@@ -33,6 +33,22 @@ dependencies {
     implementation group: 'org.littletonrobotics.akit.junction', name: 'junction-core', version: '3.2.1'
 }
 
+publishing {
+    repositories {
+        maven {
+            name = "GithubPackages"
+            url = "https://maven.pkg.github.com/Shenzhen-Robotics-Alliance/maple-sim/"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        publications {
+            maven(MavenPublication) {from components.java}
+        }
+    }
+}
+
 test {
     useJUnitPlatform()
 }

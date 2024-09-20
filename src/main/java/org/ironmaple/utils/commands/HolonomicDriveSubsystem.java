@@ -18,6 +18,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.ironmaple.utils.FieldMirroringUtils;
 import org.ironmaple.utils.mathutils.LocalADStarAK;
 import org.littletonrobotics.junction.Logger;
 
@@ -98,10 +99,10 @@ public interface HolonomicDriveSubsystem extends Subsystem {
      * runs a driverstation-centric ChassisSpeeds
      * @param driverStationCentricSpeeds a continuous chassis speeds, driverstation-centric, normally from a gamepad
      * */
-    default void runDriverStationCentricChassisSpeeds(ChassisSpeeds driverStationCentricSpeeds, Rotation2d driverStationFacing) {
+    default void runDriverStationCentricChassisSpeeds(ChassisSpeeds driverStationCentricSpeeds) {
         runRobotCentricChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
                 driverStationCentricSpeeds,
-                getPose().getRotation().minus(driverStationFacing)
+                getPose().getRotation().minus(FieldMirroringUtils.getDriverStationFacing())
         ));
     }
 

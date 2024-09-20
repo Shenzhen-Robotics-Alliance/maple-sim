@@ -1,2 +1,2 @@
 # maple-sim
-Iron Maple's Custom FRC Simulation Libarary
+Iron Maple's Custom FRC Simulation Library

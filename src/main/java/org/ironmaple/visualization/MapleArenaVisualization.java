@@ -38,6 +38,4 @@ public class MapleArenaVisualization {
         for (String type: objectsOfCertainTypePoses.keySet())
             Logger.recordOutput(path + "/Objects/" + type, objectsOfCertainTypePoses.get(type).stream().toArray(Pose3d[]::new));
     }
-
-
 }

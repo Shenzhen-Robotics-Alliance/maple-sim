@@ -154,9 +154,9 @@ public abstract class AbstractDriveTrainSimulation extends Body {
                     WHEEL_COEFFICIENT_OF_FRICTION = 0.8,
                     DRIVE_BASE_RADIUS = Math.hypot(width / 2, length/ 2);
             this.frictionForceMagnitudeNewtons = GRAVITY_CONSTANT * WHEEL_COEFFICIENT_OF_FRICTION * robotMass;
-            this.linearVelocityDamping = maxLinearAcceleration / maxLinearVelocity;
-            this.angularFrictionTorqueMagnitude = frictionForceMagnitudeNewtons * DRIVE_BASE_RADIUS;
-            this.angularVelocityDamping = maxAngularAcceleration / maxAngularVelocity;
+            this.linearVelocityDamping = maxLinearAcceleration / maxLinearVelocity * 0.75;
+            this.angularFrictionTorqueMagnitude = frictionForceMagnitudeNewtons * DRIVE_BASE_RADIUS / 2;
+            this.angularVelocityDamping = maxAngularAcceleration / maxAngularVelocity * 0.75;
         }
 
         public DriveTrainSimulationProfile withFrictionForceMagnitude(double frictionForceMagnitudeNewtons) {

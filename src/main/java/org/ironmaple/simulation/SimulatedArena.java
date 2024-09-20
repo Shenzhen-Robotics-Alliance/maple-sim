@@ -35,6 +35,7 @@ public abstract class SimulatedArena {
             this.physicsWorld.addBody(obstacle);
         this.mainRobot = mainRobot;
         this.driveTrainSimulations = new HashSet<>();
+        addDriveTrainSimulation(mainRobot);
         this.gamePieces = new HashSet<>();
     }
 

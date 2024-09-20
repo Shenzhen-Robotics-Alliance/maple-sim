@@ -1,0 +1,40 @@
+{
+  "fileName": "maple-sim.json",
+  "name": "MapleSim",
+  "version": "0.0.1",
+  "uuid": "123e4567-e89b-12d3-a456-426614174000",
+  "frcYear": "2024",
+  "mavenUrls": [
+    "https://3015rangerrobotics.github.io/pathplannerlib/repo"
+  ],
+  "jsonUrl": "",
+  "javaDependencies": [
+    {
+      "groupId": "junit",
+      "artifactId": "junit",
+      "version": "4.13.1"
+    },
+    {
+      "groupId": "org.dyn4j",
+      "artifactId": "dyn4j",
+      "version": "5.0.2"
+    },
+    {
+      "groupId": "org.littletonrobotics.akit.junction",
+      "artifactId": "junction-core",
+      "version": "3.2.1"
+    },
+    {
+      "groupId": "com.pathplanner.lib",
+      "artifactId": "PathplannerLib-java",
+      "version": "2024.2.8"
+    },
+    {
+      "groupId": "org.ironmaple",
+      "artifactId": "maple-sim",
+      "version": "0.0.1"
+    }
+  ],
+  "jniDependencies": [],
+  "cppDependencies": []
+}

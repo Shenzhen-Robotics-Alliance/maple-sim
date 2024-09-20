@@ -28,7 +28,7 @@ dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
-    implementation 'edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:2025.+'
+    implementation 'edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:2025.0.0-alpha-2'
 
     implementation group: 'org.dyn4j', name: 'dyn4j', version: '5.0.2'
 
@@ -51,7 +51,7 @@ publishing {
             maven(MavenPublication) {
                 from components.java
 
-                // Include the runtime dependencies (e.g., dyn4jpom.withXml {
+                // Include the runtime dependencies
                 pom.withXml {
                     def dependenciesNode = asNode().appendNode('dependencies')
                     configurations.implementation.allDependencies.each { dep ->

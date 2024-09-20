@@ -100,9 +100,17 @@ public interface HolonomicDriveSubsystem extends Subsystem {
      * @param driverStationCentricSpeeds a continuous chassis speeds, driverstation-centric, normally from a gamepad
      * */
     default void runDriverStationCentricChassisSpeeds(ChassisSpeeds driverStationCentricSpeeds) {
+        runDriverStationCentricChassisSpeeds(driverStationCentricSpeeds, FieldMirroringUtils.getCurrentAllianceDriverStationFacing());
+    }
+
+    /**
+     * runs a driverstation-centric ChassisSpeeds
+     * @param driverStationCentricSpeeds a continuous chassis speeds, driverstation-centric, normally from a gamepad
+     * */
+    default void runDriverStationCentricChassisSpeeds(ChassisSpeeds driverStationCentricSpeeds, Rotation2d driverStationFacing) {
         runRobotCentricChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(
                 driverStationCentricSpeeds,
-                getPose().getRotation().minus(FieldMirroringUtils.getDriverStationFacing())
+                getPose().getRotation().minus(driverStationFacing)
         ));
     }
 

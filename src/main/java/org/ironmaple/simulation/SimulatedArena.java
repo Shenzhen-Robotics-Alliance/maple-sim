@@ -38,15 +38,15 @@ public abstract class SimulatedArena {
         this.gamePieces = new HashSet<>();
     }
 
-    public void updateSimulationWorld() {
+    public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
         final double subPeriodSeconds = LoggedRobot.defaultPeriodSecs / SIMULATION_TICKS_IN_1_PERIOD;
         // move through a few sub-periods in each update
         for (int i = 0; i < SIMULATION_TICKS_IN_1_PERIOD; i++) {
-            this.physicsWorld.step(1, subPeriodSeconds);
             for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
                 driveTrainSimulation.simulationPeriodic(i, subPeriodSeconds);
+            this.physicsWorld.step(1, subPeriodSeconds);
         }
 
         Logger.recordOutput(

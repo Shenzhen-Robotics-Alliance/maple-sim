@@ -62,7 +62,7 @@ public class FieldMirroringUtils {
         return alliance.isPresent() && alliance.get().equals(DriverStation.Alliance.Red);
     }
 
-    public static Rotation2d getDriverStationFacing() {
+    public static Rotation2d getCurrentAllianceDriverStationFacing() {
         return switch (DriverStation.getAlliance().orElse(DriverStation.Alliance.Red)) {
             case Red -> new Rotation2d(Math.PI);
             case Blue -> new Rotation2d(0);

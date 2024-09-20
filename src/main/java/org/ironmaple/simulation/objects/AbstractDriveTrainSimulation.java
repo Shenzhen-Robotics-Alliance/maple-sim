@@ -28,12 +28,12 @@ public abstract class AbstractDriveTrainSimulation extends Body {
         this.profile = profile;
 
         /* width and height in world reference is flipped */
-        final double WIDTH_IN_WORLD_REFERENCE = profile.height,
+        final double WIDTH_IN_WORLD_REFERENCE = profile.length,
                 HEIGHT_IN_WORLD_REFERENCE = profile.width;
 
         super.addFixture(
                 Geometry.createRectangle(WIDTH_IN_WORLD_REFERENCE, HEIGHT_IN_WORLD_REFERENCE),
-                profile.robotMass / (profile.height * profile.width),
+                profile.robotMass / (profile.length * profile.width),
                 BUMPER_COEFFICIENT_OF_FRICTION,
                 BUMPER_COEFFICIENT_OF_RESTITUTION
         );
@@ -132,7 +132,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
                 maxAngularAcceleration,
                 robotMass,
                 width,
-                height;
+                length;
 
         private double
                 frictionForceMagnitudeNewtons,
@@ -140,19 +140,19 @@ public abstract class AbstractDriveTrainSimulation extends Body {
                 angularFrictionTorqueMagnitude,
                 angularVelocityDamping;
 
-        public DriveTrainSimulationProfile(double maxLinearVelocity, double maxLinearAcceleration, double maxAngularVelocity, double maxAngularAcceleration, double robotMass, double width, double height) {
+        public DriveTrainSimulationProfile(double maxLinearVelocity, double maxLinearAcceleration, double maxAngularVelocity, double maxAngularAcceleration, double robotMass, double width, double length) {
             this.maxLinearVelocity = maxLinearVelocity;
             this.maxLinearAcceleration = maxLinearAcceleration;
             this.maxAngularVelocity = maxAngularVelocity;
             this.maxAngularAcceleration = maxAngularAcceleration;
             this.robotMass = robotMass;
             this.width = width;
-            this.height = height;
+            this.length = length;
 
             final double
                     GRAVITY_CONSTANT = 9.8,
                     WHEEL_COEFFICIENT_OF_FRICTION = 0.8,
-                    DRIVE_BASE_RADIUS = Math.hypot(width / 2, height / 2);
+                    DRIVE_BASE_RADIUS = Math.hypot(width / 2, length/ 2);
             this.frictionForceMagnitudeNewtons = GRAVITY_CONSTANT * WHEEL_COEFFICIENT_OF_FRICTION * robotMass;
             this.linearVelocityDamping = maxLinearAcceleration / maxLinearVelocity;
             this.angularFrictionTorqueMagnitude = frictionForceMagnitudeNewtons * DRIVE_BASE_RADIUS;
@@ -184,9 +184,9 @@ public abstract class AbstractDriveTrainSimulation extends Body {
             return String.format("RobotProfile { robotMaxVelocity=%.2f(m/s), robotMaxAcceleration=%.2f(m/s^2), robotMass=%.2f(kg), " +
                             "frictionForceMagnitude=%.2f(N), linearVelocityDamping=%.2f(N*s*m^-1), maxAngularVelocity=%.2f(rad/s), " +
                             "maxAngularAcceleration=%.2f (rad/s^2), angularDamping=%.2f(N*m*s*rad^-1), angularFrictionTorqueMagnitude=%.2f(N*m), width=%.2f(m), " +
-                            "height=%.2f(m) }",
+                            "length=%.2f(m) }",
                     maxLinearVelocity, maxLinearAcceleration, robotMass, frictionForceMagnitudeNewtons, linearVelocityDamping,
-                    maxAngularVelocity, maxAngularAcceleration, angularVelocityDamping, angularFrictionTorqueMagnitude, width, height);
+                    maxAngularVelocity, maxAngularAcceleration, angularVelocityDamping, angularFrictionTorqueMagnitude, width, length);
         }
     }
 }

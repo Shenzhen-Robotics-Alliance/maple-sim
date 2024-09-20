@@ -48,7 +48,21 @@ publishing {
             }
         }
         publications {
-            maven(MavenPublication) {from components.java}
+            maven(MavenPublication) {
+                from components.java
+
+                // Include the runtime dependencies (e.g., dyn4jpom.withXml {
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    configurations.implementation.allDependencies.each { dep ->
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', dep.group)
+                        dependencyNode.appendNode('artifactId', dep.name)
+                        dependencyNode.appendNode('version', dep.version)
+                        dependencyNode.appendNode('scope', 'runtime')
+                    }
+                }
+            }
         }
     }
 }

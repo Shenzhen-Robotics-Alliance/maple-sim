@@ -1,6 +1,7 @@
 package org.ironmaple.simulation;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import org.dyn4j.dynamics.Body;
@@ -15,10 +16,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class SimulatedArena {
     public static final int SIMULATION_SUB_TICKS_IN_1_PERIOD = 5;
@@ -76,6 +74,16 @@ public abstract class SimulatedArena {
         for (GamePieceOnFieldSimulation gamePiece: this.gamePieces)
             this.physicsWorld.removeBody(gamePiece);
         this.gamePieces.clear();
+    }
+
+    public List<Pose3d> getGamePiecesPoses(String gamePieceType) {
+        final List<Pose3d> pose3ds = new ArrayList<>();
+
+        for (GamePieceOnFieldSimulation gamePiece:gamePieces)
+            if (gamePiece.type.equals(gamePieceType))
+                pose3ds.add(gamePiece.getPose3d());
+
+        return pose3ds;
     }
 
     public void resetFieldForAuto() {

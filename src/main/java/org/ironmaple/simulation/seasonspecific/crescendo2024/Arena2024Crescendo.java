@@ -5,8 +5,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.objects.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.objects.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.GamePieceOnFieldSimulation;
 import org.ironmaple.utils.MapleTimeUtils;
 
 import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;

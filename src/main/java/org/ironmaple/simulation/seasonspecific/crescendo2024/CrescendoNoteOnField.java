@@ -3,7 +3,7 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import org.dyn4j.geometry.Geometry;
-import org.ironmaple.simulation.objects.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.GamePieceOnFieldSimulation;
 
 public class CrescendoNoteOnField extends GamePieceOnFieldSimulation {
     /* https://www.andymark.com/products/frc-2024-am-4999 */

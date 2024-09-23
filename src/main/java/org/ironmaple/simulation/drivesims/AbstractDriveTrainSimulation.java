@@ -1,4 +1,4 @@
-package org.ironmaple.simulation.objects;
+package org.ironmaple.simulation.drivesims;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

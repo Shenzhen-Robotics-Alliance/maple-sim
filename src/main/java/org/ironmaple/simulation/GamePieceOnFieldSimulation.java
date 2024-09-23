@@ -1,4 +1,4 @@
-package org.ironmaple.simulation.objects;
+package org.ironmaple.simulation;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;

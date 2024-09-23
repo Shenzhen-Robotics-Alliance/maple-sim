@@ -2,6 +2,7 @@ package org.ironmaple.simulation;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.TimedRobot;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
@@ -20,7 +21,8 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class SimulatedArena {
-    public static final int SIMULATION_TICKS_IN_1_PERIOD = 5;
+    public static final int SIMULATION_SUB_TICKS_IN_1_PERIOD = 5;
+    public static final double SIMULATION_DT = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
 
     protected final World<Body> physicsWorld;
     protected final AbstractDriveTrainSimulation mainRobot;
@@ -41,9 +43,9 @@ public abstract class SimulatedArena {
     public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
-        final double subPeriodSeconds = LoggedRobot.defaultPeriodSecs / SIMULATION_TICKS_IN_1_PERIOD;
+        final double subPeriodSeconds = LoggedRobot.defaultPeriodSecs / SIMULATION_SUB_TICKS_IN_1_PERIOD;
         // move through a few sub-periods in each update
-        for (int i = 0; i < SIMULATION_TICKS_IN_1_PERIOD; i++) {
+        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) {
             for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
                 driveTrainSimulation.simulationPeriodic(i, subPeriodSeconds);
             this.physicsWorld.step(1, subPeriodSeconds);

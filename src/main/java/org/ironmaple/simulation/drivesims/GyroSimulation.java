@@ -2,7 +2,6 @@ package org.ironmaple.simulation.drivesims;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 import java.util.Queue;

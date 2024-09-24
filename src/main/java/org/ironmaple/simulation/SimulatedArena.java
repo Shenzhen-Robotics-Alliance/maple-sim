@@ -25,6 +25,7 @@ public abstract class SimulatedArena {
     protected final AbstractDriveTrainSimulation mainRobot;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
     protected final Set<GamePieceOnFieldSimulation> gamePieces;
+    protected final List<Runnable> simulationSubTickActions;
 
     public SimulatedArena(AbstractDriveTrainSimulation mainRobot, FieldObstaclesMap obstaclesMap) {
         this.physicsWorld = new World<>();
@@ -34,7 +35,12 @@ public abstract class SimulatedArena {
         this.mainRobot = mainRobot;
         this.driveTrainSimulations = new HashSet<>();
         addDriveTrainSimulation(mainRobot);
+        simulationSubTickActions = new ArrayList<>();
         this.gamePieces = new HashSet<>();
+    }
+
+    public void addSimulationSubTickAction(Runnable action) {
+        this.simulationSubTickActions.add(action);
     }
 
     public void simulationPeriodic() {
@@ -46,6 +52,8 @@ public abstract class SimulatedArena {
             for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
                 driveTrainSimulation.simulationPeriodic(i, subPeriodSeconds);
             this.physicsWorld.step(1, subPeriodSeconds);
+            for (Runnable runnable:simulationSubTickActions)
+                runnable.run();
         }
 
         SmartDashboard.putNumber(

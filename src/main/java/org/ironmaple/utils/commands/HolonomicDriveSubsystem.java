@@ -4,6 +4,8 @@ package org.ironmaple.utils.commands;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -17,12 +19,13 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.ironmaple.utils.FieldMirroringUtils;
-import org.ironmaple.utils.mathutils.LocalADStarAK;
-import org.littletonrobotics.junction.Logger;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 
 /**
  * <p>common interface for a holonomic drive</p>
@@ -146,21 +149,35 @@ public interface HolonomicDriveSubsystem extends Subsystem {
         runRawChassisSpeeds(ChassisSpeeds.discretize(speeds, 0.02));
     }
 
-    /**
-     * configure the PathPlanner {@link AutoBuilder} to make this robot follow the paths
-     * */
     default void configureHolonomicPathPlannerAutoBuilder(Field2d field2d, BooleanSupplier shouldFlipPath) {
         configureHolonomicPathPlannerAutoBuilder(
                 field2d, shouldFlipPath,
                 new PIDConstants(5, 0 , 0),
-                new PIDConstants(5, 0 , 0)
+                new PIDConstants(5, 0 , 0),
+                new LocalADStar(),
+                (activePath) -> {},
+                (setPoint) -> field2d.getObject("SetPoint").setPose(setPoint)
         );
     }
 
     /**
      * configure the PathPlanner {@link AutoBuilder} to make this robot follow the paths
      * */
-    default void configureHolonomicPathPlannerAutoBuilder(Field2d field2d, BooleanSupplier shouldFlipPath, PIDConstants translationalPIDConstants, PIDConstants rotationalPIDConstants) {
+    default void configureHolonomicPathPlannerAutoBuilder(Field2d field2d, BooleanSupplier shouldFlipPath, Pathfinder pathfinder, Consumer<List<Pose2d>> logActivePathCall, Consumer<Pose2d> logPathSetPointCall) {
+        configureHolonomicPathPlannerAutoBuilder(
+                field2d, shouldFlipPath,
+                new PIDConstants(5, 0 , 0),
+                new PIDConstants(5, 0 , 0),
+                pathfinder,
+                logActivePathCall,
+                logPathSetPointCall
+        );
+    }
+
+    /**
+     * configure the PathPlanner {@link AutoBuilder} to make this robot follow the paths
+     * */
+    default void configureHolonomicPathPlannerAutoBuilder(Field2d field2d, BooleanSupplier shouldFlipPath, PIDConstants translationalPIDConstants, PIDConstants rotationalPIDConstants, Pathfinder pathfinder, Consumer<List<Pose2d>> logActivePathCall, Consumer<Pose2d> logPathSetPointCall) {
         AutoBuilder.configureHolonomic(
                 this::getPose,
                 this::setPose,
@@ -175,17 +192,14 @@ public interface HolonomicDriveSubsystem extends Subsystem {
                 shouldFlipPath,
                 this
         );
-        Pathfinding.setPathfinder(new LocalADStarAK());
+        Pathfinding.setPathfinder(pathfinder);
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
-                    final Pose2d[] trajectory = activePath.toArray(new Pose2d[0]);
-                    Logger.recordOutput("Odometry/Trajectory", trajectory);
-                    field2d.getObject("trajectory").setPoses(trajectory);
+                    logActivePathCall.accept(activePath);
+                    field2d.getObject("trajectory").setPoses(activePath.toArray(new Pose2d[0]));
                 }
         );
-        PathPlannerLogging.setLogTargetPoseCallback(
-                (targetPose) -> Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose)
-        );
+        PathPlannerLogging.setLogTargetPoseCallback(logPathSetPointCall);
     }
 
     /**

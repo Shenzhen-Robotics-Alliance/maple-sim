@@ -20,11 +20,6 @@
       "version": "5.0.2"
     },
     {
-      "groupId": "org.littletonrobotics.akit.junction",
-      "artifactId": "junction-core",
-      "version": "3.2.1"
-    },
-    {
       "groupId": "com.pathplanner.lib",
       "artifactId": "PathplannerLib-java",
       "version": "2024.2.8"
@@ -32,7 +27,7 @@
     {
       "groupId": "org.ironmaple",
       "artifactId": "maple-sim",
-      "version": "0.0.1"
+      "version": "0.0.3"
     }
   ],
   "jniDependencies": [],

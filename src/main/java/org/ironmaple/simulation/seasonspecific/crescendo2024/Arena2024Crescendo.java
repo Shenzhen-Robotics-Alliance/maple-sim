@@ -4,10 +4,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.GamePieceOnFieldSimulation;
-import org.ironmaple.utils.MapleTimeUtils;
 
 import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;
 
@@ -152,7 +153,7 @@ public class Arena2024Crescendo extends SimulatedArena {
     public void competitionPeriodic() {
         if (!DriverStation.isTeleopEnabled()) return;
 
-        if (MapleTimeUtils.getLogTimeSeconds() - previousThrowTimeSeconds < 1) return;
+        if (Timer.getFPGATimestamp() - previousThrowTimeSeconds < 1) return;
 
         final Translation2d sourcePosition = toCurrentAllianceTranslation(BLUE_SOURCE_POSITION);
         /* if there is any game-piece 0.5 meters within the human player station, we don't throw a new note */
@@ -166,6 +167,6 @@ public class Arena2024Crescendo extends SimulatedArena {
 
         /* otherwise, place a note */
         addGamePiece(new CrescendoNoteOnField(sourcePosition));
-        previousThrowTimeSeconds = MapleTimeUtils.getLogTimeSeconds();
+        previousThrowTimeSeconds = Timer.getFPGATimestamp();
     }
 }

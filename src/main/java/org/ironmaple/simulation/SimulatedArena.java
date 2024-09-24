@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
@@ -13,8 +14,6 @@ import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
 
 import java.util.*;
 
@@ -41,7 +40,7 @@ public abstract class SimulatedArena {
     public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
-        final double subPeriodSeconds = LoggedRobot.defaultPeriodSecs / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+        final double subPeriodSeconds = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
         // move through a few sub-periods in each update
         for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) {
             for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
@@ -49,7 +48,7 @@ public abstract class SimulatedArena {
             this.physicsWorld.step(1, subPeriodSeconds);
         }
 
-        Logger.recordOutput(
+        SmartDashboard.putNumber(
                 "MapleArenaSimulation/Dyn4j Simulator CPU Time MS",
                 (System.nanoTime() - t0) / 1000000.0
         );
@@ -76,14 +75,14 @@ public abstract class SimulatedArena {
         this.gamePieces.clear();
     }
 
-    public List<Pose3d> getGamePiecesPoses(String gamePieceType) {
-        final List<Pose3d> pose3ds = new ArrayList<>();
-
-        for (GamePieceOnFieldSimulation gamePiece:gamePieces)
-            if (gamePiece.type.equals(gamePieceType))
-                pose3ds.add(gamePiece.getPose3d());
-
-        return pose3ds;
+    public Map<String, List<Pose3d>> getGamePiecesOrganizedByType() {
+        final Map<String, List<Pose3d>> gamePiecesOrganizedByType = new HashMap<>();
+        for (GamePieceOnFieldSimulation gamePiece:gamePieces) {
+            if (!gamePiecesOrganizedByType.containsKey(gamePiece.type))
+                gamePiecesOrganizedByType.put(gamePiece.type, new ArrayList<>());
+            gamePiecesOrganizedByType.get(gamePiece.type).add(gamePiece.getPose3d());
+        }
+        return gamePiecesOrganizedByType;
     }
 
     public void resetFieldForAuto() {

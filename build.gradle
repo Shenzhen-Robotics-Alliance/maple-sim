@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'org.ironmaple'
-version = '0.0.2'
+version = '0.0.3'
 
 repositories {
     mavenCentral()
@@ -31,8 +31,6 @@ dependencies {
     implementation 'edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:2025.0.0-alpha-2'
 
     implementation group: 'org.dyn4j', name: 'dyn4j', version: '5.0.2'
-
-    implementation group: 'org.littletonrobotics.akit.junction', name: 'junction-core', version: '3.2.1'
 
     implementation group: 'com.pathplanner.lib', name: 'PathplannerLib-java', version: '2024.2.8'
 }

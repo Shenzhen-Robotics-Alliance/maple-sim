@@ -68,7 +68,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * Called everytime the simulation world is updated.
      * The robot should apply the propelling forces here.
      * */
-    public abstract void simulationPeriodic(int iterations, double periodSeconds);
+    public abstract void simulationSubTick();
 
     /**
      * simulate the LINEAR friction force on the drivetrain

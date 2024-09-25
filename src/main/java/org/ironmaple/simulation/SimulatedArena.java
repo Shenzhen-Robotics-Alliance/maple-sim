@@ -50,7 +50,7 @@ public abstract class SimulatedArena {
         // move through a few sub-periods in each update
         for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) {
             for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
-                driveTrainSimulation.simulationPeriodic(i, subPeriodSeconds);
+                driveTrainSimulation.simulationSubTick();
             this.physicsWorld.step(1, subPeriodSeconds);
             for (Runnable runnable:simulationSubTickActions)
                 runnable.run();

@@ -54,7 +54,7 @@ public class SimplifiedHolonomicDriveSimulation extends AbstractDriveTrainSimula
     }
 
     @Override
-    public void simulationPeriodic(int iterations, double periodSeconds) {
+    public void simulationSubTick() {
         simulateChassisBehaviorWithFieldRelativeSpeeds(desiredFieldRelativeSpeeds);
     }
 

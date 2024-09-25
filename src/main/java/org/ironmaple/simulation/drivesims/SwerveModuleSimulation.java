@@ -5,11 +5,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import org.dyn4j.dynamics.Force;
 import org.dyn4j.geometry.Vector2;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 
 import static org.ironmaple.simulation.SimulatedArena.SIMULATION_DT;
 import static org.ironmaple.simulation.SimulatedArena.SIMULATION_SUB_TICKS_IN_1_PERIOD;
@@ -21,7 +21,7 @@ public class SwerveModuleSimulation {
             DRIVE_CURRENT_LIMIT,
             DRIVE_GEAR_RATIO, STEER_GEAR_RATIO,
             DRIVE_FRICTION_VOLTAGE, STEER_FRICTION_VOLTAGE,
-            TIRE_COEFFICIENT_OF_FRICTION, WHEEL_RADIUS_METERS,
+            WHEELS_COEFFICIENT_OF_FRICTION, WHEEL_RADIUS_METERS,
             DRIVE_WHEEL_INERTIA = 0.01;
 
     private double driveMotorRequestedVolts = 0.0, steerMotorAppliedVolts = 0.0, driveMotorAppliedVolts = 0.0,
@@ -42,7 +42,7 @@ public class SwerveModuleSimulation {
         STEER_GEAR_RATIO = steerGearRatio;
         DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
         STEER_FRICTION_VOLTAGE = steerFrictionVoltage;
-        TIRE_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
+        WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
         WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
         this.steerMotorSim = new DCMotorSim(steerMotor, STEER_GEAR_RATIO, steerRotationalInertia);
@@ -134,28 +134,28 @@ public class SwerveModuleSimulation {
 
     /**
      * updates the simulation sub-tick for this module, updating its inner status (sensor readings) and calculating a total force
-     * @param moduleCurrentGroundVelocity
+     * @param moduleCurrentGroundVelocityWorldRelative
      * @return
      * */
-    public Force updateSimulationSubTick(Vector2 moduleCurrentGroundVelocity, Rotation2d robotFacing, double gravityForceOnModuleNewtons) {
+    public Vector2 updateSimulationSubTickGetModuleForce(Vector2 moduleCurrentGroundVelocityWorldRelative, Rotation2d robotFacing, double gravityForceOnModuleNewtons) {
         updateSteerSimulation();
 
         /* the maximum gripping force that the wheel can generate */
-        final double grippingForceNewtons = gravityForceOnModuleNewtons * TIRE_COEFFICIENT_OF_FRICTION;
+        final double grippingForceNewtons = gravityForceOnModuleNewtons * WHEELS_COEFFICIENT_OF_FRICTION;
         final Rotation2d moduleWorldFacing = this.steerAbsoluteFacing.plus(robotFacing);
-        final Vector2 propellingForce = getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocity);
+        final Vector2 propellingForce = getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
         updateEncoderTicks();
 
         /* simulate the friction force */
         final Vector2
-                frictionalForce = getFrictionalForce(moduleWorldFacing, moduleCurrentGroundVelocity, grippingForceNewtons),
+                frictionalForce = getFrictionalForce(moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative, grippingForceNewtons),
                 totalForceUnconstrained = propellingForce.copy().add(frictionalForce),
                 totalForce = Vector2.create(
                         Math.min(totalForceUnconstrained.getMagnitude(), grippingForceNewtons),
                         totalForceUnconstrained.getDirection()
                 );
 
-        return new Force(totalForce);
+        return totalForce;
     }
 
     /**
@@ -256,6 +256,20 @@ public class SwerveModuleSimulation {
         );
     }
 
+    public double getModuleTheoreticalSpeedMPS() {
+        return DRIVE_MOTOR.freeSpeedRadPerSec / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS;
+    }
+
+    public double getTheoreticalPropellingForcePerModule(double robotMass, int modulesCount) {
+        final double maxThrustNewtons = DRIVE_MOTOR.getTorque(DRIVE_CURRENT_LIMIT) * DRIVE_GEAR_RATIO / WHEEL_RADIUS_METERS,
+                maxGrippingNewtons = 9.8 * robotMass / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
+
+        return Math.min(maxThrustNewtons, maxGrippingNewtons);
+    }
+
+    public double getModuleMaxAccelerationMPSsq(double robotMass, int modulesCount) {
+        return getTheoreticalPropellingForcePerModule(robotMass, modulesCount) * modulesCount / robotMass;
+    }
 
     public enum DRIVE_WHEEL_TYPE {
         RUBBER,
@@ -265,8 +279,8 @@ public class SwerveModuleSimulation {
     /**
      * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module">SDS Mark4 Swerve Module</a> for simulation
      * */
-    public static SwerveModuleSimulation createMark4(DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, DRIVE_WHEEL_TYPE driveWheelType, int gearRatioLevel) {
-        return new SwerveModuleSimulation(
+    public static Supplier<SwerveModuleSimulation> getMark4(DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, DRIVE_WHEEL_TYPE driveWheelType, int gearRatioLevel) {
+        return () -> new SwerveModuleSimulation(
                 driveMotor, steerMotor, driveCurrentLimitAmps,
                 switch (gearRatioLevel) {
                     case 1 -> 8.14;
@@ -290,8 +304,8 @@ public class SwerveModuleSimulation {
     /**
      * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4i-swerve-module">SDS Mark4-i Swerve Module</a> for simulation
      * */
-    public static SwerveModuleSimulation createMark4i(DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, DRIVE_WHEEL_TYPE driveWheelType, int gearRatioLevel) {
-        return new SwerveModuleSimulation(
+    public static Supplier<SwerveModuleSimulation> getMark4i(DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, DRIVE_WHEEL_TYPE driveWheelType, int gearRatioLevel) {
+        return () -> new SwerveModuleSimulation(
                 driveMotor, steerMotor, driveCurrentLimitAmps,
                 switch (gearRatioLevel) {
                     case 1 -> 8.14;
@@ -315,8 +329,8 @@ public class SwerveModuleSimulation {
     /**
      * creates a <a href="https://www.swervedrivespecialties.com/products/mk4n-swerve-module">SDS Mark4-n Swerve Module</a> for simulation
      * */
-    public static SwerveModuleSimulation createMark4n(DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, DRIVE_WHEEL_TYPE driveWheelType, int gearRatioLevel) {
-        return new SwerveModuleSimulation(
+    public static Supplier<SwerveModuleSimulation> getMark4n(DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, DRIVE_WHEEL_TYPE driveWheelType, int gearRatioLevel) {
+        return () -> new SwerveModuleSimulation(
                 driveMotor, steerMotor, driveCurrentLimitAmps,
                 switch (gearRatioLevel) {
                     case 1 -> 7.13;

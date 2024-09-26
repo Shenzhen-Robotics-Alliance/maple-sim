@@ -174,8 +174,8 @@ public abstract class AbstractDriveTrainSimulation extends Body {
             return this;
         }
 
-        public DriveTrainSimulationProfile withAngularVelocityDamping(double frictionForceMagnitudeNewtons) {
-            this.frictionForceMagnitudeNewtons = frictionForceMagnitudeNewtons;
+        public DriveTrainSimulationProfile withAngularVelocityDamping(double angularVelocityDamping) {
+            this.angularVelocityDamping = angularVelocityDamping;
             return this;
         }
 

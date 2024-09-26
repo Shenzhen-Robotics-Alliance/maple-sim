@@ -137,7 +137,7 @@ public abstract class SimulatedArena {
             obstacle.setMass(MassType.INFINITE);
             final BodyFixture fixture = obstacle.addFixture(shape);
             fixture.setFriction(0.6);
-            fixture.setRestitution(0.6);
+            fixture.setRestitution(0.3);
             return obstacle;
         }
     }

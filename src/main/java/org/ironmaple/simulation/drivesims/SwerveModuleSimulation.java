@@ -2,6 +2,7 @@ package org.ironmaple.simulation.drivesims;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
@@ -57,7 +58,7 @@ public class SwerveModuleSimulation {
         for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
             cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
 
-        this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() * STEER_GEAR_RATIO + steerRelativeEncoderOffSet;
+        this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
     }
 
     public void requestDriveVoltageOut(double volts) {
@@ -98,13 +99,20 @@ public class SwerveModuleSimulation {
     public double getDriveEncoderUnGearedSpeedRadPerSec() {
         return driveEncoderUnGearedSpeedRadPerSec;
     }
-    public double getDriveEncoderFinalSpeedRadPerSec() {
+    public double getDriveWheelFinalSpeedRadPerSec() {
         return getDriveEncoderUnGearedSpeedRadPerSec() / DRIVE_GEAR_RATIO;
     }
 
+    /**
+     * geared
+     * */
     public double getSteerRelativeEncoderPositionRad() {
         return steerRelativeEncoderPositionRad;
     }
+
+    /**
+     * geared
+     * */
     public double getSteerRelativeEncoderSpeedRadPerSec() {
         return steerRelativeEncoderSpeedRadPerSec;
     }
@@ -132,30 +140,25 @@ public class SwerveModuleSimulation {
         return cachedSteerAbsolutePositions.toArray(Rotation2d[]::new);
     }
 
+    protected double getGrippingForceNewtons(double gravityForceOnModuleNewtons) {
+        return gravityForceOnModuleNewtons * WHEELS_COEFFICIENT_OF_FRICTION;
+    }
+
     /**
      * updates the simulation sub-tick for this module, updating its inner status (sensor readings) and calculating a total force
      * @param moduleCurrentGroundVelocityWorldRelative
-     * @return
+     * @return the propelling force that the module generates
      * */
     public Vector2 updateSimulationSubTickGetModuleForce(Vector2 moduleCurrentGroundVelocityWorldRelative, Rotation2d robotFacing, double gravityForceOnModuleNewtons) {
         updateSteerSimulation();
 
         /* the maximum gripping force that the wheel can generate */
-        final double grippingForceNewtons = gravityForceOnModuleNewtons * WHEELS_COEFFICIENT_OF_FRICTION;
+        final double grippingForceNewtons = getGrippingForceNewtons(gravityForceOnModuleNewtons);
         final Rotation2d moduleWorldFacing = this.steerAbsoluteFacing.plus(robotFacing);
         final Vector2 propellingForce = getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
         updateEncoderTicks();
 
-        /* simulate the friction force */
-        final Vector2
-                frictionalForce = getFrictionalForce(moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative, grippingForceNewtons),
-                totalForceUnconstrained = propellingForce.copy().add(frictionalForce),
-                totalForce = Vector2.create(
-                        Math.min(totalForceUnconstrained.getMagnitude(), grippingForceNewtons),
-                        totalForceUnconstrained.getDirection()
-                );
-
-        return totalForce;
+        return propellingForce;
     }
 
     /**
@@ -166,7 +169,7 @@ public class SwerveModuleSimulation {
 
         /* update the readings of the sensor */
         this.steerAbsoluteFacing = Rotation2d.fromRadians(steerMotorSim.getAngularPositionRad());
-        this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() * STEER_GEAR_RATIO + steerRelativeEncoderOffSet;
+        this.steerRelativeEncoderPositionRad = steerMotorSim.getAngularPositionRad() + steerRelativeEncoderOffSet;
         this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getAngularVelocityRadPerSec();
         this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
 
@@ -176,7 +179,8 @@ public class SwerveModuleSimulation {
     }
 
     private Vector2 getPropellingForce(double grippingForceNewtons, Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity) {
-        final double theoreticalMaxPropellingForceNewtons = getDriveWheelTorque() / WHEEL_RADIUS_METERS;
+        final double driveWheelTorque = getDriveWheelTorque(),
+                theoreticalMaxPropellingForceNewtons = driveWheelTorque / WHEEL_RADIUS_METERS;
         final boolean skidding = Math.abs(theoreticalMaxPropellingForceNewtons) > grippingForceNewtons;
         final double propellingForceNewtons;
         if (skidding)
@@ -187,10 +191,19 @@ public class SwerveModuleSimulation {
         final double floorVelocityProjectionOnWheelDirectionMPS = moduleCurrentGroundVelocity.getMagnitude() *
                 Math.cos(moduleCurrentGroundVelocity.getAngleBetween(new Vector2(moduleWorldFacing.getRadians())));
 
-        if (skidding) // if the chassis is skidding, part of the toque will cause the wheels to spin freely
-            this.driveEncoderUnGearedSpeedRadPerSec += getDriveWheelTorque() / DRIVE_WHEEL_INERTIA * SIMULATION_DT * 0.3;
+        if (skidding) {
+            /* if the chassis is skidding, part of the toque will cause the wheels to spin freely */
+            final double torqueOnWheel = driveWheelTorque * 0.3;
+            this.driveEncoderUnGearedSpeedRadPerSec += torqueOnWheel / DRIVE_WHEEL_INERTIA * SIMULATION_DT * DRIVE_GEAR_RATIO;
+        }
         else  // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
             this.driveEncoderUnGearedSpeedRadPerSec = floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
+
+        if (Math.abs(driveMotorAppliedVolts) < DRIVE_FRICTION_VOLTAGE)
+            this.driveEncoderUnGearedSpeedRadPerSec = MathUtil.applyDeadband(
+                    this.driveEncoderUnGearedSpeedRadPerSec,
+                    Units.rotationsPerMinuteToRadiansPerSecond(300)
+            );
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
     }
@@ -235,25 +248,33 @@ public class SwerveModuleSimulation {
         return torqueOnRotter * DRIVE_GEAR_RATIO;
     }
 
-    private void updateEncoderTicks() {
-        this.driveEncoderUnGearedSpeedRadPerSec += this.driveEncoderUnGearedSpeedRadPerSec * SIMULATION_DT;
-        this.cachedDriveEncoderUnGearedPositionsRad.poll(); this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
+    /**
+     * @return the current module state of this simulation module
+     * */
+    protected SwerveModuleState getCurrentState() {
+        return new SwerveModuleState(
+                getDriveWheelFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS,
+                steerAbsoluteFacing
+        );
     }
 
-    private Vector2 getFrictionalForce(Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity, double grippingForceNewtons) {
-        final Vector2 moduleCurrentFreeVelocity = Vector2.create(
-                getDriveEncoderFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS,
-                moduleWorldFacing.getRadians()
+    /**
+     * gets the state of the module, if it is allowed to spin freely for a long time under the current applied drive volts
+     * @return the free spinning module state
+     * */
+    protected SwerveModuleState getFreeSpinState() {
+        return new SwerveModuleState(
+                DRIVE_MOTOR.getSpeed(
+                        DRIVE_MOTOR.getTorque(DRIVE_MOTOR.getCurrent(0, DRIVE_FRICTION_VOLTAGE)),
+                        driveMotorAppliedVolts
+                ) / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS,
+                steerAbsoluteFacing
         );
-        final Vector2 differenceBetweenGroundAndFreeVelocity = moduleCurrentFreeVelocity.difference(moduleCurrentGroundVelocity);
-        final double FRICTIONAL_FORCE_GAIN = 3.0;
-        final Vector2
-                frictionalForceUnconstrained = differenceBetweenGroundAndFreeVelocity.copy().multiply(FRICTIONAL_FORCE_GAIN);
+    }
 
-        return Vector2.create(
-                Math.min(frictionalForceUnconstrained.getMagnitude(), grippingForceNewtons),
-                frictionalForceUnconstrained.getDirection()
-        );
+    private void updateEncoderTicks() {
+        this.driveEncoderUnGearedPositionRad += this.driveEncoderUnGearedSpeedRadPerSec * SIMULATION_DT;
+        this.cachedDriveEncoderUnGearedPositionsRad.poll(); this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
     }
 
     public double getModuleTheoreticalSpeedMPS() {

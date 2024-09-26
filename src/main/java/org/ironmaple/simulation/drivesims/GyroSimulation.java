@@ -6,6 +6,7 @@ import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.DoubleSupplier;
 
 import static org.ironmaple.simulation.SimulatedArena.*;
 
@@ -21,7 +22,7 @@ public class GyroSimulation {
 
     private Rotation2d gyroReading;
     private double measuredAngularVelocityRadPerSec, previousAngularVelocityRadPerSec;
-    private Queue<Rotation2d> cachedRotations;
+    private final Queue<Rotation2d> cachedRotations;
 
     /**
      * creates a gyro simulation
@@ -58,6 +59,14 @@ public class GyroSimulation {
     }
 
     /**
+     * @return the angular velocity measured by the gyro
+     * error of measurement will be randomly generated according to the settings of this gyro
+     * */
+    public double getMeasuredAngularVelocityRadPerSec() {
+        return measuredAngularVelocityRadPerSec;
+    }
+
+    /**
      * gyro readings for <a href="https://v6.docs.ctr-electronics.com/en/stable/docs/application-notes/update-frequency-impact.html">high-frequency odometers</a>.
      * @return the readings of the gyro during the last 5 simulation sub ticks
      * */
@@ -83,6 +92,11 @@ public class GyroSimulation {
         cachedRotations.poll(); cachedRotations.offer(gyroReading);
     }
 
+    /**
+     * <p>Simulates IMU drifting due to robot impacts</p>
+     * <p>Generates a random amount of drifting, if the instantaneous angular acceleration is too high.</p>
+     * @return the amount of drifting that IMU will experience, if an impact is detected, 0 otherwise
+     * */
     private Rotation2d getDriftingDueToImpact(double actualAngularVelocityRadPerSec) {
         final double angularAccelerationRadPerSecSq = (actualAngularVelocityRadPerSec - previousAngularVelocityRadPerSec) / SIMULATION_DT,
                 driftingDueToImpactDegUnlimitedAbsVal = Math.abs(angularAccelerationRadPerSecSq) > ANGULAR_ACCELERATION_THRESHOLD_START_DRIFTING ?

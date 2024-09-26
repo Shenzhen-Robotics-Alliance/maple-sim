@@ -16,6 +16,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
+import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -115,11 +117,19 @@ public class RobotContainer {
                     3 // l3 gear ratio
                     ),
                 gyroSimulation,
-                new Pose2d(3, 3, new Rotation2d())); // initial starting pose on field, set it to where-ever you want
+                new Pose2d(
+                    3,
+                    3,
+                    new Rotation2d())); // initial starting pose on field, set it to where-ever you
+        // arena simulation (the simulation world)
         this.simulatedArena = new Arena2024Crescendo(swerveDriveSimulation);
+        // reset the field for auto (placing game-pieces in positions)
+        this.simulatedArena.resetFieldForAuto();
         drive =
             new Drive(
-                new GyroIOSim(gyroSimulation), // GyroIOSim is a wrapper around gyro simulation, that reads the simulation result
+                new GyroIOSim(
+                    gyroSimulation), // GyroIOSim is a wrapper around gyro simulation, that reads
+                // the simulation result
                 /* ModuleIOSim are edited such that they also wraps around module simulations */
                 new ModuleIOSim(swerveDriveSimulation.getModules()[0]),
                 new ModuleIOSim(swerveDriveSimulation.getModules()[1]),
@@ -230,5 +240,11 @@ public class RobotContainer {
 
     Logger.recordOutput(
         "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
+
+    final List<Pose3d> notes = simulatedArena.getGamePiecesOrganizedByType().get("Note");
+    if (notes != null)
+      Logger.recordOutput(
+          "FieldSimulation/Notes",
+          simulatedArena.getGamePiecesOrganizedByType().get("Note").toArray(Pose3d[]::new));
   }
 }

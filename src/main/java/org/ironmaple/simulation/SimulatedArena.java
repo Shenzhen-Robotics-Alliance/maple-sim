@@ -26,6 +26,7 @@ public abstract class SimulatedArena {
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
     protected final Set<GamePieceOnFieldSimulation> gamePieces;
     protected final List<Runnable> simulationSubTickActions;
+    private final List<IntakeSimulation> intakeSimulations;
 
     public SimulatedArena(AbstractDriveTrainSimulation mainRobot, FieldObstaclesMap obstaclesMap) {
         this.physicsWorld = new World<>();
@@ -37,29 +38,47 @@ public abstract class SimulatedArena {
         addDriveTrainSimulation(mainRobot);
         simulationSubTickActions = new ArrayList<>();
         this.gamePieces = new HashSet<>();
+        this.intakeSimulations = new ArrayList<>();
     }
 
+    /**
+     * <p>register a runnable action that is called in every simulation sub-tick</p>
+     * <p>FOR TESTING ONLY</p>
+     * */
+    @Deprecated
     public void addSimulationSubTickAction(Runnable action) {
         this.simulationSubTickActions.add(action);
+    }
+
+    protected void addIntakeSimulation(IntakeSimulation intakeSimulation) {
+        this.intakeSimulations.add(intakeSimulation);
+        this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
     }
 
     public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
-        final double subPeriodSeconds = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
         // move through a few sub-periods in each update
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) {
-            for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
-                driveTrainSimulation.simulationSubTick();
-            this.physicsWorld.step(1, subPeriodSeconds);
-            for (Runnable runnable:simulationSubTickActions)
-                runnable.run();
-        }
+        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
+            simulationSubTick();
 
         SmartDashboard.putNumber(
                 "MapleArenaSimulation/Dyn4j Simulator CPU Time MS",
                 (System.nanoTime() - t0) / 1000000.0
         );
+    }
+
+    private void simulationSubTick() {
+        for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
+            driveTrainSimulation.simulationSubTick();
+        this.physicsWorld.step(1, SIMULATION_DT);
+
+        for (IntakeSimulation intakeSimulation:intakeSimulations)
+            while (!intakeSimulation.getGamePiecesToRemove().isEmpty())
+                removeGamePiece(intakeSimulation.getGamePiecesToRemove().poll());
+
+        for (Runnable runnable:simulationSubTickActions)
+            runnable.run();
     }
 
     public void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {

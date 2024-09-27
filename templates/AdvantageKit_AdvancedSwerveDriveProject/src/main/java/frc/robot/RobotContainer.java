@@ -31,6 +31,7 @@ import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
+import frc.robot.subsystems.IntakeExample;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
@@ -57,6 +58,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Flywheel flywheel;
+  private final IntakeExample intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -93,6 +95,7 @@ public class RobotContainer {
         // new ModuleIOTalonFX(2),
         // new ModuleIOTalonFX(3));
         // flywheel = new Flywheel(new FlywheelIOTalonFX());
+        this.intake = null;
         break;
 
       case SIM:
@@ -125,6 +128,8 @@ public class RobotContainer {
         this.simulatedArena = new Arena2024Crescendo(swerveDriveSimulation);
         // reset the field for auto (placing game-pieces in positions)
         this.simulatedArena.resetFieldForAuto();
+        this.intake = new IntakeExample(simulatedArena, swerveDriveSimulation);
+
         drive =
             new Drive(
                 new GyroIOSim(
@@ -147,6 +152,7 @@ public class RobotContainer {
         this.gyroSimulation = null;
         this.swerveDriveSimulation = null;
         this.simulatedArena = null;
+        this.intake = null;
         drive =
             new Drive(
                 new GyroIO() {},
@@ -222,6 +228,14 @@ public class RobotContainer {
         .whileTrue(
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+
+    if (intake != null) {
+      controller
+          .leftTrigger(0.5)
+          .onTrue(Commands.runOnce(intake::startIntake))
+          .onFalse(Commands.runOnce(intake::stopIntake));
+      controller.leftBumper().onTrue(Commands.runOnce(intake::clearGamePiece));
+    }
   }
 
   /**
@@ -246,5 +260,7 @@ public class RobotContainer {
       Logger.recordOutput(
           "FieldSimulation/Notes",
           simulatedArena.getGamePiecesOrganizedByType().get("Note").toArray(Pose3d[]::new));
+
+    intake.visualizeNoteInIntake();
   }
 }

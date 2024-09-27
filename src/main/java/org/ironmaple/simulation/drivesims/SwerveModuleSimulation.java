@@ -199,12 +199,6 @@ public class SwerveModuleSimulation {
         else  // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
             this.driveEncoderUnGearedSpeedRadPerSec = floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
 
-        if (Math.abs(driveMotorAppliedVolts) < DRIVE_FRICTION_VOLTAGE)
-            this.driveEncoderUnGearedSpeedRadPerSec = MathUtil.applyDeadband(
-                    this.driveEncoderUnGearedSpeedRadPerSec,
-                    Units.rotationsPerMinuteToRadiansPerSecond(300)
-            );
-
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
     }
 
@@ -314,8 +308,8 @@ public class SwerveModuleSimulation {
                 0.2,
                 0.2,
                 switch (driveWheelType) {
-                    case RUBBER -> 0.95;
-                    case TIRE -> 1.05;
+                    case RUBBER -> 1.05;
+                    case TIRE -> 1.1;
                 },
                 Units.inchesToMeters(2),
                 0.05
@@ -339,8 +333,8 @@ public class SwerveModuleSimulation {
                 0.2,
                 0.2,
                 switch (driveWheelType) {
-                    case RUBBER -> 0.95;
-                    case TIRE -> 1.05;
+                    case RUBBER -> 1.05;
+                    case TIRE -> 1.1;
                 },
                 Units.inchesToMeters(2),
                 0.05
@@ -363,8 +357,8 @@ public class SwerveModuleSimulation {
                 0.25,
                 0.25,
                 switch (driveWheelType) {
-                    case RUBBER -> 0.95;
-                    case TIRE -> 1.05;
+                    case RUBBER -> 1.05;
+                    case TIRE -> 1.1;
                 },
                 Units.inchesToMeters(2),
                 0.05

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 
 import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;
 

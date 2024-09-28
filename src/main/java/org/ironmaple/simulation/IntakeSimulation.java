@@ -14,6 +14,7 @@ import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.ContactCollisionData;
 import org.dyn4j.world.listener.ContactListener;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

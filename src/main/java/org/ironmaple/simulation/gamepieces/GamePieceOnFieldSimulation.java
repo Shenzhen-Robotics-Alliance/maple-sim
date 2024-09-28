@@ -1,4 +1,4 @@
-package org.ironmaple.simulation;
+package org.ironmaple.simulation.gamepieces;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -9,7 +9,10 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.MassType;
+import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+
+import java.util.function.DoubleSupplier;
 
 /**
  * Simulates a game piece on the field.
@@ -24,13 +27,17 @@ public class GamePieceOnFieldSimulation extends Body {
             COEFFICIENT_OF_RESTITUTION = 0.3,
             MINIMUM_BOUNCING_VELOCITY = 0.2;
 
-    private final double height;
+    private final DoubleSupplier heightSupplier;
     public final String type;
 
-    public GamePieceOnFieldSimulation(String type, Convex shape, double height, double mass, Translation2d initialPosition) {
+    public GamePieceOnFieldSimulation(String type, Convex shape, double gamePieceHeight, double mass, Translation2d initialPosition) {
+        this(type, shape, () -> gamePieceHeight / 2, mass, initialPosition, new Translation2d());
+    }
+
+    public GamePieceOnFieldSimulation(String type, Convex shape, DoubleSupplier heightSupplier, double mass, Translation2d initialPosition, Translation2d initialVelocityMPS) {
         super();
         this.type = type;
-        this.height = height;
+        this.heightSupplier = heightSupplier;
 
         BodyFixture bodyFixture = super.addFixture(shape);
 
@@ -46,6 +53,8 @@ public class GamePieceOnFieldSimulation extends Body {
         super.setLinearDamping(LINEAR_DAMPING);
         super.setAngularDamping(ANGULAR_DAMPING);
         super.setBullet(true);
+
+        super.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocityMPS));
     }
 
     /**
@@ -67,7 +76,7 @@ public class GamePieceOnFieldSimulation extends Body {
         final Pose2d pose2d = getPoseOnField();
         return new Pose3d(
                 pose2d.getX(), pose2d.getY(),
-                height / 2,
+                heightSupplier.getAsDouble(),
                 new Rotation3d(
                         0, 0,
                         pose2d.getRotation().getRadians()

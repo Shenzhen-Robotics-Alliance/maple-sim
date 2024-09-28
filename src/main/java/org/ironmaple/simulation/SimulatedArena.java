@@ -13,9 +13,12 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public abstract class SimulatedArena {
     public static final int SIMULATION_SUB_TICKS_IN_1_PERIOD = 5;
@@ -25,6 +28,7 @@ public abstract class SimulatedArena {
     protected final AbstractDriveTrainSimulation mainRobot;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
     protected final Set<GamePieceOnFieldSimulation> gamePieces;
+    protected final Set<GamePieceProjectile> gamePieceProjectile;
     protected final List<Runnable> simulationSubTickActions;
     private final List<IntakeSimulation> intakeSimulations;
 
@@ -38,6 +42,7 @@ public abstract class SimulatedArena {
         addDriveTrainSimulation(mainRobot);
         simulationSubTickActions = new ArrayList<>();
         this.gamePieces = new HashSet<>();
+        this.gamePieceProjectile = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
     }
 
@@ -55,6 +60,7 @@ public abstract class SimulatedArena {
         this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
     }
 
+
     public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
@@ -71,6 +77,9 @@ public abstract class SimulatedArena {
     private void simulationSubTick() {
         for (AbstractDriveTrainSimulation driveTrainSimulation:driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
+
+        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceProjectile);
+
         this.physicsWorld.step(1, SIMULATION_DT);
 
         for (IntakeSimulation intakeSimulation:intakeSimulations)
@@ -91,6 +100,11 @@ public abstract class SimulatedArena {
         this.gamePieces.add(gamePiece);
     }
 
+    public void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
+        this.gamePieceProjectile.add(gamePieceProjectile);
+        gamePieceProjectile.launch();
+    }
+
     public void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.removeBody(gamePiece);
         this.gamePieces.remove(gamePiece);
@@ -102,14 +116,17 @@ public abstract class SimulatedArena {
         this.gamePieces.clear();
     }
 
-    public Map<String, List<Pose3d>> getGamePiecesOrganizedByType() {
-        final Map<String, List<Pose3d>> gamePiecesOrganizedByType = new HashMap<>();
-        for (GamePieceOnFieldSimulation gamePiece:gamePieces) {
-            if (!gamePiecesOrganizedByType.containsKey(gamePiece.type))
-                gamePiecesOrganizedByType.put(gamePiece.type, new ArrayList<>());
-            gamePiecesOrganizedByType.get(gamePiece.type).add(gamePiece.getPose3d());
-        }
-        return gamePiecesOrganizedByType;
+    public List<Pose3d> getGamePiecesByType(String type) {
+        final List<Pose3d> gamePiecesPoses = new ArrayList<>();
+        for (GamePieceOnFieldSimulation gamePiece:gamePieces)
+            if (Objects.equals(gamePiece.type, type))
+                gamePiecesPoses.add(gamePiece.getPose3d());
+
+        for (GamePieceProjectile gamePiece:gamePieceProjectile)
+            if (Objects.equals(gamePiece.gamePieceType, type))
+                gamePiecesPoses.add(gamePiece.getPose3d());
+
+        return gamePiecesPoses;
     }
 
     public void resetFieldForAuto() {

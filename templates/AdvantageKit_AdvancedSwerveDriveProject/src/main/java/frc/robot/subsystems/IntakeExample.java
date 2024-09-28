@@ -8,9 +8,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.littletonrobotics.junction.Logger;
 
-/**
- * An example of a simulated intake, which will such a note if activated.
- * */
+/** An example of a simulated intake, which will such a note if activated. */
 public class IntakeExample extends IntakeSimulation {
   private final AbstractDriveTrainSimulation driveTrainSimulation;
 
@@ -29,9 +27,7 @@ public class IntakeExample extends IntakeSimulation {
     super.stopIntake();
   }
 
-  /**
-   * visualizes the note in the intake
-   * */
+  /** visualizes the note in the intake */
   public void visualizeNoteInIntake() {
     final Pose3d robotPose = new Pose3d(driveTrainSimulation.getSimulatedDriveTrainPose()),
         noteInIntakePose =

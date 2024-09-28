@@ -26,12 +26,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.IntakeExample;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
-import frc.robot.subsystems.IntakeExample;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
@@ -255,11 +255,11 @@ public class RobotContainer {
     Logger.recordOutput(
         "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
 
-    final List<Pose3d> notes = simulatedArena.getGamePiecesOrganizedByType().get("Note");
+    final List<Pose3d> notes = simulatedArena.getGamePiecesByType("Note");
     if (notes != null)
       Logger.recordOutput(
           "FieldSimulation/Notes",
-          simulatedArena.getGamePiecesOrganizedByType().get("Note").toArray(Pose3d[]::new));
+          simulatedArena.getGamePiecesByType("Note").toArray(Pose3d[]::new));
 
     intake.visualizeNoteInIntake();
   }

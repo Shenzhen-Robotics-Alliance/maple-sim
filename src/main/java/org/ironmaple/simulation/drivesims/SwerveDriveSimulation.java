@@ -93,9 +93,9 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
 
         SmartDashboard.putString("MapleArenaSimulation/difference", floorAndModuleSpeedsDiffFieldRelative.toString());
 
-        final double totalGrippingForce = moduleSimulations[0].getGrippingForceNewtons(getGravityForceOnEachModule())
-                * moduleSimulations.length,
-                FRICTION_FORCE_GAIN = 1;
+        final double FRICTION_FORCE_GAIN = 3.0,
+                totalGrippingForce = moduleSimulations[0].getGrippingForceNewtons(getGravityForceOnEachModule())
+                * moduleSimulations.length;
         final Vector2 frictionForce = Vector2.create(
                 Math.min(FRICTION_FORCE_GAIN * totalGrippingForce * floorAndModuleSpeedsDiffFieldRelative.getNorm(), totalGrippingForce),
                 floorAndModuleSpeedsDiffFieldRelative.getAngle().getRadians()

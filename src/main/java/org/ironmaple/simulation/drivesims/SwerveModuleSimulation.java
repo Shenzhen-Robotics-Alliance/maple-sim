@@ -306,10 +306,10 @@ public class SwerveModuleSimulation {
                 },
                 12.8,
                 0.2,
-                0.2,
+                0.05,
                 switch (driveWheelType) {
-                    case RUBBER -> 1.05;
-                    case TIRE -> 1.1;
+                    case RUBBER -> 1.55;
+                    case TIRE -> 1.45;
                 },
                 Units.inchesToMeters(2),
                 0.05
@@ -331,10 +331,10 @@ public class SwerveModuleSimulation {
                 },
                 150.0/7.0,
                 0.2,
-                0.2,
+                0.05,
                 switch (driveWheelType) {
-                    case RUBBER -> 1.05;
-                    case TIRE -> 1.1;
+                    case RUBBER -> 1.55;
+                    case TIRE -> 1.45;
                 },
                 Units.inchesToMeters(2),
                 0.05
@@ -355,10 +355,10 @@ public class SwerveModuleSimulation {
                 },
                 18.75,
                 0.25,
-                0.25,
+                0.05,
                 switch (driveWheelType) {
-                    case RUBBER -> 1.05;
-                    case TIRE -> 1.1;
+                    case RUBBER -> 1.55;
+                    case TIRE -> 1.45;
                 },
                 Units.inchesToMeters(2),
                 0.05

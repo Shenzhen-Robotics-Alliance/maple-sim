@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 
 import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;
@@ -15,7 +14,7 @@ public class Arena2024Crescendo extends SimulatedArena {
     /**
      * the obstacles on the 2024 competition field
      * */
-    public static final class CrescendoFieldObstaclesMap extends FieldObstaclesMap {
+    public static final class CrescendoFieldObstaclesMap extends FieldMap {
         private static final double FIELD_WIDTH = 16.54;
         public CrescendoFieldObstaclesMap() {
             super();
@@ -136,8 +135,8 @@ public class Arena2024Crescendo extends SimulatedArena {
             new Translation2d(13.64, 5.55),
             new Translation2d(13.64, 7),
     };
-    public Arena2024Crescendo(AbstractDriveTrainSimulation mainRobot) {
-        super(mainRobot, new CrescendoFieldObstaclesMap());
+    public Arena2024Crescendo() {
+        super(new CrescendoFieldObstaclesMap());
     }
 
     @Override

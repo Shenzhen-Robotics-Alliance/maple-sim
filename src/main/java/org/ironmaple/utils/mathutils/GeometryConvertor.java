@@ -53,4 +53,11 @@ public class GeometryConvertor {
                 angularVelocityRadPerSec
         );
     }
+
+    public static Translation2d getChassisSpeedsTranslationalComponent(ChassisSpeeds chassisSpeeds) {
+        return new Translation2d(
+                chassisSpeeds.vxMetersPerSecond,
+                chassisSpeeds.vyMetersPerSecond
+        );
+    }
 }

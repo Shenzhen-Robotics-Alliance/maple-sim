@@ -64,11 +64,17 @@ public abstract class SimulatedArena {
     /**
      * The number of sub-ticks the simulator will run in each robot period.
      */
-    public static int SIMULATION_SUB_TICKS_IN_1_PERIOD = 5;
+    private static int SIMULATION_SUB_TICKS_IN_1_PERIOD = 5;
+    public static int getSimulationSubTicksIn1Period() {
+        return SIMULATION_SUB_TICKS_IN_1_PERIOD;
+    }
     /**
      * The period length of each sub-tick, in seconds.
      */
-    public static double SIMULATION_DT = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+    private static double SIMULATION_DT = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+    public static double getSimulationDt() {
+        return SIMULATION_DT;
+    }
 
     /**
      * <h2>Overrides the Timing Configurations of the Simulations.</h2>

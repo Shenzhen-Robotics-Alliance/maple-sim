@@ -7,13 +7,11 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.dyn4j.geometry.Vector2;
+import org.ironmaple.simulation.SimulatedArena;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
-
-import static org.ironmaple.simulation.SimulatedArena.SIMULATION_DT;
-import static org.ironmaple.simulation.SimulatedArena.SIMULATION_SUB_TICKS_IN_1_PERIOD;
 
 public class SwerveModuleSimulation {
     private final DCMotor DRIVE_MOTOR;
@@ -49,13 +47,13 @@ public class SwerveModuleSimulation {
         this.steerMotorSim = new DCMotorSim(steerMotor, STEER_GEAR_RATIO, steerRotationalInertia);
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
         this.cachedSteerRelativeEncoderPositionsRad = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
         this.cachedSteerAbsolutePositions = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
 
         this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
@@ -165,7 +163,7 @@ public class SwerveModuleSimulation {
      *
      * */
     private void updateSteerSimulation() {
-        steerMotorSim.update(SIMULATION_DT);
+        steerMotorSim.update(SimulatedArena.getSimulationDt());
 
         /* update the readings of the sensor */
         this.steerAbsoluteFacing = Rotation2d.fromRadians(steerMotorSim.getAngularPositionRad());
@@ -194,7 +192,7 @@ public class SwerveModuleSimulation {
         if (skidding) {
             /* if the chassis is skidding, part of the toque will cause the wheels to spin freely */
             final double torqueOnWheel = driveWheelTorque * 0.3;
-            this.driveEncoderUnGearedSpeedRadPerSec += torqueOnWheel / DRIVE_WHEEL_INERTIA * SIMULATION_DT * DRIVE_GEAR_RATIO;
+            this.driveEncoderUnGearedSpeedRadPerSec += torqueOnWheel / DRIVE_WHEEL_INERTIA * SimulatedArena.getSimulationDt() * DRIVE_GEAR_RATIO;
         }
         else  // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
             this.driveEncoderUnGearedSpeedRadPerSec = floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
@@ -267,7 +265,7 @@ public class SwerveModuleSimulation {
     }
 
     private void updateEncoderTicks() {
-        this.driveEncoderUnGearedPositionRad += this.driveEncoderUnGearedSpeedRadPerSec * SIMULATION_DT;
+        this.driveEncoderUnGearedPositionRad += this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getSimulationDt();
         this.cachedDriveEncoderUnGearedPositionsRad.poll(); this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
     }
 

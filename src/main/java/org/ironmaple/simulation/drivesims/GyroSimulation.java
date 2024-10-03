@@ -2,6 +2,7 @@ package org.ironmaple.simulation.drivesims;
 
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 import java.util.Queue;
@@ -41,7 +42,7 @@ public class GyroSimulation {
         gyroReading = new Rotation2d();
         this.previousAngularVelocityRadPerSec = this.measuredAngularVelocityRadPerSec = 0;
         this.cachedRotations = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             cachedRotations.offer(gyroReading);
     }
 
@@ -118,7 +119,7 @@ public class GyroSimulation {
      * @return the amount of drifting the IMU will experience if an impact is detected, or <code>Rotation2d.fromRadians(0)</code> if no impact is detected
      */
     private Rotation2d getDriftingDueToImpact(double actualAngularVelocityRadPerSec) {
-        final double angularAccelerationRadPerSecSq = (actualAngularVelocityRadPerSec - previousAngularVelocityRadPerSec) / SIMULATION_DT,
+        final double angularAccelerationRadPerSecSq = (actualAngularVelocityRadPerSec - previousAngularVelocityRadPerSec) / SimulatedArena.getSimulationDt(),
                 driftingDueToImpactDegAbsVal = Math.abs(angularAccelerationRadPerSecSq) > ANGULAR_ACCELERATION_THRESHOLD_START_DRIFTING ?
                         Math.abs(angularAccelerationRadPerSecSq) / ANGULAR_ACCELERATION_THRESHOLD_START_DRIFTING * DRIFT_DUE_TO_IMPACT_COEFFICIENT : 0,
                 driftingDueToImpactDeg = Math.copySign(driftingDueToImpactDegAbsVal, -angularAccelerationRadPerSecSq);
@@ -141,7 +142,7 @@ public class GyroSimulation {
         this.measuredAngularVelocityRadPerSec = MapleCommonMath.generateRandomNormal(
                 actualAngularVelocityRadPerSec,
                 VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT * Math.abs(actualAngularVelocityRadPerSec));
-        return Rotation2d.fromRadians(measuredAngularVelocityRadPerSec * SIMULATION_DT);
+        return Rotation2d.fromRadians(measuredAngularVelocityRadPerSec * SimulatedArena.getSimulationDt());
     }
 
     /**
@@ -153,7 +154,7 @@ public class GyroSimulation {
      * */
     private Rotation2d getNoMotionDrifting() {
         final double AVERAGE_DRIFTING_1_PERIOD = this.AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG
-                / 30 * SIMULATION_DT,
+                / 30 * SimulatedArena.getSimulationDt(),
                 driftingInThisPeriod = MapleCommonMath.generateRandomNormal(0, AVERAGE_DRIFTING_1_PERIOD);
 
         return Rotation2d.fromDegrees(driftingInThisPeriod);

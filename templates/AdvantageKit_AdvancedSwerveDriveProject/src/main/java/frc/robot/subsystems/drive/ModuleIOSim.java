@@ -31,7 +31,7 @@ public class ModuleIOSim implements ModuleIO {
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionRad = moduleSimulation.getDriveEncoderFinalPositionRad();
+    inputs.drivePositionRad = moduleSimulation.getDriveWheelFinalPositionRad();
     inputs.driveVelocityRadPerSec = moduleSimulation.getDriveWheelFinalSpeedRadPerSec();
     inputs.driveAppliedVolts = moduleSimulation.getDriveMotorAppliedVolts();
     inputs.driveCurrentAmps =

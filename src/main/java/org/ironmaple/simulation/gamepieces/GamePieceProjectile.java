@@ -13,6 +13,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * <h1>Simulates a Game Piece Launched into the Air</h1>
@@ -60,7 +61,8 @@ public class GamePieceProjectile {
     private double gamePieceHeight = 0.0, massKg = 0.0;
 
     // Optional properties of the game piece, used if we want it to have a target:
-    private Translation3d targetPosition = new Translation3d(0, 0, -100), tolerance = new Translation3d(0.2 , 0.2, 0.2);
+    private Translation3d tolerance = new Translation3d(0.2 , 0.2, 0.2);
+    private Supplier<Translation3d> targetPositionSupplier = () -> new Translation3d(0, 0, -100);
     private Runnable hitTargetCallBack = () -> {};
     private double heightAsTouchGround = 0.5;
 
@@ -167,7 +169,7 @@ public class GamePieceProjectile {
 
             if (currentPosition.getZ() < 0)
                 break;
-            final Translation3d displacementToTarget = targetPosition.minus(currentPosition);
+            final Translation3d displacementToTarget = targetPositionSupplier.get().minus(currentPosition);
             if (Math.abs(displacementToTarget.getX()) < tolerance.getX()
                     && Math.abs(displacementToTarget.getX()) < tolerance.getX()
                     && Math.abs(displacementToTarget.getX()) < tolerance.getX()) {
@@ -353,18 +355,28 @@ public class GamePieceProjectile {
     }
 
     /**
+     * <h2>Configures the Game Piece Projectile to Disappear Upon Touching Ground.</h2>
+     *
+     * <p>Reverts the effect of {@link #enableBecomesGamePieceOnFieldAfterTouchGround(Convex, double, double)}.</p>
+     * */
+    public GamePieceProjectile disableBecomesGamePieceOnFieldAfterTouchGround() {
+        this.becomesGamePieceOnGroundAfterTouchGround = false;
+        return this;
+    }
+
+    /**
      * <h2>Sets a Target for the Game Projectile.</h2>
      *
-     * <p>Configures the {@link #targetPosition} of this game piece projectile.</p>
+     * <p>Configures the {@link #targetPositionSupplier} of this game piece projectile.</p>
      * <p>The method {@link #launch()} will estimate whether or not the game piece will hit the target.</p>
      * <p>After calling {@link #launch()}, {@link #hasHitTarget()} will indicate whether the game piece has already hit the target.</p>
      * <p>Before calling this method, the target position is <code>0, 0, -100 (x,y,z)</code>, which the projectile will never hit.</p>
      *
-     * @param targetPosition the position of the target, represented as a {@link Translation3d}
+     * @param targetPositionSupplier the position of the target, represented as a {@link Translation3d}
      * @return the current instance of {@link GamePieceProjectile} to allow method chaining
      * */
-    public GamePieceProjectile withTargetPosition(Translation3d targetPosition) {
-        this.targetPosition = targetPosition;
+    public GamePieceProjectile withTargetPosition(Supplier<Translation3d> targetPositionSupplier) {
+        this.targetPositionSupplier = targetPositionSupplier;
         return this;
     }
 

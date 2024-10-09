@@ -16,9 +16,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,20 +24,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.subsystems.IntakeExample;
-import frc.robot.subsystems.drive.*;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.GyroIO;
+import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.ModuleIO;
+import frc.robot.subsystems.drive.ModuleIOSim;
+import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
-import java.util.List;
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.GyroSimulation;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation.DRIVE_WHEEL_TYPE;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -50,15 +44,9 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Simulation, we store them here in the robot container
-  private final SimulatedArena simulatedArena;
-  private final SwerveDriveSimulation swerveDriveSimulation;
-  private final GyroSimulation gyroSimulation;
-
   // Subsystems
   private final Drive drive;
   private final Flywheel flywheel;
-  private final IntakeExample intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -72,14 +60,7 @@ public class RobotContainer {
   public RobotContainer() {
     switch (Constants.currentMode) {
       case REAL:
-        /* Real robot, instantiate hardware IO implementations */
-
-        /* Disable Simulations */
-        this.simulatedArena = null;
-        this.gyroSimulation = null;
-        this.swerveDriveSimulation = null;
-
-        /* Subsystems */
+        // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
                 new GyroIOPigeon2(false),
@@ -95,64 +76,22 @@ public class RobotContainer {
         // new ModuleIOTalonFX(2),
         // new ModuleIOTalonFX(3));
         // flywheel = new Flywheel(new FlywheelIOTalonFX());
-        this.intake = null;
         break;
 
       case SIM:
-        /* Sim robot, instantiate physics sim IO implementations */
-
-        /* create simulations */
-        /* create simulation for pigeon2 IMU (different IMUs have different measurement erros) */
-        this.gyroSimulation = GyroSimulation.createPigeon2();
-        /* create a swerve drive simulation */
-        this.swerveDriveSimulation =
-            SwerveDriveSimulation.createSwerve(
-                45,
-                0.5,
-                0.5,
-                0.7,
-                0.7,
-                SwerveModuleSimulation.getMark4( // creates a mark4 module
-                    DCMotor.getKrakenX60(1), // drive motor is Kracken x60
-                    DCMotor.getFalcon500(1), // steer motor is falcon 500
-                    80, // current limit: 80 Amps
-                    DRIVE_WHEEL_TYPE.RUBBER, // wheels are rubbers
-                    3 // l3 gear ratio
-                    ),
-                gyroSimulation,
-                new Pose2d(
-                    3,
-                    3,
-                    new Rotation2d())); // initial starting pose on field, set it to where-ever you
-        // arena simulation (the simulation world)
-        this.simulatedArena = new Arena2024Crescendo(swerveDriveSimulation);
-        // reset the field for auto (placing game-pieces in positions)
-        this.simulatedArena.resetFieldForAuto();
-        this.intake = new IntakeExample(simulatedArena, swerveDriveSimulation);
-
+        // Sim robot, instantiate physics sim IO implementations
         drive =
             new Drive(
-                new GyroIOSim(
-                    gyroSimulation), // GyroIOSim is a wrapper around gyro simulation, that reads
-                // the simulation result
-                /* ModuleIOSim are edited such that they also wraps around module simulations */
-                new ModuleIOSim(swerveDriveSimulation.getModules()[0]),
-                new ModuleIOSim(swerveDriveSimulation.getModules()[1]),
-                new ModuleIOSim(swerveDriveSimulation.getModules()[2]),
-                new ModuleIOSim(swerveDriveSimulation.getModules()[3]));
-
-        /* other subsystems are created with hardware simulation IOs */
+                new GyroIO() {},
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim(),
+                new ModuleIOSim());
         flywheel = new Flywheel(new FlywheelIOSim());
         break;
 
       default:
-        /* Replayed robot, disable IO implementations */
-
-        /* physics simulations are also not needed */
-        this.gyroSimulation = null;
-        this.swerveDriveSimulation = null;
-        this.simulatedArena = null;
-        this.intake = null;
+        // Replayed robot, disable IO implementations
         drive =
             new Drive(
                 new GyroIO() {},
@@ -218,9 +157,7 @@ public class RobotContainer {
             Commands.runOnce(
                     () ->
                         drive.setPose(
-                            this.swerveDriveSimulation == null
-                                ? new Pose2d(drive.getPose().getTranslation(), new Rotation2d())
-                                : swerveDriveSimulation.getSimulatedDriveTrainPose()),
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
                 .ignoringDisable(true));
     controller
@@ -228,14 +165,6 @@ public class RobotContainer {
         .whileTrue(
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-
-    if (intake != null) {
-      controller
-          .leftTrigger(0.5)
-          .onTrue(Commands.runOnce(intake::startIntake))
-          .onFalse(Commands.runOnce(intake::stopIntake));
-      controller.leftBumper().onTrue(Commands.runOnce(intake::clearGamePiece));
-    }
   }
 
   /**
@@ -245,22 +174,5 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
-  }
-
-  public void updateSimulationField() {
-    if (simulatedArena == null) return;
-
-    simulatedArena.simulationPeriodic();
-
-    Logger.recordOutput(
-        "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
-
-    final List<Pose3d> notes = simulatedArena.getGamePiecesByType("Note");
-    if (notes != null)
-      Logger.recordOutput(
-          "FieldSimulation/Notes",
-          simulatedArena.getGamePiecesByType("Note").toArray(Pose3d[]::new));
-
-    intake.visualizeNoteInIntake();
   }
 }

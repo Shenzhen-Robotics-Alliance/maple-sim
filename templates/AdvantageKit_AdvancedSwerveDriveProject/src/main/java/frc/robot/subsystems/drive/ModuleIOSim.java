@@ -11,55 +11,62 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-// Modified by 5516 "IRON MAPLE", original source:
-// https://github.com/Shenzhen-Robotics-Alliance/maple-sim
-
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.util.OdometryTimeStampsSim;
-import java.util.Arrays;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
-/** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
+/**
+ * Physics sim implementation of module IO.
+ *
+ * <p>Uses two flywheel sims for the drive and turn motors, with the absolute position initialized
+ * to a random value. The flywheel sims are not physically accurate, but provide a decent
+ * approximation for the behavior of the module.
+ */
 public class ModuleIOSim implements ModuleIO {
-  private final SwerveModuleSimulation moduleSimulation;
+  private static final double LOOP_PERIOD_SECS = 0.02;
 
-  public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
-    this.moduleSimulation = moduleSimulation;
-  }
+  private DCMotorSim driveSim = new DCMotorSim(DCMotor.getNEO(1), 6.75, 0.025);
+  private DCMotorSim turnSim = new DCMotorSim(DCMotor.getNEO(1), 150.0 / 7.0, 0.004);
+
+  private final Rotation2d turnAbsoluteInitPosition = new Rotation2d(Math.random() * 2.0 * Math.PI);
+  private double driveAppliedVolts = 0.0;
+  private double turnAppliedVolts = 0.0;
 
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionRad = moduleSimulation.getDriveEncoderFinalPositionRad();
-    inputs.driveVelocityRadPerSec = moduleSimulation.getDriveWheelFinalSpeedRadPerSec();
-    inputs.driveAppliedVolts = moduleSimulation.getDriveMotorAppliedVolts();
-    inputs.driveCurrentAmps =
-        new double[] {Math.abs(moduleSimulation.getDriveMotorSupplyCurrentAmps())};
+    driveSim.update(LOOP_PERIOD_SECS);
+    turnSim.update(LOOP_PERIOD_SECS);
 
-    inputs.turnAbsolutePosition = moduleSimulation.getSteerAbsoluteFacing();
-    inputs.turnPosition =
-        Rotation2d.fromRadians(moduleSimulation.getSteerRelativeEncoderPositionRad());
-    inputs.turnVelocityRadPerSec = moduleSimulation.getSteerRelativeEncoderSpeedRadPerSec();
-    inputs.turnAppliedVolts = moduleSimulation.getSteerMotorAppliedVolts();
-    inputs.turnCurrentAmps =
-        new double[] {Math.abs(moduleSimulation.getSteerMotorSupplyCurrentAmps())};
+    inputs.drivePositionRad = driveSim.getAngularPositionRad();
+    inputs.driveVelocityRadPerSec = driveSim.getAngularVelocityRadPerSec();
+    inputs.driveAppliedVolts = driveAppliedVolts;
+    inputs.driveCurrentAmps = new double[] {Math.abs(driveSim.getCurrentDrawAmps())};
 
-    inputs.odometryTimestamps = OdometryTimeStampsSim.getTimeStamps();
-    inputs.odometryDrivePositionsRad = moduleSimulation.getCachedDriveWheelFinalPositionsRad();
-    inputs.odometryTurnPositions =
-        Arrays.stream(moduleSimulation.getCachedSteerRelativeEncoderPositions())
-            .mapToObj(Rotation2d::fromRadians)
-            .toArray(Rotation2d[]::new);
+    inputs.turnAbsolutePosition =
+        new Rotation2d(turnSim.getAngularPositionRad()).plus(turnAbsoluteInitPosition);
+    inputs.turnPosition = new Rotation2d(turnSim.getAngularPositionRad());
+    inputs.turnVelocityRadPerSec = turnSim.getAngularVelocityRadPerSec();
+    inputs.turnAppliedVolts = turnAppliedVolts;
+    inputs.turnCurrentAmps = new double[] {Math.abs(turnSim.getCurrentDrawAmps())};
+
+    inputs.odometryTimestamps = new double[] {Timer.getFPGATimestamp()};
+    inputs.odometryDrivePositionsRad = new double[] {inputs.drivePositionRad};
+    inputs.odometryTurnPositions = new Rotation2d[] {inputs.turnPosition};
   }
 
   @Override
   public void setDriveVoltage(double volts) {
-    moduleSimulation.requestDriveVoltageOut(volts);
+    driveAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    driveSim.setInputVoltage(driveAppliedVolts);
   }
 
   @Override
   public void setTurnVoltage(double volts) {
-    moduleSimulation.requestSteerVoltageOut(volts);
+    turnAppliedVolts = MathUtil.clamp(volts, -12.0, 12.0);
+    turnSim.setInputVoltage(turnAppliedVolts);
   }
 }

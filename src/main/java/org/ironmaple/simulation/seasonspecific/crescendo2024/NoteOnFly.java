@@ -17,7 +17,7 @@ public class NoteOnFly extends GamePieceProjectile {
                 Geometry.createCircle(NOTE_DIAMETER/2),
                 NOTE_HEIGHT,
                 NOTE_WEIGHT_KG
-        ).withTouchGroundHeight(0.4);
+        ).withTouchGroundHeight(0.6);
     }
 
     public NoteOnFly asSpeakerShotNote(Runnable hitTargetCallBack) {

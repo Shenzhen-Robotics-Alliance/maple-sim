@@ -38,7 +38,7 @@ public class GamePieceProjectile {
      * This value may seem unusual compared to the standard 9.8 m/s² for gravity.
      * However, through experimentation, it appears more realistic in our simulation, possibly due to the ignoring of air drag.
      * */
-    private static final double GRAVITY = 8;
+    private static final double GRAVITY = 9.8;
 
     // Properties of the game piece projectile:
     public final String gamePieceType;
@@ -167,12 +167,12 @@ public class GamePieceProjectile {
             final Translation3d currentPosition = getPositionAtTime(t);
             trajectoryPoints.add(new Pose3d(currentPosition, gamePieceRotation));
 
-            if (currentPosition.getZ() < 0)
+            if (currentPosition.getZ() < heightAsTouchGround && t * GRAVITY > initialVerticalSpeedMPS)
                 break;
             final Translation3d displacementToTarget = targetPositionSupplier.get().minus(currentPosition);
             if (Math.abs(displacementToTarget.getX()) < tolerance.getX()
-                    && Math.abs(displacementToTarget.getX()) < tolerance.getX()
-                    && Math.abs(displacementToTarget.getX()) < tolerance.getX()) {
+                    && Math.abs(displacementToTarget.getY()) < tolerance.getY()
+                    && Math.abs(displacementToTarget.getZ()) < tolerance.getZ()) {
                 this.calculatedHitTargetTime = t;
             }
         }
@@ -195,7 +195,8 @@ public class GamePieceProjectile {
      * @return <code>true</code> if the game piece has touched the ground, otherwise <code>false</code>
      * */
     public boolean hasHitGround() {
-        return getPositionAtTime(launchedTimer.get()).getZ() <= heightAsTouchGround;
+        return getPositionAtTime(launchedTimer.get()).getZ() <= heightAsTouchGround
+                && launchedTimer.get() * GRAVITY > initialVerticalSpeedMPS;
     }
 
     /**

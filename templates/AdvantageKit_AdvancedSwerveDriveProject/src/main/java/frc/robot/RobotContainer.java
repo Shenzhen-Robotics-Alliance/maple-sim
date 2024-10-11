@@ -18,6 +18,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -38,6 +39,7 @@ import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation.DRIVE_WHEEL_TYPE;
+import org.ironmaple.simulation.seasonspecific.crescendo2024.NoteOnFly;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -225,7 +227,54 @@ public class RobotContainer {
           .leftTrigger(0.5)
           .onTrue(Commands.runOnce(intake::startIntake))
           .onFalse(Commands.runOnce(intake::stopIntake));
-      controller.leftBumper().onTrue(Commands.runOnce(intake::clearGamePiece));
+      controller.rightTrigger(0.5).onTrue(Commands.runOnce(intake::clearGamePiece));
+
+      /* game piece projectile simulation example code: */
+      if (Constants.currentMode == Constants.Mode.SIM) {
+        controller
+            .rightTrigger(0.5)
+            .onTrue(
+                Commands.runOnce(
+                    () ->
+                        SimulatedArena.getInstance()
+                            .addGamePieceProjectile(
+                                new NoteOnFly(
+                                        swerveDriveSimulation
+                                            .getSimulatedDriveTrainPose()
+                                            .getTranslation(), // robot pose
+                                        new Translation2d(0.2, 0), // shooter pose on robot
+                                        swerveDriveSimulation
+                                            .getDriveTrainSimulatedChassisSpeedsFieldRelative(), // drivetrain speed when the projectile is launched (influences the initial velocity of the projectile)
+                                        swerveDriveSimulation
+                                            .getSimulatedDriveTrainPose()
+                                            .getRotation(), // shooter facing
+                                        0.5, // initial height (shooter height)
+                                        8, // initial velocity (m/s)
+                                        Math.toRadians(60)) // launch angle (pitch)
+                                    .asSpeakerShotNote(
+                                        () -> System.out.println("hit speaker!!!"))))); // add listener that triggers this print statement when the projectile hits the speaker
+        controller
+            .rightBumper()
+            .onTrue(
+                Commands.runOnce(
+                    () ->
+                        SimulatedArena.getInstance()
+                            .addGamePieceProjectile(
+                                new NoteOnFly(
+                                        swerveDriveSimulation
+                                            .getSimulatedDriveTrainPose()
+                                            .getTranslation(),
+                                        new Translation2d(0.2, 0),
+                                        swerveDriveSimulation
+                                            .getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                                        swerveDriveSimulation
+                                            .getSimulatedDriveTrainPose()
+                                            .getRotation(),
+                                        0.5,
+                                        3,
+                                        Math.toRadians(60))
+                                    .asAmpShotNote(() -> System.out.println("hit amp!!!")))));
+      }
     }
   }
 

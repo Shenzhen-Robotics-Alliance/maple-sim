@@ -69,7 +69,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                         robotMassWithBumpersKg,
                         bumperWidthMeters,
                         bumperLengthMeters
-                ).withAngularVelocityDamping(1).withLinearVelocityDamping(1),
+                ).withAngularVelocityDamping(1.4).withLinearVelocityDamping(1.4),
                 initialPoseOnField);
 
         this.moduleSimulations = moduleSimulations;

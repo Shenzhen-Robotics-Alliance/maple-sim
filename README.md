@@ -18,7 +18,7 @@ Having such realistic robot simulation means a lot of things, you will be able t
 
 Ultimately, your simulation can achieve a level that it is realistic enough to be played like a "video game".
 
-<iframe width="80%" src="https://www.youtube.com/embed/5jr1L8xWpog"></iframe>
+<iframe src='https://www.youtube.com/embed/5jr1L8xWpog'></iframe>
 
 ## Simulation Details
 

@@ -27,7 +27,7 @@
     {
       "groupId": "org.ironmaple",
       "artifactId": "maple-sim",
-      "version": "0.0.6"
+      "version": "0.0.9"
     }
   ],
   "jniDependencies": [],

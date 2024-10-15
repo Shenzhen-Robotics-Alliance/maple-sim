@@ -13,10 +13,17 @@
 
 package frc.robot.subsystems.flywheel;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.crescendo2024.NoteOnFly;
 
 public class FlywheelIOSim implements FlywheelIO {
   private FlywheelSim sim = new FlywheelSim(DCMotor.getNEO(1), 1.5, 0.004);
@@ -37,7 +44,10 @@ public class FlywheelIOSim implements FlywheelIO {
     sim.update(0.02);
 
     inputs.positionRad = 0.0;
-    inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec();
+    // store the rpm of the motor
+    this.velocityRPM =
+        Units.radiansPerSecondToRotationsPerMinute(
+            inputs.velocityRadPerSec = sim.getAngularVelocityRadPerSec());
     inputs.appliedVolts = appliedVolts;
     inputs.currentAmps = new double[] {sim.getCurrentDrawAmps()};
   }
@@ -64,5 +74,36 @@ public class FlywheelIOSim implements FlywheelIO {
   @Override
   public void configurePID(double kP, double kI, double kD) {
     pid.setPID(kP, kI, kD);
+  }
+
+  private double velocityRPM = 0.0;
+
+  /**
+   * when the intake passes the note to the flywheels, this method is called to simulate launching a
+   * note from the shooter
+   */
+  public void shootNoteWithCurrentRPM(
+      Pose2d robotSimulationWorldPose, ChassisSpeeds chassisSpeedsFieldRelative) {
+    SimulatedArena.getInstance()
+        .addGamePieceProjectile(
+            new NoteOnFly(
+                    robotSimulationWorldPose
+                        .getTranslation(), // specify the position of the chassis
+                    new Translation2d(
+                        0.2,
+                        0), // the shooter is installed at this position on the robot (in reference
+                    // to the robot chassis center)
+                    chassisSpeedsFieldRelative, // specify the field-relative speed of the chassis
+                    // to add it to the initial velocity of the projectile
+                    robotSimulationWorldPose
+                        .getRotation(), // the shooter facing is the robot's facing
+                    0.45, // initial height of the flying note
+                    velocityRPM
+                        / 6000
+                        * 20, // we think the launching speed is proportional to the rpm, and is 16
+                    // meters/second when the motor rpm is 6000
+                    Math.toRadians(55) // the note is launched at fixed angle of 55 degrees.
+                    )
+                .asSpeakerShotNote(() -> System.out.println("hit target!!!")));
   }
 }

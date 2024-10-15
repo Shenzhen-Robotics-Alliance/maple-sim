@@ -18,28 +18,29 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
-import frc.robot.subsystems.IntakeExample;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelIO;
 import frc.robot.subsystems.flywheel.FlywheelIOSim;
 import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOTalonSRX;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation.DRIVE_WHEEL_TYPE;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.NoteOnFly;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
@@ -57,7 +58,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Flywheel flywheel;
-  private final IntakeExample intake;
+  private final Intake intake;
 
   // Controller
   private final CommandXboxController controller = new CommandXboxController(0);
@@ -92,7 +93,7 @@ public class RobotContainer {
         // new ModuleIOTalonFX(2),
         // new ModuleIOTalonFX(3));
         // flywheel = new Flywheel(new FlywheelIOTalonFX());
-        this.intake = null;
+        this.intake = new Intake(new IntakeIOTalonSRX());
         break;
 
       case SIM:
@@ -123,7 +124,6 @@ public class RobotContainer {
 
         // reset the field for auto (placing game-pieces in positions)
         SimulatedArena.getInstance().resetFieldForAuto();
-        this.intake = new IntakeExample(SimulatedArena.getInstance(), swerveDriveSimulation);
 
         drive =
             new Drive(
@@ -137,7 +137,19 @@ public class RobotContainer {
                 new ModuleIOSim(swerveDriveSimulation.getModules()[3]));
 
         /* other subsystems are created with hardware simulation IOs */
-        flywheel = new Flywheel(new FlywheelIOSim());
+        final FlywheelIOSim flywheelIOSim = new FlywheelIOSim();
+        flywheel = new Flywheel(flywheelIOSim);
+
+        this.intake =
+            new Intake(
+                new IntakeIOSim(
+                    swerveDriveSimulation, // attach the intake simulation to swerve drive
+                    () ->
+                        flywheelIOSim.shootNoteWithCurrentRPM(
+                            swerveDriveSimulation.getSimulatedDriveTrainPose(),
+                            swerveDriveSimulation
+                                .getDriveTrainSimulatedChassisSpeedsFieldRelative())));
+        // simulation
         break;
 
       default:
@@ -222,60 +234,13 @@ public class RobotContainer {
             Commands.startEnd(
                 () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
 
-    if (intake != null) {
-      controller
-          .leftTrigger(0.5)
-          .onTrue(Commands.runOnce(intake::startIntake))
-          .onFalse(Commands.runOnce(intake::stopIntake));
-      controller.rightTrigger(0.5).onTrue(Commands.runOnce(intake::clearGamePiece));
-
-      /* game piece projectile simulation example code: */
-      if (Constants.currentMode == Constants.Mode.SIM) {
-        controller
-            .rightTrigger(0.5)
-            .onTrue(
-                Commands.runOnce(
-                    () ->
-                        SimulatedArena.getInstance()
-                            .addGamePieceProjectile(
-                                new NoteOnFly(
-                                        swerveDriveSimulation
-                                            .getSimulatedDriveTrainPose()
-                                            .getTranslation(), // robot pose
-                                        new Translation2d(0.2, 0), // shooter pose on robot
-                                        swerveDriveSimulation
-                                            .getDriveTrainSimulatedChassisSpeedsFieldRelative(), // drivetrain speed when the projectile is launched (influences the initial velocity of the projectile)
-                                        swerveDriveSimulation
-                                            .getSimulatedDriveTrainPose()
-                                            .getRotation(), // shooter facing
-                                        0.5, // initial height (shooter height)
-                                        8, // initial velocity (m/s)
-                                        Math.toRadians(60)) // launch angle (pitch)
-                                    .asSpeakerShotNote(
-                                        () -> System.out.println("hit speaker!!!"))))); // add listener that triggers this print statement when the projectile hits the speaker
-        controller
-            .rightBumper()
-            .onTrue(
-                Commands.runOnce(
-                    () ->
-                        SimulatedArena.getInstance()
-                            .addGamePieceProjectile(
-                                new NoteOnFly(
-                                        swerveDriveSimulation
-                                            .getSimulatedDriveTrainPose()
-                                            .getTranslation(),
-                                        new Translation2d(0.2, 0),
-                                        swerveDriveSimulation
-                                            .getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-                                        swerveDriveSimulation
-                                            .getSimulatedDriveTrainPose()
-                                            .getRotation(),
-                                        0.5,
-                                        3,
-                                        Math.toRadians(60))
-                                    .asAmpShotNote(() -> System.out.println("hit amp!!!")))));
-      }
-    }
+    controller.leftTrigger(0.5).whileTrue(intake.runIntakeUntilNoteDetected());
+    controller
+        .rightBumper()
+        .whileTrue(
+            new StartEndCommand(
+                () -> flywheel.runVelocity(3000), () -> flywheel.runVelocity(0), flywheel));
+    controller.rightTrigger(0.5).and(controller.rightBumper()).whileTrue(intake.launchNote());
   }
 
   /**
@@ -295,7 +260,5 @@ public class RobotContainer {
 
     final List<Pose3d> notes = SimulatedArena.getInstance().getGamePiecesByType("Note");
     if (notes != null) Logger.recordOutput("FieldSimulation/Notes", notes.toArray(Pose3d[]::new));
-
-    intake.visualizeNoteInIntake();
   }
 }

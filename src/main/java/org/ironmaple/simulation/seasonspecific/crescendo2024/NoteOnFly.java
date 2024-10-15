@@ -23,8 +23,7 @@ public class NoteOnFly extends GamePieceProjectile {
     public NoteOnFly asSpeakerShotNote(Runnable hitTargetCallBack) {
         return (NoteOnFly) super.withTargetPosition(() -> FieldMirroringUtils.toCurrentAllianceTranslation(new Translation3d(0.25, 5.56, 2.3)))
                 .withTargetTolerance(new Translation3d(0.5, 1.2, 0.3))
-                .withHitTargetCallBack(hitTargetCallBack)
-                .disableBecomesGamePieceOnFieldAfterTouchGround();
+                .withHitTargetCallBack(hitTargetCallBack);
     }
 
     public NoteOnFly asAmpShotNote(Runnable hitTargetCallBack) {

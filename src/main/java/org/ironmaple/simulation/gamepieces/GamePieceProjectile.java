@@ -38,7 +38,7 @@ public class GamePieceProjectile {
      * This value may seem unusual compared to the standard 9.8 m/s² for gravity.
      * However, through experimentation, it appears more realistic in our simulation, possibly due to the ignoring of air drag.
      * */
-    private static final double GRAVITY = 9.8;
+    private static final double GRAVITY = 11;
 
     // Properties of the game piece projectile:
     public final String gamePieceType;

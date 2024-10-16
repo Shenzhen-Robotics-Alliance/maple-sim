@@ -13,10 +13,10 @@
 
 package frc.robot.subsystems.flywheel;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -24,6 +24,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.NoteOnFly;
+import org.littletonrobotics.junction.Logger;
 
 public class FlywheelIOSim implements FlywheelIO {
   private FlywheelSim sim = new FlywheelSim(DCMotor.getNEO(1), 1.5, 0.004);
@@ -104,6 +105,15 @@ public class FlywheelIOSim implements FlywheelIO {
                     // meters/second when the motor rpm is 6000
                     Math.toRadians(55) // the note is launched at fixed angle of 55 degrees.
                     )
-                .asSpeakerShotNote(() -> System.out.println("hit target!!!")));
+                .asSpeakerShotNote(() -> System.out.println("hit target!!!"))
+                .enableBecomeNoteOnFieldAfterTouchGround()
+                .withProjectileTrajectoryDisplayCallBack(
+                    (pose3ds) ->
+                        Logger.recordOutput(
+                            "Flywheel/NoteProjectileSuccessful", pose3ds.toArray(Pose3d[]::new)),
+                    (pose3ds) ->
+                        Logger.recordOutput(
+                            "Flywheel/NoteProjectileUnsuccessful",
+                            pose3ds.toArray(Pose3d[]::new))));
   }
 }

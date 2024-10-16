@@ -53,7 +53,8 @@ public class GamePieceProjectile {
      * <p>Optionally, this callback will be used to visualize the projectile flight trajectory in a telemetry system, such as
      * <a href='https://github.com/Mechanical-Advantage/AdvantageScope'>Advantage Scope</a>.</p>
      * */
-    private Consumer<List<Pose3d>> projectileTrajectoryDisplayCallBack = projectileTrajectory -> {};
+    private Consumer<List<Pose3d>> projectileTrajectoryDisplayCallBackHitTarget = projectileTrajectory -> {};
+    private Consumer<List<Pose3d>> projectileTrajectoryDisplayCallBackMiss = projectileTrajectory -> {};
 
     // Optional properties of the game piece, used if we want it to become a GamePieceOnFieldSimulation upon touching ground:
     private boolean becomesGamePieceOnGroundAfterTouchGround = false;
@@ -153,7 +154,7 @@ public class GamePieceProjectile {
      *   <li>Initiates the projectile motion of the game piece. The current pose can be obtained with {@link #getPose3d()}.</li>
      *   <li>Calculates whether the projectile will hit the target during its flight. The result can be obtained using {@link #willHitTarget()}.</li>
      *   <li>Calculates a preview trajectory by simulating the projectile's motion for up to 100 steps, with each step lasting 0.02 seconds.</li>
-     *   <li>If specified, displays the trajectory using {@link GamePieceProjectile#projectileTrajectoryDisplayCallBack}, which can be set via {@link GamePieceProjectile#withProjectileTrajectoryDisplayCallBack(Consumer)}.</li>
+     *   <li>If specified, displays the trajectory using {@link GamePieceProjectile#projectileTrajectoryDisplayCallBackHitTarget}, which can be set via {@link GamePieceProjectile#withProjectileTrajectoryDisplayCallBack(Consumer)}.</li>
      *   <li>Starts the {@link #launchedTimer}, which stores the amount of time elapsed after the game piece is launched</li>
      * </ul>
      * */
@@ -169,14 +170,20 @@ public class GamePieceProjectile {
 
             if (currentPosition.getZ() < heightAsTouchGround && t * GRAVITY > initialVerticalSpeedMPS)
                 break;
+            if (isOutOfField(t))
+                break;
             final Translation3d displacementToTarget = targetPositionSupplier.get().minus(currentPosition);
             if (Math.abs(displacementToTarget.getX()) < tolerance.getX()
                     && Math.abs(displacementToTarget.getY()) < tolerance.getY()
                     && Math.abs(displacementToTarget.getZ()) < tolerance.getZ()) {
                 this.calculatedHitTargetTime = t;
+                break;
             }
         }
-        projectileTrajectoryDisplayCallBack.accept(trajectoryPoints);
+        if (willHitTarget())
+            projectileTrajectoryDisplayCallBackHitTarget.accept(trajectoryPoints);
+        else
+            projectileTrajectoryDisplayCallBackMiss.accept(trajectoryPoints);
         this.hitTargetCallBackCalled = false;
 
         launchedTimer.start();
@@ -212,7 +219,11 @@ public class GamePieceProjectile {
      * @return <code>true</code> if the game piece has flown out of the field's boundaries, otherwise <code>false</code>
      * */
     public boolean hasGoneOutOfField() {
-        final Translation3d position = getPositionAtTime(launchedTimer.get());
+        return isOutOfField(launchedTimer.get());
+    }
+
+    private boolean isOutOfField(double time) {
+        final Translation3d position = getPositionAtTime(time);
         final double EDGE_TOLERANCE = 0.5;
         return position.getX() < -EDGE_TOLERANCE
                 || position.getX() > FieldMirroringUtils.FIELD_WIDTH + EDGE_TOLERANCE
@@ -252,12 +263,12 @@ public class GamePieceProjectile {
     }
 
     /**
-     * <h2>Clean up the trajectory through {@link #projectileTrajectoryDisplayCallBack}</h2>
+     * <h2>Clean up the trajectory through {@link #projectileTrajectoryDisplayCallBackHitTarget}</h2>
      *
      * @return this instance
      * */
     public GamePieceProjectile cleanUp() {
-        this.projectileTrajectoryDisplayCallBack.accept(new ArrayList<>());
+        this.projectileTrajectoryDisplayCallBackHitTarget.accept(new ArrayList<>());
         return this;
     }
 
@@ -412,7 +423,7 @@ public class GamePieceProjectile {
     /**
      * <h2>Configures a Callback to Display the Trajectory of the Projectile When Launched.</h2>
      *
-     * <p>Sets the {@link #projectileTrajectoryDisplayCallBack} to be fed with data during the {@link #launch()} method.</p>
+     * <p>Sets the {@link #projectileTrajectoryDisplayCallBackHitTarget} to be fed with data during the {@link #launch()} method.</p>
      * <p>A {@link List} containing up to 50 {@link Pose3d} objects will be passed to the callback, representing the future trajectory of the projectile.</p>
      * <p>This is usually for visualizing the trajectory of the projectile on a telemetry, like <a href='https://github.com/Mechanical-Advantage/AdvantageScope'>Advantage Scope</a></p>
      *
@@ -420,7 +431,24 @@ public class GamePieceProjectile {
      * @return the current instance of {@link GamePieceProjectile} to allow method chaining
      * */
     public GamePieceProjectile withProjectileTrajectoryDisplayCallBack(Consumer<List<Pose3d>> projectileTrajectoryDisplayCallBack) {
-        this.projectileTrajectoryDisplayCallBack = projectileTrajectoryDisplayCallBack;
+        this.projectileTrajectoryDisplayCallBackMiss = this.projectileTrajectoryDisplayCallBackHitTarget = projectileTrajectoryDisplayCallBack;
+        return this;
+    }
+
+    /**
+     * <h2>Configures a Callback to Display the Trajectory of the Projectile When Launched.</h2>
+     *
+     * <p>Sets the {@link #projectileTrajectoryDisplayCallBackHitTarget} to be fed with data during the {@link #launch()} method.</p>
+     * <p>A {@link List} containing up to 50 {@link Pose3d} objects will be passed to the callback, representing the future trajectory of the projectile.</p>
+     * <p>This is usually for visualizing the trajectory of the projectile on a telemetry, like <a href='https://github.com/Mechanical-Advantage/AdvantageScope'>Advantage Scope</a></p>
+     *
+     * @param projectileTrajectoryDisplayCallBackHitTarget the callback that will receive the list of {@link Pose3d} objects representing the projectile's trajectory, called if the projectile will hit the target on its path
+     * @param projectileTrajectoryDisplayCallBackHitTargetMiss the callback that will receive the list of {@link Pose3d} objects representing the projectile's trajectory, called if the projectile will be off the target
+     * @return the current instance of {@link GamePieceProjectile} to allow method chaining
+     * */
+    public GamePieceProjectile withProjectileTrajectoryDisplayCallBack(Consumer<List<Pose3d>> projectileTrajectoryDisplayCallBackHitTarget, Consumer<List<Pose3d>> projectileTrajectoryDisplayCallBackHitTargetMiss) {
+        this.projectileTrajectoryDisplayCallBackHitTarget = projectileTrajectoryDisplayCallBackHitTarget;
+        this.projectileTrajectoryDisplayCallBackMiss = projectileTrajectoryDisplayCallBackHitTargetMiss;
         return this;
     }
 

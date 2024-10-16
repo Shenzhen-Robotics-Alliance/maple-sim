@@ -13,11 +13,7 @@ import static org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNot
 public class NoteOnFly extends GamePieceProjectile {
     public NoteOnFly(Translation2d robotPosition, Translation2d shooterPositionOnRobot, ChassisSpeeds chassisSpeeds, Rotation2d shooterFacing, double initialHeight, double launchingSpeedMPS, double shooterAngleRad) {
         super("Note", robotPosition, shooterPositionOnRobot, chassisSpeeds, shooterFacing, initialHeight, launchingSpeedMPS, shooterAngleRad);
-        super.enableBecomesGamePieceOnFieldAfterTouchGround(
-                Geometry.createCircle(NOTE_DIAMETER/2),
-                NOTE_HEIGHT,
-                NOTE_WEIGHT_KG
-        ).withTouchGroundHeight(0.6);
+        super.withTouchGroundHeight(0.6);
     }
 
     public NoteOnFly asSpeakerShotNote(Runnable hitTargetCallBack) {
@@ -30,5 +26,17 @@ public class NoteOnFly extends GamePieceProjectile {
         return (NoteOnFly) super.withTargetPosition(() -> FieldMirroringUtils.toCurrentAllianceTranslation(new Translation3d(1.83, 8.12, 0.95)))
                 .withTargetTolerance(new Translation3d(0.1, 0.6, 0.45))
                 .withHitTargetCallBack(hitTargetCallBack);
+    }
+
+    public NoteOnFly enableBecomeNoteOnFieldAfterTouchGround() {
+        return (NoteOnFly) super.enableBecomesGamePieceOnFieldAfterTouchGround(
+                Geometry.createCircle(NOTE_DIAMETER/2),
+                NOTE_HEIGHT,
+                NOTE_WEIGHT_KG
+        );
+    }
+
+    public NoteOnFly disableBecomeNoteOnFieldAfterTouchGround() {
+        return (NoteOnFly) super.disableBecomesGamePieceOnFieldAfterTouchGround();
     }
 }

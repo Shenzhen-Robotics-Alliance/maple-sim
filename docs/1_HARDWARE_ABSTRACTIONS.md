@@ -41,7 +41,7 @@ subsystems/
 
 Reference: [io-interface.md from Advantage Kit Documents](https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/docs/recording-inputs/io-interfaces.md)
 
-<div style="display:flex; justify-content: space-between; width: 100%">
+<div style="display:flex; justify-content: space-between; width: 90%">
     <h3><< <a href="../README.md">Back to Readme</a></h3>
     <h3>Next: <a href="./2_INSTALLING_MAPLE_SIM.md">Installing maple-sim</a> >></h3>
 </div>

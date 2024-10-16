@@ -159,7 +159,7 @@ this.drive = new Drive(
 );
 ```
 
-<div style="display:flex; justify-content: space-between; width: 100%">
+<div style="display:flex; justify-content: space-between; width: 90%">
     <h3><< Prev: <a href="./3_USING_THE_SIMULATED_ARENA.md">Simulating Swerve Drivetrain</a></h3>
-    <h3>Next: <a href="./6_SIMULATING_PROJECTILES.MD"></a> >></h3>
+    <h3>Next: <a href="./6_SIMULATING_PROJECTILES.MD">Simulating GamePiece Projectiles</a> >></h3>
 </div>

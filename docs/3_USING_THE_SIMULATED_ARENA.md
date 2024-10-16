@@ -84,7 +84,7 @@ Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses);
 ```
 
 
-<div style="display:flex; justify-content: space-between; width: 100%">
+<div style="display:flex; justify-content: space-between; width: 90%">
     <h3><< Prev: <a href="./2_INSTALLING_MAPLE_SIM.md">Installing maple-sim</a></h3>
     <h3>Next: <a href="./4_SIMULATING_SWERVE_DRIVETRAIN.md">Simulating Swerve Drivetrain</a> >></h3>
 </div>

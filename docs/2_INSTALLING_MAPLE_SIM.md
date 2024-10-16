@@ -61,7 +61,7 @@ repositories {
 
 > 💡 If you're using IntelliJ IDEA, remember to click the "Gradle sync" button after configuring the repository.
 
-<div style="display:flex; justify-content: space-between; width: 100%">
+<div style="display:flex; justify-content: space-between; width: 90%">
     <h3><< Prev: <a href="./1_HARDWARE_ABSTRACTIONS.md">Hardware Abstractions</a></h3>
     <h3>Next: <a href="./3_USING_THE_SIMULATED_ARENA.md">Using the Simulated Arena Object</a> >></h3>
 </div>

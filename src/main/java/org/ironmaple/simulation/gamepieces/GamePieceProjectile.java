@@ -269,6 +269,7 @@ public class GamePieceProjectile {
      * */
     public GamePieceProjectile cleanUp() {
         this.projectileTrajectoryDisplayCallBackHitTarget.accept(new ArrayList<>());
+        this.projectileTrajectoryDisplayCallBackMiss.accept(new ArrayList<>());
         return this;
     }
 

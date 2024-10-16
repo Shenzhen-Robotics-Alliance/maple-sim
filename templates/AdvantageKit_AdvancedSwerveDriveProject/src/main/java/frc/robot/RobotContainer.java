@@ -157,7 +157,6 @@ public class RobotContainer {
 
         /* physics simulations are also not needed */
         this.swerveDriveSimulation = null;
-        this.intake = null;
         drive =
             new Drive(
                 new GyroIO() {},
@@ -166,6 +165,8 @@ public class RobotContainer {
                 new ModuleIO() {},
                 new ModuleIO() {});
         flywheel = new Flywheel(new FlywheelIO() {});
+
+        this.intake = new Intake((inputs) -> {});
         break;
     }
 
@@ -253,12 +254,19 @@ public class RobotContainer {
   }
 
   public void updateSimulationField() {
-    SimulatedArena.getInstance().simulationPeriodic();
+    if (swerveDriveSimulation != null) {
+      SimulatedArena.getInstance().simulationPeriodic();
 
-    Logger.recordOutput(
-        "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
+      Logger.recordOutput(
+          "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
 
-    final List<Pose3d> notes = SimulatedArena.getInstance().getGamePiecesByType("Note");
-    if (notes != null) Logger.recordOutput("FieldSimulation/Notes", notes.toArray(Pose3d[]::new));
+      final List<Pose3d> notes = SimulatedArena.getInstance().getGamePiecesByType("Note");
+      if (notes != null) Logger.recordOutput("FieldSimulation/Notes", notes.toArray(Pose3d[]::new));
+    }
+
+    intake.visualizeNoteInIntake(
+        swerveDriveSimulation == null
+            ? drive.getPose()
+            : swerveDriveSimulation.getSimulatedDriveTrainPose());
   }
 }

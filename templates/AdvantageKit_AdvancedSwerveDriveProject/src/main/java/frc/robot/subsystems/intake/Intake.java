@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,5 +48,25 @@ public class Intake extends SubsystemBase {
     return this.run(() -> io.runIntakeVoltage(-12))
         .raceWith(Commands.waitUntil(() -> !inputs.noteDetected).andThen(Commands.waitSeconds(0.3)))
         .finallyDo(() -> io.runIntakeVoltage(0.0));
+  }
+
+  private static final Translation2d shooterTranslationOnRobot = new Translation2d(0.1, 0);
+  private static final double shooterHeightMeters = 0.45,
+      shooterPitchAngleRad = -Math.toRadians(55);
+
+  public void visualizeNoteInIntake(Pose2d robotPose) {
+    final Translation2d note2dCenter =
+        robotPose
+            .getTranslation()
+            .plus(shooterTranslationOnRobot.rotateBy(robotPose.getRotation()));
+    final Translation3d notePosition =
+        new Translation3d(note2dCenter.getX(), note2dCenter.getY(), shooterHeightMeters);
+    final Rotation3d noteRotation =
+        new Rotation3d(0, shooterPitchAngleRad, robotPose.getRotation().getRadians());
+    Logger.recordOutput(
+        "Intake/NoteInIntake",
+        inputs.noteDetected
+            ? new Pose3d[] {new Pose3d(notePosition, noteRotation)}
+            : new Pose3d[0]);
   }
 }

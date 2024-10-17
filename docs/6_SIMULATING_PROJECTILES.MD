@@ -116,6 +116,5 @@ SimulatedArena.getInstance().addGamePieceProjectile(noteOnFly);
 
 The real-time positions of the flying game pieces are also visualized with other game pieces, as described [here](./3_USING_THE_SIMULATED_ARENA.md#visualizing-game-pieces).
 
-<div style="display:flex; justify-content: space-between; width: 90%">
-    <h3><< Prev: <a href="./5_SIMULATING_INTAKE.md">Simulating Intake</a></h3>
-</div>
+
+<h3><< Prev: <a href="./5_SIMULATING_INTAKE.md">Simulating Intake</a></h3>

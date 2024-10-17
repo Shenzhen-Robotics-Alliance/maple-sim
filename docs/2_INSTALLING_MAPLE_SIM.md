@@ -65,3 +65,8 @@ repositories {
     <h3><< Prev: <a href="./1_HARDWARE_ABSTRACTIONS.md">Hardware Abstractions</a></h3>
     <h3>Next: <a href="./3_USING_THE_SIMULATED_ARENA.md">Using the Simulated Arena Object</a> >></h3>
 </div>
+
+<div style="display:flex">
+    <h3 style="width:49%"><< Prev: <a href="./1_HARDWARE_ABSTRACTIONS.md">Hardware Abstractions</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="./3_USING_THE_SIMULATED_ARENA.md">Using the Simulated Arena Object</a> >></h3>
+</div>

@@ -84,7 +84,7 @@ When the integral reaches a certain threshold, you can notify the `FlyWheelIOSim
 An example of simulating an intake together with flywheels can be found [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/src/main/java/frc/robot/subsystems/intake/IntakeIOSim.java).
 
 
-<div style="display:flex; justify-content: space-between; width: 90%">
-    <h3><< Prev: <a href="./4_SIMULATING_SWERVE_DRIVETRAIN.md">Using the Simulated Arena Object</a></h3>
-    <h3>Next: <a href="./6_SIMULATING_PROJECTILES.MD">Simulating GamePiece Projectiles</a> >></h3>
+<div style="display:flex">
+    <h3 style="width:49%"><< Prev: <a href="./4_SIMULATING_SWERVE_DRIVETRAIN.md">Simulating Swerve Drivetrain</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="./6_SIMULATING_PROJECTILES.MD">Simulating GamePiece Projectiles</a> >></h3>
 </div>

@@ -103,7 +103,8 @@ Please see the following guides:
 3. [Using the Simulated Arena](./docs/3_USING_THE_SIMULATED_ARENA.md)
 4. [Simulating Swerve Drivetrain](./docs/4_SIMULATING_SWERVE_DRIVETRAIN.md)
 5. [Simulating Intake](./docs/5_SIMULATING_INTAKE.md)
-6. [Simulating Opponent Robots](./docs/6_SIMULATING_OPPONENT_ROBOTS.md)
+6. [Simulating Projectiles](./docs/6_SIMULATING_PROJECTILES.MD)
+6. [Simulating Opponent Robots](./docs/7_SIMULATING_OPPONENT_ROBOTS.md)
 
 # Examples and Templates
 

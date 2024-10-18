@@ -9,7 +9,7 @@ Download the JSON vendordeps file and place it in the `/vendordeps` directory:
 Alternatively, you can copy the following URL and [install a library online with WPILib VSCode](https://docs.wpilib.org/en/stable/docs/software/vscode-overview/3rd-party-libraries.html#installing-libraries):
 
 ```
-https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/maple-sim.json
+https://raw.githubusercontent.com/Shenzhen-Robotics-Alliance/maple-sim/refs/heads/main/maple-sim.json
 ```
 
 

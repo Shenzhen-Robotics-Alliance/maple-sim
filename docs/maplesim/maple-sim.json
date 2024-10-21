@@ -5,9 +5,9 @@
     "frcYear": "2024",
     "uuid": "c39481e8-4a63-4a4c-9df6-48d91e4da37b",
     "mavenUrls": [
-        "ThisNeedsToBeTheRootMavenUrl"
+        "https://thenetworkgrinch.github.io/maple-sim/maplesim/repos/releases"
     ],
-    "jsonUrl": "InsertSomeUrlHere",
+    "jsonUrl": "https://thenetworkgrinch.github.io/maple-sim/maplesim/maple-sim.json",
     "javaDependencies": [
         {
             "groupId": "org.ironmaple",

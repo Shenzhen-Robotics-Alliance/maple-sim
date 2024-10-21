@@ -11,7 +11,7 @@
     "javaDependencies": [
         {
             "groupId": "org.ironmaple",
-            "artifactId": "maplesim",
+            "artifactId": "maplesim-java",
             "version": "0.0.1"
         },
         {

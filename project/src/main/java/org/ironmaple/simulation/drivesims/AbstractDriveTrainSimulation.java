@@ -123,18 +123,18 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * <p>This method simulates the angular friction forces on the drivetrain and applies them to the physics engine.</p>
      * <p>It should be called from the implementation of {@link #simulationSubTick()}, particularly when the drivetrain is not attempting to move rotationally.</p>
      */
-    protected void simulateChassisAngularFriction() {
-        final double actualRotationalMotionPercent = Math.abs(getAngularVelocity() / profile.maxAngularVelocity);
-        if (actualRotationalMotionPercent > 0.01)
-            /*
-             * apply the friction torque
-             * with its sign opposite to the that of the current angular velocity
-             * with its magnitude specified in profile
-             * */
-            super.applyTorque(Math.copySign(this.profile.angularFrictionTorqueMagnitude, -super.getAngularVelocity()));
-        else
-            /* when the velocity is too small, just set it still */
+    protected void simulateChassisAngularFriction(double desiredRotationalMotionPercent) {
+        final double
+                actualRotationalMotionPercent = Math.abs(getAngularVelocity() / profile.maxAngularVelocity),
+                differenceBetweenFloorSpeedAndModuleSpeed = desiredRotationalMotionPercent * profile.maxAngularVelocity - getAngularVelocity(),
+                FRICTION_TORQUE_GAIN = 1;
+
+        if (actualRotationalMotionPercent < 0.01 && Math.abs(desiredRotationalMotionPercent) < 0.02)
             super.setAngularVelocity(0);
+        else super.applyTorque(Math.copySign(
+                Math.min(FRICTION_TORQUE_GAIN * profile.angularFrictionTorqueMagnitude * Math.abs(differenceBetweenFloorSpeedAndModuleSpeed), profile.angularFrictionTorqueMagnitude),
+                differenceBetweenFloorSpeedAndModuleSpeed
+        ));
     }
 
     /**

@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.dyn4j.dynamics.Force;
 import org.dyn4j.geometry.Vector2;
@@ -113,9 +114,37 @@ public class SimplifiedHolonomicDriveSimulation extends AbstractDriveTrainSimula
      * */
     private void simulateChassisRotationalBehavior(double desiredRotationalMotionPercent) {
         final double maximumTorque = this.profile.maxAngularAcceleration * super.getMass().getInertia();
-        if (Math.abs(desiredRotationalMotionPercent) > 0.01)
-            super.applyTorque(desiredRotationalMotionPercent * maximumTorque);
-        else
-            simulateChassisAngularFriction();
+        super.applyTorque(desiredRotationalMotionPercent * maximumTorque);
+        simulateChassisAngularFriction(desiredRotationalMotionPercent);
+    }
+
+    public Command followTrajectory(Trajectory trajectory, Rotation2d startingRotation, Rotation2d endingRotation, boolean teleportToStartingPose) {
+        final Timer trajectoryTimer = new Timer();
+        final HolonomicDriveController driveController = new HolonomicDriveController(
+                new PIDController(5.0, 0, 0.02),
+                new PIDController(5.0, 0, 0.02),
+                new ProfiledPIDController(
+                        5.0, 0, 0.02,
+                        new TrapezoidProfile.Constraints(profile.maxAngularVelocity, profile.maxAngularAcceleration)
+                )
+        );
+        final SequentialCommandGroup commandGroup = new SequentialCommandGroup();
+        commandGroup.addCommands(Commands.runOnce(trajectoryTimer::start));
+        if (teleportToStartingPose)
+            commandGroup.addCommands(Commands.runOnce(() -> setSimulationWorldPose(new Pose2d(
+                    trajectory.getInitialPose().getTranslation(),
+                    startingRotation
+            ))));
+        commandGroup.addCommands(Commands.run(
+                () -> this.runChassisSpeeds(driveController.calculate(
+                        getSimulatedDriveTrainPose(),
+                        trajectory.sample(trajectoryTimer.get()),
+                        startingRotation.interpolate(
+                                endingRotation,
+                                trajectoryTimer.get() / trajectory.getTotalTimeSeconds()
+                        )
+                ), false)
+        ));
+        return commandGroup;
     }
 }

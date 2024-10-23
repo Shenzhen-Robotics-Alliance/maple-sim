@@ -1,64 +1,109 @@
 plugins {
+    id 'cpp'
     id 'java'
-    id 'maven-publish'
-    id "edu.wpi.first.GradleRIO" version "2024.3.2"
+    id 'google-test'
+    id "com.diffplug.spotless" version "6.11.0"
     id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
+    id 'edu.wpi.first.NativeUtils' version '2024.7.2'
+    id 'edu.wpi.first.GradleJni' version '1.1.0'
+    id 'edu.wpi.first.GradleVsCode' version '2.1.0'
+    id "edu.wpi.first.GradleRIO" version "2024.3.2" // Version should be defined here.
 }
 
-group = 'org.ironmaple'
-version = '0.1.0'
+ext.wpilibVersion = "2024.3.2" // and again here, thanks gradle....
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://maven.pkg.github.com/Mechanical-Advantage/AdvantageKit")
-        credentials {
-            username = "Mechanical-Advantage-Bot"
-            password = "\u0067\u0068\u0070\u005f\u006e\u0056\u0051\u006a\u0055\u004f\u004c\u0061\u0079\u0066\u006e\u0078\u006e\u0037\u0051\u0049\u0054\u0042\u0032\u004c\u004a\u006d\u0055\u0070\u0073\u0031\u006d\u0037\u004c\u005a\u0030\u0076\u0062\u0070\u0063\u0051"
-        }
-    }
-    maven { url = uri("https://3015rangerrobotics.github.io/pathplannerlib/repo") }
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+if (project.hasProperty('releaseMode')) {
+    wpilibRepositories.addAllReleaseRepositories(project)
+} else {
+    wpilibRepositories.addAllDevelopmentRepositories(project)
+}
 
-    implementation wpi.java.deps.wpilib()
+// Apply C++ configuration
+apply from: 'config.gradle'
+
+// Apply Java configuration
+dependencies {
+    //    implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
-    implementation 'edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:2025.0.0-alpha-2'
+    implementation 'org.dyn4j:dyn4j:5.0.2'
 
-    implementation group: 'org.dyn4j', name: 'dyn4j', version: '5.0.2'
-
-    implementation group: 'com.pathplanner.lib', name: 'PathplannerLib-java', version: '2024.2.8'
+    implementation "edu.wpi.first.cscore:cscore-java:$wpilibVersion"
+    implementation "edu.wpi.first.cameraserver:cameraserver-java:$wpilibVersion"
+    implementation "edu.wpi.first.ntcore:ntcore-java:$wpilibVersion"
+    implementation "edu.wpi.first.wpilibj:wpilibj-java:$wpilibVersion"
+    implementation "edu.wpi.first.wpiutil:wpiutil-java:$wpilibVersion"
+    implementation "edu.wpi.first.wpimath:wpimath-java:$wpilibVersion"
+    implementation "edu.wpi.first.wpiunits:wpiunits-java:$wpilibVersion"
+    implementation "edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:$wpilibVersion"
+    implementation "edu.wpi.first.hal:hal-java:$wpilibVersion"
+    implementation "org.ejml:ejml-simple:0.43.1"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
+    implementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
+    implementation 'edu.wpi.first.thirdparty.frc2024.opencv:opencv-java:4.8.0-2'
 }
 
-// Define the sourcesJar task
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    archiveClassifier = 'sources'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifact sourcesJar
-        }
-    }
-    repositories {
-        maven {
-            name = "GithubPackages"
-            url = "https://maven.pkg.github.com/Shenzhen-Robotics-Alliance/maple-sim/"
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
+// Set up exports properly
+nativeUtils {
+    exportsConfigs {
+        // Main library is just default empty. This will export everything
+        MapleSim {
         }
     }
 }
 
-test {
-    useJUnitPlatform()
+javadoc {
+    destinationDir = new File("$rootDir/../docs/javadocs")
+
+    exclude 'org/json/simple/**'
+    options {
+        links 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://github.wpilib.org/allwpilib/docs/release/java/'
+    }
+}
+
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        toggleOffOn()
+        googleJavaFormat()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format 'misc', {
+        target fileTree('.') {
+            include '**/*.md', '**/.gitignore'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
+}
+
+compileJava.dependsOn 'spotlessApply'
+
+apply from: 'publish.gradle'
+
+wrapper {
+    gradleVersion '8.5'
 }

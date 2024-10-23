@@ -20,11 +20,6 @@
       "version": "5.0.2"
     },
     {
-      "groupId": "com.pathplanner.lib",
-      "artifactId": "PathplannerLib-java",
-      "version": "2024.2.8"
-    },
-    {
       "groupId": "org.ironmaple",
       "artifactId": "maple-sim",
       "version": "0.1.0"

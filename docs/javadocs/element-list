@@ -1,0 +1,8 @@
+org.ironmaple
+org.ironmaple.simulation
+org.ironmaple.simulation.drivesims
+org.ironmaple.simulation.gamepieces
+org.ironmaple.simulation.seasonspecific.crescendo2024
+org.ironmaple.utils
+org.ironmaple.utils.commands
+org.ironmaple.utils.mathutils

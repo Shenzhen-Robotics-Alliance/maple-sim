@@ -160,6 +160,6 @@ this.drive = new Drive(
 ```
 
 <div style="display:flex">
-    <h3 style="width:49%"><< Prev: <a href="./3_USING_THE_SIMULATED_ARENA.md">Using the Simulated Arena Object</a></h3>
-    <h3 style="width:49%" align="right">Next: <a href="./5_SIMULATING_INTAKE.md">Simulating Intake</a> >></h3>
+    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3_USING_THE_SIMULATED_ARENA.html">Using the Simulated Arena Object</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_INTAKE.html">Simulating Intake</a> >></h3>
 </div>

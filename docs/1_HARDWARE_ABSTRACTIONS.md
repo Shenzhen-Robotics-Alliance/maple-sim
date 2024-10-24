@@ -43,6 +43,6 @@ Reference: [io-interface.md from Advantage Kit Documents](https://github.com/Mec
 
 
 <div style="display:flex">
-    <h3 style="width:49%"><< <a href="../README.md">Back to Readme</a></h3>
-    <h3 style="width:49%" align="right">Next: <a href="./2_INSTALLING_MAPLE_SIM.md">Installing maple-sim</a> >></h3>
+    <h3 style="width:49%"><< <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/0_SIMULATION_DETIALS.html">Back to Readme</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/2_INSTALLING_MAPLE_SIM.html">Installing maple-sim</a> >></h3>
 </div>

@@ -24,16 +24,19 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
+    - name: Go To Project Folder
+      run: cd project/
+      
     - name: Add Execution Permission to gradlew
-      run: chmod +x ./project/gradlew
+      run: chmod +x ./gradlew
 
     - name: Build with Gradle
-      run: ./project/gradlew build
+      run: ./gradlew build
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
-      run: ./project/gradlew publish
+      run: ./gradlew publish
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.JAVA_TOKEN }}

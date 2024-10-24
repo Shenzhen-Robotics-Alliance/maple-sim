@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read|write
       packages: write
 
     steps:
@@ -25,7 +25,7 @@ jobs:
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
     - name: Add Execution Permission to gradlew
-      run: chmod +x ./project/gradlew
+      run: chmod +x ./gradlew
 
     - name: Build with Gradle
       run: ./gradlew build

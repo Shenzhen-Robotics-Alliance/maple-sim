@@ -150,9 +150,6 @@ addTaskToCopyAllOutputs(outputJar)
 build.dependsOn outputSourcesJar
 build.dependsOn outputJavadocJar
 build.dependsOn outputJar
-build.doLast {
-    publishVendordepJson
-}
 
 libraryBuild.dependsOn build
 

@@ -8,7 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -28,12 +28,12 @@ jobs:
       run: chmod +x ./project/gradlew
 
     - name: Build with Gradle
-      run: ./project/gradlew build
+      run: ./gradlew build
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Publish to GitHub Packages
-      run: ./project/gradlew publish
+      run: ./gradlew publish
       env:
         GITHUB_ACTOR: ${{ github.actor }}
         GITHUB_TOKEN: ${{ secrets.JAVA_TOKEN }}

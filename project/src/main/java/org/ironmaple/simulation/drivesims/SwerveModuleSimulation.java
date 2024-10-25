@@ -731,4 +731,164 @@ public class SwerveModuleSimulation {
             Units.inchesToMeters(2),
             0.025);
   }
+
+  /**
+   * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x">WCP SwerveX
+   * Swerve Module</a> for simulation
+   *
+   * <p>X1 Ratios are gearRatioLevel 1-3 <br>
+   * X2 Ratios are gearRatioLevel 4-6 <br>
+   * X3 Ratios are gearRatioLevel 7-9
+   */
+  public static Supplier<SwerveModuleSimulation> getSwerveX(
+      DCMotor driveMotor,
+      DCMotor steerMotor,
+      double driveCurrentLimitAmps,
+      DRIVE_WHEEL_TYPE driveWheelType,
+      int gearRatioLevel) {
+    return () ->
+        new SwerveModuleSimulation(
+            driveMotor,
+            steerMotor,
+            driveCurrentLimitAmps,
+            switch (gearRatioLevel) {
+              case 1 -> 7.85;
+              case 2 -> 7.13;
+              case 3 -> 6.54;
+              case 4 -> 6.56;
+              case 5 -> 5.96;
+              case 6 -> 5.46;
+              case 7 -> 5.14;
+              case 8 -> 4.75;
+              case 9 -> 4.41;
+              default -> throw new IllegalStateException(
+                  "Unknown gearing level: " + gearRatioLevel);
+            },
+            11.3142,
+            0.2,
+            0.3,
+            getWheelGripping(driveWheelType),
+            Units.inchesToMeters(2),
+            0.03);
+  }
+
+  /**
+   * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x-flipped">WCP
+   * SwerveX Flipped Swerve Module</a> for simulation
+   *
+   * <p>X1 Ratios are gearRatioLevel 1-3 <br>
+   * X2 Ratios are gearRatioLevel 4-6 <br>
+   * X3 Ratios are gearRatioLevel 7-9
+   */
+  public static Supplier<SwerveModuleSimulation> getSwerveXFlipped(
+      DCMotor driveMotor,
+      DCMotor steerMotor,
+      double driveCurrentLimitAmps,
+      DRIVE_WHEEL_TYPE driveWheelType,
+      int gearRatioLevel) {
+    return () ->
+        new SwerveModuleSimulation(
+            driveMotor,
+            steerMotor,
+            driveCurrentLimitAmps,
+            switch (gearRatioLevel) {
+              case 1 -> 8.1;
+              case 2 -> 7.36;
+              case 3 -> 6.75;
+              case 4 -> 6.72;
+              case 5 -> 6.11;
+              case 6 -> 5.6;
+              case 7 -> 5.51;
+              case 8 -> 5.01;
+              case 9 -> 4.59;
+              default -> throw new IllegalStateException(
+                  "Unknown gearing level: " + gearRatioLevel);
+            },
+            11.3714,
+            0.2,
+            0.3,
+            getWheelGripping(driveWheelType),
+            Units.inchesToMeters(2),
+            0.03);
+  }
+
+  /**
+   * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-xs">WCP
+   * SwerveXS Swerve Module</a> for simulation
+   *
+   * <p>X1 Ratios are gearRatioLevel 1-3 <br>
+   * X2 Ratios are gearRatioLevel 4-6
+   */
+  public static Supplier<SwerveModuleSimulation> getSwerveXS(
+      DCMotor driveMotor,
+      DCMotor steerMotor,
+      double driveCurrentLimitAmps,
+      DRIVE_WHEEL_TYPE driveWheelType,
+      int gearRatioLevel) {
+    return () ->
+        new SwerveModuleSimulation(
+            driveMotor,
+            steerMotor,
+            driveCurrentLimitAmps,
+            switch (gearRatioLevel) {
+              case 1 -> 6.0;
+              case 2 -> 5.54;
+              case 3 -> 5.14;
+              case 4 -> 4.71;
+              case 5 -> 4.4;
+              case 6 -> 4.13;
+              default -> throw new IllegalStateException(
+                  "Unknown gearing level: " + gearRatioLevel);
+            },
+            41.25,
+            0.2,
+            0.3,
+            getWheelGripping(driveWheelType),
+            Units.inchesToMeters(1.5),
+            0.03);
+  }
+
+  /**
+   * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2">WCP
+   * SwerveX2 Swerve Module</a> for simulation
+   *
+   * <p>X1 Ratios are gearRatioLevel 1-3 <br>
+   * X2 Ratios are gearRatioLevel 4-6 <br>
+   * X3 Ratios are gearRatioLevel 7-9 <br>
+   * X4 Ratios are gearRatioLevel 10-12
+   */
+  public static Supplier<SwerveModuleSimulation> getSwerveX2(
+      DCMotor driveMotor,
+      DCMotor steerMotor,
+      double driveCurrentLimitAmps,
+      DRIVE_WHEEL_TYPE driveWheelType,
+      int gearRatioLevel) {
+    return () ->
+        new SwerveModuleSimulation(
+            driveMotor,
+            steerMotor,
+            driveCurrentLimitAmps,
+            switch (gearRatioLevel) {
+              case 1 -> 7.67;
+              case 2 -> 6.98;
+              case 3 -> 6.39;
+              case 4 -> 6.82;
+              case 5 -> 6.20;
+              case 6 -> 5.68;
+              case 7 -> 6.48;
+              case 8 -> 5.89;
+              case 9 -> 5.40;
+              case 10 -> 5.67;
+              case 11 -> 5.15;
+              case 12 -> 4.73;
+              default -> throw new IllegalStateException(
+                  "Unknown gearing level: " + gearRatioLevel);
+            },
+            12.1,
+            0.2,
+            0.3,
+            getWheelGripping(driveWheelType),
+            Units.inchesToMeters(2),
+            0.03);
+  }
 }

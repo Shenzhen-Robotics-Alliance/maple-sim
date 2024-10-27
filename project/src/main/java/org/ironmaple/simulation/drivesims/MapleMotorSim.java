@@ -32,21 +32,21 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 /**
  *
  *
- * <h1>DCMotorSim with Additional Features for Simulating Modern Brushless Motors.</h1>
+ * <h1>{@link DCMotorSim} with a bit of extra spice.</h1>
  *
  * <p>By Team 5516 "IRON MAPLE".
  *
- * <p>This class extends the functionality of the original `DCMotorSim` to provide additional
- * simulations specific to modern brushless motors. It simulates the following aspects:
+ * <p>This class extends the functionality of the original {@link DCMotorSim} and models the
+ * following aspects in addition:
  *
  * <ul>
  *   <li>Friction force on the rotor.
  *   <li>Smart current limiting.
- *   <li>Brake and coast modes for brushless motors.
+ *   <li>Brake and coast modes (only for simulating brushless motors).
  *   <li>Simulated encoder readings.
  * </ul>
  */
-public class BrushlessMotorSim {
+public class MapleMotorSim {
   private final DCMotor motor;
   private final double gearRatio, frictionTorque, loadInertiaJKgMetersSquared;
   private double requestedVoltageOutput, currentLimitAmps;
@@ -64,7 +64,7 @@ public class BrushlessMotorSim {
    * @param loadIntertiaJKgMetersSquared the rotational inertia of the mechanism, in kg·m²
    * @param frictionVoltage the voltage required to overcome friction and make the mechanism move
    */
-  public BrushlessMotorSim(
+  public MapleMotorSim(
       DCMotor motor,
       double gearRatio,
       double loadIntertiaJKgMetersSquared,
@@ -128,7 +128,7 @@ public class BrushlessMotorSim {
    * <p>This method sets the motor's zero power behavior, similar to the <code>
    * setZeroPowerBehavior()</code> method for brushless motors.
    *
-   * <p>When enabled, the motor is set to brake mode; when disabled, the motor is set to coast mode.
+   * <p>Use this feature only when simulating brushless motors.
    *
    * @param enabled <code>true</code> to enable brake mode, <code>false</code> to enable coast mode
    */

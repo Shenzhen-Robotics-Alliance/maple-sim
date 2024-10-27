@@ -55,7 +55,7 @@ import org.ironmaple.simulation.SimulatedArena;
  */
 public class SwerveModuleSimulation {
   private final DCMotor DRIVE_MOTOR;
-  private final BrushlessMotorSim steerMotorSim;
+  private final MapleMotorSim steerMotorSim;
   private final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
       STEER_GEAR_RATIO,
@@ -120,7 +120,7 @@ public class SwerveModuleSimulation {
     WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
     this.steerMotorSim =
-        new BrushlessMotorSim(
+        new MapleMotorSim(
             steerMotor, STEER_GEAR_RATIO, steerRotationalInertia, steerFrictionVoltage);
     // this.steerMotorSim.enableCurrentLimit(20);
 
@@ -206,7 +206,7 @@ public class SwerveModuleSimulation {
    * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
    *
    * <p>This method returns the actual voltage being applied to the steering motor. It wraps around
-   * the {@link BrushlessMotorSim#getAppliedVolts()} method.
+   * the {@link MapleMotorSim#getAppliedVolts()} method.
    *
    * <p>The actual applied voltage may differ from the value set by {@link
    * #requestSteerVoltageOut(double)}. If the motor's supply current is too high, the motor will
@@ -238,7 +238,7 @@ public class SwerveModuleSimulation {
    *
    * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
    *
-   * <p>This method wraps around {@link BrushlessMotorSim#getCurrentDrawAmps()}
+   * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}
    *
    * @return the current supplied to the steer motor, in amperes
    */
@@ -470,7 +470,7 @@ public class SwerveModuleSimulation {
    *
    * <p>Updates the simulation for the steer mechanism and cache the encoder readings.
    *
-   * <p>The steer mechanism is modeled by a {@link BrushlessMotorSim}.
+   * <p>The steer mechanism is modeled by a {@link MapleMotorSim}.
    */
   private void updateSteerSimulation() {
     steerMotorSim.update(SimulatedArena.getSimulationDt());
@@ -546,14 +546,14 @@ public class SwerveModuleSimulation {
    * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
    *
    * <p>Before calculating the torque of the motor, the output voltage of the drive motor is
-   * constrained for the current limit through {@link
-   * BrushlessMotorSim#constrainOutputVoltage(DCMotor, double, double, double)}.
+   * constrained for the current limit through {@link MapleMotorSim#constrainOutputVoltage(DCMotor,
+   * double, double, double)}.
    *
    * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
    */
   private double getDriveWheelTorque() {
     driveMotorAppliedVolts =
-        BrushlessMotorSim.constrainOutputVoltage(
+        MapleMotorSim.constrainOutputVoltage(
             DRIVE_MOTOR,
             driveEncoderUnGearedSpeedRadPerSec,
             DRIVE_CURRENT_LIMIT,

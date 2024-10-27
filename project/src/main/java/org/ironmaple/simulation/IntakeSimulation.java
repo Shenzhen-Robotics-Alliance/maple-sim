@@ -52,7 +52,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  * <p><strong>Note:</strong> This class simulates an idealized "touch it, get it" intake and does
  * not model the actual functioning of an intake mechanism.
  */
-public abstract class IntakeSimulation extends BodyFixture {
+public class IntakeSimulation extends BodyFixture {
   private final int capacity;
   protected int gamePiecesInIntakeCount;
   private boolean intakeRunning;

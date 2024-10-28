@@ -50,7 +50,7 @@ def javaBaseName = "_GROUP_org_ironmaple_ID_${baseArtifactId}-java_CLS"
 
 copy {
     from "maple-sim.json"
-    into "$rootDir/../docs/maplesim"
+    into "$rootDir/../docs/vendordep"
     expand(version: "$pubVersion")
 }
 
@@ -153,7 +153,7 @@ build.dependsOn outputJar
 
 libraryBuild.dependsOn build
 
-def releasesRepoUrl = "$rootDir/../docs/maplesim/repos/releases"
+def releasesRepoUrl = "$rootDir/../docs/vendordep/repos/releases"
 
 publishing {
     repositories {

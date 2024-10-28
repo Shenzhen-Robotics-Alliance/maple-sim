@@ -62,9 +62,9 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  */
 public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
   private final SwerveModuleSimulation[] moduleSimulations;
-  private final GyroSimulation gyroSimulation;
-  private final Translation2d[] moduleTranslations;
-  private final SwerveDriveKinematics swerveDriveKinematics;
+  protected final GyroSimulation gyroSimulation;
+  protected final Translation2d[] moduleTranslations;
+  protected final SwerveDriveKinematics kinematics;
   private final double gravityForceOnEachModule;
 
   /**
@@ -114,7 +114,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
 
     this.moduleSimulations = moduleSimulations;
     this.moduleTranslations = moduleTranslations;
-    this.swerveDriveKinematics = new SwerveDriveKinematics(moduleTranslations);
+    this.kinematics = new SwerveDriveKinematics(moduleTranslations);
     this.gyroSimulation = gyroSimulation;
 
     this.gravityForceOnEachModule = profile.robotMass * 9.8 / moduleSimulations.length;
@@ -352,7 +352,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
    * @return the desired chassis speeds, robot-relative
    */
   private ChassisSpeeds getDesiredSpeed() {
-    return swerveDriveKinematics.toChassisSpeeds(
+    return kinematics.toChassisSpeeds(
         Arrays.stream(moduleSimulations)
             .map((SwerveModuleSimulation::getFreeSpinState))
             .toArray(SwerveModuleState[]::new));
@@ -372,7 +372,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
    * @return the module speeds, robot-relative
    */
   private ChassisSpeeds getModuleSpeeds() {
-    return swerveDriveKinematics.toChassisSpeeds(
+    return kinematics.toChassisSpeeds(
         Arrays.stream(moduleSimulations)
             .map((SwerveModuleSimulation::getCurrentState))
             .toArray(SwerveModuleState[]::new));

@@ -2,6 +2,7 @@ package org.ironmaple.utils.mathutils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.dyn4j.geometry.Rotation;
@@ -31,6 +32,12 @@ public class GeometryConvertor {
     transform.setTranslation(toDyn4jVector2(wpilibPose2d.getTranslation()));
     transform.setRotation(toDyn4jRotation(wpilibPose2d.getRotation()));
     return transform;
+  }
+
+  public static Transform2d toWpilibTransform2d(Transform dyn4jTransform) {
+    return new Transform2d(
+        toWpilibTranslation2d(dyn4jTransform.getTranslation()),
+        toWpilibRotation2d(dyn4jTransform.getRotation()));
   }
 
   public static Pose2d toWpilibPose2d(Transform dyn4jTransform) {

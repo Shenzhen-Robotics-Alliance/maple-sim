@@ -3,9 +3,12 @@ package org.ironmaple.simulation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.*;
+import java.util.function.Supplier;
+
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
@@ -13,10 +16,10 @@ import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
+import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
-import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
+import org.ironmaple.utils.ProjectileUtil;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 /**
@@ -123,8 +126,7 @@ public abstract class SimulatedArena {
 
   protected final World<Body> physicsWorld;
   protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
-  protected final Set<GamePieceOnFieldSimulation> gamePieces;
-  protected final Set<GamePieceProjectile> gamePieceProjectile;
+  protected final Set<GamePiece> gamePieces;
   protected final List<Runnable> simulationSubTickActions;
   private final List<IntakeSimulation> intakeSimulations;
 
@@ -149,8 +151,11 @@ public abstract class SimulatedArena {
     this.driveTrainSimulations = new HashSet<>();
     simulationSubTickActions = new ArrayList<>();
     this.gamePieces = new HashSet<>();
-    this.gamePieceProjectile = new HashSet<>();
     this.intakeSimulations = new ArrayList<>();
+  }
+
+  World<Body> world() {
+    return physicsWorld;
   }
 
   /**
@@ -210,32 +215,23 @@ public abstract class SimulatedArena {
   /**
    *
    *
-   * <h2>Registers a {@link GamePieceOnFieldSimulation} to the Simulation.</h2>
+   * <h2>Registers a {@link GamePiece} to the Simulation.</h2>
    *
-   * <p>The collision space of the game piece is immediately added to the simulation world.
+   * <p>The user will have to call one the following methods to add the game piece to the field:
+   * <ul>
+   *   <li>{@link GamePiece#place(Translation2d)}
+   *   <li>{@link GamePiece#slide(Translation2d, Translation2d)}
+   *   <li>{@link GamePiece#launch(Pose3d, Translation3d, ProjectileUtil.ProjectileDynamics)}
+   *   <li>{@link GamePiece#intake(Supplier, Supplier)}
+   * </ul>
    *
-   * <p>{@link IntakeSimulation}s will be able to interact with this game piece during the next call
-   * to {@link SimulatedArena#simulationPeriodic()}.
-   *
-   * @param gamePiece the game piece to be registered in the simulation
+   * @param variant the variant of game piece to be registered
+   * @return the game piece that was created and registered
    */
-  public void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
-    this.physicsWorld.addBody(gamePiece);
+  public GamePiece createGamePiece(GamePieceVariant variant) {
+    GamePiece gamePiece = new GamePiece(variant, this);
     this.gamePieces.add(gamePiece);
-  }
-
-  /**
-   *
-   *
-   * <h2>Registers a {@link GamePieceProjectile} to the Simulation and Launches It.</h2>
-   *
-   * <p>Calls to {@link GamePieceProjectile#launch()}, which will launch the game piece immediately.
-   *
-   * @param gamePieceProjectile the projectile to be registered and launched in the simulation
-   */
-  public void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
-    this.gamePieceProjectile.add(gamePieceProjectile);
-    gamePieceProjectile.launch();
+    return gamePiece;
   }
 
   /**
@@ -247,8 +243,7 @@ public abstract class SimulatedArena {
    *
    * @param gamePiece the game piece to be removed from the simulation
    */
-  public void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
-    this.physicsWorld.removeBody(gamePiece);
+  public void removeGamePiece(GamePiece gamePiece) {
     this.gamePieces.remove(gamePiece);
   }
 
@@ -261,8 +256,9 @@ public abstract class SimulatedArena {
    * collection.
    */
   public void clearGamePieces() {
-    for (GamePieceOnFieldSimulation gamePiece : this.gamePieces)
-      this.physicsWorld.removeBody(gamePiece);
+    for (GamePiece gamePiece : this.gamePieces) {
+      gamePiece.delete();
+    }
     this.gamePieces.clear();
   }
 
@@ -313,13 +309,9 @@ public abstract class SimulatedArena {
     for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
       driveTrainSimulation.simulationSubTick();
 
-    GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceProjectile);
+    for (GamePiece gamePiece : gamePieces) gamePiece.simulationSubTick();
 
     this.physicsWorld.step(1, SIMULATION_DT);
-
-    for (IntakeSimulation intakeSimulation : intakeSimulations)
-      while (!intakeSimulation.getGamePiecesToRemove().isEmpty())
-        removeGamePiece(intakeSimulation.getGamePiecesToRemove().poll());
 
     for (Runnable runnable : simulationSubTickActions) runnable.run();
   }
@@ -340,7 +332,7 @@ public abstract class SimulatedArena {
    * <ul>
    *   <li>The type is determined in the constructor of {@link GamePieceOnFieldSimulation}.
    *   <li>For example, {@link
-   *       org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField} has the type
+   *       org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNote} has the type
    *       "Note".
    * </ul>
    *
@@ -349,15 +341,10 @@ public abstract class SimulatedArena {
    * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the game
    *     pieces
    */
-  public List<Pose3d> getGamePiecesByType(String type) {
-    final List<Pose3d> gamePiecesPoses = new ArrayList<>();
-    for (GamePieceOnFieldSimulation gamePiece : gamePieces)
-      if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
-
-    for (GamePieceProjectile gamePiece : gamePieceProjectile)
-      if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece.getPose3d());
-
-    return gamePiecesPoses;
+  public List<GamePiece> getGamePiecesByVariant(GamePieceVariant variant) {
+    return gamePieces.stream()
+        .filter(gamePiece -> gamePiece.variant().equals(variant))
+        .toList();
   }
 
   /**

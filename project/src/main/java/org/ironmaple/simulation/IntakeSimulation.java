@@ -1,8 +1,8 @@
 package org.ironmaple.simulation;
 
-import java.util.ArrayDeque;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.dyn4j.collision.CollisionBody;
 import org.dyn4j.collision.Fixture;
 import org.dyn4j.dynamics.Body;
@@ -14,8 +14,14 @@ import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.ContactCollisionData;
 import org.dyn4j.world.listener.ContactListener;
+import org.ironmaple.simulation.GamePiece.GamePieceCollisionBody;
+import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 /**
  *
@@ -53,13 +59,12 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  * not model the actual functioning of an intake mechanism.
  */
 public class IntakeSimulation extends BodyFixture {
-  private final int capacity;
-  protected int gamePiecesInIntakeCount;
-  private boolean intakeRunning;
+  protected int gamePiecesInIntakeCount = 0;
+  private boolean intakeRunning = false;
 
-  private final Queue<GamePieceOnFieldSimulation> gamePiecesToRemove;
   private final AbstractDriveTrainSimulation driveTrainSimulation;
-  private final String targetedGamePieceType;
+  private final List<GamePieceVariant> acceptedGamePieceVariants;
+  private final int capacity;
 
   public enum IntakeSide {
     FRONT,
@@ -80,12 +85,12 @@ public class IntakeSimulation extends BodyFixture {
    * @param capacity the maximum number of game pieces that the intake can hold
    */
   public IntakeSimulation(
-      String targetedGamePieceType,
       AbstractDriveTrainSimulation driveTrainSimulation,
       double width,
       IntakeSide side,
-      int capacity) {
-    this(targetedGamePieceType, driveTrainSimulation, width, 0.02, side, capacity);
+      int capacity,
+      GamePieceVariant... acceptedGamePieceVariants) {
+    this(driveTrainSimulation, width, 0.02, side, capacity, acceptedGamePieceVariants);
   }
 
   /**
@@ -102,17 +107,18 @@ public class IntakeSimulation extends BodyFixture {
    * @param capacity the maximum number of game pieces that the intake can hold
    */
   public IntakeSimulation(
-      String targetedGamePieceType,
       AbstractDriveTrainSimulation driveTrainSimulation,
       double width,
       double lengthExtended,
       IntakeSide side,
-      int capacity) {
+      int capacity,
+      GamePieceVariant... acceptedGamePieceVariants) {
     this(
-        targetedGamePieceType,
         driveTrainSimulation,
         getIntakeRectangle(driveTrainSimulation, width, lengthExtended, side),
-        capacity);
+        capacity,
+        acceptedGamePieceVariants
+    );
   }
 
   private static Rectangle getIntakeRectangle(
@@ -157,21 +163,14 @@ public class IntakeSimulation extends BodyFixture {
    * @param capacity the maximum number of game pieces that the intake can hold
    */
   public IntakeSimulation(
-      String targetedGamePieceType,
       AbstractDriveTrainSimulation driveTrainSimulation,
       Convex shape,
-      int capacity) {
+      int capacity,
+      GamePieceVariant... acceptedGamePieceVariants) {
     super(shape);
 
-    this.targetedGamePieceType = targetedGamePieceType;
-    this.gamePiecesInIntakeCount = 0;
-
-    if (capacity > 100) throw new IllegalArgumentException("capacity too large, max is 100");
+    this.acceptedGamePieceVariants = List.of(acceptedGamePieceVariants);
     this.capacity = capacity;
-
-    this.gamePiecesToRemove = new ArrayDeque<>(capacity);
-
-    this.intakeRunning = false;
     this.driveTrainSimulation = driveTrainSimulation;
   }
 
@@ -221,90 +220,56 @@ public class IntakeSimulation extends BodyFixture {
    * <p>If contact is detected and the intake is running, the {@link GamePieceOnFieldSimulation}
    * will be marked for removal from the field.
    */
-  public final class GamePieceContactListener implements ContactListener<Body> {
+  final class GamePieceContactListener implements ContactListener<Body> {
     @Override
-    public void begin(ContactCollisionData collision, Contact contact) {
+    public void begin(ContactCollisionData<Body> collision, Contact contact) {
       if (!intakeRunning) return;
       if (gamePiecesInIntakeCount >= capacity) return;
 
-      final CollisionBody<?> collisionBody1 = collision.getBody1(),
-          collisionBody2 = collision.getBody2();
+      final CollisionBody<?> collisionBody1 = collision.getBody1();
+      final CollisionBody<?> collisionBody2 = collision.getBody2();
       final Fixture fixture1 = collision.getFixture1(), fixture2 = collision.getFixture2();
 
-      if (collisionBody1 instanceof GamePieceOnFieldSimulation gamePiece
-          && Objects.equals(gamePiece.type, targetedGamePieceType)
-          && fixture2 == IntakeSimulation.this) flagGamePieceForRemoval(gamePiece);
-      else if (collisionBody2 instanceof GamePieceOnFieldSimulation gamePiece
-          && Objects.equals(gamePiece.type, targetedGamePieceType)
-          && fixture1 == IntakeSimulation.this) flagGamePieceForRemoval(gamePiece);
+      if (collisionBody1 instanceof GamePieceCollisionBody gamePiece
+          && acceptedGamePieceVariants.contains(gamePiece.variant)
+          && fixture2 == IntakeSimulation.this) {
+          intakeGamePiece(gamePiece);
+      } else if (collisionBody2 instanceof GamePieceCollisionBody gamePiece
+          && acceptedGamePieceVariants.contains(gamePiece.variant)
+          && fixture1 == IntakeSimulation.this) {
+          intakeGamePiece(gamePiece);
+      }
     }
 
-    private void flagGamePieceForRemoval(GamePieceOnFieldSimulation gamePiece) {
-      gamePiecesToRemove.add(gamePiece);
-      gamePiecesInIntakeCount++;
+    private void intakeGamePiece(GamePieceCollisionBody gamePiece) {
+      Supplier<Pose3d> robotPoseSupplier = () -> new Pose3d(IntakeSimulation.this.driveTrainSimulation.getSimulatedDriveTrainPose());
+      var transform = new Transform3d(new Translation3d(0.0, 0.0, 0.5), new Rotation3d());
+      Supplier<Transform3d> intakePoseSupplier = () -> transform;
+      gamePiece.intakeCallback.accept(robotPoseSupplier, intakePoseSupplier);
     }
 
     /* functions not used */
     @Override
-    public void persist(ContactCollisionData collision, Contact oldContact, Contact newContact) {}
+    public void persist(ContactCollisionData<Body> collision, Contact oldContact, Contact newContact) {}
 
     @Override
-    public void end(ContactCollisionData collision, Contact contact) {}
+    public void end(ContactCollisionData<Body> collision, Contact contact) {}
 
     @Override
-    public void destroyed(ContactCollisionData collision, Contact contact) {}
+    public void destroyed(ContactCollisionData<Body> collision, Contact contact) {}
 
     @Override
-    public void collision(ContactCollisionData collision) {}
+    public void collision(ContactCollisionData<Body> collision) {}
 
     @Override
-    public void preSolve(ContactCollisionData collision, Contact contact) {}
+    public void preSolve(ContactCollisionData<Body> collision, Contact contact) {}
 
     @Override
-    public void postSolve(ContactCollisionData collision, SolvedContact contact) {}
+    public void postSolve(ContactCollisionData<Body> collision, SolvedContact contact) {}
   }
 
-  /**
-   *
-   *
-   * <h2>Obtains a New Instance of the {@link GamePieceContactListener} for This Intake.</h2>
-   *
-   * @return a new {@link GamePieceContactListener} for this intake
-   */
-  public GamePieceContactListener getGamePieceContactListener() {
+  GamePieceContactListener getGamePieceContactListener() {
     return new GamePieceContactListener();
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the {@link GamePieceOnFieldSimulation} Instances to Be Removed from the Field.</h2>
-   *
-   * <p>This method is called from {@link SimulatedArena#simulationPeriodic()} to retrieve game
-   * pieces that have been marked for removal.
-   *
-   * <p>Game pieces are marked for removal if they have come into contact with the intake during the
-   * last {@link SimulatedArena#getSimulationSubTicksIn1Period()} sub-ticks. These game pieces
-   * should be removed from the field to reflect their interaction with the intake.
-   *
-   * @return a {@link Queue} of game pieces to be removed from the field
-   */
-  public Queue<GamePieceOnFieldSimulation> getGamePiecesToRemove() {
-    return gamePiecesToRemove;
-  }
-
-  /**
-   *
-   *
-   * <h2>Clears the Game Pieces Marked for Removal.</h2>
-   *
-   * <p>This method is called from {@link SimulatedArena#simulationPeriodic()} after the game pieces
-   * marked for removal have been processed and removed from the field.
-   *
-   * <p>It clears the queue of game pieces marked for removal
-   */
-  public void clearGamePiecesToRemoveQueue() {
-    gamePiecesToRemove.clear();
   }
 
   public void register() {

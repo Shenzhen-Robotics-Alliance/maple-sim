@@ -57,7 +57,7 @@ Please follow the guides below for quick setup:
 # Contributing
 We welcome your contributions! Here’s how you can help:
 
-[Submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues) if you’ve found a bug or have a feature request.
+[Submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) if you’ve found a bug or have a feature request.
 
 [Create a pull request](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/pulls) if you have something to contribute.
 

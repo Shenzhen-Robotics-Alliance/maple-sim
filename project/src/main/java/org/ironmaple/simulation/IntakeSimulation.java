@@ -58,7 +58,7 @@ import edu.wpi.first.math.geometry.Translation3d;
  * <p><strong>Note:</strong> This class simulates an idealized "touch it, get it" intake and does
  * not model the actual functioning of an intake mechanism.
  */
-public class IntakeSimulation extends BodyFixture {
+public class IntakeSimulation extends BodyFixture 
   protected int gamePiecesInIntakeCount = 0;
   private boolean intakeRunning = false;
 
@@ -184,7 +184,7 @@ public class IntakeSimulation extends BodyFixture {
    * <p>Once activated, the intake is considered running and will listen for contact with {@link
    * GamePieceOnFieldSimulation} instances, allowing it to collect game pieces.
    */
-  protected void startIntake() {
+  public void startIntake() {
     if (intakeRunning) return;
 
     driveTrainSimulation.addFixture(this);
@@ -201,11 +201,37 @@ public class IntakeSimulation extends BodyFixture {
    * <p>Once turned off, the intake will no longer listen for or respond to contacts with {@link
    * GamePieceOnFieldSimulation} instances.
    */
-  protected void stopIntake() {
+  public void stopIntake() {
     if (!intakeRunning) return;
 
     driveTrainSimulation.removeFixture(this);
     this.intakeRunning = false;
+  }
+
+  /**
+   *
+   *
+   * <h2>Get the amount of game pieces in the intake.</h2>
+   *
+   * @return the amount of game pieces stored in the intake
+   */
+  public int getGamePiecesAmount() {
+    return gamePiecesInIntakeCount;
+  }
+
+  /**
+   *
+   *
+   * <h1>Removes 1 game piece from the intake.</h1>
+   *
+   * <p>Deducts the {@link #getGamePiecesAmount()}} by 1, if there is any remaining.
+   *
+   * <p>This is used to obtain a game piece from the intake and move it a feeder/shooter.
+   */
+  public boolean obtainGamePieceFromIntake() {
+    if (gamePiecesInIntakeCount < 1) return false;
+    gamePiecesInIntakeCount--;
+    return true;
   }
 
   /**

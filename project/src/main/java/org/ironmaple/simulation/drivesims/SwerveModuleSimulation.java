@@ -54,9 +54,9 @@ import org.ironmaple.simulation.SimulatedArena;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-  private final DCMotor DRIVE_MOTOR;
+  protected final DCMotor DRIVE_MOTOR;
   private final MapleMotorSim steerMotorSim;
-  private final double DRIVE_CURRENT_LIMIT,
+  protected final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
       STEER_GEAR_RATIO,
       DRIVE_FRICTION_VOLTAGE,
@@ -83,6 +83,8 @@ public class SwerveModuleSimulation {
    *
    *
    * <h2>Constructs a Swerve Module Simulation.</h2>
+   *
+   * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom timings, you must call the method before constructing any swerve module simulations using this constructor.</p>
    *
    * @param driveMotor the model of the driving motor
    * @param steerMotor the model of the steering motor

@@ -25,19 +25,20 @@ This class simulates an idealized "touch it, get it" intake, meaning that when t
 
 
 ## Creating Intake Simulation
-`IntakeSimulation` is an abstract class. You need to create a subclass that inherits from it to represent the intake simulation. Let's call it `IntakeIOSim`.
+You need to create an instance of `IntakeSimulation` in your `IntakeIOSim`.
 
 ```java
 // subsystems/intake/IntakeIOSim.java
-public class IntakeIOSim extends IntakeSimulation {
+public class IntakeIOSim {
+    private final IntakeSimulation intakeSimulation;
     public IntakeIOSim(AbstractDriveTrainSimulation driveTrain) {
-        super(
+        this.intakeSimulation = new IntakeSimulation(
                 "Note", // This intake can collect game pieces of type "Note"
                 driveTrain, // Specify the drivetrain to which this intake is attached
                 0.6, // Width of the intake
                 0.1, // The extension length of the intake beyond the robot's frame
                 // For under-bumper intakes, set this to 0.01
-                IntakeSide.BACK, // The intake is mounted on the back side of the chassis
+                IntakeSimulation.IntakeSide.BACK, // The intake is mounted on the back side of the chassis
                 1 // The intake can hold up to 1 note
         );
     }
@@ -51,37 +52,40 @@ Intakes can be turned on and off by calling `startIntake()` and `stopIntake()`.
 Most intakes detect game pieces inside the mechanism (usually with a beam breaker sensor). You can simulate this by checking `gamePiecesInIntakeCount`.
 
 ```java
-public class IntakeIOSim extends IntakeSimulation implements IntakeIO {
+public class IntakeIOSim implements IntakeIO {
     ...
 
     @Override // Defined by IntakeIO
     public void setRunning(boolean runIntake) {
         if (runIntake)
-            super.startIntake(); // Extends the intake out from the chassis frame and starts detecting contacts with game pieces
+            intakeSimulation.startIntake(); // Extends the intake out from the chassis frame and starts detecting contacts with game pieces
         else
-            super.stopIntake(); // Retracts the intake into the chassis frame, disabling game piece collection
+            intakeSimulation.stopIntake(); // Retracts the intake into the chassis frame, disabling game piece collection
     }
 
     @Override // Defined by IntakeIO
     public boolean isNoteInsideIntake() {
-        return this.gamePiecesInIntakeCount != 0; // True if there is a game piece in the intake
+        return intakeSimulation.getGamePiecesAmount() != 0; // True if there is a game piece in the intake
     }
 
     @Override // Defined by IntakeIO
     public void launchNote() {
-        this.gamePiecesInIntakeCount = 0; // Clears the game piece from the intake
+        // if there is a note in the intake, it will be removed and return true; otherwise, returns false
+        if (intakeSimulation.obtainGamePieceFromIntake())
+            ShooterIOSim.launchNote(); // notify the simulated flywheels to launch a note
     }
 }
 
 ```
 
-## Combining Intake/Feeder Simulation with Shooter Simulation
-Some intakes are directly connected to shooters, while others feed into a mechanism such as a feeder.
-
-If you take the indefinite integral of the intake/feeder voltage over time since the note entered the intake, it gives an approximation of the note's position.
-When the integral reaches a certain threshold, you can notify the `FlyWheelIOSim` to shoot the note out. See [Simulating GamePiece Projectiles](./6_SIMULATING_PROJECTILES.MD) for more details.
-
-An example of simulating an intake together with flywheels can be found [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/src/main/java/frc/robot/subsystems/intake/IntakeIOSim.java).
+> 💡 **Tip**
+> 
+> As shown in the code above, you can notify `FlyWheelIOSim` (the simulated flywheel mechansim) to shoot the note out when the note is passed to the shooter from the intake. See [Simulating GamePiece Projectiles](./6_SIMULATING_PROJECTILES.MD) for more details.
+>
+>
+> If you want to simulate how the note moves inside the intake/feeder, you can take the indefinite integral of the intake/feeder voltage over time since the note entered the intake.  This gives an approximation of the note's position in the feeder.
+> 
+> An example of simulating an intake together with flywheels can be found [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/src/main/java/frc/robot/subsystems/intake/IntakeIOSim.java).
 
 
 <div style="display:flex">

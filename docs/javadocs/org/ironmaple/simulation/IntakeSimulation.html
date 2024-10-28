@@ -51,7 +51,7 @@ loadScripts(document, 'script');</script>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
@@ -84,7 +84,7 @@ loadScripts(document, 'script');</script>
 <dd><code>org.dyn4j.DataContainer</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">IntakeSimulation</span>
+<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">IntakeSimulation</span>
 <span class="extends-implements">extends org.dyn4j.dynamics.BodyFixture</span></div>
 <div class="block"><h2>Simulates an Intake Mechanism on the Robot.</h2>
 
@@ -99,7 +99,7 @@ loadScripts(document, 'script');</script>
  the intake retracts.
 
  <p>The intake can "collect" <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> instances from the field, removing
- them and incrementing the <a href="#gamePiecesInIntakeCount"><code>gamePiecesInIntakeCount</code></a>.
+ them and incrementing the <code>gamePiecesInIntakeCount</code>.
 
  <p>A game piece is collected if the following conditions are met:
 
@@ -108,7 +108,7 @@ loadScripts(document, 'script');</script>
    <li>2. The <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> is in contact
        with the intake (and not other parts of the robot).
    <li>3. The intake is turned on via <a href="#startIntake()"><code>startIntake()</code></a>.
-   <li>4. The number of game pieces in the intake (<a href="#gamePiecesInIntakeCount"><code>gamePiecesInIntakeCount</code></a>) is less than
+   <li>4. The number of game pieces in the intake (<code>gamePiecesInIntakeCount</code>) is less than
        <code>capacity</code>.
  </ul>
 
@@ -141,15 +141,6 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="field-summary" id="field-summary">
 <h2>Field Summary</h2>
-<div class="caption"><span>Fields</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Field</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected int</code></div>
-<div class="col-second even-row-color"><code><a href="#gamePiecesInIntakeCount" class="member-name-link">gamePiecesInIntakeCount</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-org.dyn4j.dynamics.BodyFixture">Fields inherited from class&nbsp;org.dyn4j.dynamics.BodyFixture</h3>
 <code>DEFAULT_DENSITY, DEFAULT_FRICTION, DEFAULT_RESTITUTION, DEFAULT_RESTITUTION_VELOCITY, density, friction, restitution, restitutionVelocity</code></div>
@@ -214,10 +205,20 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains a New Instance of the <a href="IntakeSimulation.GamePieceContactListener.html" title="class in org.ironmaple.simulation"><code>IntakeSimulation.GamePieceContactListener</code></a> for This Intake.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Queue.html" title="class or interface in java.util" class="external-link">Queue</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGamePiecesToRemove()" class="member-name-link">getGamePiecesToRemove</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGamePiecesAmount()" class="member-name-link">getGamePiecesAmount</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Get the amount of game pieces in the intake.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Queue.html" title="class or interface in java.util" class="external-link">Queue</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGamePiecesToRemove()" class="member-name-link">getGamePiecesToRemove</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> Instances to Be Removed from the Field.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#obtainGamePieceFromIntake()" class="member-name-link">obtainGamePieceFromIntake</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Removes 1 game piece from the intake.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#register()" class="member-name-link">register</a>()</code></div>
@@ -225,12 +226,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#register(org.ironmaple.simulation.SimulatedArena)" class="member-name-link">register</a><wbr>(<a href="SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a>&nbsp;arena)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#startIntake()" class="member-name-link">startIntake</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Turns the Intake On.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stopIntake()" class="member-name-link">stopIntake</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Turns the Intake Off.</div>
@@ -256,20 +257,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ============ FIELD DETAIL =========== -->
-<li>
-<section class="field-details" id="field-detail">
-<h2>Field Details</h2>
-<ul class="member-list">
-<li>
-<section class="detail" id="gamePiecesInIntakeCount">
-<h3>gamePiecesInIntakeCount</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">gamePiecesInIntakeCount</span></div>
-</section>
-</li>
-</ul>
-</section>
-</li>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <li>
 <section class="constructor-details" id="constructor-detail">
@@ -348,7 +335,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="startIntake()">
 <h3>startIntake</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">startIntake</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">startIntake</span>()</div>
 <div class="block"><h2>Turns the Intake On.</h2>
 
  <p>Extends the intake out from the chassis, making it part of the chassis's collision space.
@@ -359,12 +346,34 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="stopIntake()">
 <h3>stopIntake</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stopIntake</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stopIntake</span>()</div>
 <div class="block"><h2>Turns the Intake Off.</h2>
 
  <p>Retracts the intake into the chassis, removing it from the chassis's collision space.
 
  <p>Once turned off, the intake will no longer listen for or respond to contacts with <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> instances.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getGamePiecesAmount()">
+<h3>getGamePiecesAmount</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getGamePiecesAmount</span>()</div>
+<div class="block"><h2>Get the amount of game pieces in the intake.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the amount of game pieces stored in the intake</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="obtainGamePieceFromIntake()">
+<h3>obtainGamePieceFromIntake</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">obtainGamePieceFromIntake</span>()</div>
+<div class="block"><h1>Removes 1 game piece from the intake.</h1>
+
+ <p>Deducts the <a href="#getGamePiecesAmount()"><code>getGamePiecesAmount()</code></a>} by 1, if there is any remaining.
+
+ <p>This is used to obtain a game piece from the intake and move it a feeder/shooter.</div>
 </section>
 </li>
 <li>

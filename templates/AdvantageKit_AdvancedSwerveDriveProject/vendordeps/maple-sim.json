@@ -5,14 +5,14 @@
   "frcYear": "2024",
   "uuid": "c39481e8-4a63-4a4c-9df6-48d91e4da37b",
   "mavenUrls": [
-    "https://shenzhen-robotics-alliance.github.io/maple-sim/repos/releases"
+    "https://shenzhen-robotics-alliance.github.io/maple-sim/maplesim/repos/releases"
   ],
   "jsonUrl": "https://shenzhen-robotics-alliance.github.io/maple-sim/maplesim/maple-sim.json",
   "javaDependencies": [
     {
       "groupId": "org.ironmaple",
       "artifactId": "maplesim-java",
-      "version": "0.1.3"
+      "version": "0.1.4"
     },
     {
       "groupId": "org.dyn4j",

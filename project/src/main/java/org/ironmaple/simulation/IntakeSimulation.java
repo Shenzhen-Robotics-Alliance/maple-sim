@@ -58,7 +58,7 @@ import edu.wpi.first.math.geometry.Translation3d;
  * <p><strong>Note:</strong> This class simulates an idealized "touch it, get it" intake and does
  * not model the actual functioning of an intake mechanism.
  */
-public class IntakeSimulation extends BodyFixture 
+public class IntakeSimulation extends BodyFixture {
   protected int gamePiecesInIntakeCount = 0;
   private boolean intakeRunning = false;
 

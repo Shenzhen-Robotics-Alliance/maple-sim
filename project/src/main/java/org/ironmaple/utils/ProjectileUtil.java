@@ -17,6 +17,30 @@ public class ProjectileUtil {
      */
     @FunctionalInterface
     public interface ProjectileDynamics {
+        /**
+         * Calculate the new position of the projectile.
+         * @param dt The time since the last update.
+         * @param position The current position of the projectile.
+         * @param velocity The current velocity of the projectile.
+         * @return The new velocity of the projectile.
+         */
         Translation3d calculate(double dt, Translation3d position, Translation3d velocity);
+    }
+
+    /**
+     * Returns a {@link ProjectileDynamics} that applies gravity to the projectile.
+     * 
+     * @param g The acceleration due to gravity.
+     * @return A {@link ProjectileDynamics} that applies gravity to the projectile.
+     */
+    public static ProjectileDynamics gravity(double g) {
+        return (dt, position, velocity) -> {
+            double verticalDeceleration = -g * dt;
+            return new Translation3d(
+                velocity.getX(),
+                velocity.getY(),
+                velocity.getZ() + verticalDeceleration
+            );
+        };
     }
 }

@@ -108,7 +108,7 @@ public class GamePiece {
                 timer.start();
                 double dt = Timer.getFPGATimestamp() - lastTime;
                 lastTime = Timer.getFPGATimestamp();
-                velocity = dynamics.calculate(dt, pose.getTranslation(), velocity);
+                velocity = dynamics.calculate(dt, velocity);
                 Twist3d twist = new Twist3d(
                     dt * velocity.getX(),
                     dt * velocity.getY(),

@@ -1,5 +1,7 @@
 package org.ironmaple.utils.mathutils;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import java.util.Random;
 
 public class MapleCommonMath {
@@ -32,5 +34,20 @@ public class MapleCommonMath {
 
   public static double linearInterpretation(double x1, double y1, double x2, double y2, double x) {
     return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+  }
+
+  /**
+   *
+   *
+   * <h2>Obtains the angle of a translation, ignores zero translation.</h2>
+   *
+   * <p>This prevents the driver-station from throwing a bunch of "x and y components of Rotation2d
+   * are zero" warning.
+   *
+   * @param translation2d the translation
+   * @return the angle of the translation, or zero if the translation is zero
+   */
+  public static Rotation2d getAngle(Translation2d translation2d) {
+    return translation2d.getNorm() == 0 ? Rotation2d.fromDegrees(0) : translation2d.getAngle();
   }
 }

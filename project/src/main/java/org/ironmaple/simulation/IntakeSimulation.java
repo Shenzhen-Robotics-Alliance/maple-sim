@@ -162,6 +162,7 @@ public class IntakeSimulation extends BodyFixture {
       Convex shape,
       int capacity) {
     super(shape);
+    super.setDensity(0);
 
     this.targetedGamePieceType = targetedGamePieceType;
     this.gamePiecesInIntakeCount = 0;

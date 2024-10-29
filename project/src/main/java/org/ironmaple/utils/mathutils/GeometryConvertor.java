@@ -8,11 +8,16 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.dyn4j.geometry.Rotation;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
+import org.ironmaple.utils.geometry.Velocity2d;
 
 /** utils to convert between WPILIB and dyn4j geometry classes */
 public class GeometryConvertor {
   public static Vector2 toDyn4jVector2(Translation2d wpilibTranslation2d) {
     return new Vector2(wpilibTranslation2d.getX(), wpilibTranslation2d.getY());
+  }
+
+  public static Vector2 toDyn4jVector2(Velocity2d wpilibTranslation2d) {
+    return new Vector2(wpilibTranslation2d.getVX(), wpilibTranslation2d.getVY());
   }
 
   public static Translation2d toWpilibTranslation2d(Vector2 dyn4jVector2) {

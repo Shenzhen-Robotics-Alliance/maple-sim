@@ -30,6 +30,7 @@ public class CrescendoNote {
           new Translation3d(16.8, 6.76, 2.6)
         )
       ),
-      true
+      true,
+      0.2
   );
 }

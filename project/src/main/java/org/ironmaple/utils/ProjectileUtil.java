@@ -1,6 +1,7 @@
 package org.ironmaple.utils;
 
-import edu.wpi.first.math.geometry.Translation3d;
+import org.ironmaple.utils.geometry.Velocity3d;
+
 
 public class ProjectileUtil {
 
@@ -22,7 +23,7 @@ public class ProjectileUtil {
          * @param velocity The current velocity of the projectile.
          * @return The new velocity of the projectile.
          */
-        Translation3d calculate(double dt, Translation3d velocity);
+        Velocity3d calculate(double dt, Velocity3d velocity);
     }
 
     /**
@@ -34,10 +35,10 @@ public class ProjectileUtil {
     public static ProjectileDynamics gravity(double g) {
         return (dt, velocity) -> {
             double verticalDeceleration = -g * dt;
-            return new Translation3d(
-                velocity.getX(),
-                velocity.getY(),
-                velocity.getZ() + verticalDeceleration
+            return new Velocity3d(
+                velocity.getVX(),
+                velocity.getVY(),
+                velocity.getVZ() + verticalDeceleration
             );
         };
     }

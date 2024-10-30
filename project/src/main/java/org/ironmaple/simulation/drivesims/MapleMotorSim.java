@@ -25,8 +25,14 @@
 package org.ironmaple.simulation.drivesims;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.LinearSystemSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
 /**
@@ -46,7 +52,7 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
  *   <li>Simulated encoder readings.
  * </ul>
  */
-public class MapleMotorSim {
+public class MapleMotorSim extends LinearSystemSim<N2, N1, N2> {
   private final DCMotor motor;
   private final double gearRatio, frictionTorque, loadInertiaJKgMetersSquared;
   private double requestedVoltageOutput, currentLimitAmps;
@@ -69,6 +75,7 @@ public class MapleMotorSim {
       double gearRatio,
       double loadIntertiaJKgMetersSquared,
       double frictionVoltage) {
+    super(LinearSystemId.createDCMotorSystem(motor, loadIntertiaJKgMetersSquared, gearRatio));
     this.motor = motor;
     this.gearRatio = gearRatio;
     this.frictionTorque = motor.getTorque(motor.getCurrent(0, frictionVoltage)) * gearRatio;
@@ -78,6 +85,66 @@ public class MapleMotorSim {
     this.breakModeEnabled = true;
 
     this.angularPositionRad = angularVelocityRadPerSec = appliedVolts = currentDrawAmps = 0;
+  }
+
+    /**
+   * Sets the state of the DC motor.
+   *
+   * @param angularPositionRad The new position in radians.
+   * @param angularVelocityRadPerSec The new velocity in radians per second.
+   */
+  public void setState(double angularPositionRad, double angularVelocityRadPerSec) {
+    setState(VecBuilder.fill(angularPositionRad, angularVelocityRadPerSec));
+  }
+
+  /**
+   * Returns the DC motor position.
+   *
+   * @return The DC motor position.
+   */
+  public double getAngularPositionRad() {
+    return getOutput(0);
+  }
+
+  /**
+   * Returns the DC motor position in rotations.
+   *
+   * @return The DC motor position in rotations.
+   */
+  public double getAngularPositionRotations() {
+    return Units.radiansToRotations(getAngularPositionRad());
+  }
+
+  /**
+   * Returns the DC motor velocity in RPM.
+   *
+   * @return The DC motor velocity in RPM.
+   */
+  public double getAngularVelocity() {
+    return Units.radiansPerSecondToRotationsPerMinute(getAngularVelocityRadPerSec());
+  }
+
+  /**
+   * Returns the DC motor current draw.
+   *
+   * @return The DC motor current draw.
+   */
+  @Override
+  public double getCurrentDrawAmps() {
+    // I = V / R - omega / (Kv * R)
+    // Reductions are output over input, so a reduction of 2:1 means the motor is spinning
+    // 2x faster than the output
+    return motor.getCurrent(getAngularVelocityRadPerSec() * gearRatio, m_u.get(0, 0))
+        * Math.signum(m_u.get(0, 0));
+  }
+
+  /**
+   * Sets the input voltage for the DC motor.
+   *
+   * @param volts The input voltage.
+   */
+  public void setInputVoltage(double volts) {
+    setInput(volts);
   }
 
   /**
@@ -134,24 +201,6 @@ public class MapleMotorSim {
    */
   public void setMotorBrakeEnabled(boolean enabled) {
     this.breakModeEnabled = enabled;
-  }
-
-  /**
-   *
-   *
-   * <h2>Sets the Current State of the Motor.</h2>
-   *
-   * <p>This method instantly shifts the motor to a given state, setting its angular position and
-   * velocity.
-   *
-   * <p>Equivalent to the {@link DCMotorSim#setState(double, double)} method.
-   *
-   * @param angularPositionRad the angular position of the motor, in radians
-   * @param angularVelocityRadPerSec the angular velocity of the motor, in radians per second
-   */
-  public void setState(double angularPositionRad, double angularVelocityRadPerSec) {
-    this.angularPositionRad = angularPositionRad;
-    this.angularVelocityRadPerSec = angularVelocityRadPerSec;
   }
 
   /**
@@ -283,19 +332,6 @@ public class MapleMotorSim {
   /**
    *
    *
-   * <h2>Obtains the Angular Position of the Mechanism.</h2>
-   *
-   * <p>This method is equivalent to {@link DCMotorSim#getAngularPositionRad()}.
-   *
-   * @return the final angular position of the mechanism, in radians
-   */
-  public double getAngularPositionRad() {
-    return angularPositionRad;
-  }
-
-  /**
-   *
-   *
    * <h2>Obtains the Angular Position of the Motor.</h2>
    *
    * @return the un-geared angular position of the motor (encoder reading), in radians
@@ -307,37 +343,11 @@ public class MapleMotorSim {
   /**
    *
    *
-   * <h2>Obtains the Angular Velocity of the Mechanism.</h2>
-   *
-   * <p>This method is equivalent to {@link DCMotorSim#getAngularVelocityRadPerSec()}.
-   *
-   * @return the final angular velocity of the mechanism, in radians per second
-   */
-  public double getAngularVelocityRadPerSec() {
-    return angularVelocityRadPerSec;
-  }
-
-  /**
-   *
-   *
    * <h2>Obtains the Angular Velocity of the Encoder.</h2>
    *
    * @return the un-geared angular velocity of the motor (encoder velocity), in radians per second
    */
   public double getEncoderVelocityRadPerSec() {
     return angularVelocityRadPerSec * gearRatio;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Amount of Current Flowing into the Motor.</h2>
-   *
-   * <p>This method is equivalent to {@link DCMotorSim#getCurrentDrawAmps()}.
-   *
-   * @return the amount of current flowing into the motor, in amperes
-   */
-  public double getCurrentDrawAmps() {
-    return currentDrawAmps;
   }
 }

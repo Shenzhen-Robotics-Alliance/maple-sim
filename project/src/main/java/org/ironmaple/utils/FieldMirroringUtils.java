@@ -1,6 +1,5 @@
 package org.ironmaple.utils;
 
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -48,10 +47,6 @@ public class FieldMirroringUtils {
     return new Pose2d(
         toCurrentAllianceTranslation(poseAtBlueSide.getTranslation()),
         toCurrentAllianceRotation(poseAtBlueSide.getRotation()));
-  }
-
-  public static PathPlannerPath toCurrentAlliancePath(PathPlannerPath pathAtBlueAlliance) {
-    return isSidePresentedAsRed() ? pathAtBlueAlliance.flipPath() : pathAtBlueAlliance;
   }
 
   public static boolean isSidePresentedAsRed() {

@@ -115,20 +115,25 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">using the random number generator of a fixed seed, generate the next random normal variable</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#linearInterpretation(double,double,double,double,double)" class="member-name-link">linearInterpretation</a><wbr>(double&nbsp;x1,
- double&nbsp;y1,
- double&nbsp;x2,
- double&nbsp;y2,
- double&nbsp;x)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getAngle(edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">getAngle</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;translation2d)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Obtains the angle of a translation, ignores zero translation.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#linearInterpretationWithBounding(double,double,double,double,double)" class="member-name-link">linearInterpretationWithBounding</a><wbr>(double&nbsp;x1,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#linearInterpretation(double,double,double,double,double)" class="member-name-link">linearInterpretation</a><wbr>(double&nbsp;x1,
  double&nbsp;y1,
  double&nbsp;x2,
  double&nbsp;y2,
  double&nbsp;x)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#linearInterpretationWithBounding(double,double,double,double,double)" class="member-name-link">linearInterpretationWithBounding</a><wbr>(double&nbsp;x1,
+ double&nbsp;y1,
+ double&nbsp;x2,
+ double&nbsp;y2,
+ double&nbsp;x)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -200,6 +205,22 @@ loadScripts(document, 'script');</script>
  double&nbsp;x2,
  double&nbsp;y2,
  double&nbsp;x)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="getAngle(edu.wpi.first.math.geometry.Translation2d)">
+<h3>getAngle</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a></span>&nbsp;<span class="element-name">getAngle</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;translation2d)</span></div>
+<div class="block"><h2>Obtains the angle of a translation, ignores zero translation.</h2>
+
+ <p>This prevents the driver-station from throwing a bunch of "x and y components of Rotation2d
+ are zero" warning.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>translation2d</code> - the translation</dd>
+<dt>Returns:</dt>
+<dd>the angle of the translation, or zero if the translation is zero</dd>
+</dl>
 </section>
 </li>
 </ul>

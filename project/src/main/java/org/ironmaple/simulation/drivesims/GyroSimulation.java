@@ -5,6 +5,7 @@ import static org.ironmaple.simulation.SimulatedArena.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
@@ -220,15 +221,14 @@ public class GyroSimulation {
    * <h2>Creates the Simulation for a <a href="https://store.ctr-electronics.com/pigeon-2/">CTRE
    * Pigeon 2 IMU</a>.</h2>
    *
-   * @return a new instance of {@link GyroSimulation} configured for the Pigeon 2 IMU
+   * @return a gyro simulation factory configured for the Pigeon 2 IMU
    */
-  public static GyroSimulation createPigeon2() {
+  public static Supplier<GyroSimulation> getPigeon2() {
     /*
      * user manual of pigeon 2:
      * https://store.ctr-electronics.com/content/user-manual/Pigeon2%20User's%20Guide.pdf
      * */
-
-    return new GyroSimulation(0.5, 0.02);
+    return () -> new GyroSimulation(0.5, 0.02);
   }
 
   /**
@@ -237,10 +237,10 @@ public class GyroSimulation {
    * <h2>Creates the Simulation for a <a href="https://pdocs.kauailabs.com/navx-mxp/">navX2-MXP
    * IMU</a>.</h2>
    *
-   * @return a new instance of {@link GyroSimulation} configured for the navX2-MXP IMU
+   * @return a gyro simulation factory configured for the navX2-MXP IMU
    */
-  public static GyroSimulation createNav2X() {
-    return new GyroSimulation(2, 0.04);
+  public static Supplier<GyroSimulation> getNav2X() {
+    return () -> new GyroSimulation(2, 0.04);
   }
 
   /**
@@ -248,9 +248,9 @@ public class GyroSimulation {
    *
    * <h2>Creates the Simulation for a Generic, Low-Accuracy IMU.</h2>
    *
-   * @return a new instance of {@link GyroSimulation} configured for a generic low-accuracy IMU
+   * @return a gyro simulation factory configured for a generic low-accuracy IMU
    */
-  public static GyroSimulation createGeneric() {
-    return new GyroSimulation(5, 0.06);
+  public static Supplier<GyroSimulation> createGeneric() {
+    return () -> new GyroSimulation(5, 0.06);
   }
 }

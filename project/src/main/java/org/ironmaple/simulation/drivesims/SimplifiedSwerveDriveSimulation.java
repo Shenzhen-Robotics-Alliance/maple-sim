@@ -151,7 +151,7 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
 
   public double getMaximumLinearAccelerationMetersPerSecondSquare() {
     return moduleSimulations[0].getModuleMaxAccelerationMPSsq(
-        swerveDriveSimulation.profile.robotMass, moduleSimulations.length);
+        swerveDriveSimulation.config.robotMassKg, moduleSimulations.length);
   }
 
   public double getTrackWidthYMeters() {
@@ -174,7 +174,7 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
     final double
         maxPropellingForce =
             moduleSimulations[0].getTheoreticalPropellingForcePerModule(
-                swerveDriveSimulation.profile.robotMass, moduleSimulations.length),
+                swerveDriveSimulation.config.robotMassKg, moduleSimulations.length),
         maxPropellingTorque = maxPropellingForce * getDriveBaseRadiusMeters();
     // angular acc = torque / inertia
     return maxPropellingTorque / swerveDriveSimulation.getMass().getInertia();

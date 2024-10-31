@@ -44,7 +44,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -132,15 +132,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<li>
-<section class="nested-class-summary" id="nested-class-summary">
-<h2>Nested Class Summary</h2>
-<div class="inherited-list">
-<h2 id="nested-classes-inherited-from-class-org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation">Nested classes/interfaces inherited from class&nbsp;org.ironmaple.simulation.drivesims.<a href="AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a></h2>
-<code><a href="AbstractDriveTrainSimulation.DriveTrainSimulationProfile.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation.DriveTrainSimulationProfile</a></code></div>
-</section>
-</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -162,7 +153,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation">Fields inherited from class&nbsp;org.ironmaple.simulation.drivesims.<a href="AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a></h3>
-<code><a href="AbstractDriveTrainSimulation.html#BUMPER_COEFFICIENT_OF_FRICTION">BUMPER_COEFFICIENT_OF_FRICTION</a>, <a href="AbstractDriveTrainSimulation.html#BUMPER_COEFFICIENT_OF_RESTITUTION">BUMPER_COEFFICIENT_OF_RESTITUTION</a>, <a href="AbstractDriveTrainSimulation.html#profile">profile</a></code></div>
+<code><a href="AbstractDriveTrainSimulation.html#BUMPER_COEFFICIENT_OF_FRICTION">BUMPER_COEFFICIENT_OF_FRICTION</a>, <a href="AbstractDriveTrainSimulation.html#BUMPER_COEFFICIENT_OF_RESTITUTION">BUMPER_COEFFICIENT_OF_RESTITUTION</a>, <a href="AbstractDriveTrainSimulation.html#config">config</a></code></div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-org.dyn4j.dynamics.AbstractPhysicsBody">Fields inherited from class&nbsp;org.dyn4j.dynamics.AbstractPhysicsBody</h3>
 <code>angularDamping, angularVelocity, atRest, atRestDetectionEnabled, atRestTime, bullet, force, forces, gravityScale, linearDamping, linearVelocity, mass, torque, torques</code></div>
@@ -185,25 +176,9 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(double,double,double,double,double,java.util.function.Supplier,org.ironmaple.simulation.drivesims.GyroSimulation,edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">SwerveDriveSimulation</a><wbr>(double&nbsp;robotMassWidthBumpersKg,
- double&nbsp;trackWidthMeters,
- double&nbsp;trackLengthMeters,
- double&nbsp;bumperWidthMeters,
- double&nbsp;bumperLengthMeters,
- <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleFactory,
- <a href="GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&nbsp;gyroSimulation,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig,edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">SwerveDriveSimulation</a><wbr>(<a href="configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a>&nbsp;config,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPoseOnField)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Constructs a Swerve Drive Simulation.</div>
-</div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(double,double,double,org.ironmaple.simulation.drivesims.SwerveModuleSimulation%5B%5D,edu.wpi.first.math.geometry.Translation2d%5B%5D,org.ironmaple.simulation.drivesims.GyroSimulation,edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">SwerveDriveSimulation</a><wbr>(double&nbsp;robotMassWithBumpersKg,
- double&nbsp;bumperWidthMeters,
- double&nbsp;bumperLengthMeters,
- <a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>[]&nbsp;moduleSimulations,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>[]&nbsp;moduleTranslations,
- <a href="GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&nbsp;gyroSimulation,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPoseOnField)</code></div>
-<div class="col-last odd-row-color">
 <div class="block">Creates a Swerve Drive Simulation.</div>
 </div>
 </div>
@@ -245,7 +220,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation">Methods inherited from class&nbsp;org.ironmaple.simulation.drivesims.<a href="AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a></h3>
-<code><a href="AbstractDriveTrainSimulation.html#getDriveTrainSimulatedChassisSpeedsFieldRelative()">getDriveTrainSimulatedChassisSpeedsFieldRelative</a>, <a href="AbstractDriveTrainSimulation.html#getDriveTrainSimulatedChassisSpeedsRobotRelative()">getDriveTrainSimulatedChassisSpeedsRobotRelative</a>, <a href="AbstractDriveTrainSimulation.html#getSimulatedDriveTrainPose()">getSimulatedDriveTrainPose</a>, <a href="AbstractDriveTrainSimulation.html#setRobotSpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds)">setRobotSpeeds</a>, <a href="AbstractDriveTrainSimulation.html#setSimulationWorldPose(edu.wpi.first.math.geometry.Pose2d)">setSimulationWorldPose</a>, <a href="AbstractDriveTrainSimulation.html#simulateChassisAngularFriction(double)">simulateChassisAngularFriction</a>, <a href="AbstractDriveTrainSimulation.html#simulateChassisLinearFriction()">simulateChassisLinearFriction</a></code></div>
+<code><a href="AbstractDriveTrainSimulation.html#getDriveTrainSimulatedChassisSpeedsFieldRelative()">getDriveTrainSimulatedChassisSpeedsFieldRelative</a>, <a href="AbstractDriveTrainSimulation.html#getDriveTrainSimulatedChassisSpeedsRobotRelative()">getDriveTrainSimulatedChassisSpeedsRobotRelative</a>, <a href="AbstractDriveTrainSimulation.html#getSimulatedDriveTrainPose()">getSimulatedDriveTrainPose</a>, <a href="AbstractDriveTrainSimulation.html#setRobotSpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds)">setRobotSpeeds</a>, <a href="AbstractDriveTrainSimulation.html#setSimulationWorldPose(edu.wpi.first.math.geometry.Pose2d)">setSimulationWorldPose</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.dyn4j.dynamics.AbstractPhysicsBody">Methods inherited from class&nbsp;org.dyn4j.dynamics.AbstractPhysicsBody</h3>
 <code>accumulate, addFixture, addFixture, addFixture, applyForce, applyForce, applyForce, applyImpulse, applyImpulse, applyImpulse, applyTorque, applyTorque, clearAccumulatedForce, clearAccumulatedTorque, clearForce, clearTorque, computeSweptAABB, computeSweptAABB, createSweptAABB, createSweptAABB, getAccumulatedForce, getAccumulatedTorque, getAngularDamping, getAngularVelocity, getChangeInOrientation, getChangeInPosition, getForce, getGravityScale, getLinearDamping, getLinearVelocity, getLinearVelocity, getLocalCenter, getMass, getTorque, getWorldCenter, integratePosition, integrateVelocity, isAtRest, isAtRestDetectionEnabled, isBullet, isDynamic, isKinematic, isStatic, removeAllFixtures, removeFixture, removeFixture, removeFixture, removeFixtures, setAngularDamping, setAngularVelocity, setAtRest, setAtRestDetectionEnabled, setBullet, setEnabled, setGravityScale, setLinearDamping, setLinearVelocity, setLinearVelocity, setMass, setMass, setMassType, toString, updateAtRestTime, updateMass</code></div>
@@ -314,14 +289,9 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(double,double,double,org.ironmaple.simulation.drivesims.SwerveModuleSimulation[],edu.wpi.first.math.geometry.Translation2d[],org.ironmaple.simulation.drivesims.GyroSimulation,edu.wpi.first.math.geometry.Pose2d)">
+<section class="detail" id="&lt;init&gt;(org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig,edu.wpi.first.math.geometry.Pose2d)">
 <h3>SwerveDriveSimulation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveDriveSimulation</span><wbr><span class="parameters">(double&nbsp;robotMassWithBumpersKg,
- double&nbsp;bumperWidthMeters,
- double&nbsp;bumperLengthMeters,
- <a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>[]&nbsp;moduleSimulations,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>[]&nbsp;moduleTranslations,
- <a href="GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&nbsp;gyroSimulation,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveDriveSimulation</span><wbr><span class="parameters">(<a href="configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a>&nbsp;config,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPoseOnField)</span></div>
 <div class="block"><h2>Creates a Swerve Drive Simulation.</h2>
 
@@ -330,47 +300,10 @@ loadScripts(document, 'script');</script>
  field.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>robotMassWithBumpersKg</code> - the total mass of the robot including bumpers, in kilograms</dd>
-<dd><code>bumperWidthMeters</code> - the width of the robot's bumpers, in meters</dd>
-<dd><code>bumperLengthMeters</code> - the length of the robot's bumpers, in meters</dd>
-<dd><code>moduleSimulations</code> - an array of <a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>SwerveModuleSimulation</code></a> objects representing the
-     modules of the drivetrain</dd>
-<dd><code>moduleTranslations</code> - an array of <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Translation2d</code></a> objects representing the position
-     of each module relative to the robot center</dd>
-<dd><code>gyroSimulation</code> - a <a href="GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>GyroSimulation</code></a> object used to simulate the IMU for odometry</dd>
+<dd><code>config</code> - a <a href="configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs"><code>DriveTrainSimulationConfig</code></a> instance containing the configurations of *
+     this drivetrain</dd>
 <dd><code>initialPoseOnField</code> - the initial pose of the drivetrain in the simulation world,
      represented as a <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Pose2d</code></a></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="&lt;init&gt;(double,double,double,double,double,java.util.function.Supplier,org.ironmaple.simulation.drivesims.GyroSimulation,edu.wpi.first.math.geometry.Pose2d)">
-<h3>SwerveDriveSimulation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveDriveSimulation</span><wbr><span class="parameters">(double&nbsp;robotMassWidthBumpersKg,
- double&nbsp;trackWidthMeters,
- double&nbsp;trackLengthMeters,
- double&nbsp;bumperWidthMeters,
- double&nbsp;bumperLengthMeters,
- <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleFactory,
- <a href="GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&nbsp;gyroSimulation,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPoseOnField)</span></div>
-<div class="block"><h2>Constructs a Swerve Drive Simulation.</h2>
-
- <p>This constructor initializes a swerve drive simulation with the given robot mass, track
- dimensions, bumper dimensions, module factory, gyro simulation, and initial pose on the field.
- It calls the main constructor internally.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>robotMassWidthBumpersKg</code> - the total mass of the robot including bumpers, in kilograms</dd>
-<dd><code>trackWidthMeters</code> - the width of the robot's track, in meters</dd>
-<dd><code>trackLengthMeters</code> - the length of the robot's track, in meters</dd>
-<dd><code>bumperWidthMeters</code> - the width of the robot's bumpers, in meters</dd>
-<dd><code>bumperLengthMeters</code> - the length of the robot's bumpers, in meters</dd>
-<dd><code>swerveModuleFactory</code> - a supplier that provides instances of <a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>SwerveModuleSimulation</code></a>
-     for each swerve module</dd>
-<dd><code>gyroSimulation</code> - the <a href="GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>GyroSimulation</code></a> instance to simulate the robot's IMU</dd>
-<dd><code>initialPoseOnField</code> - the initial pose of the robot in the simulation world, represented as
-     a <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Pose2d</code></a></dd>
 </dl>
 </section>
 </li>

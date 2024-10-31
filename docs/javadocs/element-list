@@ -1,5 +1,6 @@
 org.ironmaple.simulation
 org.ironmaple.simulation.drivesims
+org.ironmaple.simulation.drivesims.configs
 org.ironmaple.simulation.gamepieces
 org.ironmaple.simulation.seasonspecific.crescendo2024
 org.ironmaple.utils

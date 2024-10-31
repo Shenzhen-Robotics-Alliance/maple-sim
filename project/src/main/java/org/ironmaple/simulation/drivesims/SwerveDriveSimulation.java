@@ -333,4 +333,8 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
   public SwerveModuleSimulation[] getModules() {
     return moduleSimulations;
   }
+
+  public GyroSimulation getGyroSimulation() {
+    return this.gyroSimulation;
+  }
 }

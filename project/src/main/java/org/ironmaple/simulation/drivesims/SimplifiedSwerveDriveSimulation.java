@@ -184,6 +184,18 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
     return this.swerveDriveSimulation;
   }
 
+  public ChassisSpeeds getActualSpeedsFieldRelative() {
+    return this.swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative();
+  }
+
+  public ChassisSpeeds getActualSpeedsRobotRelative() {
+    return this.swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsRobotRelative();
+  }
+
+  public void setSimulationWorldPose(Pose2d robotPose) {
+    this.swerveDriveSimulation.setSimulationWorldPose(robotPose);
+  }
+
   @Override
   public void periodic() {
     final SwerveModulePosition[][] cachedModulePositions = getCachedModulePositions();

@@ -12,7 +12,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 /**
  *
  *
- *<h1>Represents an Abstract Drivetrain Simulation.</h1>
+ * <h1>Represents an Abstract Drivetrain Simulation.</h1>
  *
  * <h3>Simulates the Mass, Collision Space, and Friction of the Drivetrain.</h3>
  *

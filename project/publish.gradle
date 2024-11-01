@@ -33,7 +33,6 @@ task copyAllOutputs(type: Copy) {
     dependsOn outputVersions
 }
 
-build.dependsOn copyAllOutputs
 copyAllOutputs.dependsOn outputVersions
 
 ext.addTaskToCopyAllOutputs = { task ->
@@ -96,13 +95,6 @@ task cppDriverHeadersZip(type: Zip) {
     }
 }
 
-//build.dependsOn cppHeadersZip
-//addTaskToCopyAllOutputs(cppHeadersZip)
-//build.dependsOn cppSourceZip
-//addTaskToCopyAllOutputs(cppSourceZip)
-//build.dependsOn cppDriverHeadersZip
-//addTaskToCopyAllOutputs(cppDriverHeadersZip)
-
 task sourcesJar(type: Jar, dependsOn: classes) {
     archiveClassifier = 'sources'
     from sourceSets.main.allSource
@@ -134,7 +126,6 @@ task outputJavadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-
 artifacts {
     archives sourcesJar
     archives javadocJar
@@ -142,14 +133,6 @@ artifacts {
     archives outputSourcesJar
     archives outputJavadocJar
 }
-
-addTaskToCopyAllOutputs(outputSourcesJar)
-addTaskToCopyAllOutputs(outputJavadocJar)
-addTaskToCopyAllOutputs(outputJar)
-
-build.dependsOn outputSourcesJar
-build.dependsOn outputJavadocJar
-build.dependsOn outputJar
 
 libraryBuild.dependsOn build
 
@@ -167,7 +150,20 @@ task cleanReleaseRepo(type: Delete) {
     delete releasesRepoUrl
 }
 
-tasks.matching { it != cleanReleaseRepo }.all { it.dependsOn cleanReleaseRepo }
+publish.dependsOn cleanReleaseRepo
+
+publish.dependsOn outputJar
+publish.dependsOn outputSourcesJar
+publish.dependsOn outputJavadocJar
+publish.dependsOn copyAllOutputs
+
+copyAllOutputs.dependsOn outputJar
+copyAllOutputs.dependsOn outputSourcesJar
+copyAllOutputs.dependsOn outputJavadocJar
+
+addTaskToCopyAllOutputs(outputJar)
+addTaskToCopyAllOutputs(outputSourcesJar)
+addTaskToCopyAllOutputs(outputJavadocJar)
 
 model {
     publishing {
@@ -176,28 +172,6 @@ model {
         def driverTaskList = createComponentZipTasks($.components, ['VendorDriver'], driverZipBaseName, Zip, project, includeStandardZipFormat)
 
         publications {
-            //            cpp(MavenPublication) {
-            //                taskList.each {
-            //                    artifact it
-            //                }
-            //                artifact cppHeadersZip
-            //                artifact cppSourceZip
-            //
-            //                artifactId = "${baseArtifactId}-cpp"
-            //                groupId artifactGroupId
-            //                version pubVersion
-            //            }
-            //            driver(MavenPublication) {
-            //                driverTaskList.each {
-            //                    artifact it
-            //                }
-            //                artifact cppDriverHeadersZip
-            //
-            //                artifactId = "${baseArtifactId}-driver"
-            //                groupId artifactGroupId
-            //                version pubVersion
-            //            }
-
             java(MavenPublication) {
                 artifact jar
                 artifact sourcesJar
@@ -206,10 +180,7 @@ model {
                 artifactId = "${baseArtifactId}-java"
                 groupId artifactGroupId
                 version pubVersion
-
-
             }
-
         }
     }
 }

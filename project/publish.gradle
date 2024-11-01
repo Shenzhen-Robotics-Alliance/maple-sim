@@ -150,6 +150,21 @@ task cleanReleaseRepo(type: Delete) {
     delete releasesRepoUrl
 }
 
+// Define the task to move Javadocs to the desired directory
+task moveJavadocsToDocsDirectory(type: Copy) {
+    // Source directory for generated Javadocs
+    from "$projectDir/javadoc"    // Adjust this path if your Javadocs output is different
+    // Destination directory in your project where you want Javadocs to be copied
+    into "$projectDir/docs/javadocs"
+    // Ensure the destination directory is created if it doesn’t exist
+    doFirst {
+        file("$projectDir/docs/javadocs").mkdirs()
+    }
+}
+
+// Configure the `publish` task to depend on `moveJavadocsToDocsDirectory`
+publish.dependsOn moveJavadocsToDocsDirectory
+
 publish.dependsOn cleanReleaseRepo
 
 publish.dependsOn outputJar

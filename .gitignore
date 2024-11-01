@@ -4,7 +4,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-!/docs/maplesim/repos/
+!/docs/maplesim/vendordep/
 
 ### IntelliJ IDEA ###
 project/idea/modules.xml
@@ -42,3 +42,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
+/javadocs/**

@@ -35,6 +35,8 @@ jobs:
           git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
       - name: Build with Gradle
         run: ./gradlew build ${{ matrix.build-options }}
+      - name: Publish Javadocs
+        run: ./gradlew javadocs
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact-name }}

@@ -635,7 +635,8 @@ public class SwerveModuleSimulation {
     TIRE_WHEEL_GRIP(1.15);
 
     public final double grip;
-    WHEEL_GRIP(double grip){
+
+    WHEEL_GRIP(double grip) {
       this.grip = grip;
     }
   }

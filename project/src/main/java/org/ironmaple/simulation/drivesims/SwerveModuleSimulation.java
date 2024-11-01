@@ -54,9 +54,9 @@ import org.ironmaple.simulation.SimulatedArena;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-  protected final DCMotor DRIVE_MOTOR;
+  public final DCMotor DRIVE_MOTOR;
   private final MapleMotorSim steerMotorSim;
-  protected final double DRIVE_CURRENT_LIMIT,
+  public final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
       STEER_GEAR_RATIO,
       DRIVE_FRICTION_VOLTAGE,

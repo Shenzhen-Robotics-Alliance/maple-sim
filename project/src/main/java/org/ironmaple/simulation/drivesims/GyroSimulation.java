@@ -250,7 +250,7 @@ public class GyroSimulation {
    *
    * @return a gyro simulation factory configured for a generic low-accuracy IMU
    */
-  public static Supplier<GyroSimulation> createGeneric() {
+  public static Supplier<GyroSimulation> getGeneric() {
     return () -> new GyroSimulation(5, 0.06);
   }
 }

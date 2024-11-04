@@ -15,10 +15,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.utils.AbstractSwerveDriveSubsystem;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -33,8 +31,7 @@ import org.ironmaple.utils.mathutils.SwerveStateProjection;
  *
  * <p>This class
  */
-public class SimplifiedSwerveDriveSimulation extends SubsystemBase
-    implements AbstractSwerveDriveSubsystem {
+public class SimplifiedSwerveDriveSimulation {
   private final SwerveDriveSimulation swerveDriveSimulation;
   private final SwerveModuleSimulation[] moduleSimulations;
   private final SwerveDriveKinematics kinematics;
@@ -79,7 +76,6 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
     Arrays.fill(setPointsOptimized, new SwerveModuleState());
   }
 
-  @Override
   public Rotation2d getRawGyroAngle() {
     return swerveDriveSimulation.gyroSimulation.getGyroReading();
   }
@@ -88,28 +84,23 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
     return swerveDriveSimulation.getSimulatedDriveTrainPose();
   }
 
-  @Override
   public Pose2d getEstimatedOdometryPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
-  @Override
   public void resetOdometry(Pose2d pose) {
     this.poseEstimator.resetPosition(getRawGyroAngle(), getLatestModulePositions(), pose);
   }
 
-  @Override
   public void addVisionEstimation(Pose2d robotPoseMeters, double timeStampSeconds) {
     this.poseEstimator.addVisionMeasurement(robotPoseMeters, timeStampSeconds);
   }
 
-  @Override
   public void addVisionEstimation(
       Pose2d robotPoseMeters, double timeStampSeconds, Matrix<N3, N1> measurementStdDevs) {
     this.poseEstimator.addVisionMeasurement(robotPoseMeters, timeStampSeconds, measurementStdDevs);
   }
 
-  @Override
   public void runChassisSpeeds(ChassisSpeeds chassisSpeeds, Translation2d centerOfRotationMeters) {
     final SwerveModuleState[] setPoints =
         kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
@@ -117,7 +108,6 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
       setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
   }
 
-  @Override
   public SwerveModuleState[] getMeasuredStates() {
     return Arrays.stream(moduleSimulations)
         .map(
@@ -129,18 +119,15 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
         .toArray(SwerveModuleState[]::new);
   }
 
-  @Override
   public SwerveModuleState[] getSetPointsOptimized() {
     return setPointsOptimized;
   }
 
-  @Override
   public ChassisSpeeds getMeasuredSpeedsFieldRelative() {
     return ChassisSpeeds.fromRobotRelativeSpeeds(
         getMeasuredSpeedsRobotRelative(), getEstimatedOdometryPose().getRotation());
   }
 
-  @Override
   public ChassisSpeeds getMeasuredSpeedsRobotRelative() {
     return kinematics.toChassisSpeeds(getMeasuredStates());
   }
@@ -196,7 +183,6 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
     this.swerveDriveSimulation.setSimulationWorldPose(robotPose);
   }
 
-  @Override
   public void periodic() {
     final SwerveModulePosition[][] cachedModulePositions = getCachedModulePositions();
     for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
@@ -207,7 +193,7 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
           cachedModulePositions[i]);
   }
 
-  private SwerveModulePosition[] getLatestModulePositions() {
+  public SwerveModulePosition[] getLatestModulePositions() {
     return Arrays.stream(moduleSimulations)
         .map(
             moduleSimulation ->
@@ -218,7 +204,7 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
         .toArray(SwerveModulePosition[]::new);
   }
 
-  private SwerveModulePosition[][] getCachedModulePositions() {
+  public SwerveModulePosition[][] getCachedModulePositions() {
     final SwerveModulePosition[][] cachedModulePositions =
         new SwerveModulePosition[SimulatedArena.getSimulationSubTicksIn1Period()]
             [moduleSimulations.length];
@@ -240,7 +226,7 @@ public class SimplifiedSwerveDriveSimulation extends SubsystemBase
     return cachedModulePositions;
   }
 
-  private SwerveModuleState optimizeAndRunModuleState(
+  public SwerveModuleState optimizeAndRunModuleState(
       SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
     setPoint = SwerveModuleState.optimize(setPoint, moduleSimulation.getSteerAbsoluteFacing());
     final double

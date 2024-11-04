@@ -24,10 +24,14 @@ import org.ironmaple.utils.mathutils.SwerveStateProjection;
  *
  * <h1>An easier way to simulate swerve drive.</h1>
  *
- * <p>This class serves as the drive subsystem code during simulation.
+ * <p><a
+ * href='https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html'>Check
+ * Online Documents</a>
  *
- * <p>It controls a {@link SwerveDriveSimulation}, just like how your swerve subsystem code controls
- * the real drivetrain.
+ * <p>This class owns and controls a {@link SwerveDriveSimulation}, running close loops/open loops
+ * on the simulated motors.
+ *
+ * <p>It works identically to how the real swerve simulation code.
  *
  * <p>This class
  */
@@ -110,12 +114,7 @@ public class SimplifiedSwerveDriveSimulation {
 
   public SwerveModuleState[] getMeasuredStates() {
     return Arrays.stream(moduleSimulations)
-        .map(
-            moduleSimulation ->
-                new SwerveModuleState(
-                    moduleSimulation.getDriveWheelFinalSpeedRadPerSec()
-                        * moduleSimulation.WHEEL_RADIUS_METERS,
-                    moduleSimulation.getSteerAbsoluteFacing()))
+        .map(SwerveModuleSimulation::getCurrentState)
         .toArray(SwerveModuleState[]::new);
   }
 

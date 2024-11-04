@@ -34,7 +34,9 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
  *
  * <h1>{@link DCMotorSim} with a bit of extra spice.</h1>
  *
- * <p>By Team 5516 "IRON MAPLE".
+ * <p>By Team 5516 "IRON MAPLE", <a
+ * href='https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/project/src/main/java/org/ironmaple/simulation/drivesims/MapleMotorSim.java'>original
+ * source</a>.
  *
  * <p>This class extends the functionality of the original {@link DCMotorSim} and models the
  * following aspects in addition:

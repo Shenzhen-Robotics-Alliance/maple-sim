@@ -583,10 +583,12 @@ public class SwerveModuleSimulation {
   }
 
   /**
+   *
+   *
    * <h2>Obtains the "free spin" state of the module</h2>
    *
-   * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a long time under the current
-   * input voltage</p>
+   * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a
+   * long time under the current input voltage
    *
    * @return the free spinning module state
    */
@@ -601,10 +603,12 @@ public class SwerveModuleSimulation {
   }
 
   /**
+   *
+   *
    * <h2>Cache the encoder values.</h2>
    *
-   * <p>An internal method to cache the encoder values to their queues.</p>
-   * */
+   * <p>An internal method to cache the encoder values to their queues.
+   */
   private void updateDriveEncoders() {
     this.driveEncoderUnGearedPositionRad +=
         this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getSimulationDt();
@@ -624,14 +628,18 @@ public class SwerveModuleSimulation {
   }
 
   /**
+   *
+   *
    * <h2>Obtains the theoretical maximum propelling force of ONE module.</h2>
    *
-   * <p>Calculates the maximum propelling force with respect to the gripping force and the drive motor's torque under its current limit.</p>
+   * <p>Calculates the maximum propelling force with respect to the gripping force and the drive
+   * motor's torque under its current limit.
    *
    * @param robotMassKg the mass of the robot, is kilograms
-   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
+   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force
+   *     equally
    * @return the maximum propelling force of EACH module
-   * */
+   */
   public double getTheoreticalPropellingForcePerModule(double robotMassKg, int modulesCount) {
     final double
         maxThrustNewtons =
@@ -642,13 +650,17 @@ public class SwerveModuleSimulation {
   }
 
   /**
+   *
+   *
    * <h2>Obtains the theatrical linear acceleration that the robot can achieve.</h2>
    *
-   * <p>Calculates the maximum linear acceleration of a robot, with respect to its mass and {@link #getTheoreticalPropellingForcePerModule(double, int)}.</p>
+   * <p>Calculates the maximum linear acceleration of a robot, with respect to its mass and {@link
+   * #getTheoreticalPropellingForcePerModule(double, int)}.
    *
    * @param robotMassKg the mass of the robot, is kilograms
-   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
-   * */
+   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force
+   *     equally
+   */
   public double getModuleMaxAccelerationMPSsq(double robotMassKg, int modulesCount) {
     return getTheoreticalPropellingForcePerModule(robotMassKg, modulesCount)
         * modulesCount
@@ -656,8 +668,10 @@ public class SwerveModuleSimulation {
   }
 
   /**
+   *
+   *
    * <h2>Stores the coefficient of friction of some common used wheels.</h2>
-   * */
+   */
   public enum WHEEL_GRIP {
     RUBBER_WHEEL(1.25),
     TIRE_WHEEL(1.2);

@@ -22,6 +22,15 @@ public class MapleCommonMath {
     return z0 * stdDev + mean;
   }
 
+  /**
+   *
+   *
+   * <h2>Constrains the magnitude of a value.</h2>
+   *
+   * @param value the value to constrain
+   * @param maxMagnitude the maximum allowed magnitude
+   * @return the constrained value
+   */
   public static double constrainMagnitude(double value, double maxMagnitude) {
     return Math.copySign(Math.min(Math.abs(value), Math.abs(maxMagnitude)), value);
   }

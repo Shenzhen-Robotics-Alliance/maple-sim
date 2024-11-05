@@ -633,16 +633,15 @@ public class SwerveModuleSimulation {
         / robotMass;
   }
 
-  public enum DRIVE_WHEEL_TYPE {
-    RUBBER,
-    TIRE
-  }
+  public enum WHEEL_GRIP {
+    RUBBER_WHEEL_GRIP(1.25),
+    TIRE_WHEEL_GRIP(1.15);
 
-  private static double getWheelGripping(DRIVE_WHEEL_TYPE type) {
-    return switch (type) {
-      case RUBBER -> 1.25;
-      case TIRE -> 1.15;
-    };
+    public final double grip;
+
+    WHEEL_GRIP(double grip) {
+      this.grip = grip;
+    }
   }
 
   /**
@@ -654,7 +653,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -672,7 +671,7 @@ public class SwerveModuleSimulation {
             12.8,
             0.2,
             0.3,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -686,7 +685,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -704,7 +703,7 @@ public class SwerveModuleSimulation {
             150.0 / 7.0,
             0.2,
             1,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(2),
             0.025);
   }
@@ -717,7 +716,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -734,7 +733,7 @@ public class SwerveModuleSimulation {
             18.75,
             0.25,
             1,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(2),
             0.025);
   }
@@ -751,7 +750,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -774,7 +773,7 @@ public class SwerveModuleSimulation {
             11.3142,
             0.2,
             0.3,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -791,7 +790,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -814,7 +813,7 @@ public class SwerveModuleSimulation {
             11.3714,
             0.2,
             0.3,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -830,7 +829,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -850,7 +849,7 @@ public class SwerveModuleSimulation {
             41.25,
             0.2,
             0.3,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(1.5),
             0.03);
   }
@@ -868,7 +867,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -894,7 +893,7 @@ public class SwerveModuleSimulation {
             12.1,
             0.2,
             0.3,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -911,7 +910,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      DRIVE_WHEEL_TYPE driveWheelType,
+      WHEEL_GRIP driveWheelType,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -934,7 +933,7 @@ public class SwerveModuleSimulation {
             25.9,
             0.2,
             0.3,
-            getWheelGripping(driveWheelType),
+            driveWheelType.grip,
             Units.inchesToMeters(1.875),
             0.03);
   }

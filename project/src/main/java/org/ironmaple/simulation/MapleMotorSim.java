@@ -45,12 +45,12 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
  * </ul>
  */
 public class MapleMotorSim {
-    public static enum OutputType {
+    public enum OutputType {
         VOLTAGE,
         CURRENT
     }
 
-    public static enum OutputMode {
+    public enum OutputMode {
         VELOCITY,
         POSITION,
         OPEN_LOOP
@@ -104,6 +104,28 @@ public class MapleMotorSim {
         this.frictionVoltage = frictionVoltage;
 
         arena.addMotor(this);
+    }
+
+    /**
+     * Configures the angle of the motor.
+     *
+     * @param angle the angle of the motor
+     * @return this instance for method chaining
+     */
+    public MapleMotorSim withOverrideAngle(Angle angle) {
+        sim.setAngle(angle.in(Radians));
+        return this;
+    }
+
+    /**
+     * Configures the angular velocity of the motor.
+     *
+     * @param angularVelocity the angular velocity of the motor
+     * @return this instance for method chaining
+     */
+    public MapleMotorSim withOverrideAngularVelocity(AngularVelocity angularVelocity) {
+        sim.setAngularVelocity(angularVelocity.in(RadiansPerSecond));
+        return this;
     }
 
     public MapleMotorSim withFeedForward(
@@ -220,28 +242,6 @@ public class MapleMotorSim {
     public MapleMotorSim withControllerContinousInput(Angle min, Angle max) {
         poseVoltController.enableContinuousInput(min.in(Radians), max.in(Radians));
         poseCurrentController.enableContinuousInput(min.in(Radians), max.in(Radians));
-        return this;
-    }
-
-    /**
-     * Configures the angle of the motor.
-     *
-     * @param angle the angle of the motor
-     * @return this instance for method chaining
-     */
-    public MapleMotorSim withOverrideAngle(Angle angle) {
-        sim.setAngle(angle.in(Radians));
-        return this;
-    }
-
-    /**
-     * Configures the angular velocity of the motor.
-     *
-     * @param angularVelocity the angular velocity of the motor
-     * @return this instance for method chaining
-     */
-    public MapleMotorSim withOverrideAngularVelocity(AngularVelocity angularVelocity) {
-        sim.setAngularVelocity(angularVelocity.in(RadiansPerSecond));
         return this;
     }
 

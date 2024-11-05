@@ -3,10 +3,14 @@ package org.ironmaple.simulation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.lang.ref.WeakReference;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
@@ -87,10 +91,10 @@ public abstract class SimulatedArena {
     return SIMULATION_SUB_TICKS_IN_1_PERIOD;
   }
   /** The period length of each sub-tick, in seconds. */
-  private static double SIMULATION_DT =
-      TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+  private static Time SIMULATION_DT =
+      Seconds.of(TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD);
 
-  public static double getSimulationDt() {
+  public static Time getSimulationDt() {
     return SIMULATION_DT;
   }
 
@@ -121,7 +125,7 @@ public abstract class SimulatedArena {
   public static void overrideSimulationTimings(
       double robotPeriodSeconds, int simulationSubTicksPerPeriod) {
     SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
-    SIMULATION_DT = robotPeriodSeconds / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+    SIMULATION_DT = Seconds.of(robotPeriodSeconds / SIMULATION_SUB_TICKS_IN_1_PERIOD);
   }
 
   protected final World<Body> physicsWorld;
@@ -336,7 +340,7 @@ public abstract class SimulatedArena {
 
     GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceProjectile);
 
-    this.physicsWorld.step(1, SIMULATION_DT);
+    this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
     for (IntakeSimulation intakeSimulation : intakeSimulations)
       while (!intakeSimulation.getGamePiecesToRemove().isEmpty())

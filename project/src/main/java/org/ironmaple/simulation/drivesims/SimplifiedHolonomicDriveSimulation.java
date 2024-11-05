@@ -1,5 +1,9 @@
 package org.ironmaple.simulation.drivesims;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Newtons;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static org.ironmaple.utils.mathutils.MapleCommonMath.constrainMagnitude;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -105,14 +109,14 @@ public class SimplifiedHolonomicDriveSimulation extends AbstractDriveTrainSimula
 
     final Vector2 desiredLinearMotionPercent =
         GeometryConvertor.toDyn4jLinearVelocity(desiredChassisSpeedsFieldRelative)
-            .multiply(1.0 / profile.maxLinearVelocity);
+            .multiply(1.0 / profile.maxLinearVelocity.in(MetersPerSecond));
     simulateChassisTranslationalBehavior(
         Vector2.create(
             constrainMagnitude(desiredLinearMotionPercent.getMagnitude(), 1),
             desiredLinearMotionPercent.getDirection()));
 
     final double desiredRotationalMotionPercent =
-        desiredChassisSpeedsFieldRelative.omegaRadiansPerSecond / profile.maxAngularVelocity;
+        desiredChassisSpeedsFieldRelative.omegaRadiansPerSecond / profile.maxAngularVelocity.in(RadiansPerSecond);
     simulateChassisRotationalBehavior(constrainMagnitude(desiredRotationalMotionPercent, 1));
   }
 
@@ -132,7 +136,7 @@ public class SimplifiedHolonomicDriveSimulation extends AbstractDriveTrainSimula
     final Vector2 forceVec =
         desiredLinearMotionPercent
             .copy()
-            .multiply(this.profile.robotMass * this.profile.maxLinearAcceleration);
+            .multiply(this.profile.robotMass.times(this.profile.maxLinearAcceleration).in(Newtons));
 
     if (robotRequestedToMoveLinearly) super.applyForce(new Force(forceVec));
     else simulateChassisLinearFriction();
@@ -150,7 +154,7 @@ public class SimplifiedHolonomicDriveSimulation extends AbstractDriveTrainSimula
    *     trying to reach, represented as a double
    */
   private void simulateChassisRotationalBehavior(double desiredRotationalMotionPercent) {
-    final double maximumTorque = this.profile.maxAngularAcceleration * super.getMass().getInertia();
+    final double maximumTorque = this.profile.maxAngularAcceleration.in(RadiansPerSecondPerSecond) * super.getMass().getInertia();
     super.applyTorque(desiredRotationalMotionPercent * maximumTorque);
     simulateChassisAngularFriction(desiredRotationalMotionPercent);
   }

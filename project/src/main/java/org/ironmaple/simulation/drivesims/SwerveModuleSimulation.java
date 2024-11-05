@@ -7,10 +7,18 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
+import org.ironmaple.simulation.MapleMotorSim;
 import org.ironmaple.simulation.SimulatedArena;
 
 /**
@@ -125,8 +133,12 @@ public class SwerveModuleSimulation {
 
     this.steerMotorSim =
         new MapleMotorSim(
-            steerMotor, STEER_GEAR_RATIO, steerRotationalInertia, steerFrictionVoltage);
-    // this.steerMotorSim.enableCurrentLimit(20);
+            SimulatedArena.getInstance(),
+            steerMotor,
+            steerGearRatio,
+            KilogramSquareMeters.of(steerRotationalInertia),
+            Volts.of(steerFrictionVoltage)
+        );
 
     this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
     for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
@@ -184,7 +196,7 @@ public class SwerveModuleSimulation {
    * @param volts the voltage to be applied to the steering motor
    */
   public void requestSteerVoltageOut(double volts) {
-    this.steerMotorSim.requestVoltageOutput(volts);
+    this.steerMotorSim.setControl(Volts.of(volts));
   }
 
   /**
@@ -219,7 +231,7 @@ public class SwerveModuleSimulation {
    * @return the actual output voltage of the steering motor, in volts
    */
   public double getSteerMotorAppliedVolts() {
-    return steerMotorSim.getAppliedVolts();
+    return steerMotorSim.getRotorVoltage().in(Volts);
   }
 
   /**
@@ -247,7 +259,7 @@ public class SwerveModuleSimulation {
    * @return the current supplied to the steer motor, in amperes
    */
   public double getSteerMotorSupplyCurrentAmps() {
-    return steerMotorSim.getCurrentDrawAmps();
+    return steerMotorSim.getSupplyCurrent().in(Amps);
   }
 
   /**
@@ -477,13 +489,10 @@ public class SwerveModuleSimulation {
    * <p>The steer mechanism is modeled by a {@link MapleMotorSim}.
    */
   private void updateSteerSimulation() {
-    steerMotorSim.update(SimulatedArena.getSimulationDt());
-
     /* update the readings of the sensor */
-    this.steerAbsoluteFacing = Rotation2d.fromRadians(steerMotorSim.getAngularPositionRad());
-    this.steerRelativeEncoderPositionRad =
-        steerMotorSim.getAngularPositionRad() + steerRelativeEncoderOffSet;
-    this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getAngularVelocityRadPerSec();
+    this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getPosition());
+    this.steerRelativeEncoderPositionRad = steerMotorSim.getPosition().in(Radians) + steerRelativeEncoderOffSet;
+    this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);
     this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
 
     /* cache sensor readings to queue for high-frequency odometry */
@@ -556,12 +565,7 @@ public class SwerveModuleSimulation {
    * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
    */
   private double getDriveWheelTorque() {
-    driveMotorAppliedVolts =
-        MapleMotorSim.constrainOutputVoltage(
-            DRIVE_MOTOR,
-            driveEncoderUnGearedSpeedRadPerSec,
-            DRIVE_CURRENT_LIMIT,
-            driveMotorRequestedVolts);
+    driveMotorAppliedVolts = driveMotorRequestedVolts;
 
     /* calculate the actual supply current */
     driveMotorSupplyCurrentAmps =

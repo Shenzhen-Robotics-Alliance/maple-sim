@@ -228,7 +228,7 @@ public class SimplifiedSwerveDriveSimulation {
    * <h2>Resets the odometry to a specified position.</h2>
    *
    * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d,
-   * WheelPositions, Pose2d)}.
+   * SwerveModulePosition[], Pose2d)}.
    *
    * <p>It resets the position of the pose estimator to the given pose.
    *

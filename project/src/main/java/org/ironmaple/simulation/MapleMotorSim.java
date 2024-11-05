@@ -76,6 +76,8 @@ public class MapleMotorSim {
   private OutputMode outputMode = OutputMode.OPEN_LOOP;
   private double output = 0.0;
 
+  private Angle forwardLimit = Radians.of(Double.POSITIVE_INFINITY);
+  private Angle reverseLimit = Radians.of(Double.NEGATIVE_INFINITY);
 
   /**
    * <h2>Constructs a Brushless Motor Simulation Instance.</h2>
@@ -194,6 +196,20 @@ public class MapleMotorSim {
   }
 
   /**
+   * Configures the positionaly controllers to use continuous wrap.
+   * 
+   * @param min the minimum angle
+   * @param max the maximum angle
+   * @return this instance for method chaining
+   * @see PIDController#enableContinuousInput(double, double)
+   */
+  public MapleMotorSim withControllerContinousInput(Angle min, Angle max) {
+    controllers[0].enableContinuousInput(min.in(Radians), max.in(Radians));
+    controllers[2].enableContinuousInput(min.in(Radians), max.in(Radians));
+    return this;
+  }
+
+  /**
    * Configures the angle of the motor.
    * 
    * @param angle the angle of the motor
@@ -227,6 +243,19 @@ public class MapleMotorSim {
     // this is a limit across the sum of all motors output,
     // so it should be set to the total current limit of the mechanism
     this.currentLimit = currentLimit;
+    return this;
+  }
+
+  /**
+   * Configures the hard limits for the motor.
+   * 
+   * @param forwardLimit the forward limit
+   * @param reverseLimit the reverse limit
+   * @return this instance for method chaining
+   */
+  public MapleMotorSim withHardLimits(Angle forwardLimit, Angle reverseLimit) {
+    this.forwardLimit = forwardLimit;
+    this.reverseLimit = reverseLimit;
     return this;
   }
 
@@ -336,6 +365,12 @@ public class MapleMotorSim {
     }
 
     sim.update(dtSeconds);
+
+    if (getPosition().lte(reverseLimit)) {
+      sim.setState(reverseLimit.in(Radians), 0.0);
+    } else if (getPosition().gte(forwardLimit)) {
+      sim.setState(forwardLimit.in(Radians), 0.0);
+    }
   }
 
   private void driveAtVoltage(Voltage voltage) {

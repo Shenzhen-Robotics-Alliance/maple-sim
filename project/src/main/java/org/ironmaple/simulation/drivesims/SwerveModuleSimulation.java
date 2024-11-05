@@ -16,6 +16,8 @@ import edu.wpi.first.math.util.Units;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
+
+import edu.wpi.first.units.measure.Angle;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.MapleMotorSim;
 import org.ironmaple.simulation.SimulatedArena;
@@ -197,6 +199,10 @@ public class SwerveModuleSimulation {
     this.steerMotorSim.setControl(Volts.of(volts));
   }
 
+  public void requestSteerOutput(MapleMotorSim.OutputType outputType, Angle pos) {
+    this.steerMotorSim.setControl(outputType, pos);
+  }
+
   /**
    *
    *
@@ -220,7 +226,7 @@ public class SwerveModuleSimulation {
    * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
    *
    * <p>This method returns the actual voltage being applied to the steering motor. It wraps around
-   * the {@link MapleMotorSim#getAppliedVolts()} method.
+   * the {@link MapleMotorSim#getRotorVoltage()} method.
    *
    * <p>The actual applied voltage may differ from the value set by {@link
    * #requestSteerVoltageOut(double)}. If the motor's supply current is too high, the motor will
@@ -252,7 +258,7 @@ public class SwerveModuleSimulation {
    *
    * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
    *
-   * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}.
+   * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()} ()}.
    *
    * @return the current supplied to the steer motor, in amperes
    */

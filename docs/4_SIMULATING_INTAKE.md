@@ -89,6 +89,6 @@ public class IntakeIOSim implements IntakeIO {
 
 
 <div style="display:flex">
-    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_SWERVE_DRIVETRAIN.html">Simulating Swerve Drivetrain</a></h3>
-    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_PROJECTILES.html">Simulating GamePiece Projectiles</a> >></h3>
+    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3_SWERVE_SIMULATION_OVERVIEW.html">Simulating Swerve Drivetrain</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_PROJECTILES.html">Simulating GamePiece Projectiles</a> >></h3>
 </div>

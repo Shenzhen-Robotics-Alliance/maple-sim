@@ -28,14 +28,14 @@ import org.ironmaple.simulation.SimulatedArena;
  * <p>This class provides a simulation for a single swerve module in the {@link
  * SwerveDriveSimulation}.
  *
- * <h3>Purpose</h3>
+ * <h3>1. Purpose</h3>
  *
  * <p>This class serves as the bridge between your code and the physics engine.
  *
  * <p>You will apply voltage outputs to the drive/steer motor of the module and obtain their encoder
  * readings in your code, just as how you deal with your physical motors.
  *
- * <h3>Perspectives</h3>
+ * <h3>2. Perspectives</h3>
  *
  * <ul>
  *   <li>Simulates the steering mechanism using a custom brushless motor simulator.
@@ -43,7 +43,7 @@ import org.ironmaple.simulation.SimulatedArena;
  *   <li>Simulates encoder readings, which can be used to simulate a {@link SwerveDriveOdometry}.
  * </ul>
  *
- * <h3>Simulating Odometry</h3>
+ * <h3>3. Simulating Odometry</h3>
  *
  * <ul>
  *   <li>Retrieve the encoder readings from {@link #getDriveEncoderUnGearedPositionRad()}} and
@@ -61,9 +61,9 @@ import org.ironmaple.simulation.SimulatedArena;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-  protected final DCMotor DRIVE_MOTOR;
+  public final DCMotor DRIVE_MOTOR;
   private final MapleMotorSim steerMotorSim;
-  protected final double DRIVE_CURRENT_LIMIT,
+  public final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
       STEER_GEAR_RATIO,
       DRIVE_FRICTION_VOLTAGE,
@@ -252,7 +252,7 @@ public class SwerveModuleSimulation {
    *
    * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
    *
-   * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}
+   * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}.
    *
    * @return the current supplied to the steer motor, in amperes
    */
@@ -580,14 +580,18 @@ public class SwerveModuleSimulation {
   /**
    * @return the current module state of this simulation module
    */
-  protected SwerveModuleState getCurrentState() {
+  public SwerveModuleState getCurrentState() {
     return new SwerveModuleState(
         getDriveWheelFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS, steerAbsoluteFacing);
   }
 
   /**
-   * gets the state of the module, if it is allowed to spin freely for a long time under the current
-   * applied drive volts
+   *
+   *
+   * <h2>Obtains the "free spin" state of the module</h2>
+   *
+   * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a
+   * long time under the current input voltage
    *
    * @return the free spinning module state
    */
@@ -601,7 +605,13 @@ public class SwerveModuleSimulation {
         steerAbsoluteFacing);
   }
 
-  /** */
+  /**
+   *
+   *
+   * <h2>Cache the encoder values.</h2>
+   *
+   * <p>An internal method to cache the encoder values to their queues.
+   */
   private void updateDriveEncoders() {
     this.driveEncoderUnGearedPositionRad +=
         this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getSimulationDt();
@@ -612,35 +622,67 @@ public class SwerveModuleSimulation {
   /**
    *
    *
-   * <h2>Obtains the theoretical maximum speed that the module can achieve.</h2>
+   * <h2>Obtains the theoretical speed that the module can achieve.</h2>
+   *
+   * @return the theoretical maximum ground speed that the module can achieve, in m/s
    */
   public double getModuleTheoreticalSpeedMPS() {
     return DRIVE_MOTOR.freeSpeedRadPerSec / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS;
   }
 
-  public double getTheoreticalPropellingForcePerModule(double robotMass, int modulesCount) {
+  /**
+   *
+   *
+   * <h2>Obtains the theoretical maximum propelling force of ONE module.</h2>
+   *
+   * <p>Calculates the maximum propelling force with respect to the gripping force and the drive
+   * motor's torque under its current limit.
+   *
+   * @param robotMassKg the mass of the robot, is kilograms
+   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force
+   *     equally
+   * @return the maximum propelling force of EACH module
+   */
+  public double getTheoreticalPropellingForcePerModule(double robotMassKg, int modulesCount) {
     final double
         maxThrustNewtons =
             DRIVE_MOTOR.getTorque(DRIVE_CURRENT_LIMIT) * DRIVE_GEAR_RATIO / WHEEL_RADIUS_METERS,
-        maxGrippingNewtons = 9.8 * robotMass / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
+        maxGrippingNewtons = 9.8 * robotMassKg / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
 
     return Math.min(maxThrustNewtons, maxGrippingNewtons);
   }
 
-  public double getModuleMaxAccelerationMPSsq(double robotMass, int modulesCount) {
-    return getTheoreticalPropellingForcePerModule(robotMass, modulesCount)
+  /**
+   *
+   *
+   * <h2>Obtains the theatrical linear acceleration that the robot can achieve.</h2>
+   *
+   * <p>Calculates the maximum linear acceleration of a robot, with respect to its mass and {@link
+   * #getTheoreticalPropellingForcePerModule(double, int)}.
+   *
+   * @param robotMassKg the mass of the robot, is kilograms
+   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force
+   *     equally
+   */
+  public double getModuleMaxAccelerationMPSsq(double robotMassKg, int modulesCount) {
+    return getTheoreticalPropellingForcePerModule(robotMassKg, modulesCount)
         * modulesCount
-        / robotMass;
+        / robotMassKg;
   }
 
+  /**
+   *
+   *
+   * <h2>Stores the coefficient of friction of some common used wheels.</h2>
+   */
   public enum WHEEL_GRIP {
-    RUBBER_WHEEL_GRIP(1.25),
-    TIRE_WHEEL_GRIP(1.15);
+    RUBBER_WHEEL(1.25),
+    TIRE_WHEEL(1.2);
 
-    public final double grip;
+    public final double cof;
 
-    WHEEL_GRIP(double grip) {
-      this.grip = grip;
+    WHEEL_GRIP(double cof) {
+      this.cof = cof;
     }
   }
 
@@ -653,7 +695,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -671,7 +713,7 @@ public class SwerveModuleSimulation {
             12.8,
             0.2,
             0.3,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -685,7 +727,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -703,7 +745,7 @@ public class SwerveModuleSimulation {
             150.0 / 7.0,
             0.2,
             1,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(2),
             0.025);
   }
@@ -716,7 +758,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -733,7 +775,7 @@ public class SwerveModuleSimulation {
             18.75,
             0.25,
             1,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(2),
             0.025);
   }
@@ -750,7 +792,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -773,7 +815,7 @@ public class SwerveModuleSimulation {
             11.3142,
             0.2,
             0.3,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -790,7 +832,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -813,7 +855,7 @@ public class SwerveModuleSimulation {
             11.3714,
             0.2,
             0.3,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -829,7 +871,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -849,7 +891,7 @@ public class SwerveModuleSimulation {
             41.25,
             0.2,
             0.3,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(1.5),
             0.03);
   }
@@ -867,7 +909,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -893,7 +935,7 @@ public class SwerveModuleSimulation {
             12.1,
             0.2,
             0.3,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(2),
             0.03);
   }
@@ -910,7 +952,7 @@ public class SwerveModuleSimulation {
       DCMotor driveMotor,
       DCMotor steerMotor,
       double driveCurrentLimitAmps,
-      WHEEL_GRIP driveWheelType,
+      double wheelCOF,
       int gearRatioLevel) {
     return () ->
         new SwerveModuleSimulation(
@@ -933,7 +975,7 @@ public class SwerveModuleSimulation {
             25.9,
             0.2,
             0.3,
-            driveWheelType.grip,
+            wheelCOF,
             Units.inchesToMeters(1.875),
             0.03);
   }

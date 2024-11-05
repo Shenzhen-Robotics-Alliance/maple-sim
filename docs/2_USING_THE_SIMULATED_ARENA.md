@@ -85,6 +85,6 @@ Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses);
 
 
 <div style="display:flex">
-    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/2_INSTALLING_MAPLE_SIM.html">Installing maple-sim</a></h3>
-    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_SWERVE_DRIVETRAIN.html">Simulating Swerve Drivetrain</a> >></h3>
+    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/1_INSTALLING_MAPLE_SIM.html">Installing maple-sim</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3_SWERVE_SIMULATION_OVERVIEW.html">Simulating Swerve Drivetrain</a> >></h3>
 </div>

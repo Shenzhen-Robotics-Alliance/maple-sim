@@ -118,6 +118,6 @@ The real-time positions of the flying game pieces are also visualized with other
 
 
 <div style="display:flex">
-    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_INTAKE.html">Simulating Intake</a></h3>
-    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/7_SIMULATING_OPPONENT_ROBOTS.html">Simulating Opponent Robots</a> >></h3>
+    <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html">Simulating Intake</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_OPPONENT_ROBOTS.html">Simulating Opponent Robots</a> >></h3>
 </div>

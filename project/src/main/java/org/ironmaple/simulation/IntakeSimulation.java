@@ -129,13 +129,14 @@ public class IntakeSimulation extends BodyFixture {
     final double distanceTransformed = lengthExtended / 2 - 0.01;
     intakeRectangle.translate(
         switch (side) {
-          case LEFT -> new Vector2(0, driveTrainSimulation.profile.width / 2 + distanceTransformed);
+          case LEFT -> new Vector2(
+              0, driveTrainSimulation.config.bumperWidthYMeters / 2 + distanceTransformed);
           case RIGHT -> new Vector2(
-              0, -driveTrainSimulation.profile.width / 2 - distanceTransformed);
+              0, -driveTrainSimulation.config.bumperWidthYMeters / 2 - distanceTransformed);
           case FRONT -> new Vector2(
-              driveTrainSimulation.profile.length / 2 + distanceTransformed, 0);
+              driveTrainSimulation.config.bumperLengthXMeters / 2 + distanceTransformed, 0);
           case BACK -> new Vector2(
-              -driveTrainSimulation.profile.length / 2 - distanceTransformed / 2, 0);
+              -driveTrainSimulation.config.bumperLengthXMeters / 2 - distanceTransformed / 2, 0);
         });
 
     return intakeRectangle;
@@ -162,6 +163,7 @@ public class IntakeSimulation extends BodyFixture {
       Convex shape,
       int capacity) {
     super(shape);
+    super.setDensity(0);
 
     this.targetedGamePieceType = targetedGamePieceType;
     this.gamePiecesInIntakeCount = 0;

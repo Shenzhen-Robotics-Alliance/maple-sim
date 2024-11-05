@@ -38,8 +38,8 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
  * href='https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/project/src/main/java/org/ironmaple/simulation/drivesims/MapleMotorSim.java'>original
  * source</a>.
  *
- * <p>This class extends the functionality of the original {@link DCMotorSim} and models the
- * following aspects in addition:
+ * <p>This class extends the functionality of the original {@link DCMotorSim} and models the following aspects in
+ * addition:
  *
  * <ul>
  *   <li>Friction force on the rotor.
@@ -66,11 +66,7 @@ public class MapleMotorSim {
      * @param loadIntertiaJKgMetersSquared the rotational inertia of the mechanism, in kg·m²
      * @param frictionVoltage the voltage required to overcome friction and make the mechanism move
      */
-    public MapleMotorSim(
-            DCMotor motor,
-            double gearRatio,
-            double loadIntertiaJKgMetersSquared,
-            double frictionVoltage) {
+    public MapleMotorSim(DCMotor motor, double gearRatio, double loadIntertiaJKgMetersSquared, double frictionVoltage) {
         this.motor = motor;
         this.gearRatio = gearRatio;
         this.frictionTorque = motor.getTorque(motor.getCurrent(0, frictionVoltage)) * gearRatio;
@@ -87,8 +83,8 @@ public class MapleMotorSim {
      *
      * <h2>Requests an Output Voltage for the Motor.</h2>
      *
-     * <p><strong>Note:</strong> The requested voltage may not always be fully applied due to current
-     * limits. For details on current limiting, refer to {@link #enableCurrentLimit(double)}.
+     * <p><strong>Note:</strong> The requested voltage may not always be fully applied due to current limits. For
+     * details on current limiting, refer to {@link #enableCurrentLimit(double)}.
      *
      * @param volts the requested output voltage for the motor
      */
@@ -101,8 +97,8 @@ public class MapleMotorSim {
      *
      * <h2>Configures a Current Limit for the Motor.</h2>
      *
-     * <p>If the motor's supply current exceeds the specified limit, the motor will reduce its output
-     * to prevent exceeding the limit.
+     * <p>If the motor's supply current exceeds the specified limit, the motor will reduce its output to prevent
+     * exceeding the limit.
      *
      * @param currentLimitAmps the maximum allowed current, in amperes
      */
@@ -115,8 +111,7 @@ public class MapleMotorSim {
      *
      * <h2>Disables the Current Limit of the Motor.</h2>
      *
-     * <p>This method removes the current limit, allowing the motor to operate without any current
-     * restrictions.
+     * <p>This method removes the current limit, allowing the motor to operate without any current restrictions.
      */
     public void disableCurrentLimit() {
         this.currentLimitAmps = Double.POSITIVE_INFINITY;
@@ -143,8 +138,7 @@ public class MapleMotorSim {
      *
      * <h2>Sets the Current State of the Motor.</h2>
      *
-     * <p>This method instantly shifts the motor to a given state, setting its angular position and
-     * velocity.
+     * <p>This method instantly shifts the motor to a given state, setting its angular position and velocity.
      *
      * <p>Equivalent to the {@link DCMotorSim#setState(double, double)} method.
      *
@@ -161,23 +155,21 @@ public class MapleMotorSim {
      *
      * <h2>Updates the Simulation.</h2>
      *
-     * <p>This method steps the motor simulation forward by a given time interval (<code>dt</code>),
-     * recalculating and storing the states of the motor.
+     * <p>This method steps the motor simulation forward by a given time interval (<code>dt</code>), recalculating and
+     * storing the states of the motor.
      *
      * <p>Equivalent to {@link DCMotorSim#update(double)}.
      *
      * @param dtSeconds the time step for the simulation, in seconds
      */
     public void update(double dtSeconds) {
-        appliedVolts =
-                constrainOutputVoltage(
-                        motor, angularVelocityRadPerSec * gearRatio, currentLimitAmps, requestedVoltageOutput);
+        appliedVolts = constrainOutputVoltage(
+                motor, angularVelocityRadPerSec * gearRatio, currentLimitAmps, requestedVoltageOutput);
 
         double totalTorque = getMotorElectricTorque();
 
         /* apply friction force */
-        final boolean electricTorqueResultingInAcceleration =
-                totalTorque * angularVelocityRadPerSec > 0;
+        final boolean electricTorqueResultingInAcceleration = totalTorque * angularVelocityRadPerSec > 0;
         if (electricTorqueResultingInAcceleration)
             totalTorque = MathUtil.applyDeadband(totalTorque, frictionTorque, Double.POSITIVE_INFINITY);
         else totalTorque += getCurrentFrictionTorque();
@@ -204,19 +196,16 @@ public class MapleMotorSim {
      *
      * <h2>Calculates the Dynamic Friction Torque on the Mechanism.</h2>
      *
-     * <p>This method simulates the amount of dynamic friction acting on the rotor when the mechanism
-     * is rotating.
+     * <p>This method simulates the amount of dynamic friction acting on the rotor when the mechanism is rotating.
      *
-     * <p>In the real world, dynamic friction torque is typically constant. However, in the
-     * simulation, it is made proportional to the rotor speed when the speed is small to avoid
-     * oscillation.
+     * <p>In the real world, dynamic friction torque is typically constant. However, in the simulation, it is made
+     * proportional to the rotor speed when the speed is small to avoid oscillation.
      *
      * @return the amount of dynamic friction torque on the mechanism, in Newton-meters
      */
     private double getCurrentFrictionTorque() {
         final double kFriction = 3.0,
-                percentAngularVelocity =
-                        Math.abs(angularVelocityRadPerSec) * gearRatio / motor.freeSpeedRadPerSec,
+                percentAngularVelocity = Math.abs(angularVelocityRadPerSec) * gearRatio / motor.freeSpeedRadPerSec,
                 currentFrictionTorqueMagnitude =
                         Math.min(percentAngularVelocity * kFriction * frictionTorque, frictionTorque);
         return Math.copySign(currentFrictionTorqueMagnitude, -angularVelocityRadPerSec);
@@ -227,18 +216,17 @@ public class MapleMotorSim {
      *
      * <h2>Constrains the Output Voltage of the Motor.</h2>
      *
-     * <p>This method constrains the output voltage of the motor to ensure it operates within the
-     * current limit and does not exceed the available voltage from the robot's system.
+     * <p>This method constrains the output voltage of the motor to ensure it operates within the current limit and does
+     * not exceed the available voltage from the robot's system.
      *
-     * <p>The output voltage is constrained such that the motor does not function outside of the
-     * specified current limit. Additionally, it ensures that the voltage does not exceed the robot's
-     * input voltage, which can be obtained from {@link RoboRioSim#getVInVoltage()}.
+     * <p>The output voltage is constrained such that the motor does not function outside of the specified current
+     * limit. Additionally, it ensures that the voltage does not exceed the robot's input voltage, which can be obtained
+     * from {@link RoboRioSim#getVInVoltage()}.
      *
      * @param motor the {@link DCMotor} that models the motor
-     * @param motorCurrentVelocityRadPerSec the current velocity of the motor's rotor (geared), in
-     *     radians per second
-     * @param currentLimitAmps the configured current limit, in amperes. You can configure the current
-     *     limit using {@link #enableCurrentLimit(double)}.
+     * @param motorCurrentVelocityRadPerSec the current velocity of the motor's rotor (geared), in radians per second
+     * @param currentLimitAmps the configured current limit, in amperes. You can configure the current limit using
+     *     {@link #enableCurrentLimit(double)}.
      * @param requestedOutputVoltage the requested output voltage
      * @return the constrained output voltage based on the current limit and system voltage
      */
@@ -247,20 +235,17 @@ public class MapleMotorSim {
             double motorCurrentVelocityRadPerSec,
             double currentLimitAmps,
             double requestedOutputVoltage) {
-        final double currentAtRequestedVolts =
-                motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltage);
+        final double currentAtRequestedVolts = motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltage);
 
         /* normally, motor controller starts cutting the supply voltage when the current exceed 120% the current limit */
         final boolean currentTooHigh = Math.abs(currentAtRequestedVolts) > 1.2 * currentLimitAmps;
         double limitedVoltage = requestedOutputVoltage;
         if (currentTooHigh) {
             final double limitedCurrent = Math.copySign(currentLimitAmps, currentAtRequestedVolts);
-            limitedVoltage =
-                    motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
+            limitedVoltage = motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
         }
 
-        if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltage))
-            limitedVoltage = requestedOutputVoltage;
+        if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltage)) limitedVoltage = requestedOutputVoltage;
 
         return MathUtil.clamp(limitedVoltage, -RoboRioSim.getVInVoltage(), RoboRioSim.getVInVoltage());
     }
@@ -270,11 +255,11 @@ public class MapleMotorSim {
      *
      * <h2>Obtains the Voltage Actually Applied to the Motor.</h2>
      *
-     * <p>This method returns the voltage that is actually applied to the motor after being
-     * constrained by {@link #constrainOutputVoltage(DCMotor, double, double, double)}.
+     * <p>This method returns the voltage that is actually applied to the motor after being constrained by
+     * {@link #constrainOutputVoltage(DCMotor, double, double, double)}.
      *
-     * <p>The voltage is constrained to ensure that the current limit is not exceeded and that it does
-     * not surpass the robot's battery voltage.
+     * <p>The voltage is constrained to ensure that the current limit is not exceeded and that it does not surpass the
+     * robot's battery voltage.
      *
      * @return the constrained voltage actually applied to the motor
      */

@@ -1,4 +1,4 @@
-package org.ironmaple.simulation;
+package org.ironmaple.simulation.motorsims;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -29,6 +28,7 @@ import edu.wpi.first.units.measure.Torque;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import org.ironmaple.simulation.SimulatedArena;
 
 /**
  *
@@ -91,19 +91,14 @@ public class MapleMotorSim {
      * @param loadIntertia the rotational inertia of the mechanism
      * @param frictionVoltage the voltage required to keep the motor moving at a constant velocity
      */
-    public MapleMotorSim(
-            SimulatedArena arena,
-            DCMotor motor,
-            double gearRatio,
-            MomentOfInertia loadIntertia,
-            Voltage frictionVoltage) {
+    public MapleMotorSim(DCMotor motor, double gearRatio, MomentOfInertia loadIntertia, Voltage frictionVoltage) {
         this.sim = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(motor, loadIntertia.in(KilogramSquareMeters), gearRatio), motor);
         this.motor = motor;
         this.gearing = gearRatio;
         this.frictionVoltage = frictionVoltage;
 
-        arena.addMotor(this);
+        BatterySimulationContainer.getInstance().addMotor(this);
     }
 
     /**
@@ -464,7 +459,6 @@ public class MapleMotorSim {
         }
 
         // constrain the output voltage to the battery voltage
-        return Volts.of(MathUtil.clamp(
-                limitedVoltage, -RobotController.getBatteryVoltage(), RobotController.getBatteryVoltage()));
+        return Volts.of(BatterySimulationContainer.getInstance().constrainVoltage(limitedVoltage));
     }
 }

@@ -17,8 +17,9 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
-import org.ironmaple.simulation.MapleMotorSim;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.motorsims.BatterySimulationContainer;
+import org.ironmaple.simulation.motorsims.MapleMotorSim;
 
 /**
  *
@@ -125,11 +126,11 @@ public class SwerveModuleSimulation {
         WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
         this.steerMotorSim = new MapleMotorSim(
-                SimulatedArena.getInstance(),
                 steerMotor,
                 steerGearRatio,
                 KilogramSquareMeters.of(steerRotationalInertia),
                 Volts.of(steerFrictionVoltage));
+        BatterySimulationContainer.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)

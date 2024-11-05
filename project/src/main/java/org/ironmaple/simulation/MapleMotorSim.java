@@ -1,12 +1,12 @@
 package org.ironmaple.simulation;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.KilogramSquareMeters;
 import static edu.wpi.first.units.Units.NewtonMeters;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 /**
+ *
+ *
  * <h1>{@link DCMotorSim} with a bit of extra spice.</h1>
  *
  * <p>This class extends the functionality of the original {@link DCMotorSim} and models the
@@ -80,6 +82,8 @@ public class MapleMotorSim {
   private Angle reverseLimit = Radians.of(Double.NEGATIVE_INFINITY);
 
   /**
+   *
+   *
    * <h2>Constructs a Brushless Motor Simulation Instance.</h2>
    *
    * @param motor the {@link DCMotor} model representing the motor(s) in the simulation
@@ -93,7 +97,11 @@ public class MapleMotorSim {
       double gearRatio,
       MomentOfInertia loadIntertia,
       Voltage frictionVoltage) {
-    this.sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(motor, loadIntertia.in(KilogramSquareMeters), gearRatio), motor);
+    this.sim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                motor, loadIntertia.in(KilogramSquareMeters), gearRatio),
+            motor);
     this.motor = motor;
     this.gearing = gearRatio;
     this.frictionVoltage = frictionVoltage;
@@ -101,17 +109,23 @@ public class MapleMotorSim {
     arena.addMotor(this);
   }
 
-  public MapleMotorSim withFeedForward(Voltage kS, Per<VoltageUnit, AngularVelocityUnit> kV, Per<VoltageUnit, AngularAccelerationUnit> kA) {
+  public MapleMotorSim withFeedForward(
+      Voltage kS,
+      Per<VoltageUnit, AngularVelocityUnit> kV,
+      Per<VoltageUnit, AngularAccelerationUnit> kA) {
     var kVUnit = PerUnit.combine(Volts, RadiansPerSecond);
     var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
-    feedforward = new SimpleMotorFeedforward(kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), SimulatedArena.getSimulationDt());
+    feedforward =
+        new SimpleMotorFeedforward(
+            kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), SimulatedArena.getSimulationDt());
     return this;
   }
 
   /**
    * Configures the PD controller for Positional Requests using {@link OutputType#VOLTAGE}.
-   * 
+   *
    * <p>This is unit safe and can be configure like so:
+   *
    * <pre><code>
    * // Volts per Rotation of error is how CTRE handles PID when used with voltage requests
    * sim.withPositionalVoltageController(
@@ -119,12 +133,13 @@ public class MapleMotorSim {
    *   Volts.per(RotationsPerSecond).ofNative(5.0)
    * );
    * </code></pre>
-   * 
+   *
    * @param kP the proportional gain
    * @param kD the derivative gain
    * @return this instance for method chaining
    */
-  public MapleMotorSim withPositionalVoltageController(Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
+  public MapleMotorSim withPositionalVoltageController(
+      Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
     var kPUnit = PerUnit.combine(Volts, Radians);
     var kDUnit = PerUnit.combine(Volts, RadiansPerSecond);
     poseVoltController.setP(kP.in(kPUnit));
@@ -134,14 +149,16 @@ public class MapleMotorSim {
 
   /**
    * Configures the PD controller for Velocity Requests using {@link OutputType#VOLTAGE}.
-   * 
+   *
    * <p>This is unit safe and can be configure like so:
+   *
    * <pre><code>
    * // Volts per RPS of error is how CTRE handles PID when used with voltage requests
    * sim.withVelocityVoltageController(
    *   Volts.per(RotationsPerSecond).ofNative(0.4)
    * );
    * </code></pre>
+   *
    * @param kP the proportional gain
    * @return this instance for method chaining
    */
@@ -153,8 +170,9 @@ public class MapleMotorSim {
 
   /**
    * Configures the PD controller for Positional Requests using {@link OutputType#CURRENT}.
-   * 
+   *
    * <p>This is unit safe and can be configure like so:
+   *
    * <pre><code>
    * // Amps per Rotation of error is how CTRE handles PID when used with current requests
    * sim.withPositionalCurrentController(
@@ -162,12 +180,13 @@ public class MapleMotorSim {
    *   Amps.per(RotationsPerSecond).ofNative(5.0)
    * );
    * </code></pre>
-   * 
+   *
    * @param kP the proportional gain
    * @param kD the derivative gain
    * @return this instance for method chaining
    */
-  public MapleMotorSim withPositionalCurrentController(Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD) {
+  public MapleMotorSim withPositionalCurrentController(
+      Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD) {
     var kPUnit = PerUnit.combine(Amps, Radians);
     var kDUnit = PerUnit.combine(Amps, RadiansPerSecond);
     poseCurrentController.setP(kP.in(kPUnit));
@@ -177,15 +196,16 @@ public class MapleMotorSim {
 
   /**
    * Configures the PD controller for Velocity Requests using {@link OutputType#CURRENT}.
-   * 
+   *
    * <p>This is unit safe and can be configure like so:
+   *
    * <pre><code>
    * // Amps per RPS of error is how CTRE handles PID when used with current requests
    * sim.withVelocityCurrentController(
    *   Amps.per(RotationsPerSecond).ofNative(0.4)
    * );
    * </code></pre>
-   * 
+   *
    * @param kP the proportional gain
    * @return this instance for method chaining
    */
@@ -197,7 +217,7 @@ public class MapleMotorSim {
 
   /**
    * Configures the positionaly controllers to use continuous wrap.
-   * 
+   *
    * @param min the minimum angle
    * @param max the maximum angle
    * @return this instance for method chaining
@@ -211,7 +231,7 @@ public class MapleMotorSim {
 
   /**
    * Configures the angle of the motor.
-   * 
+   *
    * @param angle the angle of the motor
    * @return this instance for method chaining
    */
@@ -222,7 +242,7 @@ public class MapleMotorSim {
 
   /**
    * Configures the angular velocity of the motor.
-   * 
+   *
    * @param angularVelocity the angular velocity of the motor
    * @return this instance for method chaining
    */
@@ -233,9 +253,9 @@ public class MapleMotorSim {
 
   /**
    * Configures the current limit for the motor.
-   * 
-   * <p> This is the total current limit for the sim
-   * 
+   *
+   * <p>This is the total current limit for the sim
+   *
    * @param currentLimit the current limit for the motor
    * @return
    */
@@ -248,7 +268,7 @@ public class MapleMotorSim {
 
   /**
    * Configures the hard limits for the motor.
-   * 
+   *
    * @param forwardLimit the forward limit
    * @param reverseLimit the reverse limit
    * @return this instance for method chaining
@@ -281,7 +301,8 @@ public class MapleMotorSim {
 
   public Current getSupplyCurrent() {
     // https://www.chiefdelphi.com/t/current-limiting-talonfx-values/374780/10
-    return getStatorCurrentDraw().times(sim.getInputVoltage() / RobotController.getBatteryVoltage());
+    return getStatorCurrentDraw()
+        .times(sim.getInputVoltage() / RobotController.getBatteryVoltage());
   }
 
   public Voltage getRotorVoltage() {
@@ -322,7 +343,7 @@ public class MapleMotorSim {
     this.output = 0.0;
   }
 
-  /** Package private call  */
+  /** Package private call */
   void update() {
     double dtSeconds = SimulatedArena.getSimulationDt();
     switch (this.outputType) {
@@ -332,13 +353,17 @@ public class MapleMotorSim {
             driveAtVoltage(Volts.of(output));
           }
           case POSITION -> {
-            Voltage voltage = Volts.of(poseVoltController.calculate(getPosition().in(Radians), output));
-            Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), velocityForVolts(voltage));
+            Voltage voltage =
+                Volts.of(poseVoltController.calculate(getPosition().in(Radians), output));
+            Voltage feedforwardVoltage =
+                feedforward.calculate(getVelocity(), velocityForVolts(voltage));
             driveAtVoltage(feedforwardVoltage.plus(voltage));
           }
           case VELOCITY -> {
-            Voltage voltage = Volts.of(veloVoltController.calculate(getVelocity().in(RadiansPerSecond), output));
-            Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), RadiansPerSecond.of(output));
+            Voltage voltage =
+                Volts.of(veloVoltController.calculate(getVelocity().in(RadiansPerSecond), output));
+            Voltage feedforwardVoltage =
+                feedforward.calculate(getVelocity(), RadiansPerSecond.of(output));
             driveAtVoltage(voltage.plus(feedforwardVoltage));
           }
         }
@@ -349,14 +374,18 @@ public class MapleMotorSim {
             sim.setInputVoltage(voltsForAmps(Amps.of(output), getVelocity()).in(Volts));
           }
           case POSITION -> {
-            Current current = Amps.of(poseCurrentController.calculate(getPosition().in(Radians), output));
+            Current current =
+                Amps.of(poseCurrentController.calculate(getPosition().in(Radians), output));
             Voltage voltage = voltsForAmps(current, getVelocity());
-            Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), velocityForVolts(voltage));
+            Voltage feedforwardVoltage =
+                feedforward.calculate(getVelocity(), velocityForVolts(voltage));
             driveAtVoltage(feedforwardVoltage.plus(voltage));
           }
           case VELOCITY -> {
-            Current current = Amps.of(veloCurrentController.calculate(getPosition().in(Radians), output));
-            Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), RadiansPerSecond.of(output));
+            Current current =
+                Amps.of(veloCurrentController.calculate(getPosition().in(Radians), output));
+            Voltage feedforwardVoltage =
+                feedforward.calculate(getVelocity(), RadiansPerSecond.of(output));
             Voltage voltage = voltsForAmps(current, getVelocity()).plus(feedforwardVoltage);
             driveAtVoltage(voltage);
           }
@@ -388,7 +417,8 @@ public class MapleMotorSim {
     // required to get the motor moving.
 
     // to apply friction we convert the motors output to torque then back to voltage
-    double current = motor.getCurrent(sim.getAngularVelocityRadPerSec() * gearing, voltage.in(Volts));
+    double current =
+        motor.getCurrent(sim.getAngularVelocityRadPerSec() * gearing, voltage.in(Volts));
     double currentVelo = getVelocity().in(RadiansPerSecond) * gearing;
     double torque = motor.getTorque(current);
     double friction = frictionTorque().in(NewtonMeters);
@@ -410,15 +440,18 @@ public class MapleMotorSim {
 
   private Voltage voltsForAmps(Current current, AngularVelocity angularVelocity) {
     // find what voltage is needed to get the current
-    return Volts.of(motor.getVoltage(current.in(Amps), angularVelocity.in(RadiansPerSecond) * gearing));
+    return Volts.of(
+        motor.getVoltage(current.in(Amps), angularVelocity.in(RadiansPerSecond) * gearing));
   }
 
   private AngularVelocity velocityForVolts(Voltage voltage) {
-    return RadiansPerSecond.of(motor.getSpeed(motor.getTorque(getStatorCurrentDraw().in(Amps)), voltage.in(Volts)));
+    return RadiansPerSecond.of(
+        motor.getSpeed(motor.getTorque(getStatorCurrentDraw().in(Amps)), voltage.in(Volts)));
   }
 
   private Torque frictionTorque() {
-    return NewtonMeters.of(motor.getTorque(motor.getCurrent(0.0, frictionVoltage.in(Volts))) * gearing);
+    return NewtonMeters.of(
+        motor.getTorque(motor.getCurrent(0.0, frictionVoltage.in(Volts))) * gearing);
   }
 
   private Voltage constrainOutputVoltage(Voltage requestedOutput) {
@@ -427,15 +460,18 @@ public class MapleMotorSim {
     final double motorCurrentVelocityRadPerSec = getVelocity().in(RadiansPerSecond);
     final double currentLimitAmps = currentLimit.in(Amps);
     final double requestedOutputVoltage = requestedOutput.in(Volts);
-    final double currentAtRequestedVolts = motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltage);
+    final double currentAtRequestedVolts =
+        motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltage);
 
     // Resource for current limiting:
     // https://file.tavsys.net/control/controls-engineering-in-frc.pdf (sec 12.1.3)
-    final boolean currentTooHigh = Math.abs(currentAtRequestedVolts) > (kCurrentThreshold * currentLimitAmps);
+    final boolean currentTooHigh =
+        Math.abs(currentAtRequestedVolts) > (kCurrentThreshold * currentLimitAmps);
     double limitedVoltage = requestedOutputVoltage;
     if (currentTooHigh) {
       final double limitedCurrent = Math.copySign(currentLimitAmps, currentAtRequestedVolts);
-      limitedVoltage = motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
+      limitedVoltage =
+          motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
     }
 
     // ensure the current limit doesn't cause an increase to output voltage
@@ -444,6 +480,10 @@ public class MapleMotorSim {
     }
 
     // constrain the output voltage to the battery voltage
-    return Volts.of(MathUtil.clamp(limitedVoltage, -RobotController.getBatteryVoltage(), RobotController.getBatteryVoltage()));
+    return Volts.of(
+        MathUtil.clamp(
+            limitedVoltage,
+            -RobotController.getBatteryVoltage(),
+            RobotController.getBatteryVoltage()));
   }
 }

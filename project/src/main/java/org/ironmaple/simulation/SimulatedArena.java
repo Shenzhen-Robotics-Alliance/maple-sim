@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.lang.ref.WeakReference;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
@@ -327,11 +326,9 @@ public abstract class SimulatedArena {
         motorRef.update();
       }
     }
-    double vin = BatterySim.calculateLoadedBatteryVoltage(
-      12.2,
-      0.015,
-      motorCurrents.stream().mapToDouble(Double::doubleValue).toArray()
-    );
+    double vin =
+        BatterySim.calculateLoadedBatteryVoltage(
+            12.2, 0.015, motorCurrents.stream().mapToDouble(Double::doubleValue).toArray());
     RoboRioSim.setVInVoltage(vin);
 
     for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)

@@ -268,12 +268,16 @@ public class SwerveModuleSimulation {
           double tireCoefficientOfFriction,
           double wheelsRadiusMeters,
           double steerRotationalInertia,
-          Per<CurrentUnit, AngleUnit> steerKp,
-          Per<CurrentUnit, AngularVelocityUnit> steerKd,
-          Per<CurrentUnit, AngleUnit> driveKp,
+          double steerKp,
+          double steerKd,
+          AngleUnit steerInputUnit,
+          double driveKp,
           Voltage driveKs,
-          Per<VoltageUnit, AngularVelocityUnit> driveKv,
-          Per<VoltageUnit, AngularAccelerationUnit> driveKa) {
+          double driveKv,
+          double driveKa,
+          AngularVelocityUnit driveInputUnit,
+          boolean useVoltage) {
+    MapleMotorSim steerMotorSimTemp;
     DRIVE_MOTOR = driveMotor;
     DRIVE_CURRENT_LIMIT = driveCurrentLimit;
     DRIVE_GEAR_RATIO = driveGearRatio;
@@ -282,15 +286,33 @@ public class SwerveModuleSimulation {
     WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
     WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
-    this.steerMotorSim =
+    steerMotorSimTemp =
             new MapleMotorSim(
                     SimulatedArena.getInstance(),
                     steerMotor,
                     steerGearRatio,
                     KilogramSquareMeters.of(steerRotationalInertia),
-                    Volts.of(steerFrictionVoltage))
-                    .withPositionalCurrentController(steerKp, steerKd);
+                    Volts.of(steerFrictionVoltage));
 
+    if (useVoltage) {
+      var steerPos = Volts.per(steerInputUnit);
+      var steerVel = Volts.per(steerInputUnit.per(Seconds));
+
+      steerMotorSimTemp = steerMotorSimTemp.withPositionalVoltageController(
+              steerPos.ofNative(steerKp),
+              steerVel.ofNative(steerKd)
+      );
+    } else {
+      var steerPos = Amps.per(steerInputUnit);
+      var steerVel = Amps.per(steerInputUnit.per(Seconds));
+
+      steerMotorSimTemp = steerMotorSimTemp.withPositionalCurrentController(
+              steerPos.ofNative(steerKp),
+              steerVel.ofNative(steerKd)
+      );
+    }
+
+    this.steerMotorSim = steerMotorSimTemp;
     this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
     for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
       cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);

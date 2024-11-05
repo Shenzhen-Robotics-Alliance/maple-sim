@@ -85,8 +85,8 @@ public class SimplifiedSwerveDriveSimulation {
     this.driveOpenLoop =
         new SimpleMotorFeedforward(
             moduleSimulations[0].DRIVE_FRICTION_VOLTAGE,
-            moduleSimulations[0].DRIVE_MOTOR.nominalVoltageVolts
-                / moduleSimulations[0].DRIVE_MOTOR.freeSpeedRadPerSec);
+            moduleSimulations[0].driveMotorSim.nominalVoltageVolts
+                / moduleSimulations[0].driveMotorSim.freeSpeedRadPerSec);
     this.kinematics = swerveDriveSimulation.kinematics;
 
     this.poseEstimator =

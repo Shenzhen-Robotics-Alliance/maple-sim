@@ -313,6 +313,14 @@ public class MapleMotorSim {
     return Volts.of(RobotController.getBatteryVoltage());
   }
 
+  public Torque getRotorTorque(Current current) {
+    return NewtonMeters.of(motor.getTorque(current.in(Amps)));
+  }
+
+  public AngularVelocity getFreeWheelSpeed() {
+    return RadiansPerSecond.of(motor.freeSpeedRadPerSec);
+  }
+
   public void setControl(OutputType outputType, AngularVelocity velo) {
     this.outputType = outputType;
     this.outputMode = OutputMode.VELOCITY;

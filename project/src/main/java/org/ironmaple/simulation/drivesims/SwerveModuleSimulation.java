@@ -65,8 +65,8 @@ import static edu.wpi.first.units.Units.*;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-  public final MapleMotorSim driveMotorSim;
-  private final MapleMotorSim steerMotorSim;
+  private MapleMotorSim driveMotorSim;
+  private MapleMotorSim steerMotorSim;
   public final double DRIVE_CURRENT_LIMIT,
       DRIVE_GEAR_RATIO,
       STEER_GEAR_RATIO,
@@ -198,8 +198,6 @@ public class SwerveModuleSimulation {
           double driveKa,
           AngularVelocityUnit driveInputUnit,
           boolean useVoltage) {
-    MapleMotorSim steerMotorSimTemp;
-    MapleMotorSim driveMotorSimTemp;
     DRIVE_CURRENT_LIMIT = driveCurrentLimit;
     DRIVE_GEAR_RATIO = driveGearRatio;
     STEER_GEAR_RATIO = steerGearRatio;
@@ -207,7 +205,7 @@ public class SwerveModuleSimulation {
     WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
     WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
-    steerMotorSimTemp =
+    this.steerMotorSim =
             new MapleMotorSim(
                     SimulatedArena.getInstance(),
                     steerMotor,
@@ -215,7 +213,7 @@ public class SwerveModuleSimulation {
                     KilogramSquareMeters.of(steerRotationalInertia),
                     Volts.of(steerFrictionVoltage));
 
-    driveMotorSimTemp =
+    this.driveMotorSim =
             new MapleMotorSim(
                     SimulatedArena.getInstance(),
                     driveMotor,
@@ -227,7 +225,7 @@ public class SwerveModuleSimulation {
       var steerPos = Volts.per(steerInputUnit);
       var steerVel = Volts.per(steerInputUnit.per(Seconds));
 
-      steerMotorSimTemp = steerMotorSimTemp.withPositionalVoltageController(
+      this.steerMotorSim = steerMotorSim.withPositionalVoltageController(
               steerPos.ofNative(steerKp),
               steerVel.ofNative(steerKd)
       );
@@ -235,7 +233,7 @@ public class SwerveModuleSimulation {
       var drivePos = Volts.per(driveInputUnit);
       var driveVel = Volts.per(driveInputUnit.per(Seconds));
 
-      driveMotorSimTemp = driveMotorSimTemp.withPositionalVoltageController(
+      this.driveMotorSim = driveMotorSim.withPositionalVoltageController(
               steerPos.ofNative(steerKp),
               steerVel.ofNative(steerKd)
       );
@@ -243,7 +241,7 @@ public class SwerveModuleSimulation {
       var steerPos = Amps.per(steerInputUnit);
       var steerVel = Amps.per(steerInputUnit.per(Seconds));
 
-      steerMotorSimTemp = steerMotorSimTemp.withPositionalCurrentController(
+      this.steerMotorSim = steerMotorSim.withPositionalCurrentController(
               steerPos.ofNative(steerKp),
               steerVel.ofNative(steerKd)
       );
@@ -251,14 +249,12 @@ public class SwerveModuleSimulation {
       var drivePos = Amps.per(driveInputUnit);
       var driveVel = Amps.per(driveInputUnit.per(Seconds));
 
-      driveMotorSimTemp = driveMotorSimTemp.withPositionalCurrentController(
+      this.driveMotorSim = driveMotorSim.withPositionalCurrentController(
               steerPos.ofNative(steerKp),
               steerVel.ofNative(steerKd)
       );
     }
 
-    this.steerMotorSim = steerMotorSimTemp;
-    this.driveMotorSim = driveMotorSimTemp;
     this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
     for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
       cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);

@@ -3,8 +3,31 @@ package org.ironmaple.simulation.drivesims;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.LinearAccelerationUnit;
+import edu.wpi.first.units.LinearVelocityUnit;
+import edu.wpi.first.units.PerUnit;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Force;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Per;
+import edu.wpi.first.units.measure.Torque;
+
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.NewtonMeter;
+import static edu.wpi.first.units.Units.Newtons;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+
 import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.Force;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
@@ -59,18 +82,20 @@ public abstract class AbstractDriveTrainSimulation extends Body {
     this.profile = profile;
 
     /* width and height in world reference is flipped */
-    final double WIDTH_IN_WORLD_REFERENCE = profile.length,
+    final Distance WIDTH_IN_WORLD_REFERENCE = profile.length,
         HEIGHT_IN_WORLD_REFERENCE = profile.width;
 
     super.addFixture(
-        Geometry.createRectangle(WIDTH_IN_WORLD_REFERENCE, HEIGHT_IN_WORLD_REFERENCE),
-        profile.robotMass / (profile.length * profile.width),
+        Geometry.createRectangle(WIDTH_IN_WORLD_REFERENCE.in(Meters), HEIGHT_IN_WORLD_REFERENCE.in(Meters)),
+        profile.robotMass.divide(profile.length.in(Meters) * profile.width.in(Meters)).in(Kilograms),
         BUMPER_COEFFICIENT_OF_FRICTION,
         BUMPER_COEFFICIENT_OF_RESTITUTION);
 
     super.setMass(MassType.NORMAL);
-    super.setLinearDamping(profile.linearVelocityDamping);
-    super.setAngularDamping(profile.angularVelocityDamping);
+    var linearDampingUnit = PerUnit.combine(MetersPerSecondPerSecond, MetersPerSecond);
+    var angularDampingUnit = PerUnit.combine(RadiansPerSecondPerSecond, RadiansPerSecond);
+    super.setLinearDamping(profile.linearVelocityDamping.in(linearDampingUnit));
+    super.setAngularDamping(profile.angularVelocityDamping.in(angularDampingUnit));
     setSimulationWorldPose(initialPoseOnField);
   }
 
@@ -133,7 +158,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
    */
   protected void simulateChassisLinearFriction() {
     final double actualLinearVelocityPercent =
-        getLinearVelocity().getMagnitude() / profile.maxLinearVelocity;
+        getLinearVelocity().getMagnitude() / profile.maxLinearVelocity.in(MetersPerSecond);
     final boolean robotActuallyMovingLinearly = actualLinearVelocityPercent > 0.01;
     if (robotActuallyMovingLinearly)
       /*
@@ -142,10 +167,10 @@ public abstract class AbstractDriveTrainSimulation extends Body {
        * with its magnitude specified in profile
        * */
       super.applyForce(
-          new Force(
+          new org.dyn4j.dynamics.Force(
               super.linearVelocity
                   .getNormalized()
-                  .multiply(-profile.frictionForceMagnitudeNewtons)));
+                  .multiply(-profile.frictionMagnitude.in(Newtons))));
     else /* when the velocity is too small, just set the object at rest */
       super.setLinearVelocity(new Vector2());
   }
@@ -163,9 +188,9 @@ public abstract class AbstractDriveTrainSimulation extends Body {
    */
   protected void simulateChassisAngularFriction(double desiredRotationalMotionPercent) {
     final double
-        actualRotationalMotionPercent = Math.abs(getAngularVelocity() / profile.maxAngularVelocity),
+        actualRotationalMotionPercent = Math.abs(getAngularVelocity() / profile.maxAngularVelocity.in(RadiansPerSecond)),
         differenceBetweenFloorSpeedAndModuleSpeed =
-            desiredRotationalMotionPercent * profile.maxAngularVelocity - getAngularVelocity(),
+            desiredRotationalMotionPercent * profile.maxAngularVelocity.in(RadiansPerSecond) - getAngularVelocity(),
         FRICTION_TORQUE_GAIN = 1;
 
     if (actualRotationalMotionPercent < 0.01 && Math.abs(desiredRotationalMotionPercent) < 0.02)
@@ -175,9 +200,9 @@ public abstract class AbstractDriveTrainSimulation extends Body {
           Math.copySign(
               Math.min(
                   FRICTION_TORQUE_GAIN
-                      * profile.angularFrictionTorqueMagnitude
+                      * profile.angularFrictionTorqueMagnitude.in(NewtonMeter)
                       * Math.abs(differenceBetweenFloorSpeedAndModuleSpeed),
-                  profile.angularFrictionTorqueMagnitude),
+                  profile.angularFrictionTorqueMagnitude.in(NewtonMeter)),
               differenceBetweenFloorSpeedAndModuleSpeed));
   }
 
@@ -244,26 +269,25 @@ public abstract class AbstractDriveTrainSimulation extends Body {
 
   /** stores the profile of a drivetrain simulation */
   public static final class DriveTrainSimulationProfile {
-    public final double maxLinearVelocity,
-        maxLinearAcceleration,
-        maxAngularVelocity,
-        maxAngularAcceleration,
-        robotMass,
-        width,
-        length;
-    private double frictionForceMagnitudeNewtons,
-        linearVelocityDamping,
-        angularFrictionTorqueMagnitude,
-        angularVelocityDamping;
-
+    public final LinearVelocity maxLinearVelocity;
+    public final LinearAcceleration maxLinearAcceleration;
+    public final AngularVelocity maxAngularVelocity;
+    public final AngularAcceleration maxAngularAcceleration;
+    public final Mass robotMass;
+    public final Distance width;
+    public final Distance length;
+    private Force frictionMagnitude;
+    private Per<LinearAccelerationUnit, LinearVelocityUnit> linearVelocityDamping;
+    private Torque angularFrictionTorqueMagnitude;
+    private Per<AngularAccelerationUnit, AngularVelocityUnit> angularVelocityDamping;
     public DriveTrainSimulationProfile(
-        double maxLinearVelocity,
-        double maxLinearAcceleration,
-        double maxAngularVelocity,
-        double maxAngularAcceleration,
-        double robotMass,
-        double width,
-        double length) {
+        LinearVelocity maxLinearVelocity,
+        LinearAcceleration maxLinearAcceleration,
+        AngularVelocity maxAngularVelocity,
+        AngularAcceleration maxAngularAcceleration,
+        Mass robotMass,
+        Distance width,
+        Distance length) {
       this.maxLinearVelocity = maxLinearVelocity;
       this.maxLinearAcceleration = maxLinearAcceleration;
       this.maxAngularVelocity = maxAngularVelocity;
@@ -274,32 +298,32 @@ public abstract class AbstractDriveTrainSimulation extends Body {
 
       final double GRAVITY_CONSTANT = 9.8,
           WHEEL_COEFFICIENT_OF_FRICTION = 0.8,
-          DRIVE_BASE_RADIUS = Math.hypot(width / 2, length / 2);
-      this.frictionForceMagnitudeNewtons =
-          GRAVITY_CONSTANT * WHEEL_COEFFICIENT_OF_FRICTION * robotMass;
-      this.linearVelocityDamping = maxLinearAcceleration / maxLinearVelocity * 0.75;
-      this.angularFrictionTorqueMagnitude = frictionForceMagnitudeNewtons * DRIVE_BASE_RADIUS / 2;
-      this.angularVelocityDamping = maxAngularAcceleration / maxAngularVelocity * 0.75;
+          DRIVE_BASE_RADIUS = Math.hypot(width.in(Meters) / 2, length.in(Meters) / 2);
+      this.frictionMagnitude =
+          Newtons.of(GRAVITY_CONSTANT * WHEEL_COEFFICIENT_OF_FRICTION * robotMass.in(Kilograms));
+      this.linearVelocityDamping = maxLinearAcceleration.divide(maxLinearVelocity).times(0.75);
+      this.angularFrictionTorqueMagnitude = NewtonMeter.of(frictionMagnitude.in(Newtons) * DRIVE_BASE_RADIUS / 2);
+      this.angularVelocityDamping = maxAngularAcceleration.divide(maxAngularVelocity).times(0.75);
     }
 
     public DriveTrainSimulationProfile withFrictionForceMagnitude(
-        double frictionForceMagnitudeNewtons) {
-      this.frictionForceMagnitudeNewtons = frictionForceMagnitudeNewtons;
+        Force frictionForceMagnitudeNewtons) {
+      this.frictionMagnitude = frictionForceMagnitudeNewtons;
       return this;
     }
 
-    public DriveTrainSimulationProfile withLinearVelocityDamping(double linearVelocityDamping) {
+    public DriveTrainSimulationProfile withLinearVelocityDamping(Per<LinearAccelerationUnit, LinearVelocityUnit> linearVelocityDamping) {
       this.linearVelocityDamping = linearVelocityDamping;
       return this;
     }
 
     public DriveTrainSimulationProfile withAngularFrictionTorqueMagnitude(
-        double angularFrictionTorqueMagnitude) {
+        Torque angularFrictionTorqueMagnitude) {
       this.angularFrictionTorqueMagnitude = angularFrictionTorqueMagnitude;
       return this;
     }
 
-    public DriveTrainSimulationProfile withAngularVelocityDamping(double angularVelocityDamping) {
+    public DriveTrainSimulationProfile withAngularVelocityDamping(Per<AngularAccelerationUnit, AngularVelocityUnit> angularVelocityDamping) {
       this.angularVelocityDamping = angularVelocityDamping;
       return this;
     }
@@ -314,7 +338,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
           maxLinearVelocity,
           maxLinearAcceleration,
           robotMass,
-          frictionForceMagnitudeNewtons,
+          frictionMagnitude,
           linearVelocityDamping,
           maxAngularVelocity,
           maxAngularAcceleration,

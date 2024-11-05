@@ -4,7 +4,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -126,6 +129,7 @@ public abstract class SimulatedArena {
   protected final Set<GamePieceOnFieldSimulation> gamePieces;
   protected final Set<GamePieceProjectile> gamePieceProjectile;
   protected final List<Runnable> simulationSubTickActions;
+  protected final List<WeakReference<MapleMotorSim>> motors;
   private final List<IntakeSimulation> intakeSimulations;
 
   /**
@@ -151,6 +155,7 @@ public abstract class SimulatedArena {
     this.gamePieces = new HashSet<>();
     this.gamePieceProjectile = new HashSet<>();
     this.intakeSimulations = new ArrayList<>();
+    motors = new ArrayList<>();
   }
 
   /**
@@ -266,6 +271,10 @@ public abstract class SimulatedArena {
     this.gamePieces.clear();
   }
 
+  public void addMotor(MapleMotorSim motor) {
+    motors.add(new WeakReference<>(motor));
+  }
+
   /**
    *
    *
@@ -310,6 +319,18 @@ public abstract class SimulatedArena {
    * </ul>
    */
   private void simulationSubTick() {
+    ArrayList<Double> motorCurrents = new ArrayList<>();
+    for (var motor : motors) {
+      MapleMotorSim motorRef = motor.get();
+      if (motorRef != null) {
+        motorRef.update();
+      }
+    }
+    double vin =
+        BatterySim.calculateLoadedBatteryVoltage(
+            12.2, 0.015, motorCurrents.stream().mapToDouble(Double::doubleValue).toArray());
+    RoboRioSim.setVInVoltage(vin);
+
     for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
       driveTrainSimulation.simulationSubTick();
 

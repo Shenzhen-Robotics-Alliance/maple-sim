@@ -63,10 +63,10 @@ public class MapleMotorSim {
   /** The voltage required to overcome friction */
   private final Voltage frictionVoltage;
 
-  private PIDController poseVoltController = new PIDController(0, 0, 0);
-  private PIDController veloVoltController = new PIDController(0, 0, 0);
-  private PIDController poseCurrentController = new PIDController(0, 0, 0);
-  private PIDController veloCurrentController = new PIDController(0, 0, 0);
+  private final PIDController poseVoltController = new PIDController(0, 0, 0);
+  private final PIDController veloVoltController = new PIDController(0, 0, 0);
+  private final PIDController poseCurrentController = new PIDController(0, 0, 0);
+  private final PIDController veloCurrentController = new PIDController(0, 0, 0);
 
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0, 0);
 

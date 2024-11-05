@@ -62,14 +62,14 @@ public class MapleMotorSim {
   private final double gearing;
   /** The voltage required to overcome friction */
   private final Voltage frictionVoltage;
-  /** The PID controllers for the motor */
-  private final PIDController[] controllers = new PIDController[] {
-    new PIDController(0, 0, 0),
-    new PIDController(0, 0, 0),
-    new PIDController(0, 0, 0),
-    new PIDController(0, 0, 0)
-  };
+
+  private PIDController poseVoltController = new PIDController(0, 0, 0);
+  private PIDController veloVoltController = new PIDController(0, 0, 0);
+  private PIDController poseCurrentController = new PIDController(0, 0, 0);
+  private PIDController veloCurrentController = new PIDController(0, 0, 0);
+
   private SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0, 0);
+
   private Current currentLimit = Amps.of(300.0);
 
   private OutputType outputType = OutputType.VOLTAGE;
@@ -127,8 +127,8 @@ public class MapleMotorSim {
   public MapleMotorSim withPositionalVoltageController(Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
     var kPUnit = PerUnit.combine(Volts, Radians);
     var kDUnit = PerUnit.combine(Volts, RadiansPerSecond);
-    controllers[0].setP(kP.in(kPUnit));
-    controllers[0].setD(kD.in(kDUnit));
+    poseVoltController.setP(kP.in(kPUnit));
+    poseVoltController.setD(kD.in(kDUnit));
     return this;
   }
 
@@ -147,7 +147,7 @@ public class MapleMotorSim {
    */
   public MapleMotorSim withVelocityVoltageController(Per<VoltageUnit, AngleUnit> kP) {
     var kPUnit = PerUnit.combine(Volts, Radians);
-    controllers[1].setP(kP.in(kPUnit));
+    veloVoltController.setP(kP.in(kPUnit));
     return this;
   }
 
@@ -170,8 +170,8 @@ public class MapleMotorSim {
   public MapleMotorSim withPositionalCurrentController(Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD) {
     var kPUnit = PerUnit.combine(Amps, Radians);
     var kDUnit = PerUnit.combine(Amps, RadiansPerSecond);
-    controllers[2].setP(kP.in(kPUnit));
-    controllers[2].setD(kD.in(kDUnit));
+    poseCurrentController.setP(kP.in(kPUnit));
+    poseCurrentController.setD(kD.in(kDUnit));
     return this;
   }
 
@@ -191,7 +191,7 @@ public class MapleMotorSim {
    */
   public MapleMotorSim withVelocityCurrentController(Per<CurrentUnit, AngleUnit> kP) {
     var kPUnit = PerUnit.combine(Amps, Radians);
-    controllers[3].setP(kP.in(kPUnit));
+    veloCurrentController.setP(kP.in(kPUnit));
     return this;
   }
 
@@ -204,8 +204,8 @@ public class MapleMotorSim {
    * @see PIDController#enableContinuousInput(double, double)
    */
   public MapleMotorSim withControllerContinousInput(Angle min, Angle max) {
-    controllers[0].enableContinuousInput(min.in(Radians), max.in(Radians));
-    controllers[2].enableContinuousInput(min.in(Radians), max.in(Radians));
+    poseVoltController.enableContinuousInput(min.in(Radians), max.in(Radians));
+    poseCurrentController.enableContinuousInput(min.in(Radians), max.in(Radians));
     return this;
   }
 
@@ -332,12 +332,12 @@ public class MapleMotorSim {
             driveAtVoltage(Volts.of(output));
           }
           case POSITION -> {
-            Voltage voltage = Volts.of(controllers[0].calculate(getPosition().in(Radians), output));
+            Voltage voltage = Volts.of(poseVoltController.calculate(getPosition().in(Radians), output));
             Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), velocityForVolts(voltage));
             driveAtVoltage(feedforwardVoltage.plus(voltage));
           }
           case VELOCITY -> {
-            Voltage voltage = Volts.of(controllers[1].calculate(getVelocity().in(RadiansPerSecond), output));
+            Voltage voltage = Volts.of(veloVoltController.calculate(getVelocity().in(RadiansPerSecond), output));
             Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), RadiansPerSecond.of(output));
             driveAtVoltage(voltage.plus(feedforwardVoltage));
           }
@@ -349,13 +349,13 @@ public class MapleMotorSim {
             sim.setInputVoltage(voltsForAmps(Amps.of(output), getVelocity()).in(Volts));
           }
           case POSITION -> {
-            Current current = Amps.of(controllers[2].calculate(getPosition().in(Radians), output));
+            Current current = Amps.of(poseCurrentController.calculate(getPosition().in(Radians), output));
             Voltage voltage = voltsForAmps(current, getVelocity());
             Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), velocityForVolts(voltage));
             driveAtVoltage(feedforwardVoltage.plus(voltage));
           }
           case VELOCITY -> {
-            Current current = Amps.of(controllers[3].calculate(getPosition().in(Radians), output));
+            Current current = Amps.of(veloCurrentController.calculate(getPosition().in(Radians), output));
             Voltage feedforwardVoltage = feedforward.calculate(getVelocity(), RadiansPerSecond.of(output));
             Voltage voltage = voltsForAmps(current, getVelocity()).plus(feedforwardVoltage);
             driveAtVoltage(voltage);

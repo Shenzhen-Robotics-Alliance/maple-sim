@@ -20,6 +20,7 @@ import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.BatterySimulationContainer;
 import org.ironmaple.simulation.motorsims.MapleMotorSim;
+import org.ironmaple.simulation.motorsims.SimMotorConfigs;
 
 /**
  *
@@ -125,11 +126,11 @@ public class SwerveModuleSimulation {
         WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
         WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
-        this.steerMotorSim = new MapleMotorSim(
+        this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
                 steerMotor,
                 steerGearRatio,
                 KilogramSquareMeters.of(steerRotationalInertia),
-                Volts.of(steerFrictionVoltage));
+                Volts.of(steerFrictionVoltage)));
         BatterySimulationContainer.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();

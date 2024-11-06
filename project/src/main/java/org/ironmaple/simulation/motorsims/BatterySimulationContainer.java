@@ -25,7 +25,7 @@ public class BatterySimulationContainer {
     }
 
     public void addMotor(MapleMotorSim mapleMotorSim) {
-        this.electricalAppliances.add(mapleMotorSim::getStatorCurrentDraw);
+        this.electricalAppliances.add(mapleMotorSim::getStatorCurrent);
     }
 
     public void flush() {

@@ -92,10 +92,8 @@ public abstract class AbstractDriveTrainSimulation extends Body {
         BUMPER_COEFFICIENT_OF_RESTITUTION);
 
     super.setMass(MassType.NORMAL);
-    var linearDampingUnit = PerUnit.combine(MetersPerSecondPerSecond, MetersPerSecond);
-    var angularDampingUnit = PerUnit.combine(RadiansPerSecondPerSecond, RadiansPerSecond);
-    super.setLinearDamping(profile.linearVelocityDamping.in(linearDampingUnit));
-    super.setAngularDamping(profile.angularVelocityDamping.in(angularDampingUnit));
+    super.setLinearDamping(profile.linearVelocityDamping);
+    super.setAngularDamping(profile.angularVelocityDamping);
     setSimulationWorldPose(initialPoseOnField);
   }
 
@@ -277,9 +275,9 @@ public abstract class AbstractDriveTrainSimulation extends Body {
     public final Distance width;
     public final Distance length;
     private Force frictionMagnitude;
-    private Per<LinearAccelerationUnit, LinearVelocityUnit> linearVelocityDamping;
+    private double linearVelocityDamping;
     private Torque angularFrictionTorqueMagnitude;
-    private Per<AngularAccelerationUnit, AngularVelocityUnit> angularVelocityDamping;
+    private double angularVelocityDamping;
     public DriveTrainSimulationProfile(
         LinearVelocity maxLinearVelocity,
         LinearAcceleration maxLinearAcceleration,
@@ -301,9 +299,9 @@ public abstract class AbstractDriveTrainSimulation extends Body {
           DRIVE_BASE_RADIUS = Math.hypot(width.in(Meters) / 2, length.in(Meters) / 2);
       this.frictionMagnitude =
           Newtons.of(GRAVITY_CONSTANT * WHEEL_COEFFICIENT_OF_FRICTION * robotMass.in(Kilograms));
-      this.linearVelocityDamping = maxLinearAcceleration.divide(maxLinearVelocity).times(0.75);
+      this.linearVelocityDamping = maxLinearAcceleration.in(MetersPerSecondPerSecond) / maxLinearVelocity.in(MetersPerSecond) * 0.75;
       this.angularFrictionTorqueMagnitude = NewtonMeter.of(frictionMagnitude.in(Newtons) * DRIVE_BASE_RADIUS / 2);
-      this.angularVelocityDamping = maxAngularAcceleration.divide(maxAngularVelocity).times(0.75);
+      this.angularVelocityDamping = maxAngularAcceleration.in(RadiansPerSecondPerSecond) / maxAngularVelocity.in(RadiansPerSecond) * 0.75;
     }
 
     public DriveTrainSimulationProfile withFrictionForceMagnitude(
@@ -313,6 +311,12 @@ public abstract class AbstractDriveTrainSimulation extends Body {
     }
 
     public DriveTrainSimulationProfile withLinearVelocityDamping(Per<LinearAccelerationUnit, LinearVelocityUnit> linearVelocityDamping) {
+      var linearDampingUnit = PerUnit.combine(MetersPerSecondPerSecond, MetersPerSecond);  
+      this.linearVelocityDamping = linearVelocityDamping.in(linearDampingUnit);
+      return this;
+    }
+
+    public DriveTrainSimulationProfile withLinearVelocityDamping(double linearVelocityDamping) {
       this.linearVelocityDamping = linearVelocityDamping;
       return this;
     }
@@ -323,7 +327,13 @@ public abstract class AbstractDriveTrainSimulation extends Body {
       return this;
     }
 
-    public DriveTrainSimulationProfile withAngularVelocityDamping(Per<AngularAccelerationUnit, AngularVelocityUnit> angularVelocityDamping) {
+    public DriveTrainSimulationProfile withAngularVelocityDamping(Per<AngularAccelerationUnit, AngularVelocityUnit> angularVelocityDamping) {      
+      var angularDampingUnit = PerUnit.combine(RadiansPerSecondPerSecond, RadiansPerSecond);
+      this.angularVelocityDamping = angularVelocityDamping.in(angularDampingUnit);
+      return this;
+    }
+    
+    public DriveTrainSimulationProfile withAngularVelocityDamping(double angularVelocityDamping) {
       this.angularVelocityDamping = angularVelocityDamping;
       return this;
     }

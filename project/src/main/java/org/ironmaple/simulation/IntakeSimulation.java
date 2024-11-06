@@ -1,5 +1,7 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
@@ -129,13 +131,13 @@ public class IntakeSimulation extends BodyFixture {
     final double distanceTransformed = lengthExtended / 2 - 0.01;
     intakeRectangle.translate(
         switch (side) {
-          case LEFT -> new Vector2(0, driveTrainSimulation.profile.width / 2 + distanceTransformed);
+          case LEFT -> new Vector2(0, driveTrainSimulation.profile.width.in(Meters) / 2 + distanceTransformed);
           case RIGHT -> new Vector2(
-              0, -driveTrainSimulation.profile.width / 2 - distanceTransformed);
+              0, -driveTrainSimulation.profile.width.in(Meters) / 2 - distanceTransformed);
           case FRONT -> new Vector2(
-              driveTrainSimulation.profile.length / 2 + distanceTransformed, 0);
+              driveTrainSimulation.profile.length.in(Meters) / 2 + distanceTransformed, 0);
           case BACK -> new Vector2(
-              -driveTrainSimulation.profile.length / 2 - distanceTransformed / 2, 0);
+              -driveTrainSimulation.profile.length.in(Meters) / 2 - distanceTransformed / 2, 0);
         });
 
     return intakeRectangle;

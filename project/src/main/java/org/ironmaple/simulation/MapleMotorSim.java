@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.NewtonMeters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.MathUtil;
@@ -117,7 +118,7 @@ public class MapleMotorSim {
     var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
     feedforward =
         new SimpleMotorFeedforward(
-            kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), SimulatedArena.getSimulationDt());
+            kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), SimulatedArena.getSimulationDt().in(Seconds));
     return this;
   }
 
@@ -345,7 +346,7 @@ public class MapleMotorSim {
 
   /** Package private call */
   void update() {
-    double dtSeconds = SimulatedArena.getSimulationDt();
+    double dtSeconds = SimulatedArena.getSimulationDt().in(Seconds);
     switch (this.outputType) {
       case VOLTAGE -> {
         switch (this.outputMode) {

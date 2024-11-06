@@ -6,6 +6,22 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Force;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Mass;
+
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Newtons;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.Arrays;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
@@ -66,7 +82,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
   protected final GyroSimulation gyroSimulation;
   protected final Translation2d[] moduleTranslations;
   protected final SwerveDriveKinematics kinematics;
-  private final double gravityForceOnEachModule;
+  private final Force gravityForceOnEachModule;
 
   /**
    *
@@ -89,9 +105,9 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
    *     represented as a {@link Pose2d}
    */
   public SwerveDriveSimulation(
-      double robotMassWithBumpersKg,
-      double bumperWidthMeters,
-      double bumperLengthMeters,
+      Mass robotMassWithBumpersKg,
+      Distance bumperWidthMeters,
+      Distance bumperLengthMeters,
       SwerveModuleSimulation[] moduleSimulations,
       Translation2d[] moduleTranslations,
       GyroSimulation gyroSimulation,
@@ -101,11 +117,11 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 moduleSimulations[0].getModuleTheoreticalSpeedMPS(),
                 moduleSimulations[0].getModuleMaxAccelerationMPSsq(
                     robotMassWithBumpersKg, moduleSimulations.length),
-                moduleSimulations[0].getModuleTheoreticalSpeedMPS()
-                    / moduleTranslations[0].getNorm(),
-                moduleSimulations[0].getModuleMaxAccelerationMPSsq(
+                RadiansPerSecond.of(moduleSimulations[0].getModuleTheoreticalSpeedMPS()
+                    .divide(moduleTranslations[0].getNorm()).in(MetersPerSecond)),
+                RadiansPerSecondPerSecond.of(moduleSimulations[0].getModuleMaxAccelerationMPSsq(
                         robotMassWithBumpersKg, moduleSimulations.length)
-                    / moduleTranslations[0].getNorm(),
+                    .divide(moduleTranslations[0].getNorm()).in(MetersPerSecondPerSecond)),
                 robotMassWithBumpersKg,
                 bumperWidthMeters,
                 bumperLengthMeters)
@@ -118,7 +134,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     this.kinematics = new SwerveDriveKinematics(moduleTranslations);
     this.gyroSimulation = gyroSimulation;
 
-    this.gravityForceOnEachModule = profile.robotMass * 9.8 / moduleSimulations.length;
+    this.gravityForceOnEachModule = Newtons.of(profile.robotMass.in(Kilograms) * 9.8 / moduleSimulations.length);
   }
 
   /**
@@ -142,11 +158,11 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
    *     a {@link Pose2d}
    */
   public SwerveDriveSimulation(
-      double robotMassWidthBumpersKg,
-      double trackWidthMeters,
-      double trackLengthMeters,
-      double bumperWidthMeters,
-      double bumperLengthMeters,
+      Mass robotMassWidthBumpersKg,
+      Distance trackWidthMeters,
+      Distance trackLengthMeters,
+      Distance bumperWidthMeters,
+      Distance bumperLengthMeters,
       Supplier<SwerveModuleSimulation> swerveModuleFactory,
       GyroSimulation gyroSimulation,
       Pose2d initialPoseOnField) {
@@ -161,10 +177,10 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
           swerveModuleFactory.get(), swerveModuleFactory.get()
         },
         new Translation2d[] {
-          new Translation2d(trackLengthMeters / 2, trackWidthMeters / 2),
-          new Translation2d(trackLengthMeters / 2, -trackWidthMeters / 2),
-          new Translation2d(-trackLengthMeters / 2, trackWidthMeters / 2),
-          new Translation2d(-trackLengthMeters / 2, -trackWidthMeters / 2)
+          new Translation2d(trackLengthMeters.divide(2), trackWidthMeters.divide(2)),
+          new Translation2d(trackLengthMeters.divide(2), trackWidthMeters.divide(-2)),
+          new Translation2d(trackLengthMeters.divide(-2), trackWidthMeters.divide(2)),
+          new Translation2d(trackLengthMeters.divide(-2), trackWidthMeters.divide(-2))
         },
         gyroSimulation,
         initialPoseOnField);
@@ -193,7 +209,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
 
     simulateModulePropellingForces();
 
-    gyroSimulation.updateSimulationSubTick(super.getAngularVelocity());
+    gyroSimulation.updateSimulationSubTick(RadiansPerSecond.of(super.getAngularVelocity()));
   }
 
   private Translation2d previousModuleSpeedsFieldRelative = new Translation2d();
@@ -227,17 +243,17 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vxMetersPerSecond,
                 differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vyMetersPerSecond)
             .rotateBy(getSimulatedDriveTrainPose().getRotation());
-    final double FRICTION_FORCE_GAIN = 3.0,
-        totalGrippingForce =
+    final double FRICTION_FORCE_GAIN = 3.0;
+    final Force totalGrippingForce =
             moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
-                * moduleSimulations.length;
+                .times(moduleSimulations.length);
     final Vector2 speedsDifferenceFrictionForce =
         Vector2.create(
             Math.min(
                 FRICTION_FORCE_GAIN
-                    * totalGrippingForce
+                    * totalGrippingForce.in(Newtons)
                     * floorAndModuleSpeedsDiffFieldRelative.getNorm(),
-                totalGrippingForce),
+                totalGrippingForce.in(Newtons)),
             MapleCommonMath.getAngle(floorAndModuleSpeedsDiffFieldRelative).getRadians());
 
     /* the centripetal friction force during turning */
@@ -249,7 +265,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
             .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
 
-    final double orbitalAngularVelocity = dTheta.getRadians() / SimulatedArena.getSimulationDt();
+    final double orbitalAngularVelocity = dTheta.getRadians() / SimulatedArena.getSimulationDt().in(Seconds);
     final Rotation2d centripetalForceDirection =
         MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative)
             .plus(Rotation2d.fromDegrees(90));
@@ -257,7 +273,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
         Vector2.create(
             previousModuleSpeedsFieldRelative.getNorm()
                 * orbitalAngularVelocity
-                * profile.robotMass,
+                * profile.robotMass.in(Kilograms),
             centripetalForceDirection.getRadians());
     previousModuleSpeedsFieldRelative =
         GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative);
@@ -268,7 +284,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
             centripetalFrictionForce.copy().add(speedsDifferenceFrictionForce),
         totalFrictionForce =
             Vector2.create(
-                Math.min(totalGrippingForce, totalFrictionForceUnlimited.getMagnitude()),
+                Math.min(totalGrippingForce.in(Newtons), totalFrictionForceUnlimited.getMagnitude()),
                 totalFrictionForceUnlimited.getDirection());
     super.applyForce(totalFrictionForce);
   }
@@ -288,13 +304,13 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
   private void simulateChassisFrictionTorque() {
     final double
         desiredRotationalMotionPercent =
-            Math.abs(getDesiredSpeed().omegaRadiansPerSecond / getTheoreticalMaxAngularVelocity()),
+            Math.abs(getDesiredSpeed().omegaRadiansPerSecond / getTheoreticalMaxAngularVelocity().in(RadiansPerSecond)),
         actualRotationalMotionPercent =
-            Math.abs(getAngularVelocity() / getTheoreticalMaxAngularVelocity()),
+            Math.abs(getAngularVelocity() / getTheoreticalMaxAngularVelocity().in(RadiansPerSecond)),
         differenceBetweenFloorSpeedAndModuleSpeed =
             getModuleSpeeds().omegaRadiansPerSecond - getAngularVelocity(),
         grippingTorqueMagnitude =
-            moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
+            moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule).in(Newtons)
                 * moduleTranslations[0].getNorm()
                 * moduleSimulations.length,
         FRICTION_TORQUE_GAIN = 1;
@@ -381,25 +397,25 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
             .toArray(SwerveModuleState[]::new));
   }
 
-  public double getTheoreticalMaxLinearVelocity() {
+  public LinearVelocity getTheoreticalMaxLinearVelocity() {
     return moduleSimulations[0].getModuleTheoreticalSpeedMPS();
   }
 
-  public double getTheoreticalMaxLinearAcceleration() {
+  public LinearAcceleration getTheoreticalMaxLinearAcceleration() {
     return moduleSimulations[0].getModuleMaxAccelerationMPSsq(
         profile.robotMass, moduleSimulations.length);
   }
 
-  public double getTheoreticalMaxAngularVelocity() {
-    return moduleSimulations[0].getModuleTheoreticalSpeedMPS() / moduleTranslations[0].getNorm();
+  public AngularVelocity getTheoreticalMaxAngularVelocity() {
+    return RadiansPerSecond.of(moduleSimulations[0].getModuleTheoreticalSpeedMPS().divide(moduleTranslations[0].getNorm()).in(MetersPerSecond));
   }
 
-  public double getSwerveDriveMaxAngularAcceleration() {
-    return moduleSimulations[0].getTheoreticalPropellingForcePerModule(
-            profile.robotMass, moduleSimulations.length)
+  public AngularAcceleration getSwerveDriveMaxAngularAcceleration() {
+    return RadiansPerSecondPerSecond.of(moduleSimulations[0].getTheoreticalPropellingForcePerModule(
+            profile.robotMass, moduleSimulations.length).in(Newtons)
         * moduleTranslations[0].getNorm()
         * moduleSimulations.length
-        / super.getMass().getInertia();
+        / super.getMass().getInertia());
   }
 
   public SwerveModuleSimulation[] getModules() {

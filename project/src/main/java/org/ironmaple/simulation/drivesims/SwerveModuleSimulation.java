@@ -116,18 +116,17 @@ public class SwerveModuleSimulation {
    *
    * @param driveMotor the model of the driving motor
    * @param steerMotor the model of the steering motor
-   * @param driveCurrentLimit the current limit for the driving motor, in amperes
+   * @param driveCurrentLimit the current limit for the driving motor
    * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
    * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
    * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving
-   *     rotter, in volts
+   *     rotter
    * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering
-   *     rotter, in volts
+   *     rotter
    * @param tireCoefficientOfFriction the <a
    *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
    *     of friction</a> of the tires, normally around 1.5
-   * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using {@link
-   *     Units#inchesToMeters(double)}.
+   * @param wheelsRadius the radius of the wheels.
    * @param steerRotationalInertia the rotational inertia of the steering mechanism
    */
   public SwerveModuleSimulation(
@@ -139,7 +138,7 @@ public class SwerveModuleSimulation {
       Voltage driveFrictionVoltage,
       Voltage steerFrictionVoltage,
       double tireCoefficientOfFriction,
-      Distance wheelsRadiusMeters,
+      Distance wheelsRadius,
       MomentOfInertia steerRotationalInertia) {
     DRIVE_MOTOR = driveMotor;
     DRIVE_CURRENT_LIMIT = driveCurrentLimit;
@@ -147,7 +146,7 @@ public class SwerveModuleSimulation {
     STEER_GEAR_RATIO = steerGearRatio;
     DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
     WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
-    WHEEL_RADIUS_METERS = wheelsRadiusMeters;
+    WHEEL_RADIUS_METERS = wheelsRadius;
 
     this.steerMotorSim =
         new MapleMotorSim(
@@ -227,7 +226,7 @@ public class SwerveModuleSimulation {
    * <p>If the motor's supply current is too high, the motor will automatically reduce its output
    * voltage to protect the system.
    *
-   * @return the actual output voltage of the drive motor, in volts
+   * @return the actual output voltage of the drive motor
    */
   public Voltage getDriveMotorAppliedVolts() {
     return driveMotorAppliedVolts;
@@ -245,7 +244,7 @@ public class SwerveModuleSimulation {
    * #requestSteerVoltageOut(double)}. If the motor's supply current is too high, the motor will
    * automatically reduce its output voltage to protect the system.
    *
-   * @return the actual output voltage of the steering motor, in volts
+   * @return the actual output voltage of the steering motor
    */
   public Voltage getSteerMotorAppliedVolts() {
     return steerMotorSim.getRotorVoltage();
@@ -258,7 +257,7 @@ public class SwerveModuleSimulation {
    *
    * <h3>Think of it as the getSupplyCurrent() of your physical drive motor.</h3>
    *
-   * @return the current supplied to the drive motor, in amperes
+   * @return the current supplied to the drive motor
    */
   public Current getDriveMotorSupplyCurrent() {
     return driveMotorSupplyCurrent;
@@ -271,9 +270,9 @@ public class SwerveModuleSimulation {
    *
    * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
    *
-   * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}
+   * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()}
    *
-   * @return the current supplied to the steer motor, in amperes
+   * @return the current supplied to the steer motor
    */
   public Current getSteerMotorSupplyCurrent() {
     return steerMotorSim.getSupplyCurrent();
@@ -293,7 +292,7 @@ public class SwerveModuleSimulation {
    *
    * <p>To get the final wheel rotations, use {@link #getDriveWheelFinalPositionRad()}.
    *
-   * @return the position of the drive motor's encoder, in radians (un-geared)
+   * @return the position of the drive motor's encoder (un-geared)
    */
   public Angle getDriveEncoderUnGearedPosition() {
     return driveEncoderUnGearedPosition;
@@ -310,7 +309,7 @@ public class SwerveModuleSimulation {
    * <p>The value is calculated by dividing the un-geared encoder position (obtained from {@link
    * #getDriveEncoderUnGearedPosition()}) by the drive gear ratio.
    *
-   * @return the final position of the drive encoder (wheel rotations), in radians
+   * @return the final position of the drive encoder (wheel rotations)
    */
   public Angle getDriveWheelFinalPositionRad() {
     return getDriveEncoderUnGearedPosition().divide(DRIVE_GEAR_RATIO);
@@ -319,14 +318,14 @@ public class SwerveModuleSimulation {
   /**
    *
    *
-   * <h2>Obtains the Speed of the Drive Encoder (Un-Geared), in Radians per Second.</h2>
+   * <h2>Obtains the Speed of the Drive Encoder (Un-Geared).</h2>
    *
    * <h3>Think of it as the <code>getVelocity()</code> of your physical drive motor.</h3>
    *
-   * <p>This method returns the current speed of the drive encoder in radians per second, without
+   * <p>This method returns the current speed of the drive encoder, without
    * accounting for the drive gear ratio.
    *
-   * @return the un-geared speed of the drive encoder, in radians per second
+   * @return the un-geared speed of the drive encoder
    */
   public AngularVelocity getDriveEncoderUnGearedSpeed() {
     return driveEncoderUnGearedSpeed;
@@ -335,9 +334,9 @@ public class SwerveModuleSimulation {
   /**
    *
    *
-   * <h2>Obtains the Final Speed of the Wheel, in Radians per Second.</h2>
+   * <h2>Obtains the Final Speed of the Wheel.</h2>
    *
-   * @return the final speed of the drive wheel, in radians per second
+   * @return the final speed of the drive wheel
    */
   public AngularVelocity getDriveWheelFinalSpeedRadPerSec() {
     return getDriveEncoderUnGearedSpeed().divide(DRIVE_GEAR_RATIO);
@@ -346,11 +345,11 @@ public class SwerveModuleSimulation {
   /**
    *
    *
-   * <h2>Obtains the Relative Position of the Steer Encoder, in Radians.</h2>
+   * <h2>Obtains the Relative Position of the Steer Encoder.</h2>
    *
    * <h3>Think of it as the <code>getPosition()</code> of your physical steer motor.</h3>
    *
-   * @return the relative encoder position of the steer motor, in radians
+   * @return the relative encoder position of the steer motor
    */
   public Angle getSteerRelativeEncoderPosition() {
     return steerRelativeEncoderPosition;
@@ -359,11 +358,11 @@ public class SwerveModuleSimulation {
   /**
    *
    *
-   * <h2>Obtains the Speed of the Steer Relative Encoder, in Radians per Second (Geared).</h2>
+   * <h2>Obtains the Speed of the Steer Relative Encoder (Geared).</h2>
    *
    * <h3>Think of it as the <code>getVelocity()</code> of your physical steer motor.</h3>
    *
-   * @return the speed of the steer relative encoder, in radians per second (geared)
+   * @return the speed of the steer relative encoder (geared)
    */
   public AngularVelocity getSteerRelativeEncoderSpeed() {
     return steerRelativeEncoderSpeed;
@@ -389,7 +388,7 @@ public class SwerveModuleSimulation {
    *
    * <h3>Think of it as the <code>getVelocity()</code> of your CanCoder.</h3>
    *
-   * @return the absolute angular velocity of the steer mechanism, in radians per second
+   * @return the absolute angular velocity of the steer mechanism
    */
   public AngularVelocity getSteerAbsoluteEncoderSpeed() {
     return steerAbsoluteEncoderSpeed;
@@ -476,21 +475,21 @@ public class SwerveModuleSimulation {
    * @param moduleCurrentGroundVelocityWorldRelative the current ground velocity of the module,
    *     relative to the world
    * @param robotFacing the absolute facing of the robot, relative to the world
-   * @param gravityForceOnModuleNewtons the gravitational force acting on this module, in newtons
+   * @param gravityForceOnModule the gravitational force acting on this module
    * @return the propelling force generated by the module, as a {@link Vector2} object
    */
   public Vector2 updateSimulationSubTickGetModuleForce(
       Vector2 moduleCurrentGroundVelocityWorldRelative,
       Rotation2d robotFacing,
-      Force gravityForceOnModuleNewtons) {
+      Force gravityForceOnModule) {
     updateSteerSimulation();
 
     /* the maximum gripping force that the wheel can generate */
-    final Force grippingForceNewtons = getGrippingForceNewtons(gravityForceOnModuleNewtons);
+    final Force grippingForceNewtons = getGrippingForceNewtons(gravityForceOnModule);
     final Rotation2d moduleWorldFacing = this.steerAbsoluteFacing.plus(robotFacing);
     final Vector2 propellingForce =
         getPropellingForce(
-            grippingForceNewtons.in(Newtons), moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
+            grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
     updateDriveEncoders();
 
     return propellingForce;
@@ -534,22 +533,22 @@ public class SwerveModuleSimulation {
    * applied. The rest of the propelling force will cause the wheel to start skidding and make the
    * odometry inaccurate.
    *
-   * @param grippingForceNewtons the amount of gripping force that wheel can generate, in newtons
+   * @param grippingForce the amount of gripping force that wheel can generate
    * @param moduleWorldFacing the current world facing of the module
    * @param moduleCurrentGroundVelocity the current ground velocity of the module, world-reference
    * @return a vector representing the propelling force that the module generates, world-reference
    */
   private Vector2 getPropellingForce(
-      double grippingForceNewtons,
+      Force grippingForce,
       Rotation2d moduleWorldFacing,
       Vector2 moduleCurrentGroundVelocity) {
     final Torque driveWheelTorque = getDriveWheelTorque();
     final Force theoreticalMaxPropellingForceNewtons = driveWheelTorque.divide(WHEEL_RADIUS_METERS),
         propellingForceNewtons;
-    final boolean skidding = Math.abs(theoreticalMaxPropellingForceNewtons.in(Newtons)) > grippingForceNewtons;
+    final boolean skidding = Math.abs(theoreticalMaxPropellingForceNewtons.in(Newtons)) > grippingForce.in(Newtons);
     if (skidding)
       propellingForceNewtons =
-          Newtons.of(Math.copySign(grippingForceNewtons, theoreticalMaxPropellingForceNewtons.in(Newtons)));
+          Newtons.of(Math.copySign(grippingForce.in(Newtons), theoreticalMaxPropellingForceNewtons.in(Newtons)));
     else propellingForceNewtons = theoreticalMaxPropellingForceNewtons;
 
     final LinearVelocity floorVelocityProjectionOnWheelDirectionMPS =
@@ -581,7 +580,7 @@ public class SwerveModuleSimulation {
    * constrained for the current limit through {@link MapleMotorSim#constrainOutputVoltage(DCMotor,
    * double, double, double)}.
    *
-   * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
+   * @return the amount of torque on the wheel by the drive motor
    */
   private Torque getDriveWheelTorque() {
     driveMotorAppliedVolts = driveMotorRequestedVolts;

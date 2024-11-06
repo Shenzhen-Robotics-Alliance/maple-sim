@@ -1,5 +1,8 @@
 package org.ironmaple.simulation.drivesims;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -13,16 +16,10 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
-
-import org.ironmaple.simulation.MapleMotorSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
-
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 /**
  *
@@ -85,12 +82,12 @@ public class SimplifiedSwerveDriveSimulation {
         this.kinematics = swerveDriveSimulation.kinematics;
 
         this.poseEstimator = new SwerveDrivePoseEstimator(
-            kinematics,
-            getRawGyroAngle(),
-            getLatestModulePositions(),
-            getActualPoseInSimulationWorld(),
-            stateStdDevs,
-            visionMeasurementStdDevs);
+                kinematics,
+                getRawGyroAngle(),
+                getLatestModulePositions(),
+                getActualPoseInSimulationWorld(),
+                stateStdDevs,
+                visionMeasurementStdDevs);
 
         this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
@@ -209,7 +206,8 @@ public class SimplifiedSwerveDriveSimulation {
      *
      * <h2>Resets the odometry to a specified position.</h2>
      *
-     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, SwerveModulePosition[], Pose2d)}.
+     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, SwerveModulePosition[],
+     * Pose2d)}.
      *
      * <p>It resets the position of the pose estimator to the given pose.
      *
@@ -437,13 +435,13 @@ public class SimplifiedSwerveDriveSimulation {
      * @return the optimized swerve module state after control execution
      */
     private SwerveModuleState optimizeAndRunModuleState(
-        SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
+            SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
         setPoint.optimize(moduleSimulation.getSteerAbsoluteFacing());
-        final double cosProjectedSpeedMPS =
-            SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
-
-        driveMotorVelocitySetPointRadPerSec =
-                cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
+        final double
+                cosProjectedSpeedMPS =
+                        SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
+                driveMotorVelocitySetPointRadPerSec =
+                        cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
 
         moduleSimulation.requestSteerOutput(Radians.of(setPoint.angle.getRadians()));
         moduleSimulation.requestDriveOutput(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec));
@@ -565,14 +563,11 @@ public class SimplifiedSwerveDriveSimulation {
      * @param useVoltage use voltage-based control for the motor
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withSteerPID(PIDController steerHeadingCloseLoop, AngleUnit inputUnit, boolean useVoltage) {
+    public SimplifiedSwerveDriveSimulation withSteerPID(
+            PIDController steerHeadingCloseLoop, AngleUnit inputUnit, boolean useVoltage) {
         for (int i = 0; i < 4; i++) {
             moduleSimulations[i] = moduleSimulations[i].withSteerPID(
-                steerHeadingCloseLoop.getP(),
-                steerHeadingCloseLoop.getD(),
-                inputUnit,
-                useVoltage
-            );
+                    steerHeadingCloseLoop.getP(), steerHeadingCloseLoop.getD(), inputUnit, useVoltage);
         }
         return this;
     }
@@ -589,13 +584,10 @@ public class SimplifiedSwerveDriveSimulation {
      * @param useVoltage use voltage-based control for the motor
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDrivePID(PIDController driveCloseLoop, AngularVelocityUnit inputUnit, boolean useVoltage) {
+    public SimplifiedSwerveDriveSimulation withDrivePID(
+            PIDController driveCloseLoop, AngularVelocityUnit inputUnit, boolean useVoltage) {
         for (int i = 0; i < 4; i++) {
-            moduleSimulations[i] = moduleSimulations[i].withDrivePID(
-                driveCloseLoop.getP(),
-                inputUnit,
-                useVoltage
-            );
+            moduleSimulations[i] = moduleSimulations[i].withDrivePID(driveCloseLoop.getP(), inputUnit, useVoltage);
         }
         return this;
     }
@@ -611,14 +603,11 @@ public class SimplifiedSwerveDriveSimulation {
      * @param inputUnit the unit used to measure the steer angle with
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDriveFeedForward(SimpleMotorFeedforward driveFeedforward, AngularVelocityUnit inputUnit) {
+    public SimplifiedSwerveDriveSimulation withDriveFeedForward(
+            SimpleMotorFeedforward driveFeedforward, AngularVelocityUnit inputUnit) {
         for (int i = 0; i < 4; i++) {
             moduleSimulations[i] = moduleSimulations[i].withDriveFeedforward(
-                driveFeedforward.getKs(),
-                driveFeedforward.getKv(),
-                driveFeedforward.getKa(),
-                inputUnit
-            );
+                    driveFeedforward.getKs(), driveFeedforward.getKv(), driveFeedforward.getKa(), inputUnit);
         }
         return this;
     }

@@ -1,7 +1,7 @@
 package org.ironmaple.simulation.drivesims;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -9,22 +9,16 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.AngleUnit;
-import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
-import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
-
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Per;
-import edu.wpi.first.units.measure.Voltage;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.MapleMotorSim;
 import org.ironmaple.simulation.SimulatedArena;
-
-import static edu.wpi.first.units.Units.*;
 
 /**
  *
@@ -65,427 +59,393 @@ import static edu.wpi.first.units.Units.*;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-  MapleMotorSim driveMotorSim;
-  private MapleMotorSim steerMotorSim;
-  public final double DRIVE_CURRENT_LIMIT,
-      DRIVE_GEAR_RATIO,
-      STEER_GEAR_RATIO,
-      DRIVE_FRICTION_VOLTAGE,
-      WHEELS_COEFFICIENT_OF_FRICTION,
-      WHEEL_RADIUS_METERS,
-      DRIVE_WHEEL_INERTIA = 0.01;
-  private double driveMotorRequestedVolts = 0.0,
-      driveMotorAppliedVolts = 0.0,
-      driveMotorSupplyCurrentAmps = 0.0,
-      steerRelativeEncoderPositionRad = 0.0,
-      steerRelativeEncoderSpeedRadPerSec = 0.0,
-      steerAbsoluteEncoderSpeedRadPerSec = 0.0,
-      driveEncoderUnGearedPositionRad = 0.0,
-      driveEncoderUnGearedSpeedRadPerSec = 0.0;
-  private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
+    MapleMotorSim driveMotorSim;
+    private MapleMotorSim steerMotorSim;
+    public final double DRIVE_CURRENT_LIMIT,
+            DRIVE_GEAR_RATIO,
+            STEER_GEAR_RATIO,
+            DRIVE_FRICTION_VOLTAGE,
+            WHEELS_COEFFICIENT_OF_FRICTION,
+            WHEEL_RADIUS_METERS,
+            DRIVE_WHEEL_INERTIA = 0.01;
+    private double driveMotorRequestedVolts = 0.0,
+            driveMotorAppliedVolts = 0.0,
+            driveMotorSupplyCurrentAmps = 0.0,
+            steerRelativeEncoderPositionRad = 0.0,
+            steerRelativeEncoderSpeedRadPerSec = 0.0,
+            steerAbsoluteEncoderSpeedRadPerSec = 0.0,
+            driveEncoderUnGearedPositionRad = 0.0,
+            driveEncoderUnGearedSpeedRadPerSec = 0.0;
+    private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
 
-  private final double steerRelativeEncoderOffSet = (Math.random() - 0.5) * 30;
+    private final double steerRelativeEncoderOffSet = (Math.random() - 0.5) * 30;
 
-  private final Queue<Double> cachedSteerRelativeEncoderPositionsRad, cachedDriveEncoderUnGearedPositionsRad;
-  private final Queue<Rotation2d> cachedSteerAbsolutePositions;
+    private final Queue<Double> cachedSteerRelativeEncoderPositionsRad, cachedDriveEncoderUnGearedPositionsRad;
+    private final Queue<Rotation2d> cachedSteerAbsolutePositions;
 
-  private MapleMotorSim.OutputType outputType;
+    private MapleMotorSim.OutputType outputType;
 
-  /**
-   *
-   *
-   * <h2>Constructs a Swerve Module Simulation.</h2>
-   *
-   * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom
-   * timings, you must call the method before constructing any swerve module simulations using this
-   * constructor.
-   *
-   * @param driveMotor the model of the driving motor
-   * @param steerMotor the model of the steering motor
-   * @param driveCurrentLimit the current limit for the driving motor, in amperes
-   * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
-   * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
-   * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving
-   *     rotter, in volts
-   * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering
-   *     rotter, in volts
-   * @param tireCoefficientOfFriction the <a
-   *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
-   *     of friction</a> of the tires, normally around 1.5
-   * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using {@link
-   *     Units#inchesToMeters(double)}.
-   * @param steerRotationalInertia the rotational inertia of the steering mechanism
-   */
-  public SwerveModuleSimulation(
-          DCMotor driveMotor,
-          DCMotor steerMotor,
-          double driveCurrentLimit,
-          double driveGearRatio,
-          double steerGearRatio,
-          double driveFrictionVoltage,
-          double steerFrictionVoltage,
-          double tireCoefficientOfFriction,
-          double wheelsRadiusMeters,
-          double steerRotationalInertia) {
-    this(driveMotor,
-            steerMotor,
-            driveCurrentLimit,
-            driveGearRatio,
-            steerGearRatio,
-            driveFrictionVoltage,
-            steerFrictionVoltage,
-            tireCoefficientOfFriction,
-            wheelsRadiusMeters,
-            steerRotationalInertia,
-            1.0,
-            0.0,
-            Radians,
-            1.0,
-            Volts.of(0.0),
-            1.0,
-            0.0,
-            RadiansPerSecond,
-            true);
-  }
-
-  /**
-   *
-   *
-   * <h2>Constructs a Swerve Module Simulation.</h2>
-   *
-   * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom
-   * timings, you must call the method before constructing any swerve module simulations using this
-   * constructor.
-   *
-   * @param driveMotor the model of the driving motor
-   * @param steerMotor the model of the steering motor
-   * @param driveCurrentLimit the current limit for the driving motor, in amperes
-   * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
-   * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
-   * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving
-   *     rotter, in volts
-   * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering
-   *     rotter, in volts
-   * @param tireCoefficientOfFriction the <a
-   *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
-   *     of friction</a> of the tires, normally around 1.5
-   * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using {@link
-   *     Units#inchesToMeters(double)}.
-   * @param steerRotationalInertia the rotational inertia of the steering mechanism
-   * @param steerKp The Unit safe P gain for the steer closed loop controller
-   * @param steerKd The Unit safe D gain for the steer closed loop controller
-   * @param driveKp The Unit safe P gain for the drive closed loop controller
-   * @param driveKs The Unit safe S gain for the drive feedforward controller
-   * @param driveKv The Unit safe V gain for the drive feedforward controller
-   * @param driveKa The Unit safe A gain for the drive feedforward controller
-   */
-  public SwerveModuleSimulation(
-          DCMotor driveMotor,
-          DCMotor steerMotor,
-          double driveCurrentLimit,
-          double driveGearRatio,
-          double steerGearRatio,
-          double driveFrictionVoltage,
-          double steerFrictionVoltage,
-          double tireCoefficientOfFriction,
-          double wheelsRadiusMeters,
-          double steerRotationalInertia,
-          double steerKp,
-          double steerKd,
-          AngleUnit steerInputUnit,
-          double driveKp,
-          Voltage driveKs,
-          double driveKv,
-          double driveKa,
-          AngularVelocityUnit driveInputUnit,
-          boolean useVoltage) {
-    DRIVE_CURRENT_LIMIT = driveCurrentLimit;
-    DRIVE_GEAR_RATIO = driveGearRatio;
-    STEER_GEAR_RATIO = steerGearRatio;
-    DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
-    WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
-    WHEEL_RADIUS_METERS = wheelsRadiusMeters;
-
-    this.steerMotorSim =
-            new MapleMotorSim(
-                    SimulatedArena.getInstance(),
-                    steerMotor,
-                    steerGearRatio,
-                    KilogramSquareMeters.of(steerRotationalInertia),
-                    Volts.of(steerFrictionVoltage));
-
-    this.driveMotorSim =
-            new MapleMotorSim(
-                    SimulatedArena.getInstance(),
-                    driveMotor,
-                    driveGearRatio,
-                    KilogramSquareMeters.of(steerRotationalInertia),
-                    Volts.of(driveFrictionVoltage));
-
-    if (useVoltage) {
-      var steerPos = Volts.per(steerInputUnit);
-      var steerVel = Volts.per(steerInputUnit.per(Seconds));
-
-      this.steerMotorSim = steerMotorSim.withPositionalVoltageController(
-              steerPos.ofNative(steerKp),
-              steerVel.ofNative(steerKd)
-      );
-
-      var drivePos = Volts.per(driveInputUnit);
-
-      this.driveMotorSim = driveMotorSim.withVelocityVoltageController(
-          drivePos.ofNative(driveKp)
-      );
-
-      this.outputType = MapleMotorSim.OutputType.VOLTAGE;
-    } else {
-      var steerPos = Amps.per(steerInputUnit);
-      var steerVel = Amps.per(steerInputUnit.per(Seconds));
-
-      this.steerMotorSim = steerMotorSim.withPositionalCurrentController(
-              steerPos.ofNative(steerKp),
-              steerVel.ofNative(steerKd)
-      );
-
-      var drivePos = Amps.per(driveInputUnit);
-
-      this.driveMotorSim = driveMotorSim.withVelocityCurrentController(
-              drivePos.ofNative(driveKp)
-      );
-
-      this.outputType = MapleMotorSim.OutputType.CURRENT;
+    /**
+     *
+     *
+     * <h2>Constructs a Swerve Module Simulation.</h2>
+     *
+     * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom timings, you must
+     * call the method before constructing any swerve module simulations using this constructor.
+     *
+     * @param driveMotor the model of the driving motor
+     * @param steerMotor the model of the steering motor
+     * @param driveCurrentLimit the current limit for the driving motor, in amperes
+     * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
+     * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
+     * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving rotter, in volts
+     * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter, in volts
+     * @param tireCoefficientOfFriction the <a
+     *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
+     *     of friction</a> of the tires, normally around 1.5
+     * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using
+     *     {@link Units#inchesToMeters(double)}.
+     * @param steerRotationalInertia the rotational inertia of the steering mechanism
+     */
+    public SwerveModuleSimulation(
+            DCMotor driveMotor,
+            DCMotor steerMotor,
+            double driveCurrentLimit,
+            double driveGearRatio,
+            double steerGearRatio,
+            double driveFrictionVoltage,
+            double steerFrictionVoltage,
+            double tireCoefficientOfFriction,
+            double wheelsRadiusMeters,
+            double steerRotationalInertia) {
+        this(
+                driveMotor,
+                steerMotor,
+                driveCurrentLimit,
+                driveGearRatio,
+                steerGearRatio,
+                driveFrictionVoltage,
+                steerFrictionVoltage,
+                tireCoefficientOfFriction,
+                wheelsRadiusMeters,
+                steerRotationalInertia,
+                1.0,
+                0.0,
+                Radians,
+                1.0,
+                Volts.of(0.0),
+                1.0,
+                0.0,
+                RadiansPerSecond,
+                true);
     }
 
-    this.steerMotorSim = this.steerMotorSim
-        .withControllerContinousInput(Radians.of(-Math.PI), Radians.of(Math.PI));
+    /**
+     *
+     *
+     * <h2>Constructs a Swerve Module Simulation.</h2>
+     *
+     * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom timings, you must
+     * call the method before constructing any swerve module simulations using this constructor.
+     *
+     * @param driveMotor the model of the driving motor
+     * @param steerMotor the model of the steering motor
+     * @param driveCurrentLimit the current limit for the driving motor, in amperes
+     * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
+     * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
+     * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving rotter, in volts
+     * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter, in volts
+     * @param tireCoefficientOfFriction the <a
+     *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
+     *     of friction</a> of the tires, normally around 1.5
+     * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using
+     *     {@link Units#inchesToMeters(double)}.
+     * @param steerRotationalInertia the rotational inertia of the steering mechanism
+     * @param steerKp The Unit safe P gain for the steer closed loop controller
+     * @param steerKd The Unit safe D gain for the steer closed loop controller
+     * @param driveKp The Unit safe P gain for the drive closed loop controller
+     * @param driveKs The Unit safe S gain for the drive feedforward controller
+     * @param driveKv The Unit safe V gain for the drive feedforward controller
+     * @param driveKa The Unit safe A gain for the drive feedforward controller
+     */
+    public SwerveModuleSimulation(
+            DCMotor driveMotor,
+            DCMotor steerMotor,
+            double driveCurrentLimit,
+            double driveGearRatio,
+            double steerGearRatio,
+            double driveFrictionVoltage,
+            double steerFrictionVoltage,
+            double tireCoefficientOfFriction,
+            double wheelsRadiusMeters,
+            double steerRotationalInertia,
+            double steerKp,
+            double steerKd,
+            AngleUnit steerInputUnit,
+            double driveKp,
+            Voltage driveKs,
+            double driveKv,
+            double driveKa,
+            AngularVelocityUnit driveInputUnit,
+            boolean useVoltage) {
+        DRIVE_CURRENT_LIMIT = driveCurrentLimit;
+        DRIVE_GEAR_RATIO = driveGearRatio;
+        STEER_GEAR_RATIO = steerGearRatio;
+        DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
+        WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
+        WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
-    this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
-    for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) {
-      cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
+        this.steerMotorSim = new MapleMotorSim(
+                SimulatedArena.getInstance(),
+                steerMotor,
+                steerGearRatio,
+                KilogramSquareMeters.of(steerRotationalInertia),
+                Volts.of(steerFrictionVoltage));
+
+        this.driveMotorSim = new MapleMotorSim(
+                SimulatedArena.getInstance(),
+                driveMotor,
+                driveGearRatio,
+                KilogramSquareMeters.of(steerRotationalInertia),
+                Volts.of(driveFrictionVoltage));
+
+        if (useVoltage) {
+            var steerPos = Volts.per(steerInputUnit);
+            var steerVel = Volts.per(steerInputUnit.per(Seconds));
+
+            this.steerMotorSim = steerMotorSim.withPositionalVoltageController(
+                    steerPos.ofNative(steerKp), steerVel.ofNative(steerKd));
+
+            var drivePos = Volts.per(driveInputUnit);
+
+            this.driveMotorSim = driveMotorSim.withVelocityVoltageController(drivePos.ofNative(driveKp));
+
+            this.outputType = MapleMotorSim.OutputType.VOLTAGE;
+        } else {
+            var steerPos = Amps.per(steerInputUnit);
+            var steerVel = Amps.per(steerInputUnit.per(Seconds));
+
+            this.steerMotorSim = steerMotorSim.withPositionalCurrentController(
+                    steerPos.ofNative(steerKp), steerVel.ofNative(steerKd));
+
+            var drivePos = Amps.per(driveInputUnit);
+
+            this.driveMotorSim = driveMotorSim.withVelocityCurrentController(drivePos.ofNative(driveKp));
+
+            this.outputType = MapleMotorSim.OutputType.CURRENT;
+        }
+
+        this.steerMotorSim = this.steerMotorSim.withControllerContinousInput(Radians.of(-Math.PI), Radians.of(Math.PI));
+
+        this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) {
+            cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
+        }
+
+        this.cachedSteerRelativeEncoderPositionsRad = new ConcurrentLinkedQueue<>();
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) {
+            cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
+        }
+
+        this.cachedSteerAbsolutePositions = new ConcurrentLinkedQueue<>();
+        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) {
+            cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
+        }
+
+        this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
     }
 
-    this.cachedSteerRelativeEncoderPositionsRad = new ConcurrentLinkedQueue<>();
-    for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) {
-      cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
+    /**
+     *
+     *
+     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     *
+     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     *
+     * @param steerKp the kP gain for the PID controller
+     * @param steerKd the kD gain for the PID controller
+     * @param steerInputUnit the unit used to measure the steer angle with
+     * @param useVoltage use voltage-based control for the motor
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SwerveModuleSimulation withSteerPID(
+            double steerKp, double steerKd, AngleUnit steerInputUnit, boolean useVoltage) {
+        if (useVoltage) {
+            var steerPos = Volts.per(steerInputUnit);
+            var steerVel = Volts.per(steerInputUnit.per(Seconds));
+
+            this.steerMotorSim = steerMotorSim.withPositionalVoltageController(
+                    steerPos.ofNative(steerKp), steerVel.ofNative(steerKd));
+
+            this.outputType = MapleMotorSim.OutputType.VOLTAGE;
+        } else {
+            var steerPos = Amps.per(steerInputUnit);
+            var steerVel = Amps.per(steerInputUnit.per(Seconds));
+
+            this.steerMotorSim = steerMotorSim.withPositionalCurrentController(
+                    steerPos.ofNative(steerKp), steerVel.ofNative(steerKd));
+
+            this.outputType = MapleMotorSim.OutputType.CURRENT;
+        }
+        return this;
     }
 
-    this.cachedSteerAbsolutePositions = new ConcurrentLinkedQueue<>();
-    for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) {
-      cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
+    /**
+     *
+     *
+     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     *
+     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     *
+     * @param driveKp the kP gain for the PID controller
+     * @param driveInputUnit the unit used to measure the steer angle with
+     * @param useVoltage use voltage-based control for the motor
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SwerveModuleSimulation withDrivePID(double driveKp, AngularVelocityUnit driveInputUnit, boolean useVoltage) {
+        if (useVoltage) {
+            var drivePos = Volts.per(driveInputUnit);
+
+            this.driveMotorSim = driveMotorSim.withVelocityVoltageController(drivePos.ofNative(driveKp));
+
+            this.outputType = MapleMotorSim.OutputType.VOLTAGE;
+        } else {
+            var drivePos = Amps.per(driveInputUnit);
+
+            this.driveMotorSim = driveMotorSim.withVelocityCurrentController(drivePos.ofNative(driveKp));
+
+            this.outputType = MapleMotorSim.OutputType.CURRENT;
+        }
+        return this;
     }
 
-    this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
+    /**
+     *
+     *
+     * <h2>Configures the SwerveModuleSimulation to use a feedforward loop on the drive motor</h2>
+     */
+    public SwerveModuleSimulation withDriveFeedforward(
+            double kS, double kV, double kA, AngularVelocityUnit driveInputUnit) {
+        driveMotorSim = driveMotorSim.withFeedForward(
+                Volts.of(kS),
+                Volts.per(driveInputUnit).ofNative(kV),
+                Volts.per(driveInputUnit.per(Second)).ofNative(kA));
+
+        return this;
     }
 
-  /**
-   *
-   *
-   * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
-   *
-   * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
-   *
-   * @param steerKp the kP gain for the PID controller
-   * @param steerKd the kD gain for the PID controller
-   * @param steerInputUnit the unit used to measure the steer angle with
-   * @param useVoltage use voltage-based control for the motor
-   * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
-   */
-  public SwerveModuleSimulation withSteerPID(double steerKp,
-                                             double steerKd,
-                                             AngleUnit steerInputUnit,
-                                             boolean useVoltage) {
-    if (useVoltage) {
-      var steerPos = Volts.per(steerInputUnit);
-      var steerVel = Volts.per(steerInputUnit.per(Seconds));
-
-      this.steerMotorSim = steerMotorSim.withPositionalVoltageController(
-          steerPos.ofNative(steerKp),
-          steerVel.ofNative(steerKd)
-      );
-
-      this.outputType = MapleMotorSim.OutputType.VOLTAGE;
-    } else {
-      var steerPos = Amps.per(steerInputUnit);
-      var steerVel = Amps.per(steerInputUnit.per(Seconds));
-
-      this.steerMotorSim = steerMotorSim.withPositionalCurrentController(
-          steerPos.ofNative(steerKp),
-          steerVel.ofNative(steerKd)
-      );
-
-      this.outputType = MapleMotorSim.OutputType.CURRENT;
+    /**
+     *
+     *
+     * <h2>Requests the Driving Motor to Run at a Specified Voltage Output.</h2>
+     *
+     * <h3>Think of it as the setVoltage() of your physical driving motor.</h3>
+     *
+     * <p>This method sets the desired voltage output for the driving motor. The change will be applied in the next
+     * sub-tick of the simulation.
+     *
+     * <p><strong>Note:</strong> The requested voltage may not always be fully applied if the current is too high. The
+     * current limit may reduce the motor's output, similar to real motors.
+     *
+     * <p>To check the actual voltage applied to the drivetrain, use {@link #getDriveMotorAppliedVolts()}.
+     *
+     * @param volts the voltage to be applied to the driving motor
+     */
+    public void requestDriveVoltageOut(double volts) {
+        this.driveMotorRequestedVolts = volts;
     }
-    return this;
-  }
 
-  /**
-   *
-   *
-   * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
-   *
-   * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
-   *
-   * @param driveKp the kP gain for the PID controller
-   * @param driveInputUnit the unit used to measure the steer angle with
-   * @param useVoltage use voltage-based control for the motor
-   * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
-   */
-  public SwerveModuleSimulation withDrivePID(double driveKp,
-                                             AngularVelocityUnit driveInputUnit,
-                                             boolean useVoltage) {
-    if (useVoltage) {
-      var drivePos = Volts.per(driveInputUnit);
-
-      this.driveMotorSim = driveMotorSim.withVelocityVoltageController(
-          drivePos.ofNative(driveKp)
-      );
-
-      this.outputType = MapleMotorSim.OutputType.VOLTAGE;
-    } else {
-      var drivePos = Amps.per(driveInputUnit);
-
-      this.driveMotorSim = driveMotorSim.withVelocityCurrentController(
-          drivePos.ofNative(driveKp)
-      );
-
-      this.outputType = MapleMotorSim.OutputType.CURRENT;
+    /**
+     *
+     *
+     * <h2>Requests the Steering Motor to Run at a Specified Voltage Output.</h2>
+     *
+     * <h3>Think of it as the setVoltage() of your physical steering motor.</h3>
+     *
+     * <p>This method sets the desired voltage output for the steering motor. The change will be applied in the next
+     * sub-tick of the simulation.
+     *
+     * <p><strong>Note:</strong> Similar to the drive motor, the requested voltage may not always be fully applied if
+     * the current exceeds the limit. The current limit will reduce the motor's output as needed, mimicking real motor
+     * behavior.
+     *
+     * <p>To check the actual voltage applied to the steering motor, use {@link #getSteerMotorAppliedVolts()}.
+     *
+     * @param volts the voltage to be applied to the steering motor
+     */
+    public void requestSteerVoltageOut(double volts) {
+        this.steerMotorSim.setControl(Volts.of(volts));
     }
-    return this;
-  }
 
-  /**
-   * <h2>Configures the SwerveModuleSimulation to use a feedforward loop on the drive motor</h2>
-   */
-  public SwerveModuleSimulation withDriveFeedforward(double kS,
-                                                     double kV,
-                                                     double kA,
-                                                     AngularVelocityUnit driveInputUnit) {
-    driveMotorSim = driveMotorSim.withFeedForward(
-        Volts.of(kS),
-        Volts.per(driveInputUnit).ofNative(kV),
-        Volts.per(driveInputUnit.per(Second)).ofNative(kA)
-    );
+    /**
+     *
+     *
+     * <h2>Requests the Steering Motor to use closed-loop control to a setpoint angle.</h2>
+     *
+     * <p>This method uses the closed loop control gains configured beforehand. If there are no closed loop gains
+     * configured the method will throw an error. The change will be applied in the next sub-tick of the simulation.
+     *
+     * <p><strong>Note:</strong> Similar to the drive motor, the requested voltage may not always be fully applied if
+     * the current exceeds the limit. The current limit will reduce the motor's output as needed, mimicking real motor
+     * behavior.
+     *
+     * <p>To check the actual voltage applied to the steering motor, use {@link #getSteerMotorAppliedVolts()}.
+     */
+    public void requestSteerOutput(Angle pos) {
+        this.steerMotorSim.setControl(outputType, pos);
+    }
 
-    return this;
-  }
+    /**
+     *
+     *
+     * <h2>Requests the Drive Motor to use closed-loop control to a setpoint angular velocity.</h2>
+     *
+     * <p>This method uses the closed loop control gains configured beforehand. If there are no closed loop gains
+     * configured the method will throw an error. The change will be applied in the next sub-tick of the simulation.
+     *
+     * <p><strong>Note:</strong> Similar to the steer motor, the requested voltage may not always be fully applied if
+     * the current exceeds the limit. The current limit will reduce the motor's output as needed, mimicking real motor
+     * behavior.
+     *
+     * <p>To check the actual voltage applied to the steering motor, use {@link #getSteerMotorAppliedVolts()}.
+     */
+    public void requestDriveOutput(AngularVelocity velo) {
+        this.steerMotorSim.setControl(outputType, velo);
+    }
 
-  /**
-   *
-   *
-   * <h2>Requests the Driving Motor to Run at a Specified Voltage Output.</h2>
-   *
-   * <h3>Think of it as the setVoltage() of your physical driving motor.</h3>
-   *
-   * <p>This method sets the desired voltage output for the driving motor. The change will be applied in the next
-   * sub-tick of the simulation.
-   *
-   * <p><strong>Note:</strong> The requested voltage may not always be fully applied if the current is too high. The
-   * current limit may reduce the motor's output, similar to real motors.
-   *
-   * <p>To check the actual voltage applied to the drivetrain, use {@link #getDriveMotorAppliedVolts()}.
-   *
-   * @param volts the voltage to be applied to the driving motor
-   */
-  public void requestDriveVoltageOut(double volts) {
-    this.driveMotorRequestedVolts = volts;
-  }
+    /**
+     *
+     *
+     * <h2>Obtains the Actual Output Voltage of the Drive Motor.</h2>
+     *
+     * <p>This method returns the actual voltage being applied to the drive motor. The actual applied voltage may differ
+     * from the value set by {@link #requestDriveVoltageOut(double)}.
+     *
+     * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
+     * the system.
+     *
+     * @return the actual output voltage of the drive motor, in volts
+     */
+    public double getDriveMotorAppliedVolts() {
+        return driveMotorAppliedVolts;
+    }
 
-  /**
-   *
-   *
-   * <h2>Requests the Steering Motor to Run at a Specified Voltage Output.</h2>
-   *
-   * <h3>Think of it as the setVoltage() of your physical steering motor.</h3>
-   *
-   * <p>This method sets the desired voltage output for the steering motor. The change will be applied in the next
-   * sub-tick of the simulation.
-   *
-   * <p><strong>Note:</strong> Similar to the drive motor, the requested voltage may not always be fully applied if
-   * the current exceeds the limit. The current limit will reduce the motor's output as needed, mimicking real motor
-   * behavior.
-   *
-   * <p>To check the actual voltage applied to the steering motor, use {@link #getSteerMotorAppliedVolts()}.
-   *
-   * @param volts the voltage to be applied to the steering motor
-   */
-  public void requestSteerVoltageOut(double volts) {
-    this.steerMotorSim.setControl(Volts.of(volts));
-  }
-
-  /**
-   *
-   *
-   * <h2>Requests the Steering Motor to use closed-loop control to a setpoint angle.</h2>
-   *
-   *
-   * <p>This method uses the closed loop control gains configured beforehand. If there are no closed loop gains configured
-   * the method will throw an error. The change will be applied in the next sub-tick of the simulation.
-   *
-   * <p><strong>Note:</strong> Similar to the drive motor, the requested voltage may not always be
-   * fully applied if the current exceeds the limit. The current limit will reduce the motor's
-   * output as needed, mimicking real motor behavior.
-   *
-   * <p>To check the actual voltage applied to the steering motor, use {@link
-   * #getSteerMotorAppliedVolts()}.
-   */
-  public void requestSteerOutput(Angle pos) {
-    this.steerMotorSim.setControl(outputType, pos);
-  }
-
-  /**
-   *
-   *
-   * <h2>Requests the Drive Motor to use closed-loop control to a setpoint angular velocity.</h2>
-   *
-   *
-   * <p>This method uses the closed loop control gains configured beforehand. If there are no closed loop gains configured
-   * the method will throw an error. The change will be applied in the next sub-tick of the simulation.
-   *
-   * <p><strong>Note:</strong> Similar to the steer motor, the requested voltage may not always be
-   * fully applied if the current exceeds the limit. The current limit will reduce the motor's
-   * output as needed, mimicking real motor behavior.
-   *
-   * <p>To check the actual voltage applied to the steering motor, use {@link
-   * #getSteerMotorAppliedVolts()}.
-   */
-  public void requestDriveOutput(AngularVelocity velo) {
-    this.steerMotorSim.setControl(outputType, velo);
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Actual Output Voltage of the Drive Motor.</h2>
-   *
-   * <p>This method returns the actual voltage being applied to the drive motor. The actual applied
-   * voltage may differ from the value set by {@link #requestDriveVoltageOut(double)}.
-   *
-   * <p>If the motor's supply current is too high, the motor will automatically reduce its output
-   * voltage to protect the system.
-   *
-   * @return the actual output voltage of the drive motor, in volts
-   */
-  public double getDriveMotorAppliedVolts() {
-    return driveMotorAppliedVolts;
-  }
-
-  /**
-   *
-   *
-   * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
-   *
-   * <p>This method returns the actual voltage being applied to the steering motor. It wraps around
-   * the {@link MapleMotorSim#getRotorVoltage()} method.
-   *
-   * <p>The actual applied voltage may differ from the value set by {@link
-   * #requestSteerVoltageOut(double)}. If the motor's supply current is too high, the motor will
-   * automatically reduce its output voltage to protect the system.
-   *
-   * @return the actual output voltage of the steering motor, in volts
-   */
-  public double getSteerMotorAppliedVolts() {
-    return steerMotorSim.getRotorVoltage().in(Volts);
-  }
+    /**
+     *
+     *
+     * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
+     *
+     * <p>This method returns the actual voltage being applied to the steering motor. It wraps around the
+     * {@link MapleMotorSim#getRotorVoltage()} method.
+     *
+     * <p>The actual applied voltage may differ from the value set by {@link #requestSteerVoltageOut(double)}. If the
+     * motor's supply current is too high, the motor will automatically reduce its output voltage to protect the system.
+     *
+     * @return the actual output voltage of the steering motor, in volts
+     */
+    public double getSteerMotorAppliedVolts() {
+        return steerMotorSim.getRotorVoltage().in(Volts);
+    }
 
     /**
      *
@@ -500,20 +460,20 @@ public class SwerveModuleSimulation {
         return driveMotorSupplyCurrentAmps;
     }
 
-  /**
-   *
-   *
-   * <h2>Obtains the Amount of Current Supplied to the Steer Motor.</h2>
-   *
-   * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
-   *
-   * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()} ()}.
-   *
-   * @return the current supplied to the steer motor, in amperes
-   */
-  public double getSteerMotorSupplyCurrentAmps() {
-    return steerMotorSim.getSupplyCurrent().in(Amps);
-  }
+    /**
+     *
+     *
+     * <h2>Obtains the Amount of Current Supplied to the Steer Motor.</h2>
+     *
+     * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
+     *
+     * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()} ()}.
+     *
+     * @return the current supplied to the steer motor, in amperes
+     */
+    public double getSteerMotorSupplyCurrentAmps() {
+        return steerMotorSim.getSupplyCurrent().in(Amps);
+    }
 
     /**
      *
@@ -791,58 +751,56 @@ public class SwerveModuleSimulation {
         this.driveEncoderUnGearedSpeedRadPerSec =
                 floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
 
-    // if the module is skidding
-    if (skidding)
-      this.driveEncoderUnGearedSpeedRadPerSec =
-          0.5 * driveEncoderUnGearedSpeedRadPerSec
-              + 0.5 * driveMotorSim.getVelocity().in(RadiansPerSecond);
+        // if the module is skidding
+        if (skidding)
+            this.driveEncoderUnGearedSpeedRadPerSec = 0.5 * driveEncoderUnGearedSpeedRadPerSec
+                    + 0.5 * driveMotorSim.getVelocity().in(RadiansPerSecond);
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
     }
 
-  /**
-   *
-   *
-   * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
-   *
-   * <p>Before calculating the torque of the motor, the output voltage of the drive motor is
-   * constrained for the current limit.</p>
-   *
-   * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
-   */
-  private double getDriveWheelTorque() {
-    driveMotorAppliedVolts = driveMotorRequestedVolts;
+    /**
+     *
+     *
+     * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
+     *
+     * <p>Before calculating the torque of the motor, the output voltage of the drive motor is constrained for the
+     * current limit.
+     *
+     * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
+     */
+    private double getDriveWheelTorque() {
+        driveMotorAppliedVolts = driveMotorRequestedVolts;
 
-    /* calculate the actual supply current */
-    driveMotorSupplyCurrentAmps =
-        driveMotorSim.getSupplyCurrent().in(Amps);
+        /* calculate the actual supply current */
+        driveMotorSupplyCurrentAmps = driveMotorSim.getSupplyCurrent().in(Amps);
 
-    /* calculate the torque generated,  */
-    final double torqueOnRotter = driveMotorSim.getRotorTorque(Amps.of(driveMotorSupplyCurrentAmps)).in(NewtonMeters);
-    return torqueOnRotter * DRIVE_GEAR_RATIO;
-  }
+        /* calculate the torque generated,  */
+        final double torqueOnRotter = driveMotorSim
+                .getRotorTorque(Amps.of(driveMotorSupplyCurrentAmps))
+                .in(NewtonMeters);
+        return torqueOnRotter * DRIVE_GEAR_RATIO;
+    }
 
     /** @return the current module state of this simulation module */
     public SwerveModuleState getCurrentState() {
         return new SwerveModuleState(getDriveWheelFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS, steerAbsoluteFacing);
     }
 
-  /**
-   *
-   *
-   * <h2>Obtains the "free spin" state of the module</h2>
-   *
-   * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a
-   * long time under the current input voltage
-   *
-   * @return the free spinning module state
-   */
-  protected SwerveModuleState getFreeSpinState() {
-    return new SwerveModuleState(
-        driveMotorSim.getVelocity().in(RadiansPerSecond)
-            * WHEEL_RADIUS_METERS,
-        steerAbsoluteFacing);
-  }
+    /**
+     *
+     *
+     * <h2>Obtains the "free spin" state of the module</h2>
+     *
+     * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a long time under
+     * the current input voltage
+     *
+     * @return the free spinning module state
+     */
+    protected SwerveModuleState getFreeSpinState() {
+        return new SwerveModuleState(
+                driveMotorSim.getVelocity().in(RadiansPerSecond) * WHEEL_RADIUS_METERS, steerAbsoluteFacing);
+    }
 
     /**
      *
@@ -858,35 +816,38 @@ public class SwerveModuleSimulation {
         this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
     }
 
-  /**
-   *
-   *
-   * <h2>Obtains the theoretical speed that the module can achieve.</h2>
-   *
-   * @return the theoretical maximum ground speed that the module can achieve, in m/s
-   */
-  public double getModuleTheoreticalSpeedMPS() {
-    return driveMotorSim.getFreeWheelSpeed().in(RadiansPerSecond) / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS;
-  }
+    /**
+     *
+     *
+     * <h2>Obtains the theoretical speed that the module can achieve.</h2>
+     *
+     * @return the theoretical maximum ground speed that the module can achieve, in m/s
+     */
+    public double getModuleTheoreticalSpeedMPS() {
+        return driveMotorSim.getFreeWheelSpeed().in(RadiansPerSecond) / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS;
+    }
 
-  /**
-   *
-   *
-   * <h2>Obtains the theoretical maximum propelling force of ONE module.</h2>
-   *
-   * <p>Calculates the maximum propelling force with respect to the gripping force and the drive
-   * motor's torque under its current limit.
-   *
-   * @param robotMassKg the mass of the robot, is kilograms
-   * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force
-   *     equally
-   * @return the maximum propelling force of EACH module
-   */
-  public double getTheoreticalPropellingForcePerModule(double robotMassKg, int modulesCount) {
-    final double
-        maxThrustNewtons =
-            driveMotorSim.getRotorTorque(Amps.of(DRIVE_CURRENT_LIMIT)).in(NewtonMeters) * DRIVE_GEAR_RATIO / WHEEL_RADIUS_METERS,
-        maxGrippingNewtons = 9.8 * robotMassKg / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
+    /**
+     *
+     *
+     * <h2>Obtains the theoretical maximum propelling force of ONE module.</h2>
+     *
+     * <p>Calculates the maximum propelling force with respect to the gripping force and the drive motor's torque under
+     * its current limit.
+     *
+     * @param robotMassKg the mass of the robot, is kilograms
+     * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
+     * @return the maximum propelling force of EACH module
+     */
+    public double getTheoreticalPropellingForcePerModule(double robotMassKg, int modulesCount) {
+        final double
+                maxThrustNewtons =
+                        driveMotorSim
+                                        .getRotorTorque(Amps.of(DRIVE_CURRENT_LIMIT))
+                                        .in(NewtonMeters)
+                                * DRIVE_GEAR_RATIO
+                                / WHEEL_RADIUS_METERS,
+                maxGrippingNewtons = 9.8 * robotMassKg / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
 
         return Math.min(maxThrustNewtons, maxGrippingNewtons);
     }

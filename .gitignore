@@ -7,10 +7,14 @@ build/
 !/docs/maplesim/vendordep/
 
 ### IntelliJ IDEA ###
+idea/modules.xml
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/libraries/
 project/idea/modules.xml
 project/.idea/compiler.xml
 project/.idea/jarRepositories.xml
-project/idea/libraries/
+project/.idea/libraries/
 *.iws
 *.iml
 *.ipr

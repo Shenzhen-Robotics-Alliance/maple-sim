@@ -178,8 +178,8 @@ public class MapleMotorSim {
      * @param kP the proportional gain
      * @return this instance for method chaining
      */
-    public MapleMotorSim withVelocityVoltageController(Per<VoltageUnit, AngleUnit> kP) {
-        var kPUnit = PerUnit.combine(Volts, Radians);
+    public MapleMotorSim withVelocityVoltageController(Per<VoltageUnit, AngularVelocityUnit> kP) {
+        var kPUnit = PerUnit.combine(Volts, RadiansPerSecond);
         veloVoltController.setP(kP.in(kPUnit));
         return this;
     }
@@ -225,8 +225,8 @@ public class MapleMotorSim {
      * @param kP the proportional gain
      * @return this instance for method chaining
      */
-    public MapleMotorSim withVelocityCurrentController(Per<CurrentUnit, AngleUnit> kP) {
-        var kPUnit = PerUnit.combine(Amps, Radians);
+    public MapleMotorSim withVelocityCurrentController(Per<CurrentUnit, AngularVelocityUnit> kP) {
+        var kPUnit = PerUnit.combine(Amps, RadiansPerSecond);
         veloCurrentController.setP(kP.in(kPUnit));
         return this;
     }

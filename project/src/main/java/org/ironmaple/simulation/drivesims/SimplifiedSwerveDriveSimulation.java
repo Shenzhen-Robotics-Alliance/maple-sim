@@ -11,10 +11,18 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
+
+import org.ironmaple.simulation.MapleMotorSim;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
+
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 /**
  *
@@ -37,10 +45,6 @@ public class SimplifiedSwerveDriveSimulation {
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveModuleState[] setPointsOptimized;
-
-    private PIDController steerHeadingCloseLoop;
-    private PIDController driveCloseLoop;
-    private final SimpleMotorFeedforward driveOpenLoop;
 
     /**
      *
@@ -78,23 +82,15 @@ public class SimplifiedSwerveDriveSimulation {
         this.swerveDriveSimulation = swerveDriveSimulation;
         this.moduleSimulations = swerveDriveSimulation.getModules();
 
-    this.steerHeadingCloseLoop = new PIDController(5.0, 0, 0);
-    this.steerHeadingCloseLoop.enableContinuousInput(-Math.PI, Math.PI);
-    this.driveCloseLoop = new PIDController(0, 0, 0);
-    this.driveOpenLoop =
-        new SimpleMotorFeedforward(
-            moduleSimulations[0].DRIVE_FRICTION_VOLTAGE,
-            moduleSimulations[0].driveMotorSim.nominalVoltageVolts
-                / moduleSimulations[0].driveMotorSim.freeSpeedRadPerSec);
-    this.kinematics = swerveDriveSimulation.kinematics;
+        this.kinematics = swerveDriveSimulation.kinematics;
 
         this.poseEstimator = new SwerveDrivePoseEstimator(
-                kinematics,
-                getRawGyroAngle(),
-                getLatestModulePositions(),
-                getActualPoseInSimulationWorld(),
-                stateStdDevs,
-                visionMeasurementStdDevs);
+            kinematics,
+            getRawGyroAngle(),
+            getLatestModulePositions(),
+            getActualPoseInSimulationWorld(),
+            stateStdDevs,
+            visionMeasurementStdDevs);
 
         this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
@@ -213,7 +209,7 @@ public class SimplifiedSwerveDriveSimulation {
      *
      * <h2>Resets the odometry to a specified position.</h2>
      *
-     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, WheelPositions, Pose2d)}.
+     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, SwerveModulePosition[], Pose2d)}.
      *
      * <p>It resets the position of the pose estimator to the given pose.
      *
@@ -441,24 +437,16 @@ public class SimplifiedSwerveDriveSimulation {
      * @return the optimized swerve module state after control execution
      */
     private SwerveModuleState optimizeAndRunModuleState(
-            SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
-        setPoint = SwerveModuleState.optimize(setPoint, moduleSimulation.getSteerAbsoluteFacing());
-        final double
-                cosProjectedSpeedMPS =
-                        SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
-                driveMotorVelocitySetPointRadPerSec =
-                        cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
-        final double driveFeedForwardVoltage = driveOpenLoop.calculate(driveMotorVelocitySetPointRadPerSec),
-                driveFeedBackVoltage =
-                        driveCloseLoop.calculate(
-                                moduleSimulation.getDriveWheelFinalSpeedRadPerSec(),
-                                driveMotorVelocitySetPointRadPerSec),
-                steerFeedBackVoltage =
-                        steerHeadingCloseLoop.calculate(
-                                moduleSimulation.getSteerAbsoluteFacing().getRadians(), setPoint.angle.getRadians());
+        SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
+        setPoint.optimize(moduleSimulation.getSteerAbsoluteFacing());
+        final double cosProjectedSpeedMPS =
+            SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
 
-        moduleSimulation.requestDriveVoltageOut(driveFeedForwardVoltage + driveFeedBackVoltage);
-        moduleSimulation.requestSteerVoltageOut(steerFeedBackVoltage);
+        driveMotorVelocitySetPointRadPerSec =
+                cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
+
+        moduleSimulation.requestSteerOutput(Radians.of(setPoint.angle.getRadians()));
+        moduleSimulation.requestDriveOutput(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec));
         return setPoint;
     }
 
@@ -573,25 +561,65 @@ public class SimplifiedSwerveDriveSimulation {
      * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
      *
      * @param steerHeadingCloseLoop the PID controller for steering control.
+     * @param inputUnit the unit used to measure the steer angle with
+     * @param useVoltage use voltage-based control for the motor
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withSteerPID(PIDController steerHeadingCloseLoop) {
-        this.steerHeadingCloseLoop = steerHeadingCloseLoop;
+    public SimplifiedSwerveDriveSimulation withSteerPID(PIDController steerHeadingCloseLoop, AngleUnit inputUnit, boolean useVoltage) {
+        for (int i = 0; i < 4; i++) {
+            moduleSimulations[i] = moduleSimulations[i].withSteerPID(
+                steerHeadingCloseLoop.getP(),
+                steerHeadingCloseLoop.getD(),
+                inputUnit,
+                useVoltage
+            );
+        }
         return this;
     }
 
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for driving.</h2>
+     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
      *
-     * <p>This method sets the PID controller used for the driving closed-loop control of the swerve drive.
+     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
      *
-     * @param driveCloseLoop the PID controller for driving control.
+     * @param driveCloseLoop the PID controller for drive control.
+     * @param inputUnit the unit used to measure the steer angle with
+     * @param useVoltage use voltage-based control for the motor
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDrivePID(PIDController driveCloseLoop) {
-        this.driveCloseLoop = driveCloseLoop;
+    public SimplifiedSwerveDriveSimulation withDrivePID(PIDController driveCloseLoop, AngularVelocityUnit inputUnit, boolean useVoltage) {
+        for (int i = 0; i < 4; i++) {
+            moduleSimulations[i] = moduleSimulations[i].withDrivePID(
+                driveCloseLoop.getP(),
+                inputUnit,
+                useVoltage
+            );
+        }
+        return this;
+    }
+
+    /**
+     *
+     *
+     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     *
+     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     *
+     * @param driveFeedforward the feedforward for drive control.
+     * @param inputUnit the unit used to measure the steer angle with
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SimplifiedSwerveDriveSimulation withDriveFeedForward(SimpleMotorFeedforward driveFeedforward, AngularVelocityUnit inputUnit) {
+        for (int i = 0; i < 4; i++) {
+            moduleSimulations[i] = moduleSimulations[i].withDriveFeedforward(
+                driveFeedforward.getKs(),
+                driveFeedforward.getKv(),
+                driveFeedforward.getKa(),
+                inputUnit
+            );
+        }
         return this;
     }
 }

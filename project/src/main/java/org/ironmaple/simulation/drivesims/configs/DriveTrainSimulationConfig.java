@@ -29,7 +29,7 @@ public class DriveTrainSimulationConfig {
     public Supplier<GyroSimulation> gyroSimulationFactory;
     public Translation2d[] moduleTranslations;
 
-     /**
+    /**
      *
      *
      * <h2>Ordinary Constructor</h2>

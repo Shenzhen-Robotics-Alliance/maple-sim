@@ -35,7 +35,6 @@ model {
             targetPlatform nativeUtils.wpi.platforms.roborio
         }
     }
-
 }
 
 ext.appendDebugPathToBinaries = { binaries->
@@ -141,7 +140,6 @@ ext.createAllCombined = { list, name, base, type, project ->
     }
 
     return task
-
 }
 
 ext.includeStandardZipFormat = { task, value ->

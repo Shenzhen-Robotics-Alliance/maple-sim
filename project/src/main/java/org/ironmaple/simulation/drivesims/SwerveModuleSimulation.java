@@ -13,6 +13,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -21,6 +23,7 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.BatterySimulationContainer;
 import org.ironmaple.simulation.motorsims.MapleMotorSim;
 import org.ironmaple.simulation.motorsims.SimMotorConfigs;
+import org.ironmaple.simulation.motorsims.requests.ControlRequest;
 
 /**
  *
@@ -62,22 +65,22 @@ import org.ironmaple.simulation.motorsims.SimMotorConfigs;
  */
 public class SwerveModuleSimulation {
     public final DCMotor DRIVE_MOTOR;
+    public final SimMotorConfigs driveMotorConfigs;
     private final MapleMotorSim steerMotorSim;
     public final double DRIVE_CURRENT_LIMIT,
             DRIVE_GEAR_RATIO,
             STEER_GEAR_RATIO,
             DRIVE_FRICTION_VOLTAGE,
             WHEELS_COEFFICIENT_OF_FRICTION,
-            WHEEL_RADIUS_METERS,
-            DRIVE_WHEEL_INERTIA = 0.01;
-    private double driveMotorRequestedVolts = 0.0,
-            driveMotorAppliedVolts = 0.0,
+            WHEEL_RADIUS_METERS;
+    private double driveMotorAppliedVolts = 0.0,
             driveMotorSupplyCurrentAmps = 0.0,
             steerRelativeEncoderPositionRad = 0.0,
             steerRelativeEncoderSpeedRadPerSec = 0.0,
             steerAbsoluteEncoderSpeedRadPerSec = 0.0,
             driveEncoderUnGearedPositionRad = 0.0,
             driveEncoderUnGearedSpeedRadPerSec = 0.0;
+    private ControlRequest driveMotorRequest;
     private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
 
     private final double steerRelativeEncoderOffSet = (Math.random() - 0.5) * 30;
@@ -126,12 +129,14 @@ public class SwerveModuleSimulation {
         WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
         WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
+        this.driveMotorConfigs = new SimMotorConfigs(
+                DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage));
+        BatterySimulationContainer.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
         this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
                 steerMotor,
                 steerGearRatio,
                 KilogramSquareMeters.of(steerRotationalInertia),
                 Volts.of(steerFrictionVoltage)));
-        BatterySimulationContainer.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
@@ -149,44 +154,29 @@ public class SwerveModuleSimulation {
     /**
      *
      *
-     * <h2>Requests the Driving Motor to Run at a Specified Voltage Output.</h2>
+     * <h2>Requests the Driving Motor to Run at a Specified Output.</h2>
      *
-     * <h3>Think of it as the setVoltage() of your physical driving motor.</h3>
+     * <p>Think of it as the <code>requestOutput()</code> of your physical driving motor.
      *
-     * <p>This method sets the desired voltage output for the driving motor. The change will be applied in the next
-     * sub-tick of the simulation.
-     *
-     * <p><strong>Note:</strong> The requested voltage may not always be fully applied if the current is too high. The
-     * current limit may reduce the motor's output, similar to real motors.
-     *
-     * <p>To check the actual voltage applied to the drivetrain, use {@link #getDriveMotorAppliedVolts()}.
-     *
-     * @param volts the voltage to be applied to the driving motor
+     * <p>This method sets the desired output for the steering motor. The change will be applied in the next sub-tick of
+     * the simulation.
      */
-    public void requestDriveVoltageOut(double volts) {
-        this.driveMotorRequestedVolts = volts;
+    public void requestDriveOutput(ControlRequest request) {
+        this.driveMotorRequest = request;
     }
 
     /**
      *
      *
-     * <h2>Requests the Steering Motor to Run at a Specified Voltage Output.</h2>
+     * <h2>Requests the Steering Motor to Run at a Specified Output.</h2>
      *
-     * <h3>Think of it as the setVoltage() of your physical steering motor.</h3>
+     * <p>Think of it as the <code>requestOutput()</code> of your physical steering motor.
      *
-     * <p>This method sets the desired voltage output for the steering motor. The change will be applied in the next
-     * sub-tick of the simulation.
-     *
-     * <p><strong>Note:</strong> Similar to the drive motor, the requested voltage may not always be fully applied if
-     * the current exceeds the limit. The current limit will reduce the motor's output as needed, mimicking real motor
-     * behavior.
-     *
-     * <p>To check the actual voltage applied to the steering motor, use {@link #getSteerMotorAppliedVolts()}.
-     *
-     * @param volts the voltage to be applied to the steering motor
+     * <p>This method sets the desired output for the steering motor. The change will be applied in the next sub-tick of
+     * the simulation.
      */
-    public void requestSteerVoltageOut(double volts) {
-        this.steerMotorSim.setControl(Volts.of(volts));
+    public void requestSteerControl(ControlRequest request) {
+        this.steerMotorSim.requestOutput(request);
     }
 
     /**
@@ -194,8 +184,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Actual Output Voltage of the Drive Motor.</h2>
      *
-     * <p>This method returns the actual voltage being applied to the drive motor. The actual applied voltage may differ
-     * from the value set by {@link #requestDriveVoltageOut(double)}.
+     * <p>This method returns the actual voltage being applied to the drive motor.
      *
      * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
      * the system.
@@ -212,15 +201,15 @@ public class SwerveModuleSimulation {
      * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
      *
      * <p>This method returns the actual voltage being applied to the steering motor. It wraps around the
-     * {@link MapleMotorSim#getAppliedVolts()} method.
+     * {@link MapleMotorSim#getAppliedVoltage()} method.
      *
-     * <p>The actual applied voltage may differ from the value set by {@link #requestSteerVoltageOut(double)}. If the
-     * motor's supply current is too high, the motor will automatically reduce its output voltage to protect the system.
+     * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
+     * the system.
      *
      * @return the actual output voltage of the steering motor, in volts
      */
     public double getSteerMotorAppliedVolts() {
-        return steerMotorSim.getRotorVoltage().in(Volts);
+        return steerMotorSim.getAppliedVoltage().in(Volts);
     }
 
     /**
@@ -243,7 +232,7 @@ public class SwerveModuleSimulation {
      *
      * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
      *
-     * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}.
+     * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()}.
      *
      * @return the current supplied to the steer motor, in amperes
      */
@@ -541,12 +530,19 @@ public class SwerveModuleSimulation {
      * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
      *
      * <p>Before calculating the torque of the motor, the output voltage of the drive motor is constrained for the
-     * current limit through {@link MapleMotorSim#constrainOutputVoltage(DCMotor, double, double, double)}.
+     * current limit through {@link MapleMotorSim#constrainOutputVoltage(AngularVelocity, Voltage, SimMotorConfigs)}
      *
      * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
      */
     private double getDriveWheelTorque() {
-        driveMotorAppliedVolts = driveMotorRequestedVolts;
+        driveMotorAppliedVolts = MapleMotorSim.constrainOutputVoltage(
+                        RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec),
+                        driveMotorRequest.updateSignal(
+                                driveMotorConfigs,
+                                Radians.of(driveEncoderUnGearedPositionRad),
+                                RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec)),
+                        driveMotorConfigs)
+                .in(Volts);
 
         /* calculate the actual supply current */
         driveMotorSupplyCurrentAmps = DRIVE_MOTOR.getCurrent(

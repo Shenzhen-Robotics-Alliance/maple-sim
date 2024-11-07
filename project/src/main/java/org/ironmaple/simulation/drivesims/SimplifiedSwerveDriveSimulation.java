@@ -1,5 +1,7 @@
 package org.ironmaple.simulation.drivesims;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -14,6 +16,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.motorsims.requests.VoltageOut;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -456,8 +459,8 @@ public class SimplifiedSwerveDriveSimulation {
                         steerHeadingCloseLoop.calculate(
                                 moduleSimulation.getSteerAbsoluteFacing().getRadians(), setPoint.angle.getRadians());
 
-        moduleSimulation.requestDriveVoltageOut(driveFeedForwardVoltage + driveFeedBackVoltage);
-        moduleSimulation.requestSteerVoltageOut(steerFeedBackVoltage);
+        moduleSimulation.requestDriveOutput(new VoltageOut(Volts.of(driveFeedForwardVoltage + driveFeedBackVoltage)));
+        moduleSimulation.requestSteerControl(new VoltageOut(Volts.of(steerFeedBackVoltage)));
         return setPoint;
     }
 

@@ -1,8 +1,8 @@
 package org.ironmaple.simulation.motorsims;
 
-import edu.wpi.first.units.measure.*;
-
 import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.units.measure.*;
 
 public record SimMotorState(Angle angularPosition, AngularVelocity angularVelocity) {
     public SimMotorState step(Torque electricTorque, Torque frictionTorque, MomentOfInertia loadMOI, Time dt) {
@@ -18,21 +18,22 @@ public record SimMotorState(Angle angularPosition, AngularVelocity angularVeloci
         currentAngularVelocityRadiansPerSecond += electricTorqueNewtonsMeters / loadMOIKgMetersSquared * dtSeconds;
 
         // step2: compute the amount of change in angular velocity due to friction
-        final double deltaAngularVelocityDueToFrictionRadPerSec = Math.copySign(frictionTorqueNewtonsMeters, currentAngularVelocityRadiansPerSecond)
-                / loadMOIKgMetersSquared * dtSeconds;
+        final double deltaAngularVelocityDueToFrictionRadPerSec =
+                Math.copySign(frictionTorqueNewtonsMeters, -currentAngularVelocityRadiansPerSecond)
+                        / loadMOIKgMetersSquared
+                        * dtSeconds;
 
-        // step3: if the angular velocity reverses direction after applying friction, or that the current angular velocity is zero
-        if ((currentAngularPositionRadians + deltaAngularVelocityDueToFrictionRadPerSec) * currentAngularPositionRadians <= 0)
-            currentAngularPositionRadians = 0;
+        // step3: if the angular velocity reverses direction after applying friction, or that the current angular
+        // velocity is zero
+        if ((currentAngularVelocityRadiansPerSecond + deltaAngularVelocityDueToFrictionRadPerSec)
+                        * currentAngularVelocityRadiansPerSecond
+                <= 0) currentAngularVelocityRadiansPerSecond = 0;
         // step4: add the change in angular velocity due to friction
-        else
-            currentAngularPositionRadians += deltaAngularVelocityDueToFrictionRadPerSec;
+        else currentAngularVelocityRadiansPerSecond += deltaAngularVelocityDueToFrictionRadPerSec;
 
         // step 5: indefinite integral on position
         currentAngularPositionRadians += currentAngularVelocityRadiansPerSecond * dtSeconds;
         return new SimMotorState(
-                Radians.of(currentAngularPositionRadians),
-                RadiansPerSecond.of(currentAngularVelocityRadiansPerSecond)
-        );
+                Radians.of(currentAngularPositionRadians), RadiansPerSecond.of(currentAngularVelocityRadiansPerSecond));
     }
 }

@@ -49,9 +49,16 @@ public class MapleMotorSim {
     }
 
     public void update(Time dt) {
-        this.appliedVoltage = constrainOutputVoltage(request.updateSignal(configs, state));
+        this.appliedVoltage = constrainOutputVoltage(
+                state.angularVelocity(),
+                request.updateSignal(
+                        configs,
+                        state.angularPosition().times(configs.gearing),
+                        state.angularVelocity().times(configs.gearing)),
+                configs);
         this.statorCurrent = configs.calculateCurrent(state.angularVelocity(), appliedVoltage);
-        this.state = this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
+        this.state = this.state.step(
+                configs.calculateTorque(statorCurrent).times(configs.gearing), configs.friction, configs.loadMOI, dt);
 
         if (state.angularPosition().lte(configs.reverseHardwareLimit))
             state = new SimMotorState(configs.reverseHardwareLimit, RadiansPerSecond.zero());
@@ -59,15 +66,16 @@ public class MapleMotorSim {
             state = new SimMotorState(configs.forwardHardwareLimit, RadiansPerSecond.zero());
     }
 
-    public void request(ControlRequest request) {
+    public void requestOutput(ControlRequest request) {
         this.request = request;
     }
 
-    private Voltage constrainOutputVoltage(Voltage requestedVoltage) {
+    public static Voltage constrainOutputVoltage(
+            AngularVelocity currentVelocity, Voltage requestedVoltage, SimMotorConfigs configs) {
         final double kCurrentThreshold = 1.2;
 
         // don't use WpiLib Units for calculations
-        final double motorCurrentVelocityRadPerSec = state.angularVelocity().in(RadiansPerSecond);
+        final double motorCurrentVelocityRadPerSec = currentVelocity.in(RadiansPerSecond);
         final double currentLimitAmps = configs.currentLimit.in(Amps);
         final double requestedOutputVoltageVolts = requestedVoltage.in(Volts);
         final double currentAtRequestedVoltageAmps =
@@ -107,8 +115,10 @@ public class MapleMotorSim {
 
     public Current getSupplyCurrent() {
         // https://www.chiefdelphi.com/t/current-limiting-talonfx-values/374780/10
-        return getStatorCurrent().times(
-                appliedVoltage.divide(Volts.of(RobotController.getBatteryVoltage()))
-        );
+        return getStatorCurrent().times(appliedVoltage.divide(Volts.of(RobotController.getBatteryVoltage())));
+    }
+
+    public SimMotorConfigs getConfigs() {
+        return this.configs;
     }
 }

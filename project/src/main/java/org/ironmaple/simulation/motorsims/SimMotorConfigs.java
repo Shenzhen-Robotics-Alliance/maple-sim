@@ -14,6 +14,8 @@ public final class SimMotorConfigs {
     public final double gearing;
     public final MomentOfInertia loadMOI;
     public final Torque friction;
+
+    /* all these controllers receive un-geared position/velocity from the encoder, not the final position/velocity of the mechanism */
     public final PIDController positionVoltageController;
     public final PIDController velocityVoltageController;
     public final PIDController positionCurrentController;
@@ -115,8 +117,8 @@ public final class SimMotorConfigs {
      * @param kP the proportional gain
      * @return this instance for method chaining
      */
-    public SimMotorConfigs withVelocityVoltageController(Per<VoltageUnit, AngleUnit> kP) {
-        var kPUnit = PerUnit.combine(Volts, Radians);
+    public SimMotorConfigs withVelocityVoltageController(Per<VoltageUnit, AngularVelocityUnit> kP) {
+        var kPUnit = PerUnit.combine(Volts, RadiansPerSecond);
         velocityVoltageController.setP(kP.in(kPUnit));
         return this;
     }
@@ -163,8 +165,8 @@ public final class SimMotorConfigs {
      * @param kP the proportional gain
      * @return this instance for method chaining
      */
-    public SimMotorConfigs withVelocityCurrentController(Per<CurrentUnit, AngleUnit> kP) {
-        var kPUnit = PerUnit.combine(Amps, Radians);
+    public SimMotorConfigs withVelocityCurrentController(Per<CurrentUnit, AngularVelocityUnit> kP) {
+        var kPUnit = PerUnit.combine(Amps, RadiansPerSecond);
         velocityCurrentController.setP(kP.in(kPUnit));
         return this;
     }

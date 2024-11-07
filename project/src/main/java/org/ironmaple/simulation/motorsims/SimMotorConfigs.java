@@ -35,14 +35,13 @@ public final class SimMotorConfigs {
         this.positionCurrentController = new PIDController(0, 0, 0);
         this.velocityVoltageController = new PIDController(0, 0, 0);
         this.velocityCurrentController = new PIDController(0, 0, 0);
-        this.feedforward = new SimpleMotorFeedforward(0, 0, 0);
         this.forwardHardwareLimit = Radians.of(Double.POSITIVE_INFINITY);
         this.reverseHardwareLimit = Radians.of(Double.NEGATIVE_INFINITY);
         this.currentLimit = Amps.of(150);
 
         this.withFeedForward(
                 frictionVoltage,
-                VoltsPerRadianPerSecond.ofNative(1.0 / motor.KvRadPerSecPerVolt),
+                VoltsPerRadianPerSecond.ofNative(motor.nominalVoltageVolts / motor.freeSpeedRadPerSec),
                 VoltsPerRadianPerSecondSquared.ofNative(0),
                 Seconds.of(0.02));
     }

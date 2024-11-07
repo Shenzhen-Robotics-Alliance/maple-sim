@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
+import org.ironmaple.utils.RuntimeLog;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -116,6 +117,7 @@ public class GamePieceStorage {
             return pieceTransforms[index];
         };
         piece.releaseControl().intakeLib(localizer, transformSupplier);
+        RuntimeLog.debug("GamePieceStorage: New game piece added to storage");
     }
 
     /**
@@ -239,6 +241,7 @@ public class GamePieceStorage {
         if (scooch) {
             scoochUp();
         }
+        RuntimeLog.debug("GamePieceStorage: Game piece removed from storage");
         return Optional.of(piece.userControlled());
     }
 
@@ -260,6 +263,7 @@ public class GamePieceStorage {
         if (scooch) {
             scoochDown();
         }
+        RuntimeLog.debug("GamePieceStorage: Game piece removed from storage");
         return Optional.of(piece.userControlled());
     }
 }

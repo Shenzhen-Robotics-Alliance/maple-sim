@@ -8,6 +8,7 @@ import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.IntakeSimulation.IntakeBehavior;
 import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.utils.RuntimeLog;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -43,6 +44,7 @@ public class SimRobot {
             if (this.value.isPresent()) {
                 throw new IllegalStateException(name + "is already initialized");
             }
+            RuntimeLog.debug("Initialized " + name);
             this.value = Optional.of(value);
         }
 
@@ -114,12 +116,14 @@ public class SimRobot {
         );
         intakes.add(intake);
         arena.world().addContactListener(intake.getGamePieceContactListener());
+        RuntimeLog.debug("Created IntakeSimulation");
         return intake;
     }
 
     public MechanismSim createMechanism(DCMotor motor, double gearRatio, MomentOfInertia loadIntertia, Voltage frictionVoltage) {
         MechanismSim mapleMotor = new MechanismSim(arena, motor, gearRatio, loadIntertia, frictionVoltage);
         mechanisms.add(mapleMotor);
+        RuntimeLog.debug("Created MechanismSim");
         return mapleMotor;
     }
 

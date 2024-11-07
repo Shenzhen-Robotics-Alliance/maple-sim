@@ -11,6 +11,7 @@ import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimRobot;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.SwerveConfig;
+import org.ironmaple.utils.RuntimeLog;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
@@ -92,6 +93,8 @@ public class SwerveDriveSimulation extends DriveTrainSimulation {
         this.kinematics = new SwerveDriveKinematics(moduleTranslations);
 
         this.gravityForceOnEachModule = config.robotMassKg * 9.8 / moduleSimulations.length;
+
+        RuntimeLog.debug("created swerve drive simulation");
     }
 
     /**

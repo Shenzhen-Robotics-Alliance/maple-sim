@@ -69,6 +69,8 @@ public abstract class SimulatedArena {
         if (instance == null) {
             if (HALUtil.getHALRuntimeType() == HALUtil.RUNTIME_SIMULATION) {
                 RuntimeLog.error("This Library is only supported in Simulation Mode");
+            } else {
+                RuntimeLog.debug("Created a new instance of Arena2024Crescendo");
             }
             instance = new Arena2024Crescendo();
         }

@@ -359,6 +359,7 @@ public class GamePiece {
         state.onExit(this, arena);
         state = newState;
         state.onEnter(this, arena);
+        RuntimeLog.debug("GamePiece: Transitioned to state " + state.tag());
     }
 
     /**
@@ -580,10 +581,12 @@ public class GamePiece {
                 transitionState(new GamePieceState.OnField(createBody(
                         pose.getTranslation().toTranslation2d(),
                         state.velocity.toVelocity2d().times(variant.landingDampening))));
+                RuntimeLog.debug("GamePiece: Landed");
             }
             if (variant.targetVolumes.stream().anyMatch(volume -> insideVolume(pose.getTranslation(), volume))) {
                 triggerEvent(GamePieceEvent.TARGET_REACHED);
                 transitionState(new GamePieceState.Limbo());
+                RuntimeLog.debug("GamePiece: Target reached");
             }
         }
     }

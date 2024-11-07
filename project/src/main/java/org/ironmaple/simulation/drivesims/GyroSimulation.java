@@ -5,6 +5,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.GyroConfig;
+import org.ironmaple.utils.RuntimeLog;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 /**
@@ -44,6 +45,8 @@ public class GyroSimulation {
         this.previousAngularVelocityRadPerSec = this.measuredAngularVelocityRadPerSec = 0;
         this.cachedRotations = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++) cachedRotations.offer(gyroReading);
+
+        RuntimeLog.debug("Created a swerve module simulation");
     }
 
     /**

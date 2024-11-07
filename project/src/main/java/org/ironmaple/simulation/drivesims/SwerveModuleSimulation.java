@@ -20,6 +20,7 @@ import org.ironmaple.simulation.MechanismSim;
 import org.ironmaple.simulation.SimRobot;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleConfig;
+import org.ironmaple.utils.RuntimeLog;
 
 /**
  *
@@ -132,6 +133,8 @@ public class SwerveModuleSimulation {
             cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
 
         this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
+
+        RuntimeLog.debug("Created a swerve module simulation");
     }
 
     /**

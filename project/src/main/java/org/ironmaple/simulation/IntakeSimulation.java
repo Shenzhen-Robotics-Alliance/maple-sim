@@ -1,7 +1,6 @@
 package org.ironmaple.simulation;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.dyn4j.collision.CollisionBody;
 import org.dyn4j.collision.Fixture;
@@ -10,18 +9,11 @@ import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.contact.Contact;
 import org.dyn4j.dynamics.contact.SolvedContact;
 import org.dyn4j.geometry.Convex;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.ContactCollisionData;
 import org.dyn4j.world.listener.ContactListener;
 import org.ironmaple.simulation.GamePiece.GamePieceCollisionBody;
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
 
 /**
  *
@@ -59,92 +51,20 @@ import edu.wpi.first.math.geometry.Translation3d;
  * not model the actual functioning of an intake mechanism.
  */
 public class IntakeSimulation extends BodyFixture {
-    protected int gamePiecesInIntakeCount = 0;
     private boolean intakeRunning = false;
 
-    private final AbstractDriveTrainSimulation driveTrainSimulation;
+    private final DriveTrainSimulation driveTrainSimulation;
     private final List<GamePieceVariant> acceptedGamePieceVariants;
-    private final int capacity;
+    private final GamePieceStorage gamePieceStorage;
+    private final IntakeBehavior intakeBehavior;
 
-    public enum IntakeSide {
-        FRONT,
-        LEFT,
-        RIGHT,
-        BACK
+    public enum IntakeBehavior {
+        ADD_HIGHEST_AVAILABLE,
+        ADD_LOWEST_AVAILABLE,
+        ADD_HIGHEST_DISPLACE,
+        ADD_LOWEST_DISPLACE,
+        ADD_RANDOM,
     }
-
-    /**
-     *
-     *
-     * <h2>Creates an Intake Simulation that Tightly Attaches to One Side of the Chassis.</h2>
-     *
-     * @param targetedGamePieceType the type of game pieces that this intake can collect
-     * @param driveTrainSimulation the chassis to which this intake is attached
-     * @param width the width of the intake, in meters
-     * @param side the side of the chassis where the intake is attached
-     * @param capacity the maximum number of game pieces that the intake can hold
-     */
-    public IntakeSimulation(
-            AbstractDriveTrainSimulation driveTrainSimulation,
-            double width,
-            IntakeSide side,
-            int capacity,
-            GamePieceVariant... acceptedGamePieceVariants) {
-        this(driveTrainSimulation, width, 0.02, side, capacity, acceptedGamePieceVariants);
-    }
-
-    /**
-     *
-     *
-     * <h2>Creates an Intake Simulation that Extends Out of the Chassis Frame.</h2>
-     *
-     * @param targetedGamePieceType the type of game pieces that this intake can collect
-     * @param driveTrainSimulation the chassis to which this intake is attached
-     * @param width the valid width of the intake, in meters
-     * @param lengthExtended the length the intake extends out from the chassis when activated, in
-     *     meters
-     * @param side the side of the chassis where the intake is attached
-     * @param capacity the maximum number of game pieces that the intake can hold
-     */
-    public IntakeSimulation(
-            AbstractDriveTrainSimulation driveTrainSimulation,
-            double width,
-            double lengthExtended,
-            IntakeSide side,
-            int capacity,
-            GamePieceVariant... acceptedGamePieceVariants) {
-        this(
-                driveTrainSimulation,
-                getIntakeRectangle(driveTrainSimulation, width, lengthExtended, side),
-                capacity,
-                acceptedGamePieceVariants);
-    }
-
-    private static Rectangle getIntakeRectangle(
-            AbstractDriveTrainSimulation driveTrainSimulation,
-            double width,
-            double lengthExtended,
-            IntakeSide side) {
-        final Rectangle intakeRectangle = new Rectangle(width, lengthExtended);
-        intakeRectangle.rotate(
-                switch (side) {
-                    case LEFT, RIGHT -> 0;
-                    case FRONT, BACK -> Math.toRadians(90);
-                });
-        final double distanceTransformed = lengthExtended / 2 - 0.01;
-        intakeRectangle.translate(
-                switch (side) {
-                    case LEFT -> new Vector2(0, driveTrainSimulation.config.bumperWidthYMeters / 2 + distanceTransformed);
-                    case RIGHT -> new Vector2(
-                            0, -driveTrainSimulation.config.bumperWidthYMeters / 2 - distanceTransformed);
-                    case FRONT -> new Vector2(
-                            driveTrainSimulation.config.bumperLengthXMeters / 2 + distanceTransformed, 0);
-                    case BACK -> new Vector2(
-                            -driveTrainSimulation.config.bumperLengthXMeters / 2 - distanceTransformed / 2, 0);
-                });
-
-        return intakeRectangle;
-    };
 
     /**
      *
@@ -160,16 +80,18 @@ public class IntakeSimulation extends BodyFixture {
      *     object
      * @param capacity the maximum number of game pieces that the intake can hold
      */
-    public IntakeSimulation(
-            AbstractDriveTrainSimulation driveTrainSimulation,
+    IntakeSimulation(
+            DriveTrainSimulation driveTrainSimulation,
+            GamePieceStorage gamePieceStorage,
             Convex shape,
-            int capacity,
+            IntakeBehavior intakeBehavior,
             GamePieceVariant... acceptedGamePieceVariants) {
         super(shape);
 
         this.acceptedGamePieceVariants = List.of(acceptedGamePieceVariants);
-        this.capacity = capacity;
         this.driveTrainSimulation = driveTrainSimulation;
+        this.gamePieceStorage = gamePieceStorage;
+        this.intakeBehavior = intakeBehavior;
     }
 
     /**
@@ -211,33 +133,6 @@ public class IntakeSimulation extends BodyFixture {
     /**
      *
      *
-     * <h2>Get the amount of game pieces in the intake.</h2>
-     *
-     * @return the amount of game pieces stored in the intake
-     */
-    public int getGamePiecesAmount() {
-        return gamePiecesInIntakeCount;
-    }
-
-    /**
-     *
-     *
-     * <h1>Removes 1 game piece from the intake.</h1>
-     *
-     * <p>Deducts the {@link #getGamePiecesAmount()}} by 1, if there is any remaining.
-     *
-     * <p>This is used to obtain a game piece from the intake and move it a feeder/shooter.
-     */
-    public boolean obtainGamePieceFromIntake() {
-        if (gamePiecesInIntakeCount < 1)
-            return false;
-        gamePiecesInIntakeCount--;
-        return true;
-    }
-
-    /**
-     *
-     *
      * <h2>The {@link ContactListener} for the Intake Simulation.</h2>
      *
      * <p>This class can be added to the simulation world to detect and manage contacts between the
@@ -250,9 +145,7 @@ public class IntakeSimulation extends BodyFixture {
     final class GamePieceContactListener implements ContactListener<Body> {
         @Override
         public void begin(ContactCollisionData<Body> collision, Contact contact) {
-            if (!intakeRunning)
-                return;
-            if (gamePiecesInIntakeCount >= capacity)
+            if (!IntakeSimulation.this.intakeRunning)
                 return;
 
             final CollisionBody<?> collisionBody1 = collision.getBody1();
@@ -260,22 +153,25 @@ public class IntakeSimulation extends BodyFixture {
             final Fixture fixture1 = collision.getFixture1(), fixture2 = collision.getFixture2();
 
             if (collisionBody1 instanceof GamePieceCollisionBody gamePiece
-                    && acceptedGamePieceVariants.contains(gamePiece.variant)
+                    && acceptedGamePieceVariants.contains(gamePiece.gp.variant())
                     && fixture2 == IntakeSimulation.this) {
                 intakeGamePiece(gamePiece);
             } else if (collisionBody2 instanceof GamePieceCollisionBody gamePiece
-                    && acceptedGamePieceVariants.contains(gamePiece.variant)
+                    && acceptedGamePieceVariants.contains(gamePiece.gp.variant())
                     && fixture1 == IntakeSimulation.this) {
                 intakeGamePiece(gamePiece);
             }
         }
 
         private void intakeGamePiece(GamePieceCollisionBody gamePiece) {
-            Supplier<Pose3d> robotPoseSupplier = () -> new Pose3d(
-                    IntakeSimulation.this.driveTrainSimulation.getSimulatedDriveTrainPose());
-            var transform = new Transform3d(new Translation3d(0.0, 0.0, 0.5), new Rotation3d());
-            Supplier<Transform3d> intakePoseSupplier = () -> transform;
-            gamePiece.intakeCallback.accept(robotPoseSupplier, intakePoseSupplier);
+            IntakeSimulation sim = IntakeSimulation.this;
+            switch (sim.intakeBehavior) {
+                case ADD_HIGHEST_AVAILABLE -> sim.gamePieceStorage.addHighestAvailable(gamePiece.gp);
+                case ADD_LOWEST_AVAILABLE -> sim.gamePieceStorage.addLowestAvailable(gamePiece.gp);
+                case ADD_HIGHEST_DISPLACE -> sim.gamePieceStorage.addHighestDisplace(gamePiece.gp);
+                case ADD_LOWEST_DISPLACE -> sim.gamePieceStorage.addLowestDisplace(gamePiece.gp);
+                case ADD_RANDOM -> sim.gamePieceStorage.addRandom(gamePiece.gp);
+            }
         }
 
         /* functions not used */
@@ -306,13 +202,5 @@ public class IntakeSimulation extends BodyFixture {
 
     GamePieceContactListener getGamePieceContactListener() {
         return new GamePieceContactListener();
-    }
-
-    public void register() {
-        register(SimulatedArena.getInstance());
-    }
-
-    public void register(SimulatedArena arena) {
-        arena.addIntakeSimulation(this);
     }
 }

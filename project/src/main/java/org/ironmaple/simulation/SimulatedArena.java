@@ -1,20 +1,17 @@
 package org.ironmaple.simulation;
 
+import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import java.util.*;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.function.Supplier;
-import java.lang.ref.WeakReference;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -24,9 +21,10 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
 import org.ironmaple.utils.ProjectileUtil;
+import org.ironmaple.utils.RuntimeLog;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 /**
@@ -46,7 +44,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * </h2>
  *
  * <ul>
- *   <li>{@link AbstractDriveTrainSimulation}: Represents abstract drivetrain simulations with
+ *   <li>{@link DriveTrainSimulation}: Represents abstract drivetrain simulations with
  *       collision detection.
  *   <li>{@link GamePieceOnFieldSimulation}: Represents abstract game pieces with collision
  *       detection.
@@ -67,8 +65,12 @@ public abstract class SimulatedArena {
      * @return the main simulation arena instance
      */
     public static SimulatedArena getInstance() {
-        if (instance == null)
+        if (instance == null) {
+            if (HALUtil.getHALRuntimeType() == HALUtil.RUNTIME_SIMULATION) {
+                RuntimeLog.error("This Library is only supported in Simulation Mode");
+            }
             instance = new Arena2024Crescendo();
+        }
         return instance;
     }
 
@@ -89,19 +91,9 @@ public abstract class SimulatedArena {
         instance = newInstance;
     }
 
-    /** The number of sub-ticks the simulator will run in each robot period. */
-    private static int SIMULATION_SUB_TICKS_IN_1_PERIOD = 5;
 
-    public static int getSimulationSubTicksIn1Period() {
-        return SIMULATION_SUB_TICKS_IN_1_PERIOD;
-    }
-
-    /** The period length of each sub-tick, in seconds. */
-    private static double SIMULATION_DT = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
-
-    public static double getSimulationDt() {
-        return SIMULATION_DT;
-    }
+    private int simulationSubTicksIn1Period = 5;
+    private double simulationDt = 0.02;
 
     /**
      *
@@ -127,18 +119,24 @@ public abstract class SimulatedArena {
      * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick()}
      *     that the simulation runs per each call to {@link #simulationPeriodic()}
      */
-    public static void overrideSimulationTimings(
+    public void overrideSimulationTimings(
             double robotPeriodSeconds, int simulationSubTicksPerPeriod) {
-        SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
-        SIMULATION_DT = robotPeriodSeconds / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+        simulationSubTicksIn1Period = simulationSubTicksPerPeriod;
+        simulationDt = robotPeriodSeconds / simulationSubTicksIn1Period;
+    }
+
+    public int getSimulationSubTicksIn1Period() {
+        return simulationSubTicksIn1Period;
+    }
+
+    public double getSimulationDt() {
+        return simulationDt;
     }
 
     protected final World<Body> physicsWorld = new World<>();
-    protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations = new HashSet<>();
     protected final Set<GamePiece> gamePieces = new HashSet<>();
-    protected final List<Runnable> simulationSubTickActions = new ArrayList<>();
-    protected final List<WeakReference<MapleMotorSim>> motors = new ArrayList<>();
-    private final List<IntakeSimulation> intakeSimulations = new ArrayList<>();
+    protected final Set<SimRobot> otherRobots = new HashSet<>();
+    protected final SimRobot userRobot;
 
     /**
      *
@@ -158,64 +156,11 @@ public abstract class SimulatedArena {
         this.physicsWorld.setGravity(PhysicsWorld.ZERO_GRAVITY);
         for (Body obstacle : obstaclesMap.obstacles)
             this.physicsWorld.addBody(obstacle);
+        userRobot = new SimRobot(this);
     }
 
     World<Body> world() {
         return physicsWorld;
-    }
-
-    /**
-     *
-     *
-     * <h2>Registers a runnable action to be executed during each simulation sub-tick.</h2>
-     *
-     * <p><strong>FOR TESTING ONLY: This method will be removed in the final release.</strong>
-     *
-     * @param action the {@link Runnable} action to be executed in each simulation sub-tick
-     */
-    @Deprecated
-    public void addSimulationSubTickAction(Runnable action) {
-        this.simulationSubTickActions.add(action);
-    }
-
-    /**
-     *
-     *
-     * <h2>Registers an {@link IntakeSimulation}.</h2>
-     *
-     * <p><strong>NOTE:</strong> This method is automatically called in the constructor of {@link
-     * IntakeSimulation}, so you don't need to call it manually.
-     *
-     * <p>The intake simulation should be bound to an {@link AbstractDriveTrainSimulation} and becomes
-     * part of its collision space.
-     *
-     * <p>This method immediately starts the {@link
-     * org.ironmaple.simulation.IntakeSimulation.GamePieceContactListener}, which listens for contact
-     * between the intake and any game piece.
-     *
-     * @param intakeSimulation the intake simulation to be registered
-     */
-    protected void addIntakeSimulation(IntakeSimulation intakeSimulation) {
-        this.intakeSimulations.add(intakeSimulation);
-        this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
-    }
-
-    /**
-     *
-     *
-     * <h2>Registers an {@link AbstractDriveTrainSimulation}.</h2>
-     *
-     * <p>The collision space of the drive train is immediately added to the simulation world.
-     *
-     * <p>Starting from the next call to {@link #simulationPeriodic()}, the {@link
-     * AbstractDriveTrainSimulation#simulationSubTick()} method will be called during each sub-tick of
-     * the simulator.
-     *
-     * @param driveTrainSimulation the drivetrain simulation to be registered
-     */
-    public void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {
-        this.physicsWorld.addBody(driveTrainSimulation);
-        this.driveTrainSimulations.add(driveTrainSimulation);
     }
 
     /**
@@ -237,7 +182,7 @@ public abstract class SimulatedArena {
     public GamePiece createGamePiece(GamePieceVariant variant) {
         GamePiece gamePiece = new GamePiece(variant, this);
         this.gamePieces.add(gamePiece);
-        return gamePiece;
+        return gamePiece.userControlled();
     }
 
     /**
@@ -268,10 +213,6 @@ public abstract class SimulatedArena {
         this.gamePieces.clear();
     }
 
-    public void addMotor(MapleMotorSim motor) {
-        motors.add(new WeakReference<>(motor));
-    }
-
     /**
      *
      *
@@ -293,7 +234,7 @@ public abstract class SimulatedArena {
         final long t0 = System.nanoTime();
         competitionPeriodic();
         // move through a few sub-periods in each update
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++)
+        for (int i = 0; i < simulationSubTicksIn1Period; i++)
             simulationSubTick();
 
         SmartDashboard.putNumber(
@@ -308,7 +249,7 @@ public abstract class SimulatedArena {
      * <p>This method performs the actions for each sub-tick of the simulation, including:
      *
      * <ul>
-     *   <li>Updating all registered {@link AbstractDriveTrainSimulation} objects.
+     *   <li>Updating all registered {@link DriveTrainSimulation} objects.
      *   <li>Updating all {@link GamePieceProjectile} objects in the simulation.
      *   <li>Stepping the physics world with the specified sub-tick duration.
      *   <li>Removing any game pieces as detected by the {@link IntakeSimulation} objects.
@@ -317,29 +258,16 @@ public abstract class SimulatedArena {
      * </ul>
      */
     private void simulationSubTick() {
-        ArrayList<Double> motorCurrents = new ArrayList<>();
-        for (var motor : motors) {
-            MapleMotorSim motorRef = motor.get();
-            if (motorRef != null) {
-                motorRef.update();
-            }
-        }
-        double vin = BatterySim.calculateLoadedBatteryVoltage(
-                12.2,
-                0.015,
-                motorCurrents.stream().mapToDouble(Double::doubleValue).toArray());
-        RoboRioSim.setVInVoltage(vin);
 
-        for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
-            driveTrainSimulation.simulationSubTick();
+        userRobot.simulationSubTick();
 
-        for (GamePiece gamePiece : gamePieces)
+        for (final SimRobot otherRobot : otherRobots)
+            otherRobot.simulationSubTick();
+
+        for (final GamePiece gamePiece : gamePieces)
             gamePiece.simulationSubTick();
 
-        this.physicsWorld.step(1, SIMULATION_DT);
-
-        for (Runnable runnable : simulationSubTickActions)
-            runnable.run();
+        this.physicsWorld.step(1, simulationDt);
     }
 
     /**
@@ -358,7 +286,7 @@ public abstract class SimulatedArena {
      * <ul>
      *   <li>The type is determined in the constructor of {@link GamePieceOnFieldSimulation}.
      *   <li>For example, {@link
-     *       org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNote} has the type
+     *       org.ironmaple.simulation.seasonspecific.crescendo2024.Note} has the type
      *       "Note".
      * </ul>
      *

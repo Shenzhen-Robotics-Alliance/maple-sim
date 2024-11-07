@@ -110,10 +110,10 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public void periodic() {
         final SwerveModulePosition[][] cachedModulePositions = getCachedModulePositions();
-        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
             poseEstimator.updateWithTime(
                     Timer.getFPGATimestamp()
-                            - SimulatedArena.getSimulationDt() * (SimulatedArena.getSimulationDt() - i),
+                            - SimulatedArena.getInstance().getSimulationDt() * (SimulatedArena.getInstance().getSimulationDt() - i),
                     swerveDriveSimulation.gyroSimulation.getCachedGyroReadings()[i],
                     cachedModulePositions[i]);
     }
@@ -153,12 +153,12 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public SwerveModulePosition[][] getCachedModulePositions() {
         final SwerveModulePosition[][] cachedModulePositions =
-                new SwerveModulePosition[SimulatedArena.getSimulationSubTicksIn1Period()][moduleSimulations.length];
+                new SwerveModulePosition[SimulatedArena.getInstance().getSimulationSubTicksIn1Period()][moduleSimulations.length];
 
         for (int moduleIndex = 0; moduleIndex < moduleSimulations.length; moduleIndex++) {
             final double[] wheelPositionRads = moduleSimulations[moduleIndex].getCachedDriveWheelFinalPositionsRad();
             final Rotation2d[] swerveModuleFacings = moduleSimulations[moduleIndex].getCachedSteerAbsolutePositions();
-            for (int timeStamp = 0; timeStamp < SimulatedArena.getSimulationSubTicksIn1Period(); timeStamp++)
+            for (int timeStamp = 0; timeStamp < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); timeStamp++)
                 cachedModulePositions[timeStamp][moduleIndex] = new SwerveModulePosition(
                         wheelPositionRads[timeStamp] * moduleSimulations[0].WHEEL_RADIUS_METERS,
                         swerveModuleFacings[timeStamp]);
@@ -284,7 +284,7 @@ public class SimplifiedSwerveDriveSimulation {
                     chassisSpeeds, getOdometryEstimatedPose().getRotation());
         if (discretizeSpeeds)
             chassisSpeeds = ChassisSpeeds.discretize(
-                    chassisSpeeds, SimulatedArena.getSimulationDt() * SimulatedArena.getSimulationSubTicksIn1Period());
+                    chassisSpeeds, SimulatedArena.getInstance().getSimulationDt() * SimulatedArena.getInstance().getSimulationSubTicksIn1Period());
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
         for (int i = 0; i < moduleSimulations.length; i++)
             setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
@@ -485,7 +485,7 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public double getMaximumLinearAccelerationMetersPerSecondSquare() {
         return moduleSimulations[0].getModuleMaxAccelerationMPSsq(
-                swerveDriveSimulation.config.robotMassKg, moduleSimulations.length);
+                swerveDriveSimulation.getConfig().robotMassKg, moduleSimulations.length);
     }
 
     /**
@@ -558,7 +558,7 @@ public class SimplifiedSwerveDriveSimulation {
         final double
                 maxPropellingForce =
                         moduleSimulations[0].getTheoreticalPropellingForcePerModule(
-                                swerveDriveSimulation.config.robotMassKg, moduleSimulations.length),
+                                swerveDriveSimulation.getConfig().robotMassKg, moduleSimulations.length),
                 maxPropellingTorque = maxPropellingForce * getDriveBaseRadiusMeters();
         // angular acc = torque / inertia
         return maxPropellingTorque / swerveDriveSimulation.getMass().getInertia();

@@ -15,10 +15,11 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
-import org.ironmaple.simulation.MapleMotorSim;
+import org.ironmaple.simulation.MechanismSim;
+import org.ironmaple.simulation.SimRobot;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleConfig;
 
 /**
  *
@@ -60,7 +61,7 @@ import org.ironmaple.simulation.SimulatedArena;
  */
 public class SwerveModuleSimulation {
     public final DCMotor DRIVE_MOTOR;
-    private final MapleMotorSim steerMotorSim;
+    private final MechanismSim steerMotorSim;
     public final double DRIVE_CURRENT_LIMIT,
             DRIVE_GEAR_RATIO,
             STEER_GEAR_RATIO,
@@ -105,40 +106,29 @@ public class SwerveModuleSimulation {
      *     {@link Units#inchesToMeters(double)}.
      * @param steerRotationalInertia the rotational inertia of the steering mechanism
      */
-    public SwerveModuleSimulation(
-            DCMotor driveMotor,
-            DCMotor steerMotor,
-            double driveCurrentLimit,
-            double driveGearRatio,
-            double steerGearRatio,
-            double driveFrictionVoltage,
-            double steerFrictionVoltage,
-            double tireCoefficientOfFriction,
-            double wheelsRadiusMeters,
-            double steerRotationalInertia) {
-        DRIVE_MOTOR = driveMotor;
-        DRIVE_CURRENT_LIMIT = driveCurrentLimit;
-        DRIVE_GEAR_RATIO = driveGearRatio;
-        STEER_GEAR_RATIO = steerGearRatio;
-        DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
-        WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
-        WHEEL_RADIUS_METERS = wheelsRadiusMeters;
+    SwerveModuleSimulation(SimRobot robot, SwerveModuleConfig config) {
+        DRIVE_MOTOR = config.driveMotor;
+        DRIVE_CURRENT_LIMIT = config.driveCurrentLimit;
+        DRIVE_GEAR_RATIO = config.driveGearRatio;
+        STEER_GEAR_RATIO = config.steerGearRatio;
+        DRIVE_FRICTION_VOLTAGE = config.driveFrictionVoltage;
+        WHEELS_COEFFICIENT_OF_FRICTION = config.tireCoefficientOfFriction;
+        WHEEL_RADIUS_METERS = config.wheelsRadiusMeters;
 
-        this.steerMotorSim = new MapleMotorSim(
-                SimulatedArena.getInstance(),
-                steerMotor,
-                steerGearRatio,
-                KilogramSquareMeters.of(steerRotationalInertia),
-                Volts.of(steerFrictionVoltage));
+        this.steerMotorSim = robot.createMechanism(
+                config.steerMotor,
+                config.steerGearRatio,
+                KilogramSquareMeters.of(config.steerRotationalInertia),
+                Volts.of(config.steerFrictionVoltage));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
             cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
         this.cachedSteerRelativeEncoderPositionsRad = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
             cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
         this.cachedSteerAbsolutePositions = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
             cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
 
         this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
@@ -210,7 +200,7 @@ public class SwerveModuleSimulation {
      * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
      *
      * <p>This method returns the actual voltage being applied to the steering motor. It wraps around the
-     * {@link MapleMotorSim#getAppliedVolts()} method.
+     * {@link MechanismSim#getAppliedVolts()} method.
      *
      * <p>The actual applied voltage may differ from the value set by {@link #requestSteerVoltageOut(double)}. If the
      * motor's supply current is too high, the motor will automatically reduce its output voltage to protect the system.
@@ -241,7 +231,7 @@ public class SwerveModuleSimulation {
      *
      * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
      *
-     * <p>This method wraps around {@link MapleMotorSim#getCurrentDrawAmps()}.
+     * <p>This method wraps around {@link MechanismSim#getCurrentDrawAmps()}.
      *
      * @return the current supplied to the steer motor, in amperes
      */
@@ -474,7 +464,7 @@ public class SwerveModuleSimulation {
      *
      * <p>Updates the simulation for the steer mechanism and cache the encoder readings.
      *
-     * <p>The steer mechanism is modeled by a {@link MapleMotorSim}.
+     * <p>The steer mechanism is modeled by a {@link MechanismSim}.
      */
     private void updateSteerSimulation() {
         /* update the readings of the sensor */
@@ -539,7 +529,7 @@ public class SwerveModuleSimulation {
      * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
      *
      * <p>Before calculating the torque of the motor, the output voltage of the drive motor is constrained for the
-     * current limit through {@link MapleMotorSim#constrainOutputVoltage(DCMotor, double, double, double)}.
+     * current limit through {@link MechanismSim#constrainOutputVoltage(DCMotor, double, double, double)}.
      *
      * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
      */
@@ -590,7 +580,7 @@ public class SwerveModuleSimulation {
      */
     private void updateDriveEncoders() {
         this.driveEncoderUnGearedPositionRad +=
-                this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getSimulationDt();
+                this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getInstance().getSimulationDt();
         this.cachedDriveEncoderUnGearedPositionsRad.poll();
         this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
     }
@@ -639,265 +629,5 @@ public class SwerveModuleSimulation {
      */
     public double getModuleMaxAccelerationMPSsq(double robotMassKg, int modulesCount) {
         return getTheoreticalPropellingForcePerModule(robotMassKg, modulesCount) * modulesCount / robotMassKg;
-    }
-
-    /**
-     *
-     *
-     * <h2>Stores the coefficient of friction of some common used wheels.</h2>
-     */
-    public enum WHEEL_GRIP {
-        RUBBER_WHEEL(1.25),
-        TIRE_WHEEL(1.2);
-
-        public final double cof;
-
-        WHEEL_GRIP(double cof) {
-            this.cof = cof;
-        }
-    }
-
-    /**
-     * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module">SDS Mark4
-     * Swerve Module</a> for simulation
-     */
-    public static Supplier<SwerveModuleSimulation> getMark4(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 8.14;
-                    case 2 -> 6.75;
-                    case 3 -> 6.12;
-                    case 4 -> 5.14;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                12.8,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
-    }
-
-    /**
-     * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4i-swerve-module">SDS
-     * Mark4-i Swerve Module</a> for simulation
-     */
-    public static Supplier<SwerveModuleSimulation> getMark4i(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 8.14;
-                    case 2 -> 6.75;
-                    case 3 -> 6.12;
-                    case 4 -> 5.15;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                150.0 / 7.0,
-                0.2,
-                1,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.025);
-    }
-
-    /**
-     * creates a <a href="https://www.swervedrivespecialties.com/products/mk4n-swerve-module">SDS Mark4-n Swerve
-     * Module</a> for simulation
-     */
-    public static Supplier<SwerveModuleSimulation> getMark4n(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 7.13;
-                    case 2 -> 5.9;
-                    case 3 -> 5.36;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                18.75,
-                0.25,
-                1,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.025);
-    }
-
-    /**
-     * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x">WCP SwerveX Swerve Module</a>
-     * for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6 <br>
-     * X3 Ratios are gearRatioLevel 7-9
-     */
-    public static Supplier<SwerveModuleSimulation> getSwerveX(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 7.85;
-                    case 2 -> 7.13;
-                    case 3 -> 6.54;
-                    case 4 -> 6.56;
-                    case 5 -> 5.96;
-                    case 6 -> 5.46;
-                    case 7 -> 5.14;
-                    case 8 -> 4.75;
-                    case 9 -> 4.41;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                11.3142,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
-    }
-
-    /**
-     * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x-flipped">WCP SwerveX Flipped
-     * Swerve Module</a> for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6 <br>
-     * X3 Ratios are gearRatioLevel 7-9
-     */
-    public static Supplier<SwerveModuleSimulation> getSwerveXFlipped(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 8.1;
-                    case 2 -> 7.36;
-                    case 3 -> 6.75;
-                    case 4 -> 6.72;
-                    case 5 -> 6.11;
-                    case 6 -> 5.6;
-                    case 7 -> 5.51;
-                    case 8 -> 5.01;
-                    case 9 -> 4.59;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                11.3714,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
-    }
-
-    /**
-     * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-xs">WCP SwerveXS Swerve
-     * Module</a> for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6
-     */
-    public static Supplier<SwerveModuleSimulation> getSwerveXS(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 6.0;
-                    case 2 -> 5.54;
-                    case 3 -> 5.14;
-                    case 4 -> 4.71;
-                    case 5 -> 4.4;
-                    case 6 -> 4.13;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                41.25,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(1.5),
-                0.03);
-    }
-
-    /**
-     * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2">WCP SwerveX2 Swerve
-     * Module</a> for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6 <br>
-     * X3 Ratios are gearRatioLevel 7-9 <br>
-     * X4 Ratios are gearRatioLevel 10-12
-     */
-    public static Supplier<SwerveModuleSimulation> getSwerveX2(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 7.67;
-                    case 2 -> 6.98;
-                    case 3 -> 6.39;
-                    case 4 -> 6.82;
-                    case 5 -> 6.20;
-                    case 6 -> 5.68;
-                    case 7 -> 6.48;
-                    case 8 -> 5.89;
-                    case 9 -> 5.40;
-                    case 10 -> 5.67;
-                    case 11 -> 5.15;
-                    case 12 -> 4.73;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                12.1,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
-    }
-
-    /**
-     * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2-s">WCP SwerveX2S Swerve
-     * Module</a> for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6 <br>
-     * X3 Ratios are gearRatioLevel 7-9
-     */
-    public static Supplier<SwerveModuleSimulation> getSwerveX2S(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
-                driveMotor,
-                steerMotor,
-                driveCurrentLimitAmps,
-                switch (gearRatioLevel) {
-                    case 1 -> 6.0;
-                    case 2 -> 5.63;
-                    case 3 -> 5.29;
-                    case 4 -> 4.94;
-                    case 5 -> 4.67;
-                    case 6 -> 4.42;
-                    case 7 -> 4.11;
-                    case 8 -> 3.9;
-                    case 9 -> 3.71;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
-                25.9,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(1.875),
-                0.03);
     }
 }

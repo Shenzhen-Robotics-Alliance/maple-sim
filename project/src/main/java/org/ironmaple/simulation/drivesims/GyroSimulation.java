@@ -1,12 +1,10 @@
 package org.ironmaple.simulation.drivesims;
 
-import static org.ironmaple.simulation.SimulatedArena.*;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.configs.GyroConfig;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 /**
@@ -21,7 +19,7 @@ public class GyroSimulation {
             ANGULAR_ACCELERATION_THRESHOLD_START_DRIFTING = 500,
             /* The amount of drift, in radians, that the gyro experiences as a result of each multiple of the angular acceleration threshold. */
             DRIFT_DUE_TO_IMPACT_COEFFICIENT = Math.toRadians(1);
-    private final double AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG, VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT;
+    private final double averageDriftingIn30SecsMotionlessDeg, velocityMeasurementStandardDeviationPercent;
 
     private Rotation2d gyroReading;
     private double measuredAngularVelocityRadPerSec, previousAngularVelocityRadPerSec;
@@ -32,21 +30,20 @@ public class GyroSimulation {
      *
      * <h2>Creates a Gyro Simulation.</h2>
      *
-     * @param AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG the average amount of drift, in degrees, the gyro experiences
+     * @param averageDriftingIn30SecsMotionlessDeg the average amount of drift, in degrees, the gyro experiences
      *     if it remains motionless for 30 seconds on a vibrating platform. This value can often be found in the user
      *     manual.
-     * @param VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT the standard deviation of the velocity measurement,
+     * @param velocityMeasurementStandardDeviationPercent the standard deviation of the velocity measurement,
      *     typically around 0.05
      */
-    public GyroSimulation(
-            double AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG, double VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT) {
-        this.AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG = AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG;
-        this.VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT = VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT;
+    public GyroSimulation(GyroConfig gyroConfig) {
+        this.averageDriftingIn30SecsMotionlessDeg = gyroConfig.averageDriftingIn30SecsMotionlessDeg;
+        this.velocityMeasurementStandardDeviationPercent = gyroConfig.velocityMeasurementStandardDeviationPercent;
 
         gyroReading = new Rotation2d();
         this.previousAngularVelocityRadPerSec = this.measuredAngularVelocityRadPerSec = 0;
         this.cachedRotations = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++) cachedRotations.offer(gyroReading);
+        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++) cachedRotations.offer(gyroReading);
     }
 
     /**
@@ -118,7 +115,7 @@ public class GyroSimulation {
      * {@link org.ironmaple.simulation.SimulatedArena#overrideSimulationTimings(double, int)}.
      *
      * @param actualAngularVelocityRadPerSec the actual angular velocity in radians per second, usually obtained from
-     *     {@link AbstractDriveTrainSimulation#getAngularVelocity()}
+     *     {@link DriveTrainSimulation#getAngularVelocity()}
      */
     public void updateSimulationSubTick(double actualAngularVelocityRadPerSec) {
         final Rotation2d driftingDueToImpact = getDriftingDueToImpact(actualAngularVelocityRadPerSec);
@@ -151,7 +148,7 @@ public class GyroSimulation {
         final double
                 angularAccelerationRadPerSecSq =
                         (actualAngularVelocityRadPerSec - previousAngularVelocityRadPerSec)
-                                / SimulatedArena.getSimulationDt(),
+                                / SimulatedArena.getInstance().getSimulationDt(),
                 driftingDueToImpactDegAbsVal =
                         Math.abs(angularAccelerationRadPerSecSq) > ANGULAR_ACCELERATION_THRESHOLD_START_DRIFTING
                                 ? Math.abs(angularAccelerationRadPerSecSq)
@@ -182,8 +179,8 @@ public class GyroSimulation {
     private Rotation2d getGyroDTheta(double actualAngularVelocityRadPerSec) {
         this.measuredAngularVelocityRadPerSec = MapleCommonMath.generateRandomNormal(
                 actualAngularVelocityRadPerSec,
-                VELOCITY_MEASUREMENT_STANDARD_DEVIATION_PERCENT * Math.abs(actualAngularVelocityRadPerSec));
-        return Rotation2d.fromRadians(measuredAngularVelocityRadPerSec * SimulatedArena.getSimulationDt());
+                velocityMeasurementStandardDeviationPercent * Math.abs(actualAngularVelocityRadPerSec));
+        return Rotation2d.fromRadians(measuredAngularVelocityRadPerSec * SimulatedArena.getInstance().getSimulationDt());
     }
 
     /**
@@ -199,47 +196,9 @@ public class GyroSimulation {
     private Rotation2d getNoMotionDrifting() {
         final double
                 AVERAGE_DRIFTING_1_PERIOD =
-                        this.AVERAGE_DRIFTING_IN_30_SECS_MOTIONLESS_DEG / 30 * SimulatedArena.getSimulationDt(),
+                        this.averageDriftingIn30SecsMotionlessDeg / 30 * SimulatedArena.getInstance().getSimulationDt(),
                 driftingInThisPeriod = MapleCommonMath.generateRandomNormal(0, AVERAGE_DRIFTING_1_PERIOD);
 
         return Rotation2d.fromDegrees(driftingInThisPeriod);
-    }
-
-    /**
-     *
-     *
-     * <h2>Creates the Simulation for a <a href="https://store.ctr-electronics.com/pigeon-2/">CTRE Pigeon 2 IMU</a>.
-     * </h2>
-     *
-     * @return a gyro simulation factory configured for the Pigeon 2 IMU
-     */
-    public static Supplier<GyroSimulation> getPigeon2() {
-        /*
-         * user manual of pigeon 2:
-         * https://store.ctr-electronics.com/content/user-manual/Pigeon2%20User's%20Guide.pdf
-         * */
-        return () -> new GyroSimulation(0.5, 0.02);
-    }
-
-    /**
-     *
-     *
-     * <h2>Creates the Simulation for a <a href="https://pdocs.kauailabs.com/navx-mxp/">navX2-MXP IMU</a>.</h2>
-     *
-     * @return a gyro simulation factory configured for the navX2-MXP IMU
-     */
-    public static Supplier<GyroSimulation> getNav2X() {
-        return () -> new GyroSimulation(2, 0.04);
-    }
-
-    /**
-     *
-     *
-     * <h2>Creates the Simulation for a Generic, Low-Accuracy IMU.</h2>
-     *
-     * @return a gyro simulation factory configured for a generic low-accuracy IMU
-     */
-    public static Supplier<GyroSimulation> getGeneric() {
-        return () -> new GyroSimulation(5, 0.06);
     }
 }

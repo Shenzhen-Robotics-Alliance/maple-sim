@@ -44,7 +44,7 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
  *   <li>Brake and coast modes (only for simulating brushless motors).
  * </ul>
  */
-public class MapleMotorSim {
+public class MechanismSim {
     public enum OutputType {
         VOLTAGE,
         CURRENT
@@ -56,6 +56,7 @@ public class MapleMotorSim {
         OPEN_LOOP
     }
 
+    private final SimulatedArena arena;
     /** The Constants for the motor */
     private final DCMotor motor;
     /** The dynamics simulation for the motor */
@@ -91,19 +92,18 @@ public class MapleMotorSim {
      * @param loadIntertia the rotational inertia of the mechanism
      * @param frictionVoltage the voltage required to keep the motor moving at a constant velocity
      */
-    public MapleMotorSim(
+    MechanismSim(
             SimulatedArena arena,
             DCMotor motor,
             double gearRatio,
             MomentOfInertia loadIntertia,
             Voltage frictionVoltage) {
+        this.arena = arena;
         this.sim = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(motor, loadIntertia.in(KilogramSquareMeters), gearRatio), motor);
         this.motor = motor;
         this.gearing = gearRatio;
         this.frictionVoltage = frictionVoltage;
-
-        arena.addMotor(this);
     }
 
     /**
@@ -112,7 +112,7 @@ public class MapleMotorSim {
      * @param angle the angle of the motor
      * @return this instance for method chaining
      */
-    public MapleMotorSim withOverrideAngle(Angle angle) {
+    public MechanismSim withOverrideAngle(Angle angle) {
         sim.setAngle(angle.in(Radians));
         return this;
     }
@@ -123,17 +123,17 @@ public class MapleMotorSim {
      * @param angularVelocity the angular velocity of the motor
      * @return this instance for method chaining
      */
-    public MapleMotorSim withOverrideAngularVelocity(AngularVelocity angularVelocity) {
+    public MechanismSim withOverrideAngularVelocity(AngularVelocity angularVelocity) {
         sim.setAngularVelocity(angularVelocity.in(RadiansPerSecond));
         return this;
     }
 
-    public MapleMotorSim withFeedForward(
+    public MechanismSim withFeedForward(
             Voltage kS, Per<VoltageUnit, AngularVelocityUnit> kV, Per<VoltageUnit, AngularAccelerationUnit> kA) {
         var kVUnit = PerUnit.combine(Volts, RadiansPerSecond);
         var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
         feedforward = new SimpleMotorFeedforward(
-                kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), SimulatedArena.getSimulationDt());
+                kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), arena.getSimulationDt());
         return this;
     }
 
@@ -154,7 +154,7 @@ public class MapleMotorSim {
      * @param kD the derivative gain
      * @return this instance for method chaining
      */
-    public MapleMotorSim withPositionalVoltageController(
+    public MechanismSim withPositionalVoltageController(
             Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
         var kPUnit = PerUnit.combine(Volts, Radians);
         var kDUnit = PerUnit.combine(Volts, RadiansPerSecond);
@@ -178,7 +178,7 @@ public class MapleMotorSim {
      * @param kP the proportional gain
      * @return this instance for method chaining
      */
-    public MapleMotorSim withVelocityVoltageController(Per<VoltageUnit, AngleUnit> kP) {
+    public MechanismSim withVelocityVoltageController(Per<VoltageUnit, AngleUnit> kP) {
         var kPUnit = PerUnit.combine(Volts, Radians);
         veloVoltController.setP(kP.in(kPUnit));
         return this;
@@ -201,7 +201,7 @@ public class MapleMotorSim {
      * @param kD the derivative gain
      * @return this instance for method chaining
      */
-    public MapleMotorSim withPositionalCurrentController(
+    public MechanismSim withPositionalCurrentController(
             Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD) {
         var kPUnit = PerUnit.combine(Amps, Radians);
         var kDUnit = PerUnit.combine(Amps, RadiansPerSecond);
@@ -225,7 +225,7 @@ public class MapleMotorSim {
      * @param kP the proportional gain
      * @return this instance for method chaining
      */
-    public MapleMotorSim withVelocityCurrentController(Per<CurrentUnit, AngleUnit> kP) {
+    public MechanismSim withVelocityCurrentController(Per<CurrentUnit, AngleUnit> kP) {
         var kPUnit = PerUnit.combine(Amps, Radians);
         veloCurrentController.setP(kP.in(kPUnit));
         return this;
@@ -239,7 +239,7 @@ public class MapleMotorSim {
      * @return this instance for method chaining
      * @see PIDController#enableContinuousInput(double, double)
      */
-    public MapleMotorSim withControllerContinousInput(Angle min, Angle max) {
+    public MechanismSim withControllerContinousInput(Angle min, Angle max) {
         poseVoltController.enableContinuousInput(min.in(Radians), max.in(Radians));
         poseCurrentController.enableContinuousInput(min.in(Radians), max.in(Radians));
         return this;
@@ -253,7 +253,7 @@ public class MapleMotorSim {
      * @param currentLimit the current limit for the motor
      * @return
      */
-    public MapleMotorSim withStatorCurrentLimit(Current currentLimit) {
+    public MechanismSim withStatorCurrentLimit(Current currentLimit) {
         // this is a limit across the sum of all motors output,
         // so it should be set to the total current limit of the mechanism
         this.currentLimit = currentLimit;
@@ -267,7 +267,7 @@ public class MapleMotorSim {
      * @param reverseLimit the reverse limit
      * @return this instance for method chaining
      */
-    public MapleMotorSim withHardLimits(Angle forwardLimit, Angle reverseLimit) {
+    public MechanismSim withHardLimits(Angle forwardLimit, Angle reverseLimit) {
         this.forwardLimit = forwardLimit;
         this.reverseLimit = reverseLimit;
         return this;
@@ -337,8 +337,8 @@ public class MapleMotorSim {
     }
 
     /** Package private call */
-    void update() {
-        double dtSeconds = SimulatedArena.getSimulationDt();
+    void simulationSubTick() {
+        double dtSeconds = arena.getSimulationDt();
         switch (this.outputType) {
             case VOLTAGE -> {
                 switch (this.outputMode) {

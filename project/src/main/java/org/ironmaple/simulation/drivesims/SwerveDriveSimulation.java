@@ -8,8 +8,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.Arrays;
 import org.dyn4j.geometry.Vector2;
+import org.ironmaple.simulation.SimRobot;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveConfig;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 import org.ironmaple.utils.mathutils.MapleCommonMath;
 
@@ -57,12 +58,13 @@ import org.ironmaple.utils.mathutils.MapleCommonMath;
  * href="https://docs.photonvision.org/en/latest/docs/simulation/simulation-java.html#updating-the-simulation-world">PhotonVision
  * simulation</a> to simulate vision.
  */
-public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
+public class SwerveDriveSimulation extends DriveTrainSimulation {
     private final SwerveModuleSimulation[] moduleSimulations;
     protected final GyroSimulation gyroSimulation;
     protected final Translation2d[] moduleTranslations;
     protected final SwerveDriveKinematics kinematics;
     private final double gravityForceOnEachModule;
+    private final SwerveConfig config;
 
     /**
      *
@@ -72,17 +74,18 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <p>This constructor initializes a swerve drive simulation with the given robot mass, bumper dimensions, module
      * simulations, module translations, gyro simulation, and initial pose on the field.
      *
-     * @param config a {@link DriveTrainSimulationConfig} instance containing the configurations of * this drivetrain
+     * @param config a {@link SwerveConfig} instance containing the configurations of * this drivetrain
      * @param initialPoseOnField the initial pose of the drivetrain in the simulation world, represented as a
      *     {@link Pose2d}
      */
-    public SwerveDriveSimulation(DriveTrainSimulationConfig config, Pose2d initialPoseOnField) {
+    public SwerveDriveSimulation(SimRobot robot, SwerveConfig config, Pose2d initialPoseOnField) {
         super(config, initialPoseOnField);
+        this.config = config;
         this.moduleTranslations = config.moduleTranslations;
         this.moduleSimulations = Arrays.stream(config.moduleTranslations)
-                .map(translation2d -> config.swerveModuleSimulationFactory.get())
+                .map(translation2d -> new SwerveModuleSimulation(robot, config.swerveModuleConfig))
                 .toArray(SwerveModuleSimulation[]::new);
-        this.gyroSimulation = config.gyroSimulationFactory.get();
+        this.gyroSimulation = new GyroSimulation(config.gyroConfig);
 
         super.setLinearDamping(1.4);
         super.setAngularDamping(1.4);
@@ -141,16 +144,15 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
         final ChassisSpeeds moduleSpeeds = getModuleSpeeds();
 
         /* The friction force that tries to bring the chassis from floor speeds to module speeds */
-        final ChassisSpeeds differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative =
-                moduleSpeeds.minus(getDriveTrainSimulatedChassisSpeedsRobotRelative());
+        final ChassisSpeeds differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative = moduleSpeeds
+                .minus(getDriveTrainSimulatedChassisSpeedsRobotRelative());
         final Translation2d floorAndModuleSpeedsDiffFieldRelative = new Translation2d(
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vxMetersPerSecond,
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vyMetersPerSecond)
+                differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vxMetersPerSecond,
+                differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vyMetersPerSecond)
                 .rotateBy(getSimulatedDriveTrainPose().getRotation());
         final double FRICTION_FORCE_GAIN = 3.0,
-                totalGrippingForce =
-                        moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
-                                * moduleSimulations.length;
+                totalGrippingForce = moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
+                        * moduleSimulations.length;
         final Vector2 speedsDifferenceFrictionForce = Vector2.create(
                 Math.min(
                         FRICTION_FORCE_GAIN * totalGrippingForce * floorAndModuleSpeedsDiffFieldRelative.getNorm(),
@@ -161,25 +163,23 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
         final ChassisSpeeds moduleSpeedsFieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(
                 moduleSpeeds, getSimulatedDriveTrainPose().getRotation());
         final Rotation2d dTheta = MapleCommonMath.getAngle(
-                        GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
+                GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
                 .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
 
-        final double orbitalAngularVelocity = dTheta.getRadians() / SimulatedArena.getSimulationDt();
-        final Rotation2d centripetalForceDirection =
-                MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative).plus(Rotation2d.fromDegrees(90));
+        final double orbitalAngularVelocity = dTheta.getRadians() / SimulatedArena.getInstance().getSimulationDt();
+        final Rotation2d centripetalForceDirection = MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative)
+                .plus(Rotation2d.fromDegrees(90));
         final Vector2 centripetalFrictionForce = Vector2.create(
                 previousModuleSpeedsFieldRelative.getNorm() * orbitalAngularVelocity * config.robotMassKg,
                 centripetalForceDirection.getRadians());
-        previousModuleSpeedsFieldRelative =
-                GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative);
+        previousModuleSpeedsFieldRelative = GeometryConvertor
+                .getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative);
 
         /* apply force to physics engine */
-        final Vector2
-                totalFrictionForceUnlimited = centripetalFrictionForce.copy().add(speedsDifferenceFrictionForce),
-                totalFrictionForce =
-                        Vector2.create(
-                                Math.min(totalGrippingForce, totalFrictionForceUnlimited.getMagnitude()),
-                                totalFrictionForceUnlimited.getDirection());
+        final Vector2 totalFrictionForceUnlimited = centripetalFrictionForce.copy().add(speedsDifferenceFrictionForce),
+                totalFrictionForce = Vector2.create(
+                        Math.min(totalGrippingForce, totalFrictionForceUnlimited.getMagnitude()),
+                        totalFrictionForceUnlimited.getDirection());
         super.applyForce(totalFrictionForce);
     }
 
@@ -196,19 +196,18 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * ({@link #getModuleSpeeds()}).
      */
     private void simulateChassisFrictionTorque() {
-        final double
-                desiredRotationalMotionPercent =
-                        Math.abs(getDesiredSpeed().omegaRadiansPerSecond / getTheoreticalMaxAngularVelocity()),
+        final double desiredRotationalMotionPercent = Math
+                .abs(getDesiredSpeed().omegaRadiansPerSecond / getTheoreticalMaxAngularVelocity()),
                 actualRotationalMotionPercent = Math.abs(getAngularVelocity() / getTheoreticalMaxAngularVelocity()),
-                differenceBetweenFloorSpeedAndModuleSpeed =
-                        getModuleSpeeds().omegaRadiansPerSecond - getAngularVelocity(),
-                grippingTorqueMagnitude =
-                        moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
-                                * moduleTranslations[0].getNorm()
-                                * moduleSimulations.length,
+                differenceBetweenFloorSpeedAndModuleSpeed = getModuleSpeeds().omegaRadiansPerSecond
+                        - getAngularVelocity(),
+                grippingTorqueMagnitude = moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
+                        * moduleTranslations[0].getNorm()
+                        * moduleSimulations.length,
                 FRICTION_TORQUE_GAIN = 1;
 
-        if (actualRotationalMotionPercent < 0.01 && desiredRotationalMotionPercent < 0.02) super.setAngularVelocity(0);
+        if (actualRotationalMotionPercent < 0.01 && desiredRotationalMotionPercent < 0.02)
+            super.setAngularVelocity(0);
         else
             super.applyTorque(Math.copySign(
                     Math.min(

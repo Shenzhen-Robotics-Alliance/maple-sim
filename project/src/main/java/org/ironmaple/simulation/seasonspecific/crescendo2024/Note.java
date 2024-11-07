@@ -9,7 +9,7 @@ import java.util.List;
 import org.dyn4j.geometry.Geometry;
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 
-public class CrescendoNote {
+public class Note {
   /* https://www.andymark.com/products/frc-2024-am-4999 */
   private static final double NOTE_HEIGHT = Units.inchesToMeters(2),
       NOTE_DIAMETER = Units.inchesToMeters(14),

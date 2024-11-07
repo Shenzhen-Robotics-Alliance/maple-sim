@@ -1,6 +1,6 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
-import static org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNote.VARIANT;
+import static org.ironmaple.simulation.seasonspecific.crescendo2024.Note.VARIANT;
 import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -82,7 +82,9 @@ public class Arena2024Crescendo extends SimulatedArena {
     @Override
     public void placeGamePiecesOnField() {
         for (Translation2d notePosition : NOTE_INITIAL_POSITIONS)
-        super.createGamePiece(VARIANT).place(notePosition);
+        super.createGamePiece(VARIANT)
+            .place(notePosition)
+            .releaseControl();
     }
 
     private static final Translation3d BLUE_SOURCE_POSITION = new Translation3d(15.6, 0.8, 0.1);

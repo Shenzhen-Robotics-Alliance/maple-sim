@@ -1,11 +1,9 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,10 +11,18 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Per;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.motorsims.requests.VoltageOut;
+import org.ironmaple.simulation.motorsims.requests.PositionVoltage;
+import org.ironmaple.simulation.motorsims.requests.VelocityVoltage;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -40,10 +46,6 @@ public class SimplifiedSwerveDriveSimulation {
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveModuleState[] setPointsOptimized;
-
-    private PIDController steerHeadingCloseLoop;
-    private PIDController driveCloseLoop;
-    private final SimpleMotorFeedforward driveOpenLoop;
 
     /**
      *
@@ -81,13 +83,6 @@ public class SimplifiedSwerveDriveSimulation {
         this.swerveDriveSimulation = swerveDriveSimulation;
         this.moduleSimulations = swerveDriveSimulation.getModules();
 
-        this.steerHeadingCloseLoop = new PIDController(5.0, 0, 0);
-        this.steerHeadingCloseLoop.enableContinuousInput(-Math.PI, Math.PI);
-        this.driveCloseLoop = new PIDController(0, 0, 0);
-        this.driveOpenLoop = new SimpleMotorFeedforward(
-                moduleSimulations[0].DRIVE_FRICTION_VOLTAGE,
-                moduleSimulations[0].DRIVE_MOTOR.nominalVoltageVolts
-                        / moduleSimulations[0].DRIVE_MOTOR.freeSpeedRadPerSec);
         this.kinematics = swerveDriveSimulation.kinematics;
 
         this.poseEstimator = new SwerveDrivePoseEstimator(
@@ -215,7 +210,8 @@ public class SimplifiedSwerveDriveSimulation {
      *
      * <h2>Resets the odometry to a specified position.</h2>
      *
-     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, WheelPositions, Pose2d)}.
+     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, SwerveModulePosition[],
+     * Pose2d)}.
      *
      * <p>It resets the position of the pose estimator to the given pose.
      *
@@ -444,23 +440,16 @@ public class SimplifiedSwerveDriveSimulation {
      */
     private SwerveModuleState optimizeAndRunModuleState(
             SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
-        setPoint = SwerveModuleState.optimize(setPoint, moduleSimulation.getSteerAbsoluteFacing());
+        setPoint.optimize(moduleSimulation.getSteerAbsoluteFacing());
         final double
                 cosProjectedSpeedMPS =
                         SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
                 driveMotorVelocitySetPointRadPerSec =
                         cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
-        final double driveFeedForwardVoltage = driveOpenLoop.calculate(driveMotorVelocitySetPointRadPerSec),
-                driveFeedBackVoltage =
-                        driveCloseLoop.calculate(
-                                moduleSimulation.getDriveWheelFinalSpeedRadPerSec(),
-                                driveMotorVelocitySetPointRadPerSec),
-                steerFeedBackVoltage =
-                        steerHeadingCloseLoop.calculate(
-                                moduleSimulation.getSteerAbsoluteFacing().getRadians(), setPoint.angle.getRadians());
 
-        moduleSimulation.requestDriveOutput(new VoltageOut(Volts.of(driveFeedForwardVoltage + driveFeedBackVoltage)));
-        moduleSimulation.requestSteerControl(new VoltageOut(Volts.of(steerFeedBackVoltage)));
+        moduleSimulation.requestSteerControl(new PositionVoltage(Radians.of(setPoint.angle.getRadians())));
+        moduleSimulation.requestDriveOutput(
+                new VelocityVoltage(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec)));
         return setPoint;
     }
 
@@ -570,30 +559,53 @@ public class SimplifiedSwerveDriveSimulation {
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     * <h2>Configures the PID controller for steer heading control.</h2>
      *
-     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     * <p>This method wraps around
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionalVoltageController(Per, Per)}
      *
-     * @param steerHeadingCloseLoop the PID controller for steering control.
+     * @param kP the proportional gain
+     * @param kD the derivative gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withSteerPID(PIDController steerHeadingCloseLoop) {
-        this.steerHeadingCloseLoop = steerHeadingCloseLoop;
+    public SimplifiedSwerveDriveSimulation withSteerPID(
+            Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getSteerMotorConfigs().withPositionalVoltageController(kP, kD);
         return this;
     }
 
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for driving.</h2>
+     * <h2>Configures the PID controllers for drive velocity control.</h2>
      *
-     * <p>This method sets the PID controller used for the driving closed-loop control of the swerve drive.
+     * <p>This method wraps around
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withVelocityVoltageController(Per)}.
      *
-     * @param driveCloseLoop the PID controller for driving control.
+     * @param kP the proportional gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDrivePID(PIDController driveCloseLoop) {
-        this.driveCloseLoop = driveCloseLoop;
+    public SimplifiedSwerveDriveSimulation withDrivePID(Per<VoltageUnit, AngularVelocityUnit> kP) {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withVelocityVoltageController(kP);
+        return this;
+    }
+
+    /**
+     *
+     *
+     * <h2>Configures the feedforward controller for the drive velocity control.</h2>
+     *
+     * <p>This method wraps around {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withFeedForward(Voltage,
+     * Per, Per, Time)}.
+     *
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SimplifiedSwerveDriveSimulation withDriveFeedForward(
+            Voltage kS, Per<VoltageUnit, AngularVelocityUnit> kV, Per<VoltageUnit, AngularAccelerationUnit> kA) {
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i]
+                    .getDriveMotorConfigs()
+                    .withFeedForward(kS, kV, kA, Seconds.of(SimulatedArena.getSimulationDt()));
         return this;
     }
 }

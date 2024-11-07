@@ -151,6 +151,14 @@ public class SwerveModuleSimulation {
         this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
     }
 
+    public SimMotorConfigs getDriveMotorConfigs() {
+        return driveMotorConfigs;
+    }
+
+    public SimMotorConfigs getSteerMotorConfigs() {
+        return steerMotorSim.getConfigs();
+    }
+
     /**
      *
      *

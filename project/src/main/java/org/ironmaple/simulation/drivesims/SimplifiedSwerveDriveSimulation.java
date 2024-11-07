@@ -1,14 +1,9 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.Volts;
-
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,11 +12,17 @@ import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.AngularAccelerationUnit;
 import edu.wpi.first.units.AngularVelocityUnit;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Per;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.motorsims.requests.VoltageOut;
+import org.ironmaple.simulation.motorsims.requests.PositionVoltage;
+import org.ironmaple.simulation.motorsims.requests.VelocityVoltage;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -446,8 +447,9 @@ public class SimplifiedSwerveDriveSimulation {
                 driveMotorVelocitySetPointRadPerSec =
                         cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
 
-        moduleSimulation.requestSteerOutput(Radians.of(setPoint.angle.getRadians()));
-        moduleSimulation.requestDriveOutput(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec));
+        moduleSimulation.requestSteerControl(new PositionVoltage(Radians.of(setPoint.angle.getRadians())));
+        moduleSimulation.requestDriveOutput(
+                new VelocityVoltage(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec)));
         return setPoint;
     }
 
@@ -557,61 +559,53 @@ public class SimplifiedSwerveDriveSimulation {
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     * <h2>Configures the PID controller for steer heading control.</h2>
      *
-     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     * <p>This method wraps around
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionalVoltageController(Per, Per)}
      *
-     * @param steerHeadingCloseLoop the PID controller for steering control.
-     * @param inputUnit the unit used to measure the steer angle with
-     * @param useVoltage use voltage-based control for the motor
+     * @param kP the proportional gain
+     * @param kD the derivative gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
     public SimplifiedSwerveDriveSimulation withSteerPID(
-            PIDController steerHeadingCloseLoop, AngleUnit inputUnit, boolean useVoltage) {
-        for (int i = 0; i < 4; i++) {
-            moduleSimulations[i] = moduleSimulations[i].withSteerPID(
-                    steerHeadingCloseLoop.getP(), steerHeadingCloseLoop.getD(), inputUnit, useVoltage);
-        }
+            Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getSteerMotorConfigs().withPositionalVoltageController(kP, kD);
         return this;
     }
 
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     * <h2>Configures the PID controllers for drive velocity control.</h2>
      *
-     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     * <p>This method wraps around
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withVelocityVoltageController(Per)}.
      *
-     * @param driveCloseLoop the PID controller for drive control.
-     * @param inputUnit the unit used to measure the steer angle with
-     * @param useVoltage use voltage-based control for the motor
+     * @param kP the proportional gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDrivePID(
-            PIDController driveCloseLoop, AngularVelocityUnit inputUnit, boolean useVoltage) {
-        for (int i = 0; i < 4; i++) {
-            moduleSimulations[i] = moduleSimulations[i].withDrivePID(driveCloseLoop.getP(), inputUnit, useVoltage);
-        }
+    public SimplifiedSwerveDriveSimulation withDrivePID(Per<VoltageUnit, AngularVelocityUnit> kP) {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withVelocityVoltageController(kP);
         return this;
     }
 
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
+     * <h2>Configures the feedforward controller for the drive velocity control.</h2>
      *
-     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
+     * <p>This method wraps around {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withFeedForward(Voltage,
+     * Per, Per, Time)}.
      *
-     * @param driveFeedforward the feedforward for drive control.
-     * @param inputUnit the unit used to measure the steer angle with
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
     public SimplifiedSwerveDriveSimulation withDriveFeedForward(
-            SimpleMotorFeedforward driveFeedforward, AngularVelocityUnit inputUnit) {
-        for (int i = 0; i < 4; i++) {
-            moduleSimulations[i] = moduleSimulations[i].withDriveFeedforward(
-                    driveFeedforward.getKs(), driveFeedforward.getKv(), driveFeedforward.getKa(), inputUnit);
-        }
+            Voltage kS, Per<VoltageUnit, AngularVelocityUnit> kV, Per<VoltageUnit, AngularAccelerationUnit> kA) {
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i]
+                    .getDriveMotorConfigs()
+                    .withFeedForward(kS, kV, kA, Seconds.of(SimulatedArena.getSimulationDt()));
         return this;
     }
 }

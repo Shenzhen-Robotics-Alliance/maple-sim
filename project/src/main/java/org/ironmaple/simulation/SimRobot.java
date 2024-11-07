@@ -123,8 +123,9 @@ public class SimRobot {
         return mapleMotor;
     }
 
-    public DriveTrainSimulation getDriveTrain() {
-        return driveTrain.get();
+    @SuppressWarnings("unchecked")
+    public <T extends DriveTrainSimulation> T getDriveTrain() {
+        return (T) driveTrain.get();
     }
 
     public GamePieceStorage getGamePieceStorage() {

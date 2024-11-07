@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import org.ironmaple.simulation.SimulatedArena;
@@ -27,7 +28,9 @@ import org.ironmaple.simulation.seasonspecific.crescendo2024.NoteOnFly;
 import org.littletonrobotics.junction.Logger;
 
 public class FlywheelIOSim implements FlywheelIO {
-  private FlywheelSim sim = new FlywheelSim(DCMotor.getNEO(1), 1.5, 0.004);
+  private FlywheelSim sim =
+      new FlywheelSim(
+          LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1), 0.004, 1.5), DCMotor.getNEO(1));
   private PIDController pid = new PIDController(0.0, 0.0, 0.0);
 
   private boolean closedLoop = false;

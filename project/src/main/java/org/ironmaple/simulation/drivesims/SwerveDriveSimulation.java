@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 /**
  *
@@ -237,19 +238,21 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                     * totalGrippingForce
                     * floorAndModuleSpeedsDiffFieldRelative.getNorm(),
                 totalGrippingForce),
-            floorAndModuleSpeedsDiffFieldRelative.getAngle().getRadians());
+            MapleCommonMath.getAngle(floorAndModuleSpeedsDiffFieldRelative).getRadians());
 
     /* the centripetal friction force during turning */
     final ChassisSpeeds moduleSpeedsFieldRelative =
         ChassisSpeeds.fromRobotRelativeSpeeds(
             moduleSpeeds, getSimulatedDriveTrainPose().getRotation());
     final Rotation2d dTheta =
-        GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative)
-            .getAngle()
-            .minus(previousModuleSpeedsFieldRelative.getAngle());
+        MapleCommonMath.getAngle(
+                GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
+            .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
+
     final double orbitalAngularVelocity = dTheta.getRadians() / SimulatedArena.getSimulationDt();
     final Rotation2d centripetalForceDirection =
-        previousModuleSpeedsFieldRelative.getAngle().plus(Rotation2d.fromDegrees(90));
+        MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative)
+            .plus(Rotation2d.fromDegrees(90));
     final Vector2 centripetalFrictionForce =
         Vector2.create(
             previousModuleSpeedsFieldRelative.getNorm()

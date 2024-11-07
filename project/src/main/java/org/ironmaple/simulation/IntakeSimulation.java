@@ -29,7 +29,7 @@ import edu.wpi.first.math.geometry.Translation3d;
  * <h2>Simulates an Intake Mechanism on the Robot.</h2>
  *
  * <h3><a
- * href='https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/docs/5_SIMULATING_INTAKE.md'>Online
+ * href='https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_INTAKE.html'>Online
  * Documentation</a></h3>
  *
  * <p>The intake is a 2D component attached to one side of the robot's chassis. It is rectangular in

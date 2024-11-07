@@ -20,6 +20,7 @@ import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
+import org.ironmaple.simulation.GamePiece.GamePieceStateTag;
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
@@ -211,6 +212,35 @@ public abstract class SimulatedArena {
             gamePiece.delete();
         }
         this.gamePieces.clear();
+    }
+
+    /**
+     *
+     *
+     * <h2>Removes All {@link GamePieceOnFieldSimulation} Objects from the Simulation.</h2>
+     *
+     * <p>This method clears all game pieces from the physics world and the simulation's game piece
+     * collection.
+     */
+    public void clearGamePiecesInState(GamePieceStateTag state) {
+        ArrayList<GamePiece> toRemove = new ArrayList<>();
+        this.gamePieces.stream()
+                .filter(gamePiece -> gamePiece.stateTag().equals(state))
+                .forEach(gp -> {
+                    gp.delete();
+                    toRemove.add(gp);
+                });
+        this.gamePieces.removeAll(toRemove);
+    }
+
+    public SimRobot robot() {
+        return userRobot;
+    }
+
+    public SimRobot newNpcRobot() {
+        var robo = new SimRobot(this);
+        otherRobots.add(robo);
+        return robo;
     }
 
     /**

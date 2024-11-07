@@ -7,9 +7,9 @@ import org.ironmaple.simulation.SimulatedArena;
 public class OdometryTimeStampsSim {
   public static double[] getTimeStamps() {
     final double[] odometryTimestamps = new double[5];
-    for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
+    for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
       odometryTimestamps[i] =
-          Timer.getFPGATimestamp() - Robot.defaultPeriodSecs + SimulatedArena.getSimulationDt() * i;
+          Timer.getFPGATimestamp() - Robot.defaultPeriodSecs + SimulatedArena.getInstance().getSimulationDt() * i;
     return odometryTimestamps;
   }
 }

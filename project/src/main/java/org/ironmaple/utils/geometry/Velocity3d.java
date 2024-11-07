@@ -58,6 +58,18 @@ public class Velocity3d implements Interpolatable<Velocity3d> {
     this(vector.get(0), vector.get(1), vector.get(2));
   }
 
+  public Velocity3d(Rotation3d rotation, double magnitude) {
+    double pitch = rotation.getY();
+    double yaw = rotation.getZ();
+    m_vx = magnitude * Math.cos(pitch) * Math.cos(yaw);
+    m_vy = magnitude * Math.cos(pitch) * Math.sin(yaw);
+    m_vz = magnitude * Math.sin(pitch);
+  }
+
+  public Velocity3d(Velocity2d velocity2d) {
+    this(velocity2d.getVX(), velocity2d.getVY(), 0.0);
+  }
+
   /**
    * Returns the X component of the translation.
    *

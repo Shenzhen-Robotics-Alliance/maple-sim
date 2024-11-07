@@ -182,3 +182,6 @@ ctre_sim/
 # clangd
 /.cache
 compile_commands.json
+
+# Sym linked for development
+/src/main/java/org/ironmaple

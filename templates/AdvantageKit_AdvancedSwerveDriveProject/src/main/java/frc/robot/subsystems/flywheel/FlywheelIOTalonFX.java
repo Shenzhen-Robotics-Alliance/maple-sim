@@ -15,7 +15,6 @@ package frc.robot.subsystems.flywheel;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -55,7 +54,6 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   public void updateInputs(FlywheelIOInputs inputs) {
     BaseStatusSignal.refreshAll(
         leaderPosition, leaderVelocity, leaderAppliedVolts, leaderCurrent, followerCurrent);
-    inputs.positionRad = Units.rotationsToRadians(leaderPosition.getValueAsDouble()) / GEAR_RATIO;
     inputs.velocityRadPerSec =
         Units.rotationsToRadians(leaderVelocity.getValueAsDouble()) / GEAR_RATIO;
     inputs.appliedVolts = leaderAppliedVolts.getValueAsDouble();
@@ -69,13 +67,13 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   }
 
   @Override
-  public void setVelocity(double velocityRadPerSec, double ffVolts) {
+  public void setVelocity(double velocityRadPerSec) {
     leader.setControl(
         new VelocityVoltage(
             Units.radiansToRotations(velocityRadPerSec),
             0.0,
             true,
-            ffVolts,
+            0.0,
             0,
             false,
             false,
@@ -85,14 +83,5 @@ public class FlywheelIOTalonFX implements FlywheelIO {
   @Override
   public void stop() {
     leader.stopMotor();
-  }
-
-  @Override
-  public void configurePID(double kP, double kI, double kD) {
-    var config = new Slot0Configs();
-    config.kP = kP;
-    config.kI = kI;
-    config.kD = kD;
-    leader.getConfigurator().apply(config);
   }
 }

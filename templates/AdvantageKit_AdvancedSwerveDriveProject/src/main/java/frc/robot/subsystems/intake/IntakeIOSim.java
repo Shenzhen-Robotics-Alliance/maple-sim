@@ -1,10 +1,15 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
+import org.ironmaple.simulation.GamePieceStorage;
 import org.ironmaple.simulation.IntakeSimulation;
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField;
+import org.ironmaple.simulation.SimRobot;
+import org.ironmaple.simulation.IntakeSimulation.IntakeBehavior;
+import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
+import org.ironmaple.simulation.seasonspecific.crescendo2024.Note;
 
 /**
  * Example intake simulation, implementing IntakeIO notes can be stored in the intake, and when
@@ -12,7 +17,8 @@ import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnFiel
  */
 public class IntakeIOSim implements IntakeIO {
   private final IntakeSimulation intakeSimulation;
-  private final AbstractDriveTrainSimulation driveTrain;
+  private final DriveTrainSimulation driveTrain;
+  private final GamePieceStorage gamePieceStorage;
   private final Runnable passNoteToFlyWheelsCall;
   private double intakeVoltage = 0.0,
       // This is an indefinite integral of the intake motor voltage since the note has been in the
@@ -25,56 +31,45 @@ public class IntakeIOSim implements IntakeIO {
    * @param passNoteToFlyWheelsCall called when the note in the intake is pushed to the flywheels,
    *     allowing the flywheels to simulate the projected note
    */
-  public IntakeIOSim(AbstractDriveTrainSimulation driveTrain, Runnable passNoteToFlyWheelsCall) {
-    this.intakeSimulation =
-        new IntakeSimulation( // create intake simulation with no extension
-            "Note", // the intake grabs game pieces of this type
-            driveTrain, // specify the drivetrain to which the intake is attached to
-            0.6, // the width of the intake
-            IntakeSimulation.IntakeSide.BACK, // the intake is attached the back of the drivetrain
-            1 // the intake can only hold 1 game piece at a time
-            );
-    intakeSimulation.register();
+  public IntakeIOSim(SimRobot simRobot, Runnable passNoteToFlyWheelsCall) {
+    this.intakeSimulation = simRobot.createIntake(
+      new Pair<>(new Translation2d(-0.8, 0.8), new Translation2d(-1.1, -0.8)),
+      IntakeBehavior.ADD_RANDOM, //lols
+      Note.VARIANT
+    );
 
-    this.driveTrain = driveTrain;
+    this.driveTrain = simRobot.getDriveTrain();
+    this.gamePieceStorage = simRobot.getGamePieceStorage();
     this.passNoteToFlyWheelsCall = passNoteToFlyWheelsCall;
   }
 
   @Override
   public void updateInputs(IntakeInputs inputs) {
-    // gamePiecesInIntakeCount shows the amount of game pieces in the intake, we store this in the
-    // inputs
-    inputs.noteDetected = intakeSimulation.getGamePiecesAmount() != 0;
+    inputs.noteDetected = gamePieceStorage.stored() > 0;
 
     // if the intake voltage is higher than 2 volts, it is considered running
-    if (intakeVoltage > 4) intakeSimulation.startIntake();
-    // otherwise, it's stopped
-    else intakeSimulation.stopIntake();
+    if (intakeVoltage > 4) {
+      intakeSimulation.startIntake();
+    } else {
+      intakeSimulation.stopIntake();
+    }
 
     // if the there is note, we do an integral to the voltage to approximate the position of the
     // note in the intake
-    if (inputs.noteDetected) intakeVoltageIntegralSinceNoteTaken += 0.02 * intakeVoltage;
-    // if the note is gone, we clear the integral
-    else intakeVoltageIntegralSinceNoteTaken = 0.0;
+    if (inputs.noteDetected) {
+      intakeVoltageIntegralSinceNoteTaken += 0.02 * intakeVoltage;
+    } else {
+      intakeVoltageIntegralSinceNoteTaken = 0.0;
+    }
 
-    // if the integral is negative, we get rid of the note
-    if (intakeVoltageIntegralSinceNoteTaken < 0 && intakeSimulation.obtainGamePieceFromIntake())
-      // splits the note out by adding it on field
-      SimulatedArena.getInstance()
-          .addGamePiece(
-              new CrescendoNoteOnField(
-                  driveTrain
-                      .getSimulatedDriveTrainPose()
-                      .getTranslation()
-                      .plus(
-                          new Translation2d(-0.4, 0)
-                              .rotateBy(driveTrain.getSimulatedDriveTrainPose().getRotation()))));
-    // if the intake have been running positive volts since the note touches the intake, it will
-    // touch the fly wheels
-    else if (intakeVoltageIntegralSinceNoteTaken > 12 * 0.1
-        && intakeSimulation.obtainGamePieceFromIntake())
-      // launch the note by calling the shoot note call back
+    if (intakeVoltageIntegralSinceNoteTaken < 0 && inputs.noteDetected) {
+      gamePieceStorage.pullLowest(true).ifPresent(note -> {
+        Pose2d pose = driveTrain.getSimulatedDriveTrainPose();
+        note.place(pose.getTranslation().plus(new Translation2d(-0.4, 0).rotateBy(pose.getRotation())));
+      });
+    } else if (intakeVoltageIntegralSinceNoteTaken > 12 * 0.1 && inputs.noteDetected) {
       passNoteToFlyWheelsCall.run();
+    }
   }
 
   @Override

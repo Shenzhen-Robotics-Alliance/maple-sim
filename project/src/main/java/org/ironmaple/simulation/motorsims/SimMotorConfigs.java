@@ -173,6 +173,15 @@ public final class SimMotorConfigs {
     /**
      * Configures the positionaly controllers to use continuous wrap.
      *
+     * @see PIDController#enableContinuousInput(double, double)
+     */
+    public SimMotorConfigs withControllerContinousInput() {
+        return this.withControllerContinousInput(Rotations.of(0), Rotations.of(1));
+    }
+
+    /**
+     * Configures the positionaly controllers to use continuous wrap.
+     *
      * @param min the minimum angle
      * @param max the maximum angle
      * @return this instance for method chaining

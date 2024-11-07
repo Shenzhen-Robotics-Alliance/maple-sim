@@ -1,10 +1,6 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -133,10 +129,13 @@ public class SwerveModuleSimulation {
                 DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage));
         BatterySimulationContainer.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
         this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
-                steerMotor,
-                steerGearRatio,
-                KilogramSquareMeters.of(steerRotationalInertia),
-                Volts.of(steerFrictionVoltage)));
+                        steerMotor,
+                        steerGearRatio,
+                        KilogramSquareMeters.of(steerRotationalInertia),
+                        Volts.of(steerFrictionVoltage))
+                .withControllerContinousInput()
+                .withPositionalVoltageController(
+                        Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0)));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)

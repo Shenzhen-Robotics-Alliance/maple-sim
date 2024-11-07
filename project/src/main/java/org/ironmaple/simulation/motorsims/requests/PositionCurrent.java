@@ -1,7 +1,6 @@
 package org.ironmaple.simulation.motorsims.requests;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -15,7 +14,7 @@ public record PositionCurrent(Angle setPoint) implements ControlRequest {
         Current current =
                 Amps.of(configs.positionCurrentController.calculate(encoderPosition.in(Radians), setPoint.in(Radians)));
         Voltage currentVoltage = configs.calculateVoltage(current, encoderVelocity);
-        Voltage feedforwardVoltage = configs.feedforward.calculate(encoderVelocity);
+        Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(encoderVelocity.in(RadiansPerSecond)));
         return currentVoltage.plus(feedforwardVoltage);
     }
 }

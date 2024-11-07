@@ -12,9 +12,7 @@ import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.interpolation.Interpolatable;
 import edu.wpi.first.math.numbers.N2;
-import edu.wpi.first.units.Distance;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 
 public class Velocity2d implements Interpolatable<Velocity2d> {
     private final double m_vx;
@@ -54,7 +52,7 @@ public class Velocity2d implements Interpolatable<Velocity2d> {
    * @param x The x component of the translation.
    * @param y The y component of the translation.
    */
-  public Velocity2d(Measure<Velocity<Distance>> x, Measure<Velocity<Distance>> y) {
+  public Velocity2d(LinearVelocity x, LinearVelocity y) {
     this(x.in(MetersPerSecond), y.in(MetersPerSecond));
   }
 

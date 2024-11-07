@@ -11,9 +11,7 @@ import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.interpolation.Interpolatable;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.Velocity;
-import edu.wpi.first.units.Distance;
-import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.measure.LinearVelocity;
 
 public class Velocity3d implements Interpolatable<Velocity3d> {
   private final double m_vx;
@@ -46,7 +44,7 @@ public class Velocity3d implements Interpolatable<Velocity3d> {
    * @param y The y component of the translation.
    * @param z The z component of the translation.
    */
-  public Velocity3d(Measure<Velocity<Distance>> x, Measure<Velocity<Distance>> y, Measure<Velocity<Distance>> z) {
+  public Velocity3d(LinearVelocity x, LinearVelocity y, LinearVelocity z) {
     this(x.in(MetersPerSecond), y.in(MetersPerSecond), z.in(MetersPerSecond));
   }
 

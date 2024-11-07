@@ -1,5 +1,7 @@
 package org.ironmaple.simulation.drivesims;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -19,6 +21,7 @@ import edu.wpi.first.units.AngularVelocityUnit;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.motorsims.requests.VoltageOut;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**

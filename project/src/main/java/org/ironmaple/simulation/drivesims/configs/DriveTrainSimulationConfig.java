@@ -1,7 +1,14 @@
 package org.ironmaple.simulation.drivesims.configs;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Kilograms;
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
+
 import java.util.Arrays;
 import java.util.OptionalDouble;
 import java.util.function.Supplier;
@@ -29,30 +36,30 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Creates an instance of {@link DriveTrainSimulationConfig} with specified parameters.
      *
-     * @param robotMassKg the mass of the robot in kilograms, including bumpers.
-     * @param bumperLengthXMeters the length of the bumper in meters (distance from front to back).
-     * @param bumperWidthYMeters the width of the bumper in meters (distance from left to right).
-     * @param trackLengthXMeters the distance between the front and rear wheels, in meters.
-     * @param trackWidthYMeters the distance between the left and right wheels, in meters.
+     * @param robotMass the mass of the robot, including bumpers.
+     * @param bumperLengthX the length of the bumper (distance from front to back).
+     * @param bumperWidthY the width of the bumper (distance from left to right).
+     * @param trackLengthX the distance between the front and rear wheels.
+     * @param trackWidthY the distance between the left and right wheels.
      * @param swerveModuleSimulationFactory the factory that creates appropriate swerve module simulation for the
      *     drivetrain.
      * @param gyroSimulationFactory the factory that creates appropriate gyro simulation for the drivetrain.
      */
     public DriveTrainSimulationConfig(
-            double robotMassKg,
-            double bumperLengthXMeters,
-            double bumperWidthYMeters,
-            double trackLengthXMeters,
-            double trackWidthYMeters,
+            Mass robotMass,
+            Distance bumperLengthX,
+            Distance bumperWidthY,
+            Distance trackLengthX,
+            Distance trackWidthY,
             Supplier<SwerveModuleSimulation> swerveModuleSimulationFactory,
             Supplier<GyroSimulation> gyroSimulationFactory) {
-        this.robotMassKg = robotMassKg;
-        this.bumperLengthXMeters = bumperLengthXMeters;
-        this.bumperWidthYMeters = bumperWidthYMeters;
+        this.robotMassKg = robotMass.in(Kilograms);
+        this.bumperLengthXMeters = bumperLengthX.in(Meters);
+        this.bumperWidthYMeters = bumperWidthY.in(Meters);
 
         this.swerveModuleSimulationFactory = swerveModuleSimulationFactory;
         this.gyroSimulationFactory = gyroSimulationFactory;
-        this.withTrackLengthTrackWidth(trackLengthXMeters, trackWidthYMeters);
+        this.withTrackLengthTrackWidth(trackLengthX, trackWidthY);
     }
 
     /**
@@ -80,15 +87,15 @@ public class DriveTrainSimulationConfig {
      */
     public static DriveTrainSimulationConfig Default() {
         return new DriveTrainSimulationConfig(
-                45,
-                0.76,
-                0.76,
-                0.52,
-                0.52,
+                Kilograms.of(45),
+                Meters.of(0.76),
+                Meters.of(.76),
+                Meters.of(0.52),
+                Meters.of(0.52),
                 SwerveModuleSimulation.getMark4(
                         DCMotor.getFalcon500(1),
                         DCMotor.getFalcon500(1),
-                        60,
+                        Amps.of(60),
                         SwerveModuleSimulation.WHEEL_GRIP.RUBBER_WHEEL.cof,
                         2),
                 GyroSimulation.getPigeon2());
@@ -101,11 +108,11 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Updates the mass of the robot in kilograms.
      *
-     * @param robotMassKg the new mass of the robot in kilograms.
+     * @param robotMass the new mass of the robot.
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
-    public DriveTrainSimulationConfig withRobotMass(double robotMassKg) {
-        this.robotMassKg = robotMassKg;
+    public DriveTrainSimulationConfig withRobotMass(Mass robotMass) {
+        this.robotMassKg = robotMass.in(Kilograms);
         return this;
     }
 
@@ -116,13 +123,13 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Updates the dimensions of the bumper.
      *
-     * @param bumperLengthXMeters the length of the bumper in meters.
-     * @param bumperWidthYMeters the width of the bumper in meters.
+     * @param bumperLengthX the length of the bumper.
+     * @param bumperWidthY the width of the bumper.
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
-    public DriveTrainSimulationConfig withBumperSize(double bumperLengthXMeters, double bumperWidthYMeters) {
-        this.bumperLengthXMeters = bumperLengthXMeters;
-        this.bumperWidthYMeters = bumperWidthYMeters;
+    public DriveTrainSimulationConfig withBumperSize(Distance bumperLengthX, Distance bumperWidthY) {
+        this.bumperLengthXMeters = bumperLengthX.in(Meters);
+        this.bumperWidthYMeters = bumperWidthY.in(Meters);
         return this;
     }
 
@@ -135,16 +142,16 @@ public class DriveTrainSimulationConfig {
      *
      * <p>For non-rectangular chassis configuration, use {@link #withCustomModuleTranslations(Translation2d[])} instead.
      *
-     * @param trackLengthXMeters the distance between the front and rear wheels, in meters.
-     * @param trackWidthYMeters the distance between the left and right wheels, in meters.
+     * @param trackLengthX the distance between the front and rear wheels.
+     * @param trackWidthY the distance between the left and right wheels.
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
-    public DriveTrainSimulationConfig withTrackLengthTrackWidth(double trackLengthXMeters, double trackWidthYMeters) {
+    public DriveTrainSimulationConfig withTrackLengthTrackWidth(Distance trackLengthX, Distance trackWidthY) {
         this.moduleTranslations = new Translation2d[] {
-            new Translation2d(trackLengthXMeters / 2, trackWidthYMeters / 2),
-            new Translation2d(trackLengthXMeters / 2, -trackWidthYMeters / 2),
-            new Translation2d(-trackLengthXMeters / 2, trackWidthYMeters / 2),
-            new Translation2d(-trackLengthXMeters / 2, -trackWidthYMeters / 2)
+            new Translation2d(trackLengthX.in(Meters) / 2, trackWidthY.in(Meters) / 2),
+            new Translation2d(trackLengthX.in(Meters) / 2, -trackWidthY.in(Meters) / 2),
+            new Translation2d(-trackLengthX.in(Meters) / 2, trackWidthY.in(Meters) / 2),
+            new Translation2d(-trackLengthX.in(Meters) / 2, -trackWidthY.in(Meters) / 2)
         };
         return this;
     }
@@ -217,10 +224,10 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Returns the total distance between the frontmost and rearmost module translations in the X direction.
      *
-     * @return the track length in meters.
+     * @return the track length.
      * @throws IllegalStateException if the module translations are empty.
      */
-    public double getTrackLengthX() {
+    public Distance getTrackLengthX() {
         final OptionalDouble maxModuleX = Arrays.stream(moduleTranslations)
                 .mapToDouble(Translation2d::getX)
                 .max();
@@ -229,7 +236,7 @@ public class DriveTrainSimulationConfig {
                 .min();
         if (maxModuleX.isEmpty() || minModuleX.isEmpty())
             throw new IllegalStateException("Modules translations are empty");
-        return maxModuleX.getAsDouble() - minModuleX.getAsDouble();
+        return Meters.of(maxModuleX.getAsDouble() - minModuleX.getAsDouble());
     }
 
     /**
@@ -239,10 +246,10 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Returns the total distance between the leftmost and rightmost module translations in the Y direction.
      *
-     * @return the track width in meters.
+     * @return the track width.
      * @throws IllegalStateException if the module translations are empty.
      */
-    public double getTrackWidthY() {
+    public Distance getTrackWidthY() {
         final OptionalDouble maxModuleY = Arrays.stream(moduleTranslations)
                 .mapToDouble(Translation2d::getY)
                 .max();
@@ -251,6 +258,6 @@ public class DriveTrainSimulationConfig {
                 .min();
         if (maxModuleY.isEmpty() || minModuleY.isEmpty())
             throw new IllegalStateException("Modules translations are empty");
-        return maxModuleY.getAsDouble() - minModuleY.getAsDouble();
+        return Meters.of(maxModuleY.getAsDouble() - minModuleY.getAsDouble());
     }
 }

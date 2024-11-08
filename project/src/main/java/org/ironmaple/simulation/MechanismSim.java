@@ -27,6 +27,7 @@ import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Torque;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
@@ -339,6 +340,7 @@ public class MechanismSim {
     /** Package private call */
     void simulationSubTick() {
         double dtSeconds = arena.getSimulationDt();
+        updateOutputForEnableState();
         switch (this.outputType) {
             case VOLTAGE -> {
                 switch (this.outputMode) {
@@ -389,6 +391,12 @@ public class MechanismSim {
             sim.setState(reverseLimit.in(Radians), 0.0);
         } else if (getPosition().gte(forwardLimit)) {
             sim.setState(forwardLimit.in(Radians), 0.0);
+        }
+    }
+
+    private void updateOutputForEnableState() {
+        if (DriverStation.isEnabled()) {
+            setControl();
         }
     }
 

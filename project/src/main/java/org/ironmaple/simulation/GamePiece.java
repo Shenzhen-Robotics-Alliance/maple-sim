@@ -3,7 +3,6 @@ package org.ironmaple.simulation;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.dyn4j.dynamics.Body;
@@ -451,7 +450,7 @@ public class GamePiece {
      * @param pose the position to place the {@link GamePiece} at
      * @return this {@link GamePiece} object
      */
-    GamePiece placeLib(Translation2d pose) {
+    GamePiece placeSudo(Translation2d pose) {
         transitionState(new GamePieceState.OnField(createBody(pose, new Velocity2d())));
         return this;
     }
@@ -464,7 +463,7 @@ public class GamePiece {
      * @param initialVelo the velocity to slide the {@link GamePiece} at
      * @return this {@link GamePiece} object
      */
-    GamePiece slideLib(Translation2d initialPose, Velocity2d initialVelo) {
+    GamePiece slideSudo(Translation2d initialPose, Velocity2d initialVelo) {
         transitionState(new GamePieceState.OnField(createBody(initialPose, initialVelo)));
         return this;
     }
@@ -478,7 +477,7 @@ public class GamePiece {
      * @param dynamics the dynamics of the projectile
      * @return this {@link GamePiece} object
      */
-    GamePiece launchLib(Pose3d initialPose, Velocity3d initialVelocity, ProjectileDynamics dynamics) {
+    GamePiece launchSudo(Pose3d initialPose, Velocity3d initialVelocity, ProjectileDynamics dynamics) {
         transitionState(new GamePieceState.InFlight(initialPose, initialVelocity, dynamics));
         return this;
     }
@@ -491,7 +490,7 @@ public class GamePiece {
      * @param offset the supplier of the offset
      * @return this {@link GamePiece} object
      */
-    GamePiece intakeLib(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset) {
+    GamePiece intakeSudo(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset) {
         transitionState(new GamePieceState.Held(robotPoseSupplier, offset));
         return this;
     }
@@ -499,7 +498,7 @@ public class GamePiece {
     /**
      * Deletes the {@link GamePiece} no matter the who has control of the {@link GamePiece}
      */
-    void deleteLib() {
+    void deleteSudo() {
         transitionState(new GamePieceState.Limbo());
     }
 
@@ -508,15 +507,13 @@ public class GamePiece {
      * if the user has control of the {@link GamePiece}.
      * 
      * @param pose the position to place the {@link GamePiece} at
-     * @return this {@link GamePiece} object
      */
-    public GamePiece place(Translation2d pose) {
+    public void place(Translation2d pose) {
         if (userControlled) {
             transitionState(new GamePieceState.OnField(createBody(pose, new Velocity2d())));
-            return releaseControl();
+            releaseControl();
         } else {
             RuntimeLog.warn("Tried to place a game piece without control");
-            return this;
         }
     }
 
@@ -526,15 +523,13 @@ public class GamePiece {
      * 
      * @param initialPosition the position to place the {@link GamePiece} at
      * @param initialVelocity the velocity to slide the {@link GamePiece} at
-     * @return this {@link GamePiece} object
      */
-    public GamePiece slide(Translation2d initialPosition, Velocity2d initialVelocity) {
+    public void slide(Translation2d initialPosition, Velocity2d initialVelocity) {
         if (userControlled) {
             transitionState(new GamePieceState.OnField(createBody(initialPosition, initialVelocity)));
-            return releaseControl();
+            releaseControl();
         } else {
             RuntimeLog.warn("Tried to slide a game piece without control");
-            return this;
         }
     }
 
@@ -544,31 +539,25 @@ public class GamePiece {
      * @param initialPose the pose to launch the {@link GamePiece} from
      * @param initialVelocity the velocity to launch the {@link GamePiece} at
      * @param dynamics the dynamics of the projectile
-     * @return this {@link GamePiece} object
      */
-    public GamePiece launch(Pose3d initialPose, Velocity3d initialVelocity, ProjectileDynamics dynamics) {
+    public void launch(Pose3d initialPose, Velocity3d initialVelocity, ProjectileDynamics dynamics) {
         if (userControlled) {
             transitionState(new GamePieceState.InFlight(initialPose, initialVelocity, dynamics));
-            return releaseControl();
+            releaseControl();
         } else {
             RuntimeLog.warn("Tried to launch a game piece without control");
-            return this;
         }
     }
 
     /**
      * Deletes the {@link GamePiece} if the user has control of the {@link GamePiece}.
-     * 
-     * @return an empty optional if the game piece was deleted, otherwise an optional containing the game piece
      */
-    public Optional<GamePiece> delete() {
+    public void delete() {
         if (userControlled) {
             transitionState(new GamePieceState.Limbo());
-            this.releaseControl();
-            return Optional.empty();
+            releaseControl();
         } else {
             RuntimeLog.warn("Tried to delete a game piece without control");
-            return Optional.of(this);
         }
     }
 

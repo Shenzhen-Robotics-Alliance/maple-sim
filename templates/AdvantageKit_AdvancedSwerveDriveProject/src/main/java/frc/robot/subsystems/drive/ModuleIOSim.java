@@ -16,10 +16,13 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.OdometryTimeStampsSim;
 import java.util.Arrays;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.motorsims.requests.VoltageOut;
 
 /** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
 public class ModuleIOSim implements ModuleIO {
@@ -51,11 +54,11 @@ public class ModuleIOSim implements ModuleIO {
 
     @Override
     public void setDriveVoltage(double volts) {
-        moduleSimulation.requestDriveVoltageOut(volts);
+        moduleSimulation.requestDriveOutput(new VoltageOut(Volts.of(volts)));
     }
 
     @Override
     public void setTurnVoltage(double volts) {
-        moduleSimulation.requestSteerVoltageOut(volts);
+        moduleSimulation.requestSteerControl(new VoltageOut(Volts.of(volts)));
     }
 }

@@ -477,6 +477,7 @@ public class SwerveModuleSimulation {
      */
     private void updateSteerSimulation() {
         /* update the readings of the sensor */
+        steerMotorSim.update(Seconds.of(SimulatedArena.getSimulationDt()));
         this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getPosition());
         this.steerRelativeEncoderPositionRad = steerMotorSim.getPosition().in(Radians) + steerRelativeEncoderOffSet;
         this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);

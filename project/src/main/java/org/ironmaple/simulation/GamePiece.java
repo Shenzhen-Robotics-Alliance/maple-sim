@@ -429,9 +429,8 @@ public class GamePiece {
      * 
      * @return this {@link GamePiece} object
      */
-    public GamePiece releaseControl() {
+    public void releaseControl() {
         userControlled = false;
-        return this;
     }
 
     /**

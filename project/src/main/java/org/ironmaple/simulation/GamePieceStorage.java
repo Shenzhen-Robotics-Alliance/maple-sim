@@ -116,7 +116,8 @@ public class GamePieceStorage {
             }
             return pieceTransforms[index];
         };
-        piece.releaseControl().intakeSudo(localizer, transformSupplier);
+        piece.releaseControl();
+        piece.intakeSudo(localizer, transformSupplier);
         RuntimeLog.debug("GamePieceStorage: New game piece added to storage");
     }
 

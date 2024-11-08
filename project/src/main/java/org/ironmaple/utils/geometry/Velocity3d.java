@@ -26,9 +26,9 @@ public class Velocity3d implements Interpolatable<Velocity3d> {
   /**
    * Constructs a Velocity3d with the X, Y, and Z components equal to the provided values.
    *
-   * @param vx The x component of the translation.
-   * @param vy The y component of the translation.
-   * @param vz The z component of the translation.
+   * @param vx The x component of the velocity.
+   * @param vy The y component of the velocity.
+   * @param vz The z component of the velocity.
    */
   public Velocity3d(double vx, double vy, double vz) {
     m_vx = vx;
@@ -40,30 +40,35 @@ public class Velocity3d implements Interpolatable<Velocity3d> {
    * Constructs a Velocity3d with the X, Y, and Z components equal to the provided values. The
    * components will be converted to and tracked as meters.
    *
-   * @param x The x component of the translation.
-   * @param y The y component of the translation.
-   * @param z The z component of the translation.
+   * @param x The x component of the velocity.
+   * @param y The y component of the velocity.
+   * @param z The z component of the velocity.
    */
   public Velocity3d(LinearVelocity x, LinearVelocity y, LinearVelocity z) {
     this(x.in(MetersPerSecond), y.in(MetersPerSecond), z.in(MetersPerSecond));
   }
 
   /**
-   * Constructs a Velocity3d from the provided translation vector's X, Y, and Z components. The
+   * Constructs a Velocity3d from the provided velocity vector's X, Y, and Z components. The
    * values are assumed to be in meters.
    *
-   * @param vector The translation vector to represent.
+   * @param vector The velocity vector to represent.
    */
   public Velocity3d(Vector<N3> vector) {
     this(vector.get(0), vector.get(1), vector.get(2));
   }
 
-  public Velocity3d(Rotation3d rotation, double magnitude) {
-    double pitch = rotation.getY();
-    double yaw = rotation.getZ();
-    m_vx = magnitude * Math.cos(pitch) * Math.cos(yaw);
-    m_vy = magnitude * Math.cos(pitch) * Math.sin(yaw);
-    m_vz = magnitude * Math.sin(pitch);
+  /**
+   * Constructs a Velocity3d with the provided speed and angle.
+   *
+   * @param speed The speed of the velocity.
+   * @param angle The angle between the x-axis and the velocity vector.
+   */
+  public Velocity3d(double speed, Rotation3d angle) {
+    final var rectangular = new Velocity3d(speed, 0.0, 0.0).rotateBy(angle);
+    m_vx = rectangular.m_vx;
+    m_vy = rectangular.m_vy;
+    m_vz = rectangular.m_vz;
   }
 
   public Velocity3d(Velocity2d velocity2d) {
@@ -71,58 +76,58 @@ public class Velocity3d implements Interpolatable<Velocity3d> {
   }
 
   /**
-   * Returns the X component of the translation.
+   * Returns the X component of the velocity.
    *
-   * @return The X component of the translation.
+   * @return The X component of the velocity.
    */
   public double getVX() {
     return m_vx;
   }
 
   /**
-   * Returns the Y component of the translation.
+   * Returns the Y component of the velocity.
    *
-   * @return The Y component of the translation.
+   * @return The Y component of the velocity.
    */
   public double getVY() {
     return m_vy;
   }
 
   /**
-   * Returns the Z component of the translation.
+   * Returns the Z component of the velocity.
    *
-   * @return The Z component of the translation.
+   * @return The Z component of the velocity.
    */
   public double getVZ() {
     return m_vz;
   }
 
   /**
-   * Returns a vector representation of this translation.
+   * Returns a vector representation of this velocity.
    *
-   * @return A Vector representation of this translation.
+   * @return A Vector representation of this velocity.
    */
   public Vector<N3> toVector() {
     return VecBuilder.fill(m_vx, m_vy, m_vz);
   }
 
   /**
-   * Returns the norm, or distance from the origin to the translation.
+   * Returns the speed, or magnitude, of the velocity.
    *
-   * @return The norm of the translation.
+   * @return The speed of the velocity.
    */
-  public double getNorm() {
+  public double getSpeed() {
     return Math.sqrt(m_vx * m_vx + m_vy * m_vy + m_vz * m_vz);
   }
 
   /**
-   * Applies a rotation to the translation in 3D space.
+   * Applies a rotation to the velocity in 3D space.
    *
    * <p>For example, rotating a Velocity3d of &lt;2, 0, 0&gt; by 90 degrees around the Z axis
    * will return a Velocity3d of &lt;0, 2, 0&gt;.
    *
-   * @param other The rotation to rotate the translation by.
-   * @return The new rotated translation.
+   * @param other The rotation to rotate the velocity by.
+   * @return The new rotated velocity.
    */
   public Velocity3d rotateBy(Rotation3d other) {
     final var p = new Quaternion(0.0, m_vx, m_vy, m_vz);
@@ -131,55 +136,55 @@ public class Velocity3d implements Interpolatable<Velocity3d> {
   }
 
   /**
-   * Returns the sum of two translations in 3D space.
+   * Returns the sum of two velocitys in 3D space.
    *
    * <p>For example, Velocity3d(1.0, 2.5, 3.5) + Velocity3d(2.0, 5.5, 7.5) =
    * Velocity3d{3.0, 8.0, 11.0).
    *
-   * @param other The translation to add.
-   * @return The sum of the translations.
+   * @param other The velocity to add.
+   * @return The sum of the velocitys.
    */
   public Velocity3d plus(Velocity3d other) {
     return new Velocity3d(m_vx + other.m_vx, m_vy + other.m_vy, m_vz + other.m_vz);
   }
 
   /**
-   * Returns the difference between two translations.
+   * Returns the difference between two velocitys.
    *
    * <p>For example, Velocity3d(5.0, 4.0, 3.0) - Velocity3d(1.0, 2.0, 3.0) =
    * Velocity3d(4.0, 2.0, 0.0).
    *
-   * @param other The translation to subtract.
-   * @return The difference between the two translations.
+   * @param other The velocity to subtract.
+   * @return The difference between the two velocitys.
    */
   public Velocity3d minus(Velocity3d other) {
     return new Velocity3d(m_vx - other.m_vx, m_vy - other.m_vy, m_vz - other.m_vz);
   }
 
   /**
-   * Returns the inverse of the current translation. This is equivalent to negating all components
-   * of the translation.
+   * Returns the inverse of the current velocity. This is equivalent to negating all components
+   * of the velocity.
    *
-   * @return The inverse of the current translation.
+   * @return The inverse of the current velocity.
    */
   public Velocity3d unaryMinus() {
     return new Velocity3d(-m_vx, -m_vy, -m_vz);
   }
 
   /**
-   * Returns the translation multiplied by a scalar.
+   * Returns the velocity multiplied by a scalar.
    *
    * <p>For example, Velocity3d(2.0, 2.5, 4.5) * 2 = Velocity3d(4.0, 5.0, 9.0).
    *
    * @param scalar The scalar to multiply by.
-   * @return The scaled translation.
+   * @return The scaled velocity.
    */
   public Velocity3d times(double scalar) {
     return new Velocity3d(m_vx * scalar, m_vy * scalar, m_vz * scalar);
   }
 
   /**
-   * Returns the translation divided by a scalar.
+   * Returns the velocity divided by a scalar.
    *
    * <p>For example, Velocity3d(2.0, 2.5, 4.5) / 2 = Velocity3d(1.0, 1.25, 2.25).
    *

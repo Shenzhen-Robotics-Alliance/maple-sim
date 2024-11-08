@@ -83,8 +83,7 @@ public class Arena2024Crescendo extends SimulatedArena {
     public void placeGamePiecesOnField() {
         for (Translation2d notePosition : NOTE_INITIAL_POSITIONS)
         super.createGamePiece(VARIANT)
-            .place(notePosition)
-            .releaseControl();
+            .place(notePosition);
     }
 
     private static final Translation3d BLUE_SOURCE_POSITION = new Translation3d(15.6, 0.8, 0.1);

@@ -162,7 +162,7 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Updates the translations of the swerve modules with user-defined values.
      *
-     * <p>For ordinary rectangular modules configuration, use {@link #withTrackLengthTrackWidth(double, double)}
+     * <p>For ordinary rectangular modules configuration, use {@link #withTrackLengthTrackWidth(Distance, Distance)}
      * instead.
      *
      * @param moduleTranslations the custom translations for the swerve modules.

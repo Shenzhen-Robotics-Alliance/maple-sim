@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -667,11 +668,11 @@ public class SwerveModuleSimulation {
      * Swerve Module</a> for simulation
      */
     public static Supplier<SwerveModuleSimulation> getMark4(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 8.14;
                     case 2 -> 6.75;
@@ -692,11 +693,11 @@ public class SwerveModuleSimulation {
      * Mark4-i Swerve Module</a> for simulation
      */
     public static Supplier<SwerveModuleSimulation> getMark4i(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 8.14;
                     case 2 -> 6.75;
@@ -717,11 +718,11 @@ public class SwerveModuleSimulation {
      * Module</a> for simulation
      */
     public static Supplier<SwerveModuleSimulation> getMark4n(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 7.13;
                     case 2 -> 5.9;
@@ -745,11 +746,11 @@ public class SwerveModuleSimulation {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static Supplier<SwerveModuleSimulation> getSwerveX(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 7.85;
                     case 2 -> 7.13;
@@ -779,11 +780,11 @@ public class SwerveModuleSimulation {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static Supplier<SwerveModuleSimulation> getSwerveXFlipped(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 8.1;
                     case 2 -> 7.36;
@@ -812,11 +813,11 @@ public class SwerveModuleSimulation {
      * X2 Ratios are gearRatioLevel 4-6
      */
     public static Supplier<SwerveModuleSimulation> getSwerveXS(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 6.0;
                     case 2 -> 5.54;
@@ -844,11 +845,11 @@ public class SwerveModuleSimulation {
      * X4 Ratios are gearRatioLevel 10-12
      */
     public static Supplier<SwerveModuleSimulation> getSwerveX2(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 7.67;
                     case 2 -> 6.98;
@@ -881,11 +882,11 @@ public class SwerveModuleSimulation {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static Supplier<SwerveModuleSimulation> getSwerveX2S(
-            DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimitAmps,
+                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 6.0;
                     case 2 -> 5.63;

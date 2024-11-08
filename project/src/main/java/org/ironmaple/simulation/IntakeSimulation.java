@@ -1,5 +1,8 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.units.measure.Distance;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
@@ -71,17 +74,17 @@ public class IntakeSimulation extends BodyFixture {
      *
      * @param targetedGamePieceType the type of game pieces that this intake can collect
      * @param driveTrainSimulation the chassis to which this intake is attached
-     * @param width the width of the intake, in meters
+     * @param width the width of the intake
      * @param side the side of the chassis where the intake is attached
      * @param capacity the maximum number of game pieces that the intake can hold
      */
     public IntakeSimulation(
             String targetedGamePieceType,
             AbstractDriveTrainSimulation driveTrainSimulation,
-            double width,
+            Distance width,
             IntakeSide side,
             int capacity) {
-        this(targetedGamePieceType, driveTrainSimulation, width, 0.02, side, capacity);
+        this(targetedGamePieceType, driveTrainSimulation, width, Meters.of(0.02), side, capacity);
     }
 
     /**
@@ -91,22 +94,22 @@ public class IntakeSimulation extends BodyFixture {
      *
      * @param targetedGamePieceType the type of game pieces that this intake can collect
      * @param driveTrainSimulation the chassis to which this intake is attached
-     * @param width the valid width of the intake, in meters
-     * @param lengthExtended the length the intake extends out from the chassis when activated, in meters
+     * @param width the valid width of the intake
+     * @param lengthExtended the length the intake extends out from the chassis when activated
      * @param side the side of the chassis where the intake is attached
      * @param capacity the maximum number of game pieces that the intake can hold
      */
     public IntakeSimulation(
             String targetedGamePieceType,
             AbstractDriveTrainSimulation driveTrainSimulation,
-            double width,
-            double lengthExtended,
+            Distance width,
+            Distance lengthExtended,
             IntakeSide side,
             int capacity) {
         this(
                 targetedGamePieceType,
                 driveTrainSimulation,
-                getIntakeRectangle(driveTrainSimulation, width, lengthExtended, side),
+                getIntakeRectangle(driveTrainSimulation, width.in(Meters), lengthExtended.in(Meters), side),
                 capacity);
     }
 

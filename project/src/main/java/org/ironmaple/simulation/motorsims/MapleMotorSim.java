@@ -3,7 +3,6 @@ package org.ironmaple.simulation.motorsims;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import org.ironmaple.simulation.motorsims.requests.ControlRequest;
 import org.ironmaple.simulation.motorsims.requests.VoltageOut;
@@ -49,20 +48,20 @@ public class MapleMotorSim {
     }
 
     public void update(Time dt) {
+        final Angle motorAndEncoderPosition = state.finalAngularPosition().times(configs.gearing);
+        final AngularVelocity motorAndEncoderVelocity =
+                state.finalAngularVelocity().times(configs.gearing);
         this.appliedVoltage = constrainOutputVoltage(
-                state.angularVelocity(),
-                request.updateSignal(
-                        configs,
-                        state.angularPosition().times(configs.gearing),
-                        state.angularVelocity().times(configs.gearing)),
+                state.finalAngularVelocity(),
+                request.updateSignal(configs, motorAndEncoderPosition, motorAndEncoderVelocity),
                 configs);
-        this.statorCurrent = configs.calculateCurrent(state.angularVelocity(), appliedVoltage);
+        this.statorCurrent = configs.calculateCurrent(motorAndEncoderVelocity, appliedVoltage);
         this.state = this.state.step(
                 configs.calculateTorque(statorCurrent).times(configs.gearing), configs.friction, configs.loadMOI, dt);
 
-        if (state.angularPosition().lte(configs.reverseHardwareLimit))
+        if (state.finalAngularPosition().lte(configs.reverseHardwareLimit))
             state = new SimMotorState(configs.reverseHardwareLimit, RadiansPerSecond.zero());
-        else if (state.angularPosition().gte(configs.forwardHardwareLimit))
+        else if (state.finalAngularPosition().gte(configs.forwardHardwareLimit))
             state = new SimMotorState(configs.forwardHardwareLimit, RadiansPerSecond.zero());
     }
 
@@ -75,7 +74,7 @@ public class MapleMotorSim {
         final double kCurrentThreshold = 1.2;
 
         // don't use WpiLib Units for calculations
-        final double motorCurrentVelocityRadPerSec = currentVelocity.in(RadiansPerSecond);
+        final double motorCurrentVelocityRadPerSec = currentVelocity.in(RadiansPerSecond) * configs.gearing;
         final double currentLimitAmps = configs.currentLimit.in(Amps);
         final double requestedOutputVoltageVolts = requestedVoltage.in(Volts);
         final double currentAtRequestedVoltageAmps =
@@ -98,11 +97,19 @@ public class MapleMotorSim {
     }
 
     public Angle getPosition() {
-        return state.angularPosition();
+        return state.finalAngularPosition();
+    }
+
+    public Angle getEncoderPosition() {
+        return getPosition().times(configs.gearing);
     }
 
     public AngularVelocity getVelocity() {
-        return state.angularVelocity();
+        return state.finalAngularVelocity();
+    }
+
+    public AngularVelocity getEncoderVelocity() {
+        return getVelocity().times(configs.gearing);
     }
 
     public Voltage getAppliedVoltage() {
@@ -115,7 +122,9 @@ public class MapleMotorSim {
 
     public Current getSupplyCurrent() {
         // https://www.chiefdelphi.com/t/current-limiting-talonfx-values/374780/10
-        return getStatorCurrent().times(appliedVoltage.divide(Volts.of(RobotController.getBatteryVoltage())));
+        return getStatorCurrent()
+                .times(appliedVoltage.divide(
+                        Volts.of(BatterySimulationContainer.getInstance().getBatteryVoltage())));
     }
 
     public SimMotorConfigs getConfigs() {

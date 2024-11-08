@@ -4,13 +4,14 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.*;
 
-public record SimMotorState(Angle angularPosition, AngularVelocity angularVelocity) {
-    public SimMotorState step(Torque electricTorque, Torque frictionTorque, MomentOfInertia loadMOI, Time dt) {
+public record SimMotorState(Angle finalAngularPosition, AngularVelocity finalAngularVelocity) {
+    public SimMotorState step(
+            Torque finalElectricTorque, Torque finalFrictionTorque, MomentOfInertia loadMOI, Time dt) {
         // step0: convert all WPILib units to SI units
-        double currentAngularPositionRadians = angularPosition.in(Radians);
-        double currentAngularVelocityRadiansPerSecond = angularVelocity.in(RadiansPerSecond);
-        final double electricTorqueNewtonsMeters = electricTorque.in(NewtonMeters);
-        final double frictionTorqueNewtonsMeters = frictionTorque.in(NewtonMeters);
+        double currentAngularPositionRadians = finalAngularPosition.in(Radians);
+        double currentAngularVelocityRadiansPerSecond = finalAngularVelocity.in(RadiansPerSecond);
+        final double electricTorqueNewtonsMeters = finalElectricTorque.in(NewtonMeters);
+        final double frictionTorqueNewtonsMeters = finalFrictionTorque.in(NewtonMeters);
         final double loadMOIKgMetersSquared = loadMOI.in(KilogramSquareMeters);
         final double dtSeconds = dt.in(Seconds);
 

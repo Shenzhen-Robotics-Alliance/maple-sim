@@ -30,7 +30,7 @@ public class GyroConfig {
      *
      * @return a gyro simulation factory configured for the Pigeon 2 IMU
      */
-    public static GyroConfig createPigeon2() {
+    public static GyroConfig ofPigeon2() {
         /*
          * user manual of pigeon 2:
          * https://store.ctr-electronics.com/content/user-manual/Pigeon2%20User's%20Guide.pdf
@@ -45,7 +45,7 @@ public class GyroConfig {
      *
      * @return a gyro simulation factory configured for the navX2-MXP IMU
      */
-    public static GyroConfig getNav2X() {
+    public static GyroConfig ofNavX2() {
         return new GyroConfig(2, 0.04);
     }
 }

@@ -1,10 +1,13 @@
 package org.ironmaple.utils.mathutils;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
+import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Rotation;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
@@ -37,6 +40,14 @@ public class GeometryConvertor {
         transform.setTranslation(toDyn4jVector2(wpilibPose2d.getTranslation()));
         transform.setRotation(toDyn4jRotation(wpilibPose2d.getRotation()));
         return transform;
+    }
+
+    public static Rectangle toDyn4jRectangle(Rectangle2d wpilibRectangle2d) {
+        Pose2d rectCenter = wpilibRectangle2d.getCenter();
+        Rectangle shape = new Rectangle(wpilibRectangle2d.getXWidth(), wpilibRectangle2d.getYWidth());
+        shape.translate(toDyn4jVector2(rectCenter.getTranslation()));
+        shape.rotate(toDyn4jRotation(rectCenter.getRotation()));
+        return shape;
     }
 
     public static Transform2d toWpilibTransform2d(Transform dyn4jTransform) {

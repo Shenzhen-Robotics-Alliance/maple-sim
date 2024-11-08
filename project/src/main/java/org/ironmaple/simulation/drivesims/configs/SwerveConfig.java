@@ -74,20 +74,20 @@ public class SwerveConfig extends DriveTrainSimulationConfig<SwerveDriveSimulati
      *
      * @return a new instance of {@link SwerveConfig} with all configs set to default values.
      */
-    public static SwerveConfig Default() {
+    public static SwerveConfig ofDefault() {
         return new SwerveConfig(
                 45,
                 0.76,
                 0.76,
                 0.52,
                 0.52,
-                SwerveModuleConfig.createMark4(
+                SwerveModuleConfig.ofMk4(
                         DCMotor.getFalcon500(1),
                         DCMotor.getFalcon500(1),
                         60,
-                        SwerveModuleConfig.WHEEL_GRIP.RUBBER_WHEEL.cof,
+                        SwerveModuleConfig.WHEEL_COF.BLACK_NITRILE.cof,
                         2),
-                GyroConfig.createPigeon2());
+                GyroConfig.ofPigeon2());
     }
 
     /**

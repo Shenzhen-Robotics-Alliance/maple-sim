@@ -3,17 +3,16 @@ package org.ironmaple.simulation;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.dyn4j.geometry.Rectangle;
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.IntakeSimulation.IntakeBehavior;
 import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.RuntimeLog;
+import org.ironmaple.utils.mathutils.GeometryConvertor;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
@@ -101,16 +100,11 @@ public class SimRobot {
         return this;
     }
 
-    public IntakeSimulation createIntake(Pair<Translation2d, Translation2d> boundingBoxCorners, IntakeBehavior behavior, GamePieceVariant... acceptedGamePieceVariants) {
-        Rectangle boundingBox = new Rectangle(
-            Math.abs(boundingBoxCorners.getFirst().getX() - boundingBoxCorners.getSecond().getX()),
-            Math.abs(boundingBoxCorners.getFirst().getY() - boundingBoxCorners.getSecond().getY())
-        );
-        boundingBox.translate(boundingBoxCorners.getFirst().getX(), boundingBoxCorners.getFirst().getY());
+    public IntakeSimulation createIntake(Rectangle2d boundingBox, IntakeBehavior behavior, GamePieceVariant... acceptedGamePieceVariants) {
         var intake = new IntakeSimulation(
             driveTrain.get(),
             gamePieceStorage.get(),
-            boundingBox,
+            GeometryConvertor.toDyn4jRectangle(boundingBox),
             behavior,
             acceptedGamePieceVariants
         );

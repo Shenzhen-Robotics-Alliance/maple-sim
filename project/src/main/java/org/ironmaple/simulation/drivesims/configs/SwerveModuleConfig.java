@@ -93,17 +93,17 @@ public class SwerveModuleConfig {
 
     
     /**
-     *
-     *
-     * <h2>Stores the coefficient of friction of some common used wheels.</h2>
+     * Stores the coefficient of friction of some common used wheels.
      */
-    public enum WHEEL_GRIP {
-        RUBBER_WHEEL(1.25),
-        TIRE_WHEEL(1.2);
+    public enum WHEEL_COF {
+        //https://www.chiefdelphi.com/t/spectrum-3847-build-blog-2024/447471/217
+        COLSONS(0.9),
+        BLACK_NITRILE(1.542),
+        VEX_GRIPLOCK_V2(1.916);
 
         public final double cof;
 
-        WHEEL_GRIP(double cof) {
+        WHEEL_COF(double cof) {
             this.cof = cof;
         }
     }
@@ -112,7 +112,7 @@ public class SwerveModuleConfig {
      * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module">SDS Mark4
      * Swerve Module</a> for simulation
      */
-    public static SwerveModuleConfig createMark4(
+    public static SwerveModuleConfig ofMk4(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -137,7 +137,7 @@ public class SwerveModuleConfig {
      * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4i-swerve-module">SDS
      * Mark4-i Swerve Module</a> for simulation
      */
-    public static SwerveModuleConfig createMark4i(
+    public static SwerveModuleConfig ofMk4i(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -162,7 +162,7 @@ public class SwerveModuleConfig {
      * creates a <a href="https://www.swervedrivespecialties.com/products/mk4n-swerve-module">SDS Mark4-n Swerve
      * Module</a> for simulation
      */
-    public static SwerveModuleConfig createMark4n(
+    public static SwerveModuleConfig ofMk4n(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -190,7 +190,7 @@ public class SwerveModuleConfig {
      * X2 Ratios are gearRatioLevel 4-6 <br>
      * X3 Ratios are gearRatioLevel 7-9
      */
-    public static SwerveModuleConfig createSwerveX(
+    public static SwerveModuleConfig ofSwerveX(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -224,7 +224,7 @@ public class SwerveModuleConfig {
      * X2 Ratios are gearRatioLevel 4-6 <br>
      * X3 Ratios are gearRatioLevel 7-9
      */
-    public static SwerveModuleConfig createSwerveXFlipped(
+    public static SwerveModuleConfig ofSwerveXFlipped(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -257,7 +257,7 @@ public class SwerveModuleConfig {
      * <p>X1 Ratios are gearRatioLevel 1-3 <br>
      * X2 Ratios are gearRatioLevel 4-6
      */
-    public static SwerveModuleConfig createSwerveXS(
+    public static SwerveModuleConfig ofSwerveXS(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -289,7 +289,7 @@ public class SwerveModuleConfig {
      * X3 Ratios are gearRatioLevel 7-9 <br>
      * X4 Ratios are gearRatioLevel 10-12
      */
-    public static SwerveModuleConfig createSwerveX2(
+    public static SwerveModuleConfig ofSwerveX2(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,
@@ -326,7 +326,7 @@ public class SwerveModuleConfig {
      * X2 Ratios are gearRatioLevel 4-6 <br>
      * X3 Ratios are gearRatioLevel 7-9
      */
-    public static SwerveModuleConfig createSwerveX2S(
+    public static SwerveModuleConfig ofSwerveX2S(
             DCMotor driveMotor, DCMotor steerMotor, double driveCurrentLimitAmps, double wheelCOF, int gearRatioLevel) {
         return new SwerveModuleConfig(
                 driveMotor,

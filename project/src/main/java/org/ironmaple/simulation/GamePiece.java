@@ -17,6 +17,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rectangle2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,6 +31,23 @@ import edu.wpi.first.math.geometry.Twist3d;
  */
 public class GamePiece {
     /**
+     * Represents a reactangular prism volume in 3d space.
+     * 
+     * <p> For implementation simplicity the volume supports yaw scewing but not roll or pitch.
+     */
+    public record GamePieceTarget(Rectangle2d area, Pair<Double, Double> heightRange) {
+        public GamePieceTarget(Translation3d first, Translation3d second) {
+            this(new Rectangle2d(first.toTranslation2d(), second.toTranslation2d()), new Pair<>(first.getZ(), second.getZ()));
+        }
+
+        public boolean isInside(Translation3d position) {
+            return area.contains(position.toTranslation2d())
+                && position.getZ() >= heightRange.getFirst()
+                && position.getZ() <= heightRange.getSecond();
+        }
+    }
+
+    /**
      * An object describing the properties of a {@link GamePiece} variant.
      */
     public record GamePieceVariant(
@@ -37,7 +55,7 @@ public class GamePiece {
             double height,
             double mass,
             Convex shape,
-            List<Pair<Translation3d, Translation3d>> targetVolumes,
+            List<GamePieceTarget> targets,
             boolean placeOnFieldWhenTouchGround,
             double landingDampening) {
         @Override
@@ -50,7 +68,7 @@ public class GamePiece {
     /**
      * A union type representing the different states a game piece can be in.
      */
-    private sealed interface GamePieceState {
+    protected sealed interface GamePieceState {
         /**
          * Called when a game piece enters this state.
          * @param gp the game piece entering this state
@@ -292,7 +310,7 @@ public class GamePiece {
      * A class representing the collision body of a game piece.
      * This is used to provide extra info in the dyn4j functions when doing collision handling.
      */
-    static class GamePieceCollisionBody extends Body {
+    protected static class GamePieceCollisionBody extends Body {
         public final GamePiece gp;
 
         private GamePieceCollisionBody(GamePiece gp) {
@@ -301,11 +319,11 @@ public class GamePiece {
         }
     }
 
-    private final GamePieceVariant variant;
-    private final SimulatedArena arena;
-    private GamePieceState state = new GamePieceState.Limbo();
-    private boolean userControlled = false;
-    private EnumMap<GamePieceEvent, ArrayList<GamePieceEventHandler>> eventHandlers = new EnumMap<>(
+    protected final GamePieceVariant variant;
+    protected final SimulatedArena arena;
+    protected GamePieceState state = new GamePieceState.Limbo();
+    protected boolean userControlled = false;
+    protected EnumMap<GamePieceEvent, ArrayList<GamePieceEventHandler>> eventHandlers = new EnumMap<>(
             GamePieceEvent.class) {
         {
             for (GamePieceEvent event : GamePieceEvent.values()) {
@@ -319,7 +337,7 @@ public class GamePiece {
         this.arena = arena;
     }
 
-    private GamePieceCollisionBody createBody(Translation2d initialPosition, Velocity2d initialVelocity) {
+    protected GamePieceCollisionBody createBody(Translation2d initialPosition, Velocity2d initialVelocity) {
         final double LINEAR_DAMPING = 3.5;
         final double ANGULAR_DAMPING = 5;
         final double COEFFICIENT_OF_FRICTION = 0.8;
@@ -348,13 +366,13 @@ public class GamePiece {
         return body;
     }
 
-    private boolean insideVolume(Translation3d position, Pair<Translation3d, Translation3d> volume) {
+    protected boolean insideVolume(Translation3d position, Pair<Translation3d, Translation3d> volume) {
         return position.getX() >= volume.getFirst().getX() && position.getX() <= volume.getSecond().getX()
                 && position.getY() >= volume.getFirst().getY() && position.getY() <= volume.getSecond().getY()
                 && position.getZ() >= volume.getFirst().getZ() && position.getZ() <= volume.getSecond().getZ();
     }
 
-    private void transitionState(GamePieceState newState) {
+    protected void transitionState(GamePieceState newState) {
         state.onExit(this, arena);
         state = newState;
         state.onEnter(this, arena);
@@ -571,7 +589,7 @@ public class GamePiece {
                         state.velocity.toVelocity2d().times(variant.landingDampening))));
                 RuntimeLog.debug("GamePiece: Landed");
             }
-            if (variant.targetVolumes.stream().anyMatch(volume -> insideVolume(pose.getTranslation(), volume))) {
+            if (variant.targets.stream().anyMatch(target -> target.isInside(pose.getTranslation()))) {
                 triggerEvent(GamePieceEvent.TARGET_REACHED);
                 transitionState(new GamePieceState.Limbo());
                 RuntimeLog.debug("GamePiece: Target reached");

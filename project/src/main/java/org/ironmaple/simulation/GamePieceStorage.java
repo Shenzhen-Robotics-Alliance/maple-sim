@@ -11,9 +11,9 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 public class GamePieceStorage {
-    private final Supplier<Pose3d> localizer;
-    private final GamePiece[] pieces;
-    private final Transform3d[] pieceTransforms;
+    protected final Supplier<Pose3d> localizer;
+    protected final GamePiece[] pieces;
+    protected final Transform3d[] pieceTransforms;
 
     /**
      * Creates a new GamePieceStorage that can store the given number of pieces.
@@ -99,7 +99,7 @@ public class GamePieceStorage {
         }
     }
 
-    private int getIndexOf(GamePiece piece) {
+    protected int getIndexOf(GamePiece piece) {
         for (int i = 0; i < pieces.length; i++) {
             if (pieces[i] == piece) {
                 return i;
@@ -108,7 +108,7 @@ public class GamePieceStorage {
         return -1;
     }
 
-    private void handleNewGamepiece(GamePiece piece) {
+    protected void handleNewGamepiece(GamePiece piece) {
         Supplier<Transform3d> transformSupplier = () -> {
             int index = getIndexOf(piece);
             if (index == -1) {
@@ -123,6 +123,10 @@ public class GamePieceStorage {
 
     /**
      * Adds a {@link GamePiece} to the highest available slot in the storage.
+     * 
+     * <p> <b>Control</b>: This method will fail and return false if the {@link GamePiece}
+     * is not under {@code UserControl}. If this method succeeds, the {@link GamePiece}
+     * will no longer be under {@code UserControl} until it is pulled from the storage.
      * 
      * @param piece the {@link GamePiece} to add
      * @return true if the piece was added, false if the storage is full
@@ -141,6 +145,10 @@ public class GamePieceStorage {
     /**
      * Adds a {@link GamePiece} to the lowest available slot in the storage.
      * 
+     * <p> <b>Control</b>: This method will fail and return false if the {@link GamePiece}
+     * is not under {@code UserControl}. If this method succeeds, the {@link GamePiece}
+     * will no longer be under {@code UserControl} until it is pulled from the storage.
+     * 
      * @param piece the {@link GamePiece} to add
      * @return true if the piece was added, false if the storage is full
      */
@@ -158,6 +166,10 @@ public class GamePieceStorage {
     /**
      * Adds a {@link GamePiece} to the storage at the lowest index.
      * This will move other pieces up to make room.
+     * 
+     * <p> <b>Control</b>: This method will fail and return false if the {@link GamePiece}
+     * is not under {@code UserControl}. If this method succeeds, the {@link GamePiece}
+     * will no longer be under {@code UserControl} until it is pulled from the storage.
      * 
      * @param piece the {@link GamePiece} to add
      * @return
@@ -178,6 +190,10 @@ public class GamePieceStorage {
      * Adds a {@link GamePiece} to the storage at the highest index.
      * This will move other pieces down to make room.
      * 
+     * <p> <b>Control</b>: This method will fail and return false if the {@link GamePiece}
+     * is not under {@code UserControl}. If this method succeeds, the {@link GamePiece}
+     * will no longer be under {@code UserControl} until it is pulled from the storage.
+     * 
      * @param piece the {@link GamePiece} to add
      * @return true if the piece was added, false if the storage is full
      */
@@ -195,6 +211,10 @@ public class GamePieceStorage {
 
     /**
      * Adds a {@link GamePiece} to the storage at a random index.
+     * 
+     * <p> <b>Control</b>: This method will fail and return false if the {@link GamePiece}
+     * is not under {@code UserControl}. If this method succeeds, the {@link GamePiece}
+     * will no longer be under {@code UserControl} until it is pulled from the storage.
      * 
      * @param piece the {@link GamePiece} to add
      * @return true if the piece was added, false if the storage is full
@@ -227,7 +247,7 @@ public class GamePieceStorage {
     /**
      * Pulls a {@link GamePiece} from the top of the storage.
      * 
-     * <p> The {@link GamePiece} from this will be {@code UserControlled}.
+     * <p> The {@link GamePiece} from this will be under {@code UserControl}.
      * 
      * @param scooch whether to move the other pieces up to fill the gap
      * @return the {@link GamePiece} that was pulled, or empty if the storage is empty
@@ -249,7 +269,7 @@ public class GamePieceStorage {
     /**
      * Pulls a {@link GamePiece} from the bottom of the storage.
      * 
-     * <p> The {@link GamePiece} from this will be {@code UserControlled}.
+     * <p> The {@link GamePiece} from this will be under {@code UserControl}.
      * 
      * @param scooch whether to move the other pieces down to fill the gap
      * @return the {@link GamePiece} that was pulled, or empty if the storage is empty

@@ -46,227 +46,193 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
+ * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
+ * Instead, the structure of the robot (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // Simulations are store in the robot container
-  private final SwerveDriveSimulation swerveDriveSimulation;
+    // Simulations are store in the robot container
+    private final SwerveDriveSimulation swerveDriveSimulation;
 
-  // Subsystems
-  private final Drive drive;
-  private final Flywheel flywheel;
-  private final Intake intake;
+    // Subsystems
+    private final Drive drive;
+    private final Flywheel flywheel;
+    private final Intake intake;
 
-  // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+    // Controller
+    private final CommandXboxController controller = new CommandXboxController(0);
 
-  // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
-  private final LoggedDashboardNumber flywheelSpeedInput =
-      new LoggedDashboardNumber("Flywheel Speed", 1500.0);
+    // Dashboard inputs
+    private final LoggedDashboardChooser<Command> autoChooser;
+    private final LoggedDashboardNumber flywheelSpeedInput = new LoggedDashboardNumber("Flywheel Speed", 1500.0);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    switch (Constants.currentMode) {
-      case REAL:
-        /* Real robot, instantiate hardware IO implementations */
+    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    public RobotContainer() {
+        switch (Constants.currentMode) {
+            case REAL:
+                /* Real robot, instantiate hardware IO implementations */
 
-        /* Disable Simulations */
-        this.swerveDriveSimulation = null;
+                /* Disable Simulations */
+                this.swerveDriveSimulation = null;
 
-        /* Subsystems */
-        drive =
-            new Drive(
-                new GyroIOPigeon2(false),
-                new ModuleIOSparkMax(0),
-                new ModuleIOSparkMax(1),
-                new ModuleIOSparkMax(2),
-                new ModuleIOSparkMax(3));
-        flywheel = new Flywheel(new FlywheelIOSparkMax());
-        // drive = new Drive(
-        // new GyroIOPigeon2(true),
-        // new ModuleIOTalonFX(0),
-        // new ModuleIOTalonFX(1),
-        // new ModuleIOTalonFX(2),
-        // new ModuleIOTalonFX(3));
-        // flywheel = new Flywheel(new FlywheelIOTalonFX());
-        this.intake = new Intake(new IntakeIOTalonSRX());
-        break;
+                /* Subsystems */
+                drive = new Drive(
+                        new GyroIOPigeon2(false),
+                        new ModuleIOSparkMax(0),
+                        new ModuleIOSparkMax(1),
+                        new ModuleIOSparkMax(2),
+                        new ModuleIOSparkMax(3));
+                flywheel = new Flywheel(new FlywheelIOSparkMax());
+                // drive = new Drive(
+                // new GyroIOPigeon2(true),
+                // new ModuleIOTalonFX(0),
+                // new ModuleIOTalonFX(1),
+                // new ModuleIOTalonFX(2),
+                // new ModuleIOTalonFX(3));
+                // flywheel = new Flywheel(new FlywheelIOTalonFX());
+                this.intake = new Intake(new IntakeIOTalonSRX());
+                break;
 
-      case SIM:
-        /* Sim robot, instantiate physics sim IO implementations */
+            case SIM:
+                /* Sim robot, instantiate physics sim IO implementations */
 
-        /* create simulation for pigeon2 IMU (different IMUs have different measurement errors) */
-        final GyroSimulation gyroSimulation = GyroSimulation.createPigeon2();
-        /* create a swerve drive simulation */
-        this.swerveDriveSimulation =
-            new SwerveDriveSimulation(
-                45,
-                0.65,
-                0.65,
-                0.74,
-                0.74,
-                SwerveModuleSimulation.getMark4( // creates a mark4 module
-                    DCMotor.getKrakenX60(1), // drive motor is a Kraken x60
-                    DCMotor.getFalcon500(1), // steer motor is a Falcon 500
-                    80, // current limit: 80 Amps
-                    DRIVE_WHEEL_TYPE.RUBBER, // rubber wheels
-                    3 // l3 gear ratio
-                    ),
-                gyroSimulation,
-                new Pose2d( // initial starting pose on field, set it to where-ever you want
-                    3, 3, new Rotation2d()));
-        SimulatedArena.getInstance()
-            .addDriveTrainSimulation(swerveDriveSimulation); // register the drive train simulation
+                /* create simulation for pigeon2 IMU (different IMUs have different measurement errors) */
+                final GyroSimulation gyroSimulation = GyroSimulation.createPigeon2();
+                /* create a swerve drive simulation */
+                this.swerveDriveSimulation = new SwerveDriveSimulation(
+                        45,
+                        0.65,
+                        0.65,
+                        0.74,
+                        0.74,
+                        SwerveModuleSimulation.getMark4( // creates a mark4 module
+                                DCMotor.getKrakenX60(1), // drive motor is a Kraken x60
+                                DCMotor.getFalcon500(1), // steer motor is a Falcon 500
+                                80, // current limit: 80 Amps
+                                DRIVE_WHEEL_TYPE.RUBBER, // rubber wheels
+                                3 // l3 gear ratio
+                                ),
+                        gyroSimulation,
+                        new Pose2d( // initial starting pose on field, set it to where-ever you want
+                                3, 3, new Rotation2d()));
+                SimulatedArena.getInstance()
+                        .addDriveTrainSimulation(swerveDriveSimulation); // register the drive train simulation
 
-        // reset the field for auto (placing game-pieces in positions)
-        SimulatedArena.getInstance().resetFieldForAuto();
+                // reset the field for auto (placing game-pieces in positions)
+                SimulatedArena.getInstance().resetFieldForAuto();
 
-        drive =
-            new Drive(
-                new GyroIOSim(
-                    gyroSimulation), // GyroIOSim is a wrapper around gyro simulation, that reads
-                // the simulation result
-                /* ModuleIOSim are edited such that they also wraps around module simulations */
-                new ModuleIOSim(swerveDriveSimulation.getModules()[0]),
-                new ModuleIOSim(swerveDriveSimulation.getModules()[1]),
-                new ModuleIOSim(swerveDriveSimulation.getModules()[2]),
-                new ModuleIOSim(swerveDriveSimulation.getModules()[3]));
+                drive = new Drive(
+                        new GyroIOSim(gyroSimulation), // GyroIOSim is a wrapper around gyro simulation, that reads
+                        // the simulation result
+                        /* ModuleIOSim are edited such that they also wraps around module simulations */
+                        new ModuleIOSim(swerveDriveSimulation.getModules()[0]),
+                        new ModuleIOSim(swerveDriveSimulation.getModules()[1]),
+                        new ModuleIOSim(swerveDriveSimulation.getModules()[2]),
+                        new ModuleIOSim(swerveDriveSimulation.getModules()[3]));
 
-        /* other subsystems are created with hardware simulation IOs */
-        final FlywheelIOSim flywheelIOSim = new FlywheelIOSim();
-        flywheel = new Flywheel(flywheelIOSim);
+                /* other subsystems are created with hardware simulation IOs */
+                final FlywheelIOSim flywheelIOSim = new FlywheelIOSim();
+                flywheel = new Flywheel(flywheelIOSim);
 
-        this.intake =
-            new Intake(
-                new IntakeIOSim(
-                    swerveDriveSimulation, // attach the intake simulation to swerve drive
-                    () ->
-                        flywheelIOSim.shootNoteWithCurrentRPM(
-                            swerveDriveSimulation.getSimulatedDriveTrainPose(),
-                            swerveDriveSimulation
-                                .getDriveTrainSimulatedChassisSpeedsFieldRelative())));
-        // simulation
-        break;
+                this.intake = new Intake(new IntakeIOSim(
+                        swerveDriveSimulation, // attach the intake simulation to swerve drive
+                        () -> flywheelIOSim.shootNoteWithCurrentRPM(
+                                swerveDriveSimulation.getSimulatedDriveTrainPose(),
+                                swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative())));
+                // simulation
+                break;
 
-      default:
-        /* Replayed robot, disable IO implementations */
+            default:
+                /* Replayed robot, disable IO implementations */
 
-        /* physics simulations are also not needed */
-        this.swerveDriveSimulation = null;
-        drive =
-            new Drive(
-                new GyroIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {},
-                new ModuleIO() {});
-        flywheel = new Flywheel(new FlywheelIO() {});
+                /* physics simulations are also not needed */
+                this.swerveDriveSimulation = null;
+                drive = new Drive(
+                        new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
+                flywheel = new Flywheel(new FlywheelIO() {});
 
-        this.intake = new Intake((inputs) -> {});
-        break;
+                this.intake = new Intake((inputs) -> {});
+                break;
+        }
+
+        // Set up auto routines
+        NamedCommands.registerCommand(
+                "Run Flywheel",
+                Commands.startEnd(() -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
+                        .withTimeout(5.0));
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+        // Set up SysId routines
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Forward)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Drive SysId (Quasistatic Reverse)", drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption("Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption("Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Flywheel SysId (Quasistatic Forward)", flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Flywheel SysId (Quasistatic Reverse)", flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        autoChooser.addOption(
+                "Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        autoChooser.addOption(
+                "Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+        // Configure the button bindings
+        configureButtonBindings();
     }
 
-    // Set up auto routines
-    NamedCommands.registerCommand(
-        "Run Flywheel",
-        Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel)
-            .withTimeout(5.0));
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    /**
+     * Use this method to define your button->command mappings. Buttons can be created by instantiating a
+     * {@link GenericHID} or one of its subclasses ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}),
+     * and then passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        drive.setDefaultCommand(DriveCommands.joystickDrive(
+                drive, () -> -controller.getLeftY(), () -> -controller.getLeftX(), () -> -controller.getRightX()));
+        controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+        controller
+                .b()
+                .onTrue(Commands.runOnce(
+                                () -> drive.setPose(
+                                        this.swerveDriveSimulation == null
+                                                ? new Pose2d(drive.getPose().getTranslation(), new Rotation2d())
+                                                : swerveDriveSimulation.getSimulatedDriveTrainPose()),
+                                drive)
+                        .ignoringDisable(true));
+        controller
+                .a()
+                .whileTrue(Commands.startEnd(
+                        () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
 
-    // Set up SysId routines
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Flywheel SysId (Quasistatic Forward)",
-        flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Flywheel SysId (Quasistatic Reverse)",
-        flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-    // Configure the button bindings
-    configureButtonBindings();
-  }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    drive.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            this.swerveDriveSimulation == null
-                                ? new Pose2d(drive.getPose().getTranslation(), new Rotation2d())
-                                : swerveDriveSimulation.getSimulatedDriveTrainPose()),
-                    drive)
-                .ignoringDisable(true));
-    controller
-        .a()
-        .whileTrue(
-            Commands.startEnd(
-                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
-
-    controller.leftTrigger(0.5).whileTrue(intake.runIntakeUntilNoteDetected());
-    controller
-        .rightBumper()
-        .whileTrue(
-            new StartEndCommand(
-                () -> flywheel.runVelocity(3000), () -> flywheel.runVelocity(0), flywheel));
-    controller.rightTrigger(0.5).and(controller.rightBumper()).whileTrue(intake.launchNote());
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return autoChooser.get();
-  }
-
-  public void updateSimulationField() {
-    if (swerveDriveSimulation != null) {
-      SimulatedArena.getInstance().simulationPeriodic();
-
-      Logger.recordOutput(
-          "FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
-
-      final List<Pose3d> notes = SimulatedArena.getInstance().getGamePiecesByType("Note");
-      if (notes != null) Logger.recordOutput("FieldSimulation/Notes", notes.toArray(Pose3d[]::new));
+        controller.leftTrigger(0.5).whileTrue(intake.runIntakeUntilNoteDetected());
+        controller
+                .rightBumper()
+                .whileTrue(
+                        new StartEndCommand(() -> flywheel.runVelocity(3000), () -> flywheel.runVelocity(0), flywheel));
+        controller.rightTrigger(0.5).and(controller.rightBumper()).whileTrue(intake.launchNote());
     }
 
-    intake.visualizeNoteInIntake(
-        swerveDriveSimulation == null
-            ? drive.getPose()
-            : swerveDriveSimulation.getSimulatedDriveTrainPose());
-  }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return autoChooser.get();
+    }
+
+    public void updateSimulationField() {
+        if (swerveDriveSimulation != null) {
+            SimulatedArena.getInstance().simulationPeriodic();
+
+            Logger.recordOutput("FieldSimulation/RobotPosition", swerveDriveSimulation.getSimulatedDriveTrainPose());
+
+            final List<Pose3d> notes = SimulatedArena.getInstance().getGamePiecesByType("Note");
+            if (notes != null) Logger.recordOutput("FieldSimulation/Notes", notes.toArray(Pose3d[]::new));
+        }
+
+        intake.visualizeNoteInIntake(
+                swerveDriveSimulation == null ? drive.getPose() : swerveDriveSimulation.getSimulatedDriveTrainPose());
+    }
 }

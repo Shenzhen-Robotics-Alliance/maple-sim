@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
+import org.ironmaple.simulation.SimulationArena.SimulationTiming;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -57,7 +59,7 @@ public class MechanismSim {
         OPEN_LOOP
     }
 
-    private final SimulatedArena arena;
+    private final SimulationTiming timing;
     /** The Constants for the motor */
     private final DCMotor motor;
     /** The dynamics simulation for the motor */
@@ -94,12 +96,12 @@ public class MechanismSim {
      * @param frictionVoltage the voltage required to keep the motor moving at a constant velocity
      */
     MechanismSim(
-            SimulatedArena arena,
+            SimulationTiming timing,
             DCMotor motor,
             double gearRatio,
             MomentOfInertia loadIntertia,
             Voltage frictionVoltage) {
-        this.arena = arena;
+        this.timing = timing;
         this.sim = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(motor, loadIntertia.in(KilogramSquareMeters), gearRatio), motor);
         this.motor = motor;
@@ -131,10 +133,9 @@ public class MechanismSim {
 
     public MechanismSim withFeedForward(
             Voltage kS, Per<VoltageUnit, AngularVelocityUnit> kV, Per<VoltageUnit, AngularAccelerationUnit> kA) {
-        var kVUnit = PerUnit.combine(Volts, RadiansPerSecond);
-        var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
-        feedforward = new SimpleMotorFeedforward(
-                kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), arena.getSimulationDt());
+        final var kVUnit = PerUnit.combine(Volts, RadiansPerSecond);
+        final var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
+        feedforward = new SimpleMotorFeedforward(kS.in(Volts), kV.in(kVUnit), kA.in(kAUnit), timing.dt);
         return this;
     }
 
@@ -339,7 +340,7 @@ public class MechanismSim {
 
     /** Package private call */
     void simulationSubTick() {
-        double dtSeconds = arena.getSimulationDt();
+        double dtSeconds = timing.dt;
         updateOutputForEnableState();
         switch (this.outputType) {
             case VOLTAGE -> {

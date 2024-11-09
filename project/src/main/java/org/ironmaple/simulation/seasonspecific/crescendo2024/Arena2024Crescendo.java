@@ -1,5 +1,6 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static org.ironmaple.simulation.seasonspecific.crescendo2024.Note.VARIANT;
 import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;
 
@@ -7,11 +8,12 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.SimulationArena;
 
-public class Arena2024Crescendo extends SimulatedArena {
+public class Arena2024Crescendo extends SimulationArena {
     /** the obstacles on the 2024 competition field */
     public static final class CrescendoFieldObstaclesMap extends FieldMap {
         private static final double FIELD_WIDTH = 16.54;
@@ -75,8 +77,8 @@ public class Arena2024Crescendo extends SimulatedArena {
         new Translation2d(13.64, 7),
     };
 
-    public Arena2024Crescendo() {
-        super(new CrescendoFieldObstaclesMap());
+    public Arena2024Crescendo(Time period, int ticksPerPeriod) {
+        super(new CrescendoFieldObstaclesMap(), period.in(Seconds), ticksPerPeriod);
     }
 
     @Override
@@ -90,7 +92,7 @@ public class Arena2024Crescendo extends SimulatedArena {
     private double previousThrowTimeSeconds = 0;
 
     @Override
-    public void competitionPeriodic() {
+    protected void competitionPeriodic() {
         if (!DriverStation.isTeleopEnabled()) return;
 
         if (Timer.getFPGATimestamp() - previousThrowTimeSeconds < 1) return;

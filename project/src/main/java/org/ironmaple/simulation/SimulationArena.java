@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.ArrayList;
 import java.util.function.Supplier;
 
@@ -53,26 +56,38 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *       {@link GamePieceOnFieldSimulation}.
  * </ul>
  */
-public abstract class SimulatedArena {
-    private static SimulatedArena instance = null;
+public abstract class SimulationArena {
+    public static final class SimulationTiming {
+        public final double period;
+        public final int ticksPerPeriod;
+        public final double dt;
+
+        private SimulationTiming(double robotPeriodSeconds, int simulationSubTicksPerPeriod) {
+            this.period = robotPeriodSeconds;
+            this.ticksPerPeriod = simulationSubTicksPerPeriod;
+            this.dt = period / ((double) ticksPerPeriod);
+        }
+    }
+
+    private static SimulationArena instance = null;
 
     /**
      *
      *
      * <h2>Gets/Creates the Default Simulation World</h2>
      *
-     * <p>Multiple instances of {@link SimulatedArena} can exist elsewhere.
+     * <p>Multiple instances of {@link SimulationArena} can exist elsewhere.
      *
      * @return the main simulation arena instance
      */
-    public static SimulatedArena getInstance() {
+    public static SimulationArena getInstance() {
         if (instance == null) {
             if (HALUtil.getHALRuntimeType() == HALUtil.RUNTIME_SIMULATION) {
                 RuntimeLog.error("This Library is only supported in Simulation Mode");
             } else {
                 RuntimeLog.debug("Created a new instance of Arena2024Crescendo");
             }
-            instance = new Arena2024Crescendo();
+            instance = new Arena2024Crescendo(Seconds.of(0.02), 5);
         }
         return instance;
     }
@@ -90,56 +105,15 @@ public abstract class SimulatedArena {
      *
      * @param newInstance the new simulation arena instance to override the current one
      */
-    public static void overrideInstance(SimulatedArena newInstance) {
+    public static void overrideInstance(SimulationArena newInstance) {
         instance = newInstance;
-    }
-
-
-    private int simulationSubTicksIn1Period = 5;
-    private double simulationDt = 0.02;
-
-    /**
-     *
-     *
-     * <h2>Overrides the Timing Configurations of the Simulations.</h2>
-     *
-     * <h4>If Using <a href='https://github.com/Mechanical-Advantage/AdvantageKit'>Advantage-Kit</a>:
-     * DO NOT CHANGE THE DEFAULT TIMINGS</h4>
-     *
-     * <p>Changes apply to every instance of {@link SimulatedArena}.
-     *
-     * <p>The new configuration will take effect the next time {@link
-     * SimulatedArena#simulationPeriodic()} is called on an instance.
-     *
-     * <p>It is recommended to call this method before the first call to {@link
-     * SimulatedArena#simulationPeriodic()} of any instance.
-     *
-     * <p>It is also recommended to keep the simulation frequency above 200 Hz for accurate simulation
-     * results.
-     *
-     * @param robotPeriodSeconds the time between two calls of {@link #simulationPeriodic()}, usually
-     *     obtained from {@link TimedRobot#getPeriod()}
-     * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick()}
-     *     that the simulation runs per each call to {@link #simulationPeriodic()}
-     */
-    public void overrideSimulationTimings(
-            double robotPeriodSeconds, int simulationSubTicksPerPeriod) {
-        simulationSubTicksIn1Period = simulationSubTicksPerPeriod;
-        simulationDt = robotPeriodSeconds / simulationSubTicksIn1Period;
-    }
-
-    public int getSimulationSubTicksIn1Period() {
-        return simulationSubTicksIn1Period;
-    }
-
-    public double getSimulationDt() {
-        return simulationDt;
     }
 
     protected final World<Body> physicsWorld = new World<>();
     protected final Set<GamePiece> gamePieces = new HashSet<>();
     protected final Set<SimRobot> otherRobots = new HashSet<>();
     protected final SimRobot userRobot;
+    public final SimulationTiming timing;
 
     /**
      *
@@ -154,8 +128,11 @@ public abstract class SimulatedArena {
      *
      * @param obstaclesMap the season-specific field map containing the layout of obstacles for the
      *     simulation
+     * @param period the duration of each simulation period in seconds
+     * @param ticksPerPeriod the number of sub-ticks to execute in each simulation period
      */
-    protected SimulatedArena(FieldMap obstaclesMap) {
+    protected SimulationArena(FieldMap obstaclesMap, double period, int ticksPerPeriod) {
+        this.timing = new SimulationTiming(period, ticksPerPeriod);
         this.physicsWorld.setGravity(PhysicsWorld.ZERO_GRAVITY);
         for (Body obstacle : obstaclesMap.obstacles)
             this.physicsWorld.addBody(obstacle);
@@ -254,7 +231,7 @@ public abstract class SimulatedArena {
      * LoggedRobot.simulationPeriodic()</code> if using <a
      * href='https://github.com/Mechanical-Advantage/AdvantageKit'>Advantage-Kit</a>)
      *
-     * <p>If not configured through {@link SimulatedArena#overrideSimulationTimings(double
+     * <p>If not configured through {@link SimulationArena#overrideSimulationTimings(double
      * robotPeriodSeconds, int simulationSubTicksPerPeriod)}, the simulator will iterate through 5
      * Sub-ticks by default.
      *
@@ -266,7 +243,7 @@ public abstract class SimulatedArena {
         final long t0 = System.nanoTime();
         competitionPeriodic();
         // move through a few sub-periods in each update
-        for (int i = 0; i < simulationSubTicksIn1Period; i++)
+        for (int i = 0; i < timing.ticksPerPeriod; i++)
             simulationSubTick();
 
         SmartDashboard.putNumber(
@@ -286,7 +263,7 @@ public abstract class SimulatedArena {
      *   <li>Stepping the physics world with the specified sub-tick duration.
      *   <li>Removing any game pieces as detected by the {@link IntakeSimulation} objects.
      *   <li>Executing any additional sub-tick actions registered via {@link
-     *       SimulatedArena#addSimulationSubTickAction(Runnable)}.
+     *       SimulationArena#addSimulationSubTickAction(Runnable)}.
      * </ul>
      */
     private void simulationSubTick() {
@@ -299,7 +276,7 @@ public abstract class SimulatedArena {
         for (final GamePiece gamePiece : gamePieces)
             gamePiece.simulationSubTick();
 
-        this.physicsWorld.step(1, simulationDt);
+        this.physicsWorld.step(1, timing.dt);
     }
 
     /**
@@ -355,17 +332,17 @@ public abstract class SimulatedArena {
      * autonomous mode.
      *
      * <p>It should be implemented differently for each season-specific subclass of {@link
-     * SimulatedArena} to reflect the unique game piece placements for that season's game.
+     * SimulationArena} to reflect the unique game piece placements for that season's game.
      */
     public abstract void placeGamePiecesOnField();
 
     /**
      *
      *
-     * <h2>Season-Specific Actions to Execute in {@link SimulatedArena#simulationPeriodic()}.</h2>
+     * <h2>Season-Specific Actions to Execute in {@link SimulationArena#simulationPeriodic()}.</h2>
      *
      * <p>This method defines season-specific tasks to be executed during the {@link
-     * SimulatedArena#simulationPeriodic()} method.
+     * SimulationArena#simulationPeriodic()} method.
      *
      * <p>For example:
      *
@@ -374,10 +351,10 @@ public abstract class SimulatedArena {
      *   <li>Simulating human player activities.
      * </ul>
      *
-     * <p>This method should be implemented in the season-specific subclass of {@link SimulatedArena}
+     * <p>This method should be implemented in the season-specific subclass of {@link SimulationArena}
      * to reflect the unique aspects of that season's game.
      */
-    public abstract void competitionPeriodic();
+    protected abstract void competitionPeriodic();
 
     /**
      *
@@ -386,7 +363,7 @@ public abstract class SimulatedArena {
      *
      * <p>Stores the layout of obstacles and game pieces.
      *
-     * <p>For each season-specific subclass of {@link SimulatedArena}, there should be a corresponding
+     * <p>For each season-specific subclass of {@link SimulationArena}, there should be a corresponding
      * subclass of this class to store the field map for that specific season's game.
      */
     public abstract static class FieldMap {

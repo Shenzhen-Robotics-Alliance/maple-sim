@@ -18,7 +18,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.MechanismSim;
 import org.ironmaple.simulation.SimRobot;
-import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.SimulationArena;
+import org.ironmaple.simulation.SimulationArena.SimulationTiming;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleConfig;
 import org.ironmaple.utils.RuntimeLog;
 
@@ -61,14 +62,14 @@ import org.ironmaple.utils.RuntimeLog;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-    public final DCMotor DRIVE_MOTOR;
+    public final DCMotor driveMotor;
     private final MechanismSim steerMotorSim;
-    public final double DRIVE_CURRENT_LIMIT,
-            DRIVE_GEAR_RATIO,
-            STEER_GEAR_RATIO,
-            DRIVE_FRICTION_VOLTAGE,
-            WHEELS_COEFFICIENT_OF_FRICTION,
-            WHEEL_RADIUS_METERS,
+    public final double driveCurrentLimit,
+            driveGearRatio,
+            steerGearRatio,
+            driveFrictionVoltage,
+            wheelsCoefficientOfFriction,
+            wheelRadiusMeters,
             DRIVE_WHEEL_INERTIA = 0.01;
     private double driveMotorRequestedVolts = 0.0,
             driveMotorAppliedVolts = 0.0,
@@ -80,6 +81,8 @@ public class SwerveModuleSimulation {
             driveEncoderUnGearedSpeedRadPerSec = 0.0;
     private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
 
+    private final SimulationTiming timing;
+
     private final double steerRelativeEncoderOffSet = (Math.random() - 0.5) * 30;
 
     private final Queue<Double> cachedSteerRelativeEncoderPositionsRad, cachedDriveEncoderUnGearedPositionsRad;
@@ -90,7 +93,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Constructs a Swerve Module Simulation.</h2>
      *
-     * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom timings, you must
+     * <p>If you are using {@link SimulationArena#overrideSimulationTimings(double, int)} to use custom timings, you must
      * call the method before constructing any swerve module simulations using this constructor.
      *
      * @param driveMotor the model of the driving motor
@@ -108,13 +111,14 @@ public class SwerveModuleSimulation {
      * @param steerRotationalInertia the rotational inertia of the steering mechanism
      */
     SwerveModuleSimulation(SimRobot robot, SwerveModuleConfig config) {
-        DRIVE_MOTOR = config.driveMotor;
-        DRIVE_CURRENT_LIMIT = config.driveCurrentLimit;
-        DRIVE_GEAR_RATIO = config.driveGearRatio;
-        STEER_GEAR_RATIO = config.steerGearRatio;
-        DRIVE_FRICTION_VOLTAGE = config.driveFrictionVoltage;
-        WHEELS_COEFFICIENT_OF_FRICTION = config.tireCoefficientOfFriction;
-        WHEEL_RADIUS_METERS = config.wheelsRadiusMeters;
+        timing = robot.timing();
+        driveMotor = config.driveMotor;
+        driveCurrentLimit = config.driveCurrentLimit;
+        driveGearRatio = config.driveGearRatio;
+        steerGearRatio = config.steerGearRatio;
+        driveFrictionVoltage = config.driveFrictionVoltage;
+        wheelsCoefficientOfFriction = config.tireCoefficientOfFriction;
+        wheelRadiusMeters = config.wheelsRadiusMeters;
 
         this.steerMotorSim = robot.createMechanism(
                 config.steerMotor,
@@ -123,13 +127,13 @@ public class SwerveModuleSimulation {
                 Volts.of(config.steerFrictionVoltage));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < timing.ticksPerPeriod; i++)
             cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
         this.cachedSteerRelativeEncoderPositionsRad = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < timing.ticksPerPeriod; i++)
             cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
         this.cachedSteerAbsolutePositions = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < timing.ticksPerPeriod; i++)
             cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
 
         this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
@@ -276,7 +280,7 @@ public class SwerveModuleSimulation {
      * @return the final position of the drive encoder (wheel rotations), in radians
      */
     public double getDriveWheelFinalPositionRad() {
-        return getDriveEncoderUnGearedPositionRad() / DRIVE_GEAR_RATIO;
+        return getDriveEncoderUnGearedPositionRad() / driveGearRatio;
     }
 
     /**
@@ -303,7 +307,7 @@ public class SwerveModuleSimulation {
      * @return the final speed of the drive wheel, in radians per second
      */
     public double getDriveWheelFinalSpeedRadPerSec() {
-        return getDriveEncoderUnGearedSpeedRadPerSec() / DRIVE_GEAR_RATIO;
+        return getDriveEncoderUnGearedSpeedRadPerSec() / driveGearRatio;
     }
 
     /**
@@ -386,7 +390,7 @@ public class SwerveModuleSimulation {
      */
     public double[] getCachedDriveWheelFinalPositionsRad() {
         return cachedDriveEncoderUnGearedPositionsRad.stream()
-                .mapToDouble(value -> value / DRIVE_GEAR_RATIO)
+                .mapToDouble(value -> value / driveGearRatio)
                 .toArray();
     }
 
@@ -421,7 +425,7 @@ public class SwerveModuleSimulation {
     }
 
     protected double getGrippingForceNewtons(double gravityForceOnModuleNewtons) {
-        return gravityForceOnModuleNewtons * WHEELS_COEFFICIENT_OF_FRICTION;
+        return gravityForceOnModuleNewtons * wheelsCoefficientOfFriction;
     }
 
     /**
@@ -474,7 +478,7 @@ public class SwerveModuleSimulation {
         this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getPosition());
         this.steerRelativeEncoderPositionRad = steerMotorSim.getPosition().in(Radians) + steerRelativeEncoderOffSet;
         this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);
-        this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
+        this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * steerGearRatio;
 
         /* cache sensor readings to queue for high-frequency odometry */
         this.cachedSteerAbsolutePositions.poll();
@@ -504,7 +508,7 @@ public class SwerveModuleSimulation {
     private Vector2 getPropellingForce(
             double grippingForceNewtons, Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity) {
         final double driveWheelTorque = getDriveWheelTorque(),
-                theoreticalMaxPropellingForceNewtons = driveWheelTorque / WHEEL_RADIUS_METERS;
+                theoreticalMaxPropellingForceNewtons = driveWheelTorque / wheelRadiusMeters;
         final boolean skidding = Math.abs(theoreticalMaxPropellingForceNewtons) > grippingForceNewtons;
         final double propellingForceNewtons;
         if (skidding)
@@ -516,12 +520,12 @@ public class SwerveModuleSimulation {
 
         // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
         this.driveEncoderUnGearedSpeedRadPerSec =
-                floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
+                floorVelocityProjectionOnWheelDirectionMPS / wheelRadiusMeters * driveGearRatio;
 
         // if the module is skidding
         if (skidding)
             this.driveEncoderUnGearedSpeedRadPerSec =
-                    0.5 * driveEncoderUnGearedSpeedRadPerSec + 0.5 * DRIVE_MOTOR.getSpeed(0, driveMotorAppliedVolts);
+                    0.5 * driveEncoderUnGearedSpeedRadPerSec + 0.5 * driveMotor.getSpeed(0, driveMotorAppliedVolts);
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
     }
@@ -540,18 +544,18 @@ public class SwerveModuleSimulation {
         driveMotorAppliedVolts = driveMotorRequestedVolts;
 
         /* calculate the actual supply current */
-        driveMotorSupplyCurrentAmps = DRIVE_MOTOR.getCurrent(
+        driveMotorSupplyCurrentAmps = driveMotor.getCurrent(
                 this.driveEncoderUnGearedSpeedRadPerSec,
-                MathUtil.applyDeadband(driveMotorAppliedVolts, DRIVE_FRICTION_VOLTAGE, 12));
+                MathUtil.applyDeadband(driveMotorAppliedVolts, driveFrictionVoltage, 12));
 
         /* calculate the torque generated,  */
-        final double torqueOnRotter = DRIVE_MOTOR.getTorque(driveMotorSupplyCurrentAmps);
-        return torqueOnRotter * DRIVE_GEAR_RATIO;
+        final double torqueOnRotter = driveMotor.getTorque(driveMotorSupplyCurrentAmps);
+        return torqueOnRotter * driveGearRatio;
     }
 
     /** @return the current module state of this simulation module */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(getDriveWheelFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS, steerAbsoluteFacing);
+        return new SwerveModuleState(getDriveWheelFinalSpeedRadPerSec() * wheelRadiusMeters, steerAbsoluteFacing);
     }
 
     /**
@@ -566,11 +570,11 @@ public class SwerveModuleSimulation {
      */
     protected SwerveModuleState getFreeSpinState() {
         return new SwerveModuleState(
-                DRIVE_MOTOR.getSpeed(
-                                DRIVE_MOTOR.getTorque(DRIVE_MOTOR.getCurrent(0, DRIVE_FRICTION_VOLTAGE)),
+                driveMotor.getSpeed(
+                                driveMotor.getTorque(driveMotor.getCurrent(0, driveFrictionVoltage)),
                                 driveMotorAppliedVolts)
-                        / DRIVE_GEAR_RATIO
-                        * WHEEL_RADIUS_METERS,
+                        / driveGearRatio
+                        * wheelRadiusMeters,
                 steerAbsoluteFacing);
     }
 
@@ -582,8 +586,7 @@ public class SwerveModuleSimulation {
      * <p>An internal method to cache the encoder values to their queues.
      */
     private void updateDriveEncoders() {
-        this.driveEncoderUnGearedPositionRad +=
-                this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getInstance().getSimulationDt();
+        this.driveEncoderUnGearedPositionRad += this.driveEncoderUnGearedSpeedRadPerSec * timing.dt;
         this.cachedDriveEncoderUnGearedPositionsRad.poll();
         this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
     }
@@ -596,7 +599,7 @@ public class SwerveModuleSimulation {
      * @return the theoretical maximum ground speed that the module can achieve, in m/s
      */
     public double getModuleTheoreticalSpeedMPS() {
-        return DRIVE_MOTOR.freeSpeedRadPerSec / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS;
+        return driveMotor.freeSpeedRadPerSec / driveGearRatio * wheelRadiusMeters;
     }
 
     /**
@@ -613,8 +616,8 @@ public class SwerveModuleSimulation {
      */
     public double getTheoreticalPropellingForcePerModule(double robotMassKg, int modulesCount) {
         final double
-                maxThrustNewtons = DRIVE_MOTOR.getTorque(DRIVE_CURRENT_LIMIT) * DRIVE_GEAR_RATIO / WHEEL_RADIUS_METERS,
-                maxGrippingNewtons = 9.8 * robotMassKg / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
+                maxThrustNewtons = driveMotor.getTorque(driveCurrentLimit) * driveGearRatio / wheelRadiusMeters,
+                maxGrippingNewtons = 9.8 * robotMassKg / modulesCount * wheelsCoefficientOfFriction;
 
         return Math.min(maxThrustNewtons, maxGrippingNewtons);
     }

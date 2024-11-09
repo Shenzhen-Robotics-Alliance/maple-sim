@@ -13,7 +13,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
-import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.SimulationArena;
+import org.ironmaple.simulation.SimulationArena.SimulationTiming;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -41,6 +42,7 @@ public class SimplifiedSwerveDriveSimulation {
     private PIDController steerHeadingCloseLoop;
     private PIDController driveCloseLoop;
     private final SimpleMotorFeedforward driveOpenLoop;
+    private final SimulationTiming timing;
 
     /**
      *
@@ -76,15 +78,16 @@ public class SimplifiedSwerveDriveSimulation {
             Matrix<N3, N1> stateStdDevs,
             Matrix<N3, N1> visionMeasurementStdDevs) {
         this.swerveDriveSimulation = swerveDriveSimulation;
+        this.timing = swerveDriveSimulation.timing;
         this.moduleSimulations = swerveDriveSimulation.getModules();
 
         this.steerHeadingCloseLoop = new PIDController(5.0, 0, 0);
         this.steerHeadingCloseLoop.enableContinuousInput(-Math.PI, Math.PI);
         this.driveCloseLoop = new PIDController(0, 0, 0);
         this.driveOpenLoop = new SimpleMotorFeedforward(
-                moduleSimulations[0].DRIVE_FRICTION_VOLTAGE,
-                moduleSimulations[0].DRIVE_MOTOR.nominalVoltageVolts
-                        / moduleSimulations[0].DRIVE_MOTOR.freeSpeedRadPerSec);
+                moduleSimulations[0].driveFrictionVoltage,
+                moduleSimulations[0].driveMotor.nominalVoltageVolts
+                        / moduleSimulations[0].driveMotor.freeSpeedRadPerSec);
         this.kinematics = swerveDriveSimulation.kinematics;
 
         this.poseEstimator = new SwerveDrivePoseEstimator(
@@ -110,10 +113,10 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public void periodic() {
         final SwerveModulePosition[][] cachedModulePositions = getCachedModulePositions();
-        for (int i = 0; i < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); i++)
+        for (int i = 0; i < timing.ticksPerPeriod; i++)
             poseEstimator.updateWithTime(
                     Timer.getFPGATimestamp()
-                            - SimulatedArena.getInstance().getSimulationDt() * (SimulatedArena.getInstance().getSimulationDt() - i),
+                            - timing.dt * (timing.dt - i),
                     swerveDriveSimulation.gyroSimulation.getCachedGyroReadings()[i],
                     cachedModulePositions[i]);
     }
@@ -130,7 +133,7 @@ public class SimplifiedSwerveDriveSimulation {
     public SwerveModulePosition[] getLatestModulePositions() {
         return Arrays.stream(moduleSimulations)
                 .map(moduleSimulation -> new SwerveModulePosition(
-                        moduleSimulation.getDriveWheelFinalPositionRad() * moduleSimulation.WHEEL_RADIUS_METERS,
+                        moduleSimulation.getDriveWheelFinalPositionRad() * moduleSimulation.wheelRadiusMeters,
                         moduleSimulation.getSteerAbsoluteFacing()))
                 .toArray(SwerveModulePosition[]::new);
     }
@@ -153,14 +156,14 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public SwerveModulePosition[][] getCachedModulePositions() {
         final SwerveModulePosition[][] cachedModulePositions =
-                new SwerveModulePosition[SimulatedArena.getInstance().getSimulationSubTicksIn1Period()][moduleSimulations.length];
+                new SwerveModulePosition[timing.ticksPerPeriod][moduleSimulations.length];
 
         for (int moduleIndex = 0; moduleIndex < moduleSimulations.length; moduleIndex++) {
             final double[] wheelPositionRads = moduleSimulations[moduleIndex].getCachedDriveWheelFinalPositionsRad();
             final Rotation2d[] swerveModuleFacings = moduleSimulations[moduleIndex].getCachedSteerAbsolutePositions();
-            for (int timeStamp = 0; timeStamp < SimulatedArena.getInstance().getSimulationSubTicksIn1Period(); timeStamp++)
+            for (int timeStamp = 0; timeStamp < timing.ticksPerPeriod; timeStamp++)
                 cachedModulePositions[timeStamp][moduleIndex] = new SwerveModulePosition(
-                        wheelPositionRads[timeStamp] * moduleSimulations[0].WHEEL_RADIUS_METERS,
+                        wheelPositionRads[timeStamp] * moduleSimulations[0].wheelRadiusMeters,
                         swerveModuleFacings[timeStamp]);
         }
 
@@ -283,8 +286,7 @@ public class SimplifiedSwerveDriveSimulation {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     chassisSpeeds, getOdometryEstimatedPose().getRotation());
         if (discretizeSpeeds)
-            chassisSpeeds = ChassisSpeeds.discretize(
-                    chassisSpeeds, SimulatedArena.getInstance().getSimulationDt() * SimulatedArena.getInstance().getSimulationSubTicksIn1Period());
+            chassisSpeeds = ChassisSpeeds.discretize(chassisSpeeds, timing.period);
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
         for (int i = 0; i < moduleSimulations.length; i++)
             setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
@@ -446,7 +448,7 @@ public class SimplifiedSwerveDriveSimulation {
                 cosProjectedSpeedMPS =
                         SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
                 driveMotorVelocitySetPointRadPerSec =
-                        cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
+                        cosProjectedSpeedMPS / moduleSimulation.wheelRadiusMeters * moduleSimulation.driveGearRatio;
         final double driveFeedForwardVoltage = driveOpenLoop.calculate(driveMotorVelocitySetPointRadPerSec),
                 driveFeedBackVoltage =
                         driveCloseLoop.calculate(

@@ -42,7 +42,7 @@ public class DriveTrainSimulation extends Body {
      * <p>Since this is an abstract class, the constructor must be called from a subclass.
      *
      * <p>Note that the chassis does not appear on the simulation field upon creation. Refer to
-     * {@link org.ironmaple.simulation.SimulatedArena} for instructions on how to add it to the simulation world.
+     * {@link org.ironmaple.simulation.SimulationArena} for instructions on how to add it to the simulation world.
      *
      * @param config a {@link DriveTrainSimulationConfig} instance containing the configurations of this drivetrain
      * @param initialPoseOnField the initial pose of the drivetrain in the simulation world

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.IntakeSimulation.IntakeBehavior;
+import org.ironmaple.simulation.SimulationArena.SimulationTiming;
 import org.ironmaple.simulation.drivesims.DriveTrainSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.RuntimeLog;
@@ -52,14 +53,18 @@ public class SimRobot {
         }
     }
 
-    private final SimulatedArena arena;
+    private final SimulationArena arena;
     private final Once<DriveTrainSimulation> driveTrain = new Once<>("DriveTrainSimulation");
     private final Once<GamePieceStorage> gamePieceStorage = new Once<>("GamePieceStorage");
     private final ArrayList<IntakeSimulation> intakes = new ArrayList<>();
     private final ArrayList<MechanismSim> mechanisms = new ArrayList<>();
 
-    protected SimRobot(SimulatedArena arena) {
+    protected SimRobot(SimulationArena arena) {
         this.arena = arena;
+    }
+
+    public SimulationTiming timing() {
+        return arena.timing;
     }
 
     void simulationSubTick() {
@@ -115,7 +120,7 @@ public class SimRobot {
     }
 
     public MechanismSim createMechanism(DCMotor motor, double gearRatio, MomentOfInertia loadIntertia, Voltage frictionVoltage) {
-        MechanismSim mapleMotor = new MechanismSim(arena, motor, gearRatio, loadIntertia, frictionVoltage);
+        MechanismSim mapleMotor = new MechanismSim(timing(), motor, gearRatio, loadIntertia, frictionVoltage);
         mechanisms.add(mapleMotor);
         RuntimeLog.debug("Created MechanismSim");
         return mapleMotor;

@@ -10,16 +10,12 @@ import org.ironmaple.simulation.GamePiece.GamePieceTarget;
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 
 public class Note {
-  /* https://www.andymark.com/products/frc-2024-am-4999 */
-  private static final double NOTE_HEIGHT = Units.inchesToMeters(2),
-      NOTE_DIAMETER = Units.inchesToMeters(14),
-      NOTE_WEIGHT_KG = 0.2;
-
+  /** https://www.andymark.com/products/frc-2024-am-4999 */
   public static final GamePieceVariant VARIANT = new GamePieceVariant(
       "Note",
-      NOTE_HEIGHT,
-      NOTE_WEIGHT_KG,
-      Geometry.createCircle(NOTE_DIAMETER / 2),
+      Units.inchesToMeters(2),
+      0.2,
+      Geometry.createCircle(Units.inchesToMeters(14) / 2),
       List.of(
         new GamePieceTarget(
           new Translation3d(-0.25, 4.36, 2.0),

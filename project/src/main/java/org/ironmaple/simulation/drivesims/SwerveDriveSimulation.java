@@ -9,7 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.Arrays;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimRobot;
-import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.SimulationArena.SimulationTiming;
 import org.ironmaple.simulation.drivesims.configs.SwerveConfig;
 import org.ironmaple.utils.RuntimeLog;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
@@ -60,7 +60,8 @@ import org.ironmaple.utils.mathutils.MapleCommonMath;
  * simulation</a> to simulate vision.
  */
 public class SwerveDriveSimulation extends DriveTrainSimulation {
-    private final SwerveModuleSimulation[] moduleSimulations;
+    protected final SimulationTiming timing;
+    protected final SwerveModuleSimulation[] moduleSimulations;
     protected final GyroSimulation gyroSimulation;
     protected final Translation2d[] moduleTranslations;
     protected final SwerveDriveKinematics kinematics;
@@ -81,18 +82,19 @@ public class SwerveDriveSimulation extends DriveTrainSimulation {
      */
     public SwerveDriveSimulation(SimRobot robot, SwerveConfig config, Pose2d initialPoseOnField) {
         super(config, initialPoseOnField);
+        this.timing = robot.timing();
         this.config = config;
         this.moduleTranslations = config.moduleTranslations;
         this.moduleSimulations = Arrays.stream(config.moduleTranslations)
                 .map(translation2d -> new SwerveModuleSimulation(robot, config.swerveModuleConfig))
                 .toArray(SwerveModuleSimulation[]::new);
-        this.gyroSimulation = new GyroSimulation(config.gyroConfig);
+        this.gyroSimulation = new GyroSimulation(timing, config.gyroConfig);
 
         super.setLinearDamping(1.4);
         super.setAngularDamping(1.4);
         this.kinematics = new SwerveDriveKinematics(moduleTranslations);
 
-        this.gravityForceOnEachModule = config.robotMassKg * 9.8 / moduleSimulations.length;
+        this.gravityForceOnEachModule = (config.robotMassKg * 9.8) / moduleSimulations.length;
 
         RuntimeLog.debug("created swerve drive simulation");
     }
@@ -169,7 +171,7 @@ public class SwerveDriveSimulation extends DriveTrainSimulation {
                 GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
                 .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
 
-        final double orbitalAngularVelocity = dTheta.getRadians() / SimulatedArena.getInstance().getSimulationDt();
+        final double orbitalAngularVelocity = dTheta.getRadians() / timing.dt;
         final Rotation2d centripetalForceDirection = MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative)
                 .plus(Rotation2d.fromDegrees(90));
         final Vector2 centripetalFrictionForce = Vector2.create(

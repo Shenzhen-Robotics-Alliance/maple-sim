@@ -74,7 +74,7 @@ public class GamePiece {
          * @param gp the game piece entering this state
          * @param arena the arena the game piece is in
          */
-        default void onEnter(GamePiece gp, SimulatedArena arena) {
+        default void onEnter(GamePiece gp, SimulationArena arena) {
         };
 
         /**
@@ -82,7 +82,7 @@ public class GamePiece {
          * @param gp the game piece exiting this state
          * @param arena the arena the game piece is in
          */
-        default void onExit(GamePiece gp, SimulatedArena arena) {
+        default void onExit(GamePiece gp, SimulationArena arena) {
         };
 
         /**
@@ -90,7 +90,7 @@ public class GamePiece {
          * @param gp the game piece in this state
          * @param arena the arena the game piece is in
          */
-        default void tick(GamePiece gp, SimulatedArena arena) {
+        default void tick(GamePiece gp, SimulationArena arena) {
         };
 
         /**
@@ -99,7 +99,7 @@ public class GamePiece {
          * @param arena the arena the game piece is in
          * @return the pose of the game piece in this state
          */
-        Pose3d pose(GamePiece gp, SimulatedArena arena);
+        Pose3d pose(GamePiece gp, SimulationArena arena);
 
         /**
          * Returns the tag of this state.
@@ -113,7 +113,7 @@ public class GamePiece {
          */
         public record Limbo() implements GamePieceState {
             @Override
-            public Pose3d pose(GamePiece gp, SimulatedArena arena) {
+            public Pose3d pose(GamePiece gp, SimulationArena arena) {
                 return new Pose3d(-1.0, -1.0, -1.0, new Rotation3d());
             }
 
@@ -128,17 +128,17 @@ public class GamePiece {
          */
         public record OnField(GamePieceCollisionBody body) implements GamePieceState {
             @Override
-            public void onEnter(GamePiece gp, SimulatedArena arena) {
+            public void onEnter(GamePiece gp, SimulationArena arena) {
                 arena.world().addBody(body);
             }
 
             @Override
-            public void onExit(GamePiece gp, SimulatedArena arena) {
+            public void onExit(GamePiece gp, SimulationArena arena) {
                 arena.world().removeBody(body);
             }
 
             @Override
-            public Pose3d pose(GamePiece gp, SimulatedArena arena) {
+            public Pose3d pose(GamePiece gp, SimulationArena arena) {
                 var pose2d = GeometryConvertor.toWpilibPose2d(body.getTransform());
                 var t = pose2d.getTranslation();
                 return new Pose3d(
@@ -170,8 +170,8 @@ public class GamePiece {
             }
 
             @Override
-            public void tick(GamePiece gp, SimulatedArena arena) {
-                double dt = arena.getSimulationDt();
+            public void tick(GamePiece gp, SimulationArena arena) {
+                double dt = arena.timing.dt;
                 velocity = dynamics.calculate(dt, velocity);
                 Twist3d twist = new Twist3d(
                         dt * velocity.getVX(),
@@ -184,7 +184,7 @@ public class GamePiece {
             }
 
             @Override
-            public Pose3d pose(GamePiece gp, SimulatedArena arena) {
+            public Pose3d pose(GamePiece gp, SimulationArena arena) {
                 return pose;
             }
 
@@ -199,7 +199,7 @@ public class GamePiece {
          */
         public record Held(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset) implements GamePieceState {
             @Override
-            public Pose3d pose(GamePiece gp, SimulatedArena arena) {
+            public Pose3d pose(GamePiece gp, SimulationArena arena) {
                 return robotPoseSupplier.get().transformBy(offset.get());
             }
 
@@ -320,7 +320,7 @@ public class GamePiece {
     }
 
     protected final GamePieceVariant variant;
-    protected final SimulatedArena arena;
+    protected final SimulationArena arena;
     protected GamePieceState state = new GamePieceState.Limbo();
     protected boolean userControlled = false;
     protected EnumMap<GamePieceEvent, ArrayList<GamePieceEventHandler>> eventHandlers = new EnumMap<>(
@@ -332,7 +332,7 @@ public class GamePiece {
         }
     };
 
-    public GamePiece(GamePieceVariant variant, SimulatedArena arena) {
+    public GamePiece(GamePieceVariant variant, SimulationArena arena) {
         this.variant = variant;
         this.arena = arena;
     }

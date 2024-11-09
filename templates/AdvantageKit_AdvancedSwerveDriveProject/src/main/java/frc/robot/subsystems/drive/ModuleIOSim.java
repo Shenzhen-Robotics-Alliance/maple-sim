@@ -16,6 +16,9 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -34,16 +37,16 @@ public class ModuleIOSim implements ModuleIO {
 
     @Override
     public void updateInputs(ModuleIOInputs inputs) {
-        inputs.drivePositionRad = moduleSimulation.getDriveWheelFinalPositionRad();
-        inputs.driveVelocityRadPerSec = moduleSimulation.getDriveWheelFinalSpeedRadPerSec();
-        inputs.driveAppliedVolts = moduleSimulation.getDriveMotorAppliedVolts();
-        inputs.driveCurrentAmps = new double[] {Math.abs(moduleSimulation.getDriveMotorSupplyCurrentAmps())};
+        inputs.drivePositionRad = moduleSimulation.getDriveWheelFinalPosition().in(Radians);
+        inputs.driveVelocityRadPerSec = moduleSimulation.getDriveWheelFinalSpeed().in(RadiansPerSecond);
+        inputs.driveAppliedVolts = moduleSimulation.getDriveMotorAppliedVoltage().in(Volts);
+        inputs.driveCurrentAmps = new double[] {Math.abs(moduleSimulation.getDriveMotorSupplyCurrent().in(Amps))};
 
         inputs.turnAbsolutePosition = moduleSimulation.getSteerAbsoluteFacing();
-        inputs.turnPosition = Rotation2d.fromRadians(moduleSimulation.getSteerRelativeEncoderPositionRad());
-        inputs.turnVelocityRadPerSec = moduleSimulation.getSteerRelativeEncoderSpeedRadPerSec();
-        inputs.turnAppliedVolts = moduleSimulation.getSteerMotorAppliedVolts();
-        inputs.turnCurrentAmps = new double[] {Math.abs(moduleSimulation.getSteerMotorSupplyCurrentAmps())};
+        inputs.turnPosition = Rotation2d.fromRadians(moduleSimulation.getSteerRelativeEncoderPosition().in(Radians));
+        inputs.turnVelocityRadPerSec = moduleSimulation.getSteerRelativeEncoderSpeed().in(RadiansPerSecond);
+        inputs.turnAppliedVolts = moduleSimulation.getSteerMotorAppliedVoltage().in(Volts);
+        inputs.turnCurrentAmps = new double[] {Math.abs(moduleSimulation.getSteerMotorSupplyCurrent().in(Amps))};
 
         inputs.odometryTimestamps = OdometryTimeStampsSim.getTimeStamps();
         inputs.odometryDrivePositionsRad = moduleSimulation.getCachedDriveWheelFinalPositionsRad();

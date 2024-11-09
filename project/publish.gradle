@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 ext.licenseFile = files("$rootDir/LICENSE.txt")
 
-def pubVersion = '0.1.7'
+def pubVersion = 'wpilib-units-api-preview'
 
 def outputsFolder = file("$buildDir/outputs")
 

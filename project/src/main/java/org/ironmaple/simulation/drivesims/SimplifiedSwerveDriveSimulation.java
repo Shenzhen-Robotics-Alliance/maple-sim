@@ -128,7 +128,8 @@ public class SimplifiedSwerveDriveSimulation {
     public SwerveModulePosition[] getLatestModulePositions() {
         return Arrays.stream(moduleSimulations)
                 .map(moduleSimulation -> new SwerveModulePosition(
-                        moduleSimulation.getDriveWheelFinalPositionRad() * moduleSimulation.WHEEL_RADIUS_METERS,
+                        Meters.of(moduleSimulation.getDriveWheelFinalPosition().in(Radians)
+                                * moduleSimulation.WHEEL_RADIUS_METERS),
                         moduleSimulation.getSteerAbsoluteFacing()))
                 .toArray(SwerveModulePosition[]::new);
     }

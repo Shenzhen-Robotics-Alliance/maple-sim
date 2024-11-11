@@ -17,9 +17,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.motorsims.BatterySimulationContainer;
 import org.ironmaple.simulation.motorsims.MapleMotorSim;
 import org.ironmaple.simulation.motorsims.SimMotorConfigs;
+import org.ironmaple.simulation.motorsims.SimMotorState;
+import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.motorsims.requests.ControlRequest;
 
 /**
@@ -128,7 +129,7 @@ public class SwerveModuleSimulation {
 
         this.driveMotorConfigs = new SimMotorConfigs(
                 DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage));
-        BatterySimulationContainer.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
+        SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
         this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
                         steerMotor,
                         steerGearRatio,
@@ -478,8 +479,9 @@ public class SwerveModuleSimulation {
     private void updateSteerSimulation() {
         /* update the readings of the sensor */
         steerMotorSim.update(Seconds.of(SimulatedArena.getSimulationDt()));
-        this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getPosition());
-        this.steerRelativeEncoderPositionRad = steerMotorSim.getPosition().in(Radians) + steerRelativeEncoderOffSet;
+        this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getAngularPosition());
+        this.steerRelativeEncoderPositionRad =
+                steerMotorSim.getAngularPosition().in(Radians) + steerRelativeEncoderOffSet;
         this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);
         this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
 
@@ -539,13 +541,15 @@ public class SwerveModuleSimulation {
      * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
      *
      * <p>Before calculating the torque of the motor, the output voltage of the drive motor is constrained for the
-     * current limit through {@link MapleMotorSim#constrainOutputVoltage(AngularVelocity, Voltage, SimMotorConfigs)}
+     * current limit through {@link MapleMotorSim#constrainOutputVoltage(SimMotorState, Voltage, SimMotorConfigs)}
      *
      * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
      */
     private double getDriveWheelTorque() {
         driveMotorAppliedVolts = MapleMotorSim.constrainOutputVoltage(
-                        RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec),
+                        new SimMotorState(
+                                Radians.of(driveEncoderUnGearedPositionRad),
+                                RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec)),
                         driveMotorRequest.updateSignal(
                                 driveMotorConfigs,
                                 Radians.of(driveEncoderUnGearedPositionRad),

@@ -92,6 +92,12 @@ public class MapleMotorSim {
         if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltageVolts))
             limitedVoltage = requestedOutputVoltageVolts;
 
+        // apply software limits
+        if (state.finalAngularPosition().gte(configs.forwardSoftwareLimit) && limitedVoltage > 0)
+            limitedVoltage = 0;
+        if (state.finalAngularPosition().lte(configs.reverseHardwareLimit) && limitedVoltage < 0)
+            limitedVoltage = 0;
+
         // constrain the output voltage to the battery voltage
         return Volts.of(BatterySimulationContainer.getInstance().constrainVoltage(limitedVoltage));
     }

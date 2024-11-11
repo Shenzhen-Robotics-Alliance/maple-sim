@@ -112,6 +112,10 @@ public final class SimMotorConfigs {
         return Amps.of(motor.getCurrent(angularVelocity.in(RadiansPerSecond), voltage.in(Volts)));
     }
 
+    public Current calculateCurrent(Torque torque) {
+        return Amps.of(motor.getCurrent(torque.in(NewtonMeters)));
+    }
+
     public Torque calculateTorque(Current current) {
         return NewtonMeters.of(motor.getTorque(current.in(Amps)));
     }
@@ -254,6 +258,12 @@ public final class SimMotorConfigs {
         // this is a limit across the sum of all motors output,
         // so it should be set to the total current limit of the mechanism
         this.currentLimit = currentLimit;
+        return this;
+    }
+
+    public SimMotorConfigs withSoftLimits(Angle forwardLimit, Angle reverseLimit) {
+        this.forwardSoftwareLimit = forwardLimit;
+        this.reverseSoftwareLimit = reverseLimit;
         return this;
     }
 

@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
+import org.ironmaple.simulation.SimulatedArena;
 
 /**
  *
@@ -55,16 +56,19 @@ public final class SimMotorConfigs {
 
     public SimpleMotorFeedforward feedforward;
 
-    protected Angle forwardHardwareLimit;
-    protected Angle reverseHardwareLimit;
+    protected Angle forwardHardwareLimit, reverseHardwareLimit, forwardSoftwareLimit, reverseSoftwareLimit;
     protected Current currentLimit;
 
     /**
+     * <h2>Constructs a simulated motor configuration.</h2>
      *
+     * <p>This constructor initializes a {@link SimMotorConfigs} object with the necessary parameters for motor simulation,
+     * including the motor model, gearing ratio, load moment of inertia, and friction characteristics.</p>
      *
-     * <h2>Constructs a simulated motor.</h2>
-     *
-     * @param (ChatGPT completes this part)
+     * @param motor the motor model to be used in the simulation (e.g., Falcon 500, NEO).
+     * @param gearing the gear ratio between the motor and the load, affecting torque and speed output.
+     * @param loadMOI the moment of inertia of the load connected to the motor, representing rotational resistance.
+     * @param frictionVoltage the voltage applied to simulate frictional torque losses in the motor.
      */
     public SimMotorConfigs(DCMotor motor, double gearing, MomentOfInertia loadMOI, Voltage frictionVoltage) {
         this.motor = motor;
@@ -75,57 +79,99 @@ public final class SimMotorConfigs {
         this.positionCurrentController = new PIDController(0, 0, 0);
         this.velocityVoltageController = new PIDController(0, 0, 0);
         this.velocityCurrentController = new PIDController(0, 0, 0);
-        this.forwardHardwareLimit = Radians.of(Double.POSITIVE_INFINITY);
-        this.reverseHardwareLimit = Radians.of(Double.NEGATIVE_INFINITY);
+        this.feedforward = new SimpleMotorFeedforward(0, 0);
+        this.forwardHardwareLimit = this.forwardSoftwareLimit = Radians.of(Double.POSITIVE_INFINITY);
+        this.reverseHardwareLimit = this.reverseSoftwareLimit = Radians.of(Double.NEGATIVE_INFINITY);
         this.currentLimit = Amps.of(150);
-
-        this.withFeedForward(
-                frictionVoltage,
-                VoltsPerRadianPerSecond.ofNative(motor.nominalVoltageVolts / motor.freeSpeedRadPerSec),
-                VoltsPerRadianPerSecondSquared.ofNative(0),
-                Seconds.of(0.02));
     }
 
     /**
-     *
-     *
      * <h2>Calculates the voltage of the motor.</h2>
      *
-     * <p>This methods uses the {@link DCMotor} model to find the voltage for a given current and angular velocity.
+     * <p>This method uses the {@link DCMotor} model to find the voltage for a given current and angular velocity.</p>
      *
-     * <p>It's the {@link DCMotor#getVoltage(double, double)} wrapped with WPILib units library.
+     * @see DCMotor#getVoltage(double, double) for the underlying implementation.
      *
-     * @param (ChaptGPT completes)
-     * @return (ChatGPT completes)
+     * @param current the current flowing through the motor, in amperes.
+     * @param angularVelocity the angular velocity of the motor, in radians per second.
+     * @return the voltage required for the motor to achieve the specified current and angular velocity, in volts.
      */
     public Voltage calculateVoltage(Current current, AngularVelocity angularVelocity) {
-        // find what voltage is needed to get the current
         return Volts.of(motor.getVoltage(current.in(Amps), angularVelocity.in(RadiansPerSecond) * gearing));
     }
 
-    // imitating the API docs above, ChatGPT completes the javadocs for the methods below:
+    /**
+     * <h2>Calculates the velocity of the motor.</h2>
+     *
+     * <p>This method uses the {@link DCMotor} model to find the angular velocity for a given current and voltage.</p>
+     *
+     * @see DCMotor#getSpeed(double, double) for the underlying implementation.
+     *
+     * @param current the current flowing through the motor, in amperes.
+     * @param voltage the voltage applied to the motor, in volts.
+     * @return the angular velocity of the motor, in radians per second.
+     */
     public AngularVelocity calculateVelocity(Current current, Voltage voltage) {
         return RadiansPerSecond.of(motor.getSpeed(motor.getTorque(current.in(Amps)), voltage.in(Volts)));
     }
 
+    /**
+     * <h2>Calculates the current of the motor.</h2>
+     *
+     * <p>This method uses the {@link DCMotor} model to find the current for a given angular velocity and voltage.</p>
+     *
+     * @see DCMotor#getCurrent(double, double) for the underlying implementation.
+     *
+     * @param angularVelocity the angular velocity of the motor, in radians per second.
+     * @param voltage the voltage applied to the motor, in volts.
+     * @return the current drawn by the motor, in amperes.
+     */
     public Current calculateCurrent(AngularVelocity angularVelocity, Voltage voltage) {
         return Amps.of(motor.getCurrent(angularVelocity.in(RadiansPerSecond), voltage.in(Volts)));
     }
 
+    /**
+     * <h2>Calculates the current based on the motor's torque.</h2>
+     *
+     * <p>This method uses the {@link DCMotor} model to find the current required for a given torque.</p>
+     *
+     * @see DCMotor#getCurrent(double) for the underlying implementation.
+     *
+     * @param torque the torque generated by the motor, in Newton-meters.
+     * @return the current required to produce the specified torque, in amperes.
+     */
     public Current calculateCurrent(Torque torque) {
         return Amps.of(motor.getCurrent(torque.in(NewtonMeters)));
     }
 
+    /**
+     * <h2>Calculates the torque based on the motor's current.</h2>
+     *
+     * <p>This method uses the {@link DCMotor} model to find the torque generated by a given current.</p>
+     *
+     * @see DCMotor#getTorque(double) for the underlying implementation.
+     *
+     * @param current the current flowing through the motor, in amperes.
+     * @return the torque generated by the motor, in Newton-meters.
+     */
     public Torque calculateTorque(Current current) {
         return NewtonMeters.of(motor.getTorque(current.in(Amps)));
     }
 
     /**
-     *
-     *
      * <h2>Configures the feed-forward calculator for the motor.</h2>
      *
-     * GPT completes the params and returns
+     * <p>This method sets up a feed-forward calculator for the motor, which helps in estimating the required voltage
+     * to achieve a desired motor output, based on the current state of the system. The feed-forward components include
+     * the static voltage offset (`kS`), velocity-dependent voltage (`kV`), and acceleration-dependent voltage (`kA`).</p>
+     *
+     * <p>The feed-forward calculator is configured with the following parameters:</p>
+     *
+     * @param kS the static voltage offset for the motor.
+     * @param kV the velocity-dependent voltage coefficient for the motor.
+     * @param kA the acceleration-dependent voltage coefficient for the motor.
+     * @param dt the time step used for simulation.
+     * @return the updated {@link SimMotorConfigs} object with the specified feed-forward calculator configured.
      */
     public SimMotorConfigs withFeedForward(
             Voltage kS,
@@ -139,10 +185,30 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the PD controller for Positional Requests using
-     * {@link org.ironmaple.simulation.motorsims.requests.PositionVoltage} request.
+     * <h2>Configures a default set of feed-forward gains.</h2>
      *
-     * <p>This is unit safe and can be configure like so:
+     * <p>The feed-forward gains (`ks`, `kv`, and `ka`) are automatically calculated using the data from the {@link DCMotor} model.</p>
+     *
+     * @return this instance for method chaining, with the default feed-forward gains configured.
+     */
+    public SimMotorConfigs withDefaultFeedForward() {
+        return this.withFeedForward(
+                this.calculateVoltage(calculateCurrent(friction), RadiansPerSecond.zero()),
+                VoltsPerRadianPerSecond.ofNative(motor.nominalVoltageVolts / motor.freeSpeedRadPerSec),
+                VoltsPerRadianPerSecondSquared.ofNative(
+                        motor.nominalVoltageVolts / (motor.stallTorqueNewtonMeters / this.loadMOI.in(KilogramSquareMeters))
+                ),
+                Seconds.of(SimulatedArena.getSimulationDt()));
+    }
+
+    /**
+     * <h2>Configures the PD controller for
+     * {@link ControlRequest.PositionVoltage} requests.</h2>
+     *
+     * <p>This method configures a PD controller for handling positional requests with voltage commands.
+     * The controller is unit-safe and can be used with {@link ControlRequest.PositionVoltage} to control motor position.</p>
+     *
+     * <p>For example, this can be configured as follows:</p>
      *
      * <pre><code>
      * // Volts per Rotation of error is how CTRE handles PID when used with voltage requests
@@ -151,6 +217,9 @@ public final class SimMotorConfigs {
      *   Volts.per(RotationsPerSecond).ofNative(5.0)
      * );
      * </code></pre>
+     *
+     * <p>The proportional gain (`kP`) and derivative gain (`kD`) are both configured in terms of
+     * voltage per unit of error and velocity, ensuring unit consistency.</p>
      *
      * @param kP the proportional gain
      * @param kD the derivative gain
@@ -166,16 +235,22 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the PD controller for {@link org.ironmaple.simulation.motorsims.requests.VelocityVoltage} requests.
+     * <h2>Configures the PD controller for {@link ControlRequest.VelocityVoltage} requests.</h2>
      *
-     * <p>This is unit safe and can be configure like so:
+     * <p>This method configures a PD controller to handle velocity requests using voltage commands.
+     * It ensures unit consistency and allows voltage requests for controlling motor velocity.</p>
+     *
+     * <p>For example, it can be configured as follows:</p>
      *
      * <pre><code>
-     * // Volts per RPS of error is how CTRE handles PID when used with voltage requests
+     * // Volts per RPS of error is how CTRE handles PID when used with velocity requests
      * sim.withVelocityVoltageController(
      *   Volts.per(RotationsPerSecond).ofNative(0.4)
      * );
      * </code></pre>
+     *
+     * <p>The proportional gain (`kP`) is configured in terms of voltage per unit of angular velocity,
+     * which determines the motor's response to the velocity error.</p>
      *
      * @param kP the proportional gain
      * @return this instance for method chaining
@@ -187,10 +262,12 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the PD controller for Positional Requests using
-     * {@link org.ironmaple.simulation.motorsims.requests.PositionVoltage} requests.
+     * <h2>Configures the PD controller for {@link ControlRequest.PositionCurrent} requests.</h2>
      *
-     * <p>This is unit safe and can be configure like so:
+     * <p>This method configures a PD controller to handle positional requests using current commands.
+     * It ensures unit consistency and allows current-based positional control for the motor.</p>
+     *
+     * <p>For example, it can be configured as follows:</p>
      *
      * <pre><code>
      * // Amps per Rotation of error is how CTRE handles PID when used with current requests
@@ -200,8 +277,11 @@ public final class SimMotorConfigs {
      * );
      * </code></pre>
      *
-     * @param kP the proportional gain
-     * @param kD the derivative gain
+     * <p>The proportional gain (`kP`) and derivative gain (`kD`) are configured in terms of current per unit of angle and current per unit of angular velocity,
+     * which determines the motor's response to the positional error and the rate of change of that error.</p>
+     *
+     * @param kP the proportional gain, which determines the motor's response to positional error
+     * @param kD the derivative gain, which determines the motor's response to the rate of change of positional error
      * @return this instance for method chaining
      */
     public SimMotorConfigs withPositionalCurrentController(
@@ -214,9 +294,12 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the PD controller for Velocity Requests using
+     * <h2>Configures the PD controller for {@link ControlRequest.VelocityCurrent} requests using current commands.</h2>
      *
-     * <p>This is unit safe and can be configure like so:
+     * <p>This method configures a PD controller to handle velocity requests with current commands.
+     * It ensures unit consistency and allows current-based velocity control for the motor.</p>
+     *
+     * <p>For example, it can be configured as follows:</p>
      *
      * <pre><code>
      * // Amps per RPS of error is how CTRE handles PID when used with current requests
@@ -225,7 +308,10 @@ public final class SimMotorConfigs {
      * );
      * </code></pre>
      *
-     * @param kP the proportional gain
+     * <p>The proportional gain (`kP`) is defined in terms of current per unit of angular velocity,
+     * which determines the motor's response to the velocity error.</p>
+     *
+     * @param kP the proportional gain, which determines the motor's response to velocity error
      * @return this instance for method chaining
      */
     public SimMotorConfigs withVelocityCurrentController(Per<CurrentUnit, AngularVelocityUnit> kP) {
@@ -235,7 +321,10 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the positional controllers to use continuous wrap.
+     * <h2>Configures the positional controllers to use continuous wrap.</h2>
+     *
+     * <p>It is typically used in applications where the input can exceed its normal range and you want the controller
+     * to handle these cases seamlessly (e.g., in rotational systems where angles are cyclic).</p>
      *
      * @return this instance for method chaining
      * @see PIDController#enableContinuousInput(double, double)
@@ -247,12 +336,12 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the current limit for the motor.
+     * <h2>Configures the current limit for the motor.</h2>
      *
-     * <p>This is the total current limit for the sim
+     * <p>This method sets the total current limit for the motor's stator. The limit is applied during the simulation to ensure realistic behavior and prevent simulation errors.</p>
      *
-     * @param currentLimit the current limit for the motor
-     * @return
+     * @param currentLimit the current limit for the motor, typically expressed in amps
+     * @return this instance for method chaining
      */
     public SimMotorConfigs withStatorCurrentLimit(Current currentLimit) {
         // this is a limit across the sum of all motors output,
@@ -261,6 +350,16 @@ public final class SimMotorConfigs {
         return this;
     }
 
+    /**
+     * <h2>Configures the software limits for the motor.</h2>
+     *
+     * <p>This method sets the software limits for the motor's movement. When either the forward or reverse limit is reached,
+     * the motor will stop applying voltage in that direction, effectively preventing it from exceeding the specified range.</p>
+     *
+     * @param forwardLimit the forward limit angle, beyond which the motor will not apply voltage
+     * @param reverseLimit the reverse limit angle, beyond which the motor will not apply voltage
+     * @return this instance for method chaining
+     */
     public SimMotorConfigs withSoftLimits(Angle forwardLimit, Angle reverseLimit) {
         this.forwardSoftwareLimit = forwardLimit;
         this.reverseSoftwareLimit = reverseLimit;
@@ -268,10 +367,13 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the hard limits for the motor.
+     * <h2>Configures the hard limits for the motor.</h2>
      *
-     * @param forwardLimit the forward limit
-     * @param reverseLimit the reverse limit
+     * <p>This method sets the hardware limits for the motor's movement. When either the forward or reverse limit is reached,
+     * the motor will be physically restricted from moving beyond that point, based on the motor's hardware constraints.</p>
+     *
+     * @param forwardLimit the forward hardware limit angle, beyond which the motor cannot move
+     * @param reverseLimit the reverse hardware limit angle, beyond which the motor cannot move
      * @return this instance for method chaining
      */
     public SimMotorConfigs withHardLimits(Angle forwardLimit, Angle reverseLimit) {

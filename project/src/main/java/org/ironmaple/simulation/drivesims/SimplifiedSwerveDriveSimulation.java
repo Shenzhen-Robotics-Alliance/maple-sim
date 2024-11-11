@@ -21,8 +21,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.motorsims.requests.PositionVoltage;
-import org.ironmaple.simulation.motorsims.requests.VelocityVoltage;
+import org.ironmaple.simulation.motorsims.ControlRequest;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -447,9 +446,9 @@ public class SimplifiedSwerveDriveSimulation {
                 driveMotorVelocitySetPointRadPerSec =
                         cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
 
-        moduleSimulation.requestSteerControl(new PositionVoltage(Radians.of(setPoint.angle.getRadians())));
+        moduleSimulation.requestSteerControl(new ControlRequest.PositionVoltage(Radians.of(setPoint.angle.getRadians())));
         moduleSimulation.requestDriveOutput(
-                new VelocityVoltage(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec)));
+                new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec)));
         return setPoint;
     }
 

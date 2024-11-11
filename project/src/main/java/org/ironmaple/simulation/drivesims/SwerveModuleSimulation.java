@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import java.util.Queue;
@@ -21,7 +20,7 @@ import org.ironmaple.simulation.motorsims.MapleMotorSim;
 import org.ironmaple.simulation.motorsims.SimMotorConfigs;
 import org.ironmaple.simulation.motorsims.SimMotorState;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
-import org.ironmaple.simulation.motorsims.requests.ControlRequest;
+import org.ironmaple.simulation.motorsims.ControlRequest;
 
 /**
  *

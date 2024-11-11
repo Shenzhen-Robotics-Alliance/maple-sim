@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class BatterySimulationContainer {
-    private static BatterySimulationContainer instance = null;
+public class SimulatedBattery {
+    private static SimulatedBattery instance = null;
 
-    public static BatterySimulationContainer getInstance() {
-        if (instance == null) instance = new BatterySimulationContainer();
+    public static SimulatedBattery getInstance() {
+        if (instance == null) instance = new SimulatedBattery();
         return instance;
     }
 

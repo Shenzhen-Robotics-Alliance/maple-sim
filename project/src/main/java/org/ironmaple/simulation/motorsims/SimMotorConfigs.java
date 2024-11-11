@@ -9,23 +9,63 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
 
+/**
+ *
+ *
+ * <h1>Stores the configurations of the motor.</h1>
+ *
+ * <p>This class encapsulates the various configuration parameters required to simulate and control a motor in a system.
+ * The configurations include:
+ *
+ * <ul>
+ *   <li><strong>motor:</strong> The motor model used in the simulation (e.g., Falcon 500, NEO).
+ *   <li><strong>gearing:</strong> The gear ratio between the motor and the load, affecting the output torque and speed.
+ *   <li><strong>loadMOI:</strong> The moment of inertia (MOI) of the load connected to the motor, which determines the
+ *       resistance to changes in rotational speed.
+ *   <li><strong>friction:</strong> The torque friction characteristics applied to the motor's simulation, representing
+ *       real-world losses.
+ *   <li><strong>positionVoltageController:</strong> PID controller for controlling the motor's position via voltage.
+ *   <li><strong>velocityVoltageController:</strong> PID controller for controlling the motor's velocity via voltage.
+ *   <li><strong>positionCurrentController:</strong> PID controller for controlling the motor's position via current.
+ *   <li><strong>velocityCurrentController:</strong> PID controller for controlling the motor's velocity via current.
+ *   <li><strong>feedforward:</strong> A feedforward controller used to compensate for the desired motor behavior based
+ *       on input speeds.
+ *   <li><strong>forwardHardwareLimit:</strong> The forward limit for motor rotation, specified in angle units.
+ *   <li><strong>reverseHardwareLimit:</strong> The reverse limit for motor rotation, specified in angle units.
+ *   <li><strong>currentLimit:</strong> The current limit applied to the motor to protect it from overcurrent
+ *       conditions.
+ * </ul>
+ */
 public final class SimMotorConfigs {
     public final DCMotor motor;
     public final double gearing;
     public final MomentOfInertia loadMOI;
     public final Torque friction;
 
-    /* all these controllers receive un-geared position/velocity from the encoder, not the final position/velocity of the mechanism */
-    public final PIDController positionVoltageController;
-    public final PIDController velocityVoltageController;
-    public final PIDController positionCurrentController;
-    public final PIDController velocityCurrentController;
+    /**
+     *
+     *
+     * <h3>All the controllers receives un-geared position from the <strong>encoder</strong>, using
+     * {@link MapleMotorSim#getEncoderPosition()} and {@link MapleMotorSim#getEncoderVelocity()}.</h3>
+     */
+    public final PIDController positionVoltageController,
+            velocityVoltageController,
+            positionCurrentController,
+            velocityCurrentController;
+
     public SimpleMotorFeedforward feedforward;
 
     protected Angle forwardHardwareLimit;
     protected Angle reverseHardwareLimit;
     protected Current currentLimit;
 
+    /**
+     *
+     *
+     * <h2>Constructs a simulated motor.</h2>
+     *
+     * @param (ChatGPT completes this part)
+     */
     public SimMotorConfigs(DCMotor motor, double gearing, MomentOfInertia loadMOI, Voltage frictionVoltage) {
         this.motor = motor;
         this.gearing = gearing;
@@ -46,11 +86,24 @@ public final class SimMotorConfigs {
                 Seconds.of(0.02));
     }
 
+    /**
+     *
+     *
+     * <h2>Calculates the voltage of the motor.</h2>
+     *
+     * <p>This methods uses the {@link DCMotor} model to find the voltage for a given current and angular velocity.
+     *
+     * <p>It's the {@link DCMotor#getVoltage(double, double)} wrapped with WPILib units library.
+     *
+     * @param (ChaptGPT completes)
+     * @return (ChatGPT completes)
+     */
     public Voltage calculateVoltage(Current current, AngularVelocity angularVelocity) {
         // find what voltage is needed to get the current
         return Volts.of(motor.getVoltage(current.in(Amps), angularVelocity.in(RadiansPerSecond) * gearing));
     }
 
+    // imitating the API docs above, ChatGPT completes the javadocs for the methods below:
     public AngularVelocity calculateVelocity(Current current, Voltage voltage) {
         return RadiansPerSecond.of(motor.getSpeed(motor.getTorque(current.in(Amps)), voltage.in(Volts)));
     }
@@ -63,6 +116,13 @@ public final class SimMotorConfigs {
         return NewtonMeters.of(motor.getTorque(current.in(Amps)));
     }
 
+    /**
+     *
+     *
+     * <h2>Configures the feed-forward calculator for the motor.</h2>
+     *
+     * GPT completes the params and returns
+     */
     public SimMotorConfigs withFeedForward(
             Voltage kS,
             Per<VoltageUnit, AngularVelocityUnit> kV,
@@ -171,25 +231,14 @@ public final class SimMotorConfigs {
     }
 
     /**
-     * Configures the positionaly controllers to use continuous wrap.
+     * Configures the positional controllers to use continuous wrap.
      *
-     * @see PIDController#enableContinuousInput(double, double)
-     */
-    public SimMotorConfigs withControllerContinousInput() {
-        return this.withControllerContinousInput(Rotations.of(0), Rotations.of(1));
-    }
-
-    /**
-     * Configures the positionaly controllers to use continuous wrap.
-     *
-     * @param min the minimum angle
-     * @param max the maximum angle
      * @return this instance for method chaining
      * @see PIDController#enableContinuousInput(double, double)
      */
-    public SimMotorConfigs withControllerContinousInput(Angle min, Angle max) {
-        positionVoltageController.enableContinuousInput(min.in(Radians), max.in(Radians));
-        positionCurrentController.enableContinuousInput(min.in(Radians), max.in(Radians));
+    public SimMotorConfigs withControllerContinousInput() {
+        positionVoltageController.enableContinuousInput(0, 2 * Math.PI);
+        positionCurrentController.enableContinuousInput(0, 2 * Math.PI);
         return this;
     }
 
@@ -219,5 +268,30 @@ public final class SimMotorConfigs {
         this.forwardHardwareLimit = forwardLimit;
         this.reverseHardwareLimit = reverseLimit;
         return this;
+    }
+
+    @Override
+    protected SimMotorConfigs clone() {
+        SimMotorConfigs cfg = new SimMotorConfigs(
+                        motor, gearing, loadMOI, Volts.of(motor.getVoltage(friction.in(NewtonMeter), 0.0)))
+                .withFeedForward(
+                        Volts.of(feedforward.getKs()),
+                        VoltsPerRadianPerSecond.ofNative(feedforward.getKv()),
+                        VoltsPerRadianPerSecondSquared.ofNative(feedforward.getKa()),
+                        Seconds.of(feedforward.getDt()))
+                .withHardLimits(forwardHardwareLimit, reverseHardwareLimit)
+                .withStatorCurrentLimit(currentLimit)
+                .withPositionalVoltageController(
+                        Volts.per(Radians).ofNative(positionVoltageController.getP()),
+                        Volts.per(RadiansPerSecond).ofNative(positionVoltageController.getD()))
+                .withVelocityVoltageController(Volts.per(RadiansPerSecond).ofNative(velocityVoltageController.getP()))
+                .withPositionalCurrentController(
+                        Amps.per(Radians).ofNative(positionCurrentController.getP()),
+                        Amps.per(RadiansPerSecond).ofNative(positionCurrentController.getD()))
+                .withVelocityCurrentController(Amps.per(RadiansPerSecond).ofNative(velocityCurrentController.getP()));
+
+        if (positionVoltageController.isContinuousInputEnabled()) cfg.withControllerContinousInput();
+
+        return cfg;
     }
 }

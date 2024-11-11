@@ -282,37 +282,45 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     }
 
     /**
+     *
+     *
      * <h2>Obtains the maximum achievable linear velocity of the chassis.</h2>
      *
      * @return the maximum linear velocity in meters/second
-     * */
+     */
     public double getTheoreticalMaxLinearVelocity() {
         return moduleSimulations[0].getModuleTheoreticalSpeedMPS();
     }
 
     /**
+     *
+     *
      * <h2>Obtains the maximum achievable linear acceleration of the chassis.</h2>
      *
      * @return the maximum linear acceleration in meters/second^2
-     * */
+     */
     public double getTheoreticalMaxLinearAcceleration() {
         return moduleSimulations[0].getModuleMaxAccelerationMPSsq(config.robotMassKg, moduleSimulations.length);
     }
 
     /**
+     *
+     *
      * <h2>Obtains the maximum achievable angular velocity of the chassis.</h2>
      *
      * @return the maximum angular velocity in radians/second
-     * */
+     */
     public double getTheoreticalMaxAngularVelocity() {
         return moduleSimulations[0].getModuleTheoreticalSpeedMPS() / moduleTranslations[0].getNorm();
     }
 
     /**
+     *
+     *
      * <h2>Obtains the maximum achievable angular acceleration of the chassis.</h2>
      *
      * @return the maximum angular acceleration in radians/second^2
-     * */
+     */
     public double getSwerveDriveMaxAngularAcceleration() {
         return moduleSimulations[0].getTheoreticalPropellingForcePerModule(config.robotMassKg, moduleSimulations.length)
                 * moduleTranslations[0].getNorm()

@@ -15,28 +15,27 @@
 The `SwerveDriveSimulation` object represents the simulation for a swerve drivetrain. To create it, you need to provide some details about the drivetrain:
 
 ```java
+// Create and configures a drivetrain simulation configuration
+final DriveTrainSimulationConfig driveTrainSimulationConfig =
+    DriveTrainSimulationConfig.Default()
+        .withGyro(GyroSimulation.getPigeon2())
+        .withSwerveModule(SwerveModuleSimulation.getMark4(
+            DCMotor.getKrakenX60(1), // drive motor is a Kraken x60
+            DCMotor.getFalcon500(1), // steer motor is a Falcon 500
+            Amps.of(60), // current limit: 60 Amps
+            SwerveModuleSimulation.WHEEL_GRIP.RUBBER_WHEEL.cof, // use COF of rubber wheels
+            3 // l3 gear ratio
+        ))
+        .withCustomModuleTranslations(Drive.getModuleTranslations())
+        .withBumperSize(Inches.of(30), Inches.of(30));
 
-// Create a gyro simulation
-final GyroSimulation gyroSimulation = GyroSimulation.createPigeon2();
-
+/* Create a swerve drive simulation */
 this.swerveDriveSimulation = new SwerveDriveSimulation(
-    45, // robot weight in kg
-    0.65, // track width in meters
-    0.65, // track length in meters 
-    0.74, // bumper width in meters
-    0.74, // bumper length in meters
-    SwerveModuleSimulation.getMark4( // creates a mark4 module
-        DCMotor.getKrakenX60(1), // drive motor is a Kraken x60
-        DCMotor.getFalcon500(1), // steer motor is a Falcon 500
-        80, // current limit is 80 Amps
-        DRIVE_WHEEL_TYPE.RUBBER, // rubber wheels
-        3 // l3 gear ratio
-    ),
-    gyroSimulation, // the gyro simulation
-    new Pose2d(3, 3, new Rotation2d()) // initial starting pose on the field
+    driveTrainSimulationConfig, 
+    new Pose2d(3, 3, new Rotation2d())
 );
 
-// register the drivetrain simulation
+// Register the drivetrain simulation
 SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation); 
 ```
 

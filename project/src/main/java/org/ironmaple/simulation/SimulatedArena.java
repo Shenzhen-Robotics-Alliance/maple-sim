@@ -3,6 +3,8 @@ package org.ironmaple.simulation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
@@ -34,7 +36,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * <p>The default instance can be obtained using the {@link #getInstance()} method.
  *
  * <p>Simulates all interactions within the arena field.
- *
+ *g
  * <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
  *
  * <ul>
@@ -125,6 +127,12 @@ public abstract class SimulatedArena {
     protected final List<Runnable> simulationSubTickActions;
     protected final List<WeakReference<MapleMotorSim>> motors;
     private final List<IntakeSimulation> intakeSimulations;
+    private boolean runsOnRealRobot = false;
+    private final Alert runningOnRealRobotAlert = new Alert(
+        "SimulatedArena's simulationPeriodic() method is being run on the real robot(this will not do anything)." +
+        "MapleSim error",
+        Alert.AlertType.kError
+    );
 
     /**
      *
@@ -200,6 +208,10 @@ public abstract class SimulatedArena {
     public void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {
         this.physicsWorld.addBody(driveTrainSimulation);
         this.driveTrainSimulations.add(driveTrainSimulation);
+    }
+    
+    public void enableOnRealRobot() {
+        runsOnRealRobot = true;
     }
 
     /**
@@ -279,6 +291,12 @@ public abstract class SimulatedArena {
      * SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern
      */
     public void simulationPeriodic() {
+        if (!runsOnRealRobot && RobotBase.isReal()) {
+            runningOnRealRobotAlert.set(true);
+            return;
+        } else {
+            runningOnRealRobotAlert.set(false);
+        }
         final long t0 = System.nanoTime();
         competitionPeriodic();
         // move through a few sub-periods in each update

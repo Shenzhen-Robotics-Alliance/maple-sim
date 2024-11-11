@@ -127,8 +127,7 @@ public abstract class SimulatedArena {
     protected final List<Runnable> simulationSubTickActions;
     protected final List<WeakReference<MapleMotorSim>> motors;
     private final List<IntakeSimulation> intakeSimulations;
-    private boolean runsOnRealRobot = false;
-    private final Alert runningOnRealRobotAlert = new Alert(
+	private final Alert runningOnRealRobotAlert = new Alert(
         "SimulatedArena's simulationPeriodic() method is being run on the real robot(this will not do anything)." +
         "MapleSim error",
         Alert.AlertType.kError
@@ -209,10 +208,6 @@ public abstract class SimulatedArena {
         this.physicsWorld.addBody(driveTrainSimulation);
         this.driveTrainSimulations.add(driveTrainSimulation);
     }
-    
-    public void enableOnRealRobot() {
-        runsOnRealRobot = true;
-    }
 
     /**
      *
@@ -291,7 +286,7 @@ public abstract class SimulatedArena {
      * SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern
      */
     public void simulationPeriodic() {
-        if (!runsOnRealRobot && RobotBase.isReal()) {
+	    if (RobotBase.isReal()) {
             runningOnRealRobotAlert.set(true);
             return;
         } else {

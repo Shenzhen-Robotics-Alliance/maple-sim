@@ -59,7 +59,7 @@ public abstract class SimulatedArena {
      */
     public static SimulatedArena getInstance() {
         if (RobotBase.isReal())
-            throw new IllegalStateException("MapleSim cannot be run from the roboRIO!");
+            throw new IllegalStateException("MapleSim should not be running on a real robot!");
 
         if (instance == null)
             instance = new Arena2024Crescendo();

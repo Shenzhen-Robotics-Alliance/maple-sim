@@ -31,8 +31,8 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *
  * <p>The default instance can be obtained using the {@link #getInstance()} method.
  *
- * <p>Simulates all interactions within the arena field.
- *g
+ * <p>Simulates all interactions within the arena field. g
+ *
  * <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
  *
  * <ul>
@@ -55,11 +55,9 @@ public abstract class SimulatedArena {
      * @throws IllegalStateException if the method is call when running on a real robot
      */
     public static SimulatedArena getInstance() {
-        if (RobotBase.isReal())
-            throw new IllegalStateException("MapleSim should not be running on a real robot!");
+        if (RobotBase.isReal()) throw new IllegalStateException("MapleSim should not be running on a real robot!");
 
-        if (instance == null)
-            instance = new Arena2024Crescendo();
+        if (instance == null) instance = new Arena2024Crescendo();
 
         return instance;
     }

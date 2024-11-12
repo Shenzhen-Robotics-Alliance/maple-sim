@@ -98,7 +98,7 @@ public class RobotContainer {
             case SIM:
                 /* Sim robot, instantiate physics sim IO implementations */
 
-                /* create simulation for pigeon2 IMU (different IMUs have different measurement errors) */
+                // create and configures a drivetrain simulation configuration
                 final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulationConfig.Default()
                         .withGyro(GyroSimulation.getPigeon2())
                         .withSwerveModule(SwerveModuleSimulation.getMark4(

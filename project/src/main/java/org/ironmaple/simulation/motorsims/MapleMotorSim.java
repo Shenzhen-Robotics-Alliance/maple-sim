@@ -57,9 +57,7 @@ public class MapleMotorSim {
         final AngularVelocity motorAndEncoderVelocity =
                 state.finalAngularVelocity().times(configs.gearing);
         this.appliedVoltage = constrainOutputVoltage(
-                state,
-                request.updateSignal(configs, motorAndEncoderPosition, motorAndEncoderVelocity),
-                configs);
+                state, request.updateSignal(configs, motorAndEncoderPosition, motorAndEncoderVelocity), configs);
         this.statorCurrent = configs.calculateCurrent(motorAndEncoderVelocity, appliedVoltage);
         this.state = this.state.step(
                 configs.calculateTorque(statorCurrent).times(configs.gearing), configs.friction, configs.loadMOI, dt);
@@ -104,7 +102,8 @@ public class MapleMotorSim {
         final double kCurrentThreshold = 1.2;
 
         // don't use WpiLib Units for calculations
-        final double motorCurrentVelocityRadPerSec = state.finalAngularVelocity().in(RadiansPerSecond) * configs.gearing;
+        final double motorCurrentVelocityRadPerSec =
+                state.finalAngularVelocity().in(RadiansPerSecond) * configs.gearing;
         final double currentLimitAmps = configs.currentLimit.in(Amps);
         final double requestedOutputVoltageVolts = requestedVoltage.in(Volts);
         final double currentAtRequestedVoltageAmps =
@@ -123,10 +122,8 @@ public class MapleMotorSim {
             limitedVoltage = requestedOutputVoltageVolts;
 
         // apply software limits
-        if (state.finalAngularPosition().gte(configs.forwardSoftwareLimit) && limitedVoltage > 0)
-            limitedVoltage = 0;
-        if (state.finalAngularPosition().lte(configs.reverseHardwareLimit) && limitedVoltage < 0)
-            limitedVoltage = 0;
+        if (state.finalAngularPosition().gte(configs.forwardSoftwareLimit) && limitedVoltage > 0) limitedVoltage = 0;
+        if (state.finalAngularPosition().lte(configs.reverseHardwareLimit) && limitedVoltage < 0) limitedVoltage = 0;
 
         // constrain the output voltage to the battery voltage
         return Volts.of(SimulatedBattery.getInstance().constrainVoltage(limitedVoltage));

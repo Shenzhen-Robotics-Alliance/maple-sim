@@ -446,8 +446,9 @@ public class SimplifiedSwerveDriveSimulation {
                 driveMotorVelocitySetPointRadPerSec =
                         cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
 
-        moduleSimulation.requestSteerControl(new ControlRequest.PositionVoltage(Radians.of(setPoint.angle.getRadians())));
-        moduleSimulation.requestDriveOutput(
+        moduleSimulation.requestSteerControl(
+                new ControlRequest.PositionVoltage(Radians.of(setPoint.angle.getRadians())));
+        moduleSimulation.requestDriveControl(
                 new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec)));
         return setPoint;
     }
@@ -561,7 +562,7 @@ public class SimplifiedSwerveDriveSimulation {
      * <h2>Configures the PID controller for steer heading control.</h2>
      *
      * <p>This method wraps around
-     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionalVoltageController(Per, Per)}
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionVoltageController(Per, Per)}
      *
      * @param kP the proportional gain
      * @param kD the derivative gain
@@ -569,7 +570,7 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public SimplifiedSwerveDriveSimulation withSteerPID(
             Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
-        for (int i = 0; i < 4; i++) moduleSimulations[i].getSteerMotorConfigs().withPositionalVoltageController(kP, kD);
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getSteerMotorConfigs().withPositionVoltageController(kP, kD);
         return this;
     }
 

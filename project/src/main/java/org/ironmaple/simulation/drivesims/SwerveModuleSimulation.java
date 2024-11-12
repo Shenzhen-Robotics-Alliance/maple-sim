@@ -3,7 +3,6 @@ package org.ironmaple.simulation.drivesims;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -16,11 +15,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.motorsims.ControlRequest;
 import org.ironmaple.simulation.motorsims.MapleMotorSim;
 import org.ironmaple.simulation.motorsims.SimMotorConfigs;
 import org.ironmaple.simulation.motorsims.SimMotorState;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
-import org.ironmaple.simulation.motorsims.ControlRequest;
 
 /**
  *
@@ -135,7 +134,7 @@ public class SwerveModuleSimulation {
                         KilogramSquareMeters.of(steerRotationalInertia),
                         Volts.of(steerFrictionVoltage))
                 .withControllerContinousInput()
-                .withPositionalVoltageController(
+                .withPositionVoltageController(
                         Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0)));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
@@ -166,10 +165,9 @@ public class SwerveModuleSimulation {
      *
      * <p>Think of it as the <code>requestOutput()</code> of your physical driving motor.
      *
-     * <p>This method sets the desired output for the steering motor. The change will be applied in the next sub-tick of
-     * the simulation.
+     * @param request the control request to apply
      */
-    public void requestDriveOutput(ControlRequest request) {
+    public void requestDriveControl(ControlRequest request) {
         this.driveMotorRequest = request;
     }
 
@@ -180,8 +178,8 @@ public class SwerveModuleSimulation {
      *
      * <p>Think of it as the <code>requestOutput()</code> of your physical steering motor.
      *
-     * <p>This method sets the desired output for the steering motor. The change will be applied in the next sub-tick of
-     * the simulation.
+     * @param request the control request to apply
+     * @see MapleMotorSim#requestOutput(ControlRequest)
      */
     public void requestSteerControl(ControlRequest request) {
         this.steerMotorSim.requestOutput(request);
@@ -191,11 +189,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>Obtains the Actual Output Voltage of the Drive Motor.</h2>
-     *
-     * <p>This method returns the actual voltage being applied to the drive motor.
-     *
-     * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
-     * the system.
      *
      * @return the actual output voltage of the drive motor, in volts
      */
@@ -208,13 +201,8 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
      *
-     * <p>This method returns the actual voltage being applied to the steering motor. It wraps around the
-     * {@link MapleMotorSim#getAppliedVoltage()} method.
-     *
-     * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
-     * the system.
-     *
      * @return the actual output voltage of the steering motor, in volts
+     * @see MapleMotorSim#getAppliedVoltage()
      */
     public double getSteerMotorAppliedVolts() {
         return steerMotorSim.getAppliedVoltage().in(Volts);
@@ -224,8 +212,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>Obtains the Amount of Current Supplied to the Drive Motor.</h2>
-     *
-     * <h3>Think of it as the getSupplyCurrent() of your physical drive motor.</h3>
      *
      * @return the current supplied to the drive motor, in amperes
      */
@@ -238,11 +224,8 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Amount of Current Supplied to the Steer Motor.</h2>
      *
-     * <h3>Think of it as the getSupplyCurrent() of your physical steer motor.</h3>
-     *
-     * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()}.
-     *
      * @return the current supplied to the steer motor, in amperes
+     * @see MapleMotorSim#getSupplyCurrent()
      */
     public double getSteerMotorSupplyCurrentAmps() {
         return steerMotorSim.getSupplyCurrent().in(Amps);
@@ -253,14 +236,8 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Position of the Drive Encoder.</h2>
      *
-     * <h3>Think of it as the getPosition() of your physical driving motor.</h3>
-     *
-     * <p>This method is used to simulate your {@link SwerveDrivePoseEstimator}.
-     *
      * <p>This value represents the un-geared position of the encoder, i.e., the amount of radians the drive motor's
      * encoder has rotated.
-     *
-     * <p>To get the final wheel rotations, use {@link #getDriveWheelFinalPositionRad()}.
      *
      * @return the position of the drive motor's encoder, in radians (un-geared)
      */
@@ -273,11 +250,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Final Position of the Drive Encoder (Wheel Rotations).</h2>
      *
-     * <p>This method is used to simulate the {@link SwerveDrivePoseEstimator} by providing the final position of the
-     * drive encoder in terms of wheel rotations.
-     *
-     * <p>The value is calculated by dividing the un-geared encoder position (obtained from
-     * {@link #getDriveEncoderUnGearedPositionRad()}) by the drive gear ratio.
+     * <p>This method provides the final position of the drive encoder in terms of wheel angle.
      *
      * @return the final position of the drive encoder (wheel rotations), in radians
      */
@@ -289,11 +262,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>Obtains the Speed of the Drive Encoder (Un-Geared), in Radians per Second.</h2>
-     *
-     * <h3>Think of it as the <code>getVelocity()</code> of your physical drive motor.</h3>
-     *
-     * <p>This method returns the current speed of the drive encoder in radians per second, without accounting for the
-     * drive gear ratio.
      *
      * @return the un-geared speed of the drive encoder, in radians per second
      */
@@ -317,9 +285,8 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Relative Position of the Steer Encoder, in Radians.</h2>
      *
-     * <h3>Think of it as the <code>getPosition()</code> of your physical steer motor.</h3>
-     *
      * @return the relative encoder position of the steer motor, in radians
+     * @see MapleMotorSim#getEncoderPosition()
      */
     public double getSteerRelativeEncoderPositionRad() {
         return steerRelativeEncoderPositionRad;
@@ -330,9 +297,8 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Speed of the Steer Relative Encoder, in Radians per Second (Geared).</h2>
      *
-     * <h3>Think of it as the <code>getVelocity()</code> of your physical steer motor.</h3>
-     *
      * @return the speed of the steer relative encoder, in radians per second (geared)
+     * @see MapleMotorSim#getEncoderVelocity()
      */
     public double getSteerRelativeEncoderSpeedRadPerSec() {
         return steerRelativeEncoderSpeedRadPerSec;
@@ -342,8 +308,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>Obtains the Absolute Facing of the Steer Mechanism.</h2>
-     *
-     * <h3>Think of it as the <code>getAbsolutePosition()</code> of your CanCoder.</h3>
      *
      * @return the absolute facing of the steer mechanism, as a {@link Rotation2d}
      */
@@ -355,8 +319,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>Obtains the Absolute Rotational Velocity of the Steer Mechanism.</h2>
-     *
-     * <h3>Think of it as the <code>getVelocity()</code> of your CanCoder.</h3>
      *
      * @return the absolute angular velocity of the steer mechanism, in radians per second
      */
@@ -435,14 +397,6 @@ public class SwerveModuleSimulation {
      *
      * <h2>Updates the Simulation for This Module.</h2>
      *
-     * <p>This method is called once during every sub-tick of the simulation. It performs the following actions:
-     *
-     * <ul>
-     *   <li>Updates the simulation of the steering mechanism.
-     *   <li>Simulates the propelling force generated by the module.
-     *   <li>Updates and caches the encoder readings for odometry simulation.
-     * </ul>
-     *
      * <p><strong>Note:</strong> Friction forces are not simulated in this method.
      *
      * @param moduleCurrentGroundVelocityWorldRelative the current ground velocity of the module, relative to the world
@@ -454,13 +408,16 @@ public class SwerveModuleSimulation {
             Vector2 moduleCurrentGroundVelocityWorldRelative,
             Rotation2d robotFacing,
             double gravityForceOnModuleNewtons) {
+        /* Step1: Update the steer mechanism simulation */
         updateSteerSimulation();
 
-        /* the maximum gripping force that the wheel can generate */
+        /* Step2: Simulate the amount of propelling force generated by the module. */
         final double grippingForceNewtons = getGrippingForceNewtons(gravityForceOnModuleNewtons);
         final Rotation2d moduleWorldFacing = this.steerAbsoluteFacing.plus(robotFacing);
         final Vector2 propellingForce =
                 getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
+
+        /* Step3: Updates and caches the encoder readings for odometry simulation. */
         updateDriveEncoders();
 
         return propellingForce;
@@ -470,10 +427,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>updates the simulation for the steer mechanism.</h2>
-     *
-     * <p>Updates the simulation for the steer mechanism and cache the encoder readings.
-     *
-     * <p>The steer mechanism is modeled by a {@link MapleMotorSim}.
      */
     private void updateSteerSimulation() {
         /* update the readings of the sensor */
@@ -495,8 +448,6 @@ public class SwerveModuleSimulation {
      *
      *
      * <h2>Calculates the amount of propelling force that the module generates.</h2>
-     *
-     * <p>The swerve module's drive motor will generate a propelling force.
      *
      * <p>For most of the time, that propelling force is directly applied to the drivetrain. And the drive wheel runs as
      * fast as the ground velocity
@@ -561,7 +512,7 @@ public class SwerveModuleSimulation {
                 this.driveEncoderUnGearedSpeedRadPerSec,
                 MathUtil.applyDeadband(driveMotorAppliedVolts, DRIVE_FRICTION_VOLTAGE, 12));
 
-        /* calculate the torque generated,  */
+        /* calculate the torque generated */
         final double torqueOnRotter = DRIVE_MOTOR.getTorque(driveMotorSupplyCurrentAmps);
         return torqueOnRotter * DRIVE_GEAR_RATIO;
     }

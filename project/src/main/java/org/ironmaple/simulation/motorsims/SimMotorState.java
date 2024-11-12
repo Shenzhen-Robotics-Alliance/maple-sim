@@ -5,28 +5,33 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.*;
 
 /**
+ *
+ *
  * <h2>Represents the state of a simulated motor at a given point in time.</h2>
  *
  * <p>This record holds the final angular position and velocity of the motor. It is used to track the motor's state
- * during each simulation step.</p>
+ * during each simulation step.
  *
  * @param finalAngularPosition the final angular position of the motor, in radians
  * @param finalAngularVelocity the final angular velocity of the motor, in radians per second
  */
 public record SimMotorState(Angle finalAngularPosition, AngularVelocity finalAngularVelocity) {
     /**
+     *
+     *
      * <h2>Simulates a step in the motor's motion based on the applied forces.</h2>
      *
-     * <p>This method calculates the new angular position and velocity of the motor after applying electric and frictional
-     * torques over a time step.</p>
+     * <p>This method calculates the new angular position and velocity of the motor after applying electric and
+     * frictional torques over a time step.
      *
-     * <p>The method follows these steps:</p>
+     * <p>The method follows these steps:
+     *
      * <ul>
-     *     <li>Convert all units to SI units for calculation.</li>
-     *     <li>Apply the electric torque to the current angular velocity.</li>
-     *     <li>Compute the change in angular velocity due to friction.</li>
-     *     <li>If friction reverses the direction of angular velocity, the velocity is set to zero.</li>
-     *     <li>Integrate the angular velocity to find the new position.</li>
+     *   <li>Convert all units to SI units for calculation.
+     *   <li>Apply the electric torque to the current angular velocity.
+     *   <li>Compute the change in angular velocity due to friction.
+     *   <li>If friction reverses the direction of angular velocity, the velocity is set to zero.
+     *   <li>Integrate the angular velocity to find the new position.
      * </ul>
      *
      * @param finalElectricTorque the final applied electric torque, in Newton-meters
@@ -57,9 +62,11 @@ public record SimMotorState(Angle finalAngularPosition, AngularVelocity finalAng
                         * dtSeconds;
 
         // Step 3: Check if the angular velocity changes direction due to friction, or if it reaches zero.
-        // If friction causes the motor to reverse direction, or if the velocity reaches zero, set the angular velocity to zero.
+        // If friction causes the motor to reverse direction, or if the velocity reaches zero, set the angular velocity
+        // to zero.
         if ((currentAngularVelocityRadiansPerSecond + deltaAngularVelocityDueToFrictionRadPerSec)
-                        * currentAngularVelocityRadiansPerSecond <= 0)
+                        * currentAngularVelocityRadiansPerSecond
+                <= 0)
             // The velocity has reversed direction or reached zero, so stop the motor
             currentAngularVelocityRadiansPerSecond = 0;
         else

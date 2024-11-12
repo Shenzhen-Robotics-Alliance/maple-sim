@@ -3,7 +3,6 @@ package org.ironmaple.simulation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -56,9 +55,15 @@ public abstract class SimulatedArena {
      * <p>Multiple instances of {@link SimulatedArena} can exist elsewhere.
      *
      * @return the main simulation arena instance
+     * @throws IllegalStateException if the method is call when running on a real robot
      */
     public static SimulatedArena getInstance() {
-        if (instance == null) instance = new Arena2024Crescendo();
+        if (RobotBase.isReal())
+            throw new IllegalStateException("MapleSim cannot be run from the roboRIO!");
+
+        if (instance == null)
+            instance = new Arena2024Crescendo();
+
         return instance;
     }
 
@@ -127,11 +132,6 @@ public abstract class SimulatedArena {
     protected final List<Runnable> simulationSubTickActions;
     protected final List<WeakReference<MapleMotorSim>> motors;
     private final List<IntakeSimulation> intakeSimulations;
-	private final Alert runningOnRealRobotAlert = new Alert(
-        "SimulatedArena's simulationPeriodic() method is being run on the real robot(this will not do anything)." +
-        "MapleSim error",
-        Alert.AlertType.kError
-    );
 
     /**
      *
@@ -286,12 +286,6 @@ public abstract class SimulatedArena {
      * SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern
      */
     public void simulationPeriodic() {
-	    if (RobotBase.isReal()) {
-            runningOnRealRobotAlert.set(true);
-            return;
-        } else {
-            runningOnRealRobotAlert.set(false);
-        }
         final long t0 = System.nanoTime();
         competitionPeriodic();
         // move through a few sub-periods in each update

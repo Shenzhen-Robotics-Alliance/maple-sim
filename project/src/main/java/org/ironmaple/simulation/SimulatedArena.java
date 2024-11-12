@@ -17,6 +17,7 @@ import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
+import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
@@ -277,6 +278,7 @@ public abstract class SimulatedArena {
     public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
+        SimulatedBattery.getInstance().flush();
         // move through a few sub-periods in each update
         for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick();
 

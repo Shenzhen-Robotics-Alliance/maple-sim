@@ -1,10 +1,12 @@
 package org.ironmaple.simulation.motorsims;
 
+import static edu.wpi.first.units.Units.Amps;
+
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -25,22 +27,23 @@ public class SimulatedBattery {
     }
 
     public void addMotor(MapleMotorSim mapleMotorSim) {
-        this.electricalAppliances.add(mapleMotorSim::getStatorCurrent);
+        this.electricalAppliances.add(mapleMotorSim::getSupplyCurrent);
     }
 
     public void flush() {
-        batteryVoltage = BatterySim.calculateDefaultBatteryLoadedVoltage(electricalAppliances.stream()
-                .mapToDouble(currentSupplier -> currentSupplier.get().in(Units.Amps))
-                .toArray());
+        final double totalCurrentAmps = electricalAppliances.stream()
+                .mapToDouble(currentSupplier -> currentSupplier.get().in(Amps))
+                .sum();
+
+        SmartDashboard.putNumber("BatterySim/TotalCurrentAmps", totalCurrentAmps);
+        batteryVoltage = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
+
+        batteryVoltage = MathUtil.clamp(batteryVoltage, 0, 12);
 
         RoboRioSim.setVInVoltage(batteryVoltage);
     }
 
     public double getBatteryVoltage() {
         return batteryVoltage;
-    }
-
-    public double constrainVoltage(double voltage) {
-        return MathUtil.clamp(voltage, -batteryVoltage, batteryVoltage);
     }
 }

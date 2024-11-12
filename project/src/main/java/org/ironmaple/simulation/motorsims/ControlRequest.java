@@ -5,30 +5,33 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.*;
 
 /**
+ *
+ *
  * <h2>Represents a control request for a {@link MapleMotorSim} motor simulator.</h2>
  *
- * <p>A control request defines the behavior of a controller running on a {@link MapleMotorSim} instance
- * to achieve a specific task. The control request can either be open-loop or closed-loop, depending on the type
- * of controller used.</p>
+ * <p>A control request defines the behavior of a controller running on a {@link MapleMotorSim} instance to achieve a
+ * specific task. The control request can either be open-loop or closed-loop, depending on the type of controller used.
  *
- * <p>The following control requests are supported:</p>
+ * <p>The following control requests are supported:
+ *
  * <ul>
- *   <li>{@link VoltageOut} A request to output a constant voltage to the motor.</li>
- *   <li>{@link CurrentOut} A request to output a constant current to the motor.</li>
- *   <li>{@link PositionVoltage} A request to control the motor's position using a voltage controller.</li>
- *   <li>{@link PositionCurrent} A request to control the motor's position using a current controller.</li>
- *   <li>{@link VelocityVoltage} A request to control the motor's velocity using a voltage controller.</li>
- *   <li>{@link VelocityCurrent} A request to control the motor's velocity using a current controller.</li>
+ *   <li>{@link VoltageOut} A request to output a constant voltage to the motor.
+ *   <li>{@link CurrentOut} A request to output a constant current to the motor.
+ *   <li>{@link PositionVoltage} A request to control the motor's position using a voltage controller.
+ *   <li>{@link PositionCurrent} A request to control the motor's position using a current controller.
+ *   <li>{@link VelocityVoltage} A request to control the motor's velocity using a voltage controller.
+ *   <li>{@link VelocityCurrent} A request to control the motor's velocity using a current controller.
  * </ul>
  */
-
 public sealed interface ControlRequest {
 
     /**
+     *
+     *
      * <h2>Updates the control signal based on the motor's state.</h2>
      *
-     * <p>Given the motor's current configuration and state (angular position and velocity), this method calculates
-     * the control signal (voltage) that should be applied to the motor.</p>
+     * <p>Given the motor's current configuration and state (angular position and velocity), this method calculates the
+     * control signal (voltage) that should be applied to the motor.
      *
      * @param configs the motor's configuration
      * @param encoderPosition the position of the motor, measured by the encoder
@@ -38,9 +41,11 @@ public sealed interface ControlRequest {
     Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity);
 
     /**
+     *
+     *
      * <h2>Represents a constant voltage output.</h2>
      *
-     * <p>This control request outputs a constant voltage to the motor, regardless of the motor's position or velocity.</p>
+     * <p>This control request outputs a constant voltage to the motor, regardless of the motor's position or velocity.
      *
      * @param voltage the requested voltage to apply to the motor
      */
@@ -52,10 +57,12 @@ public sealed interface ControlRequest {
     }
 
     /**
+     *
+     *
      * <h2>Represents a constant current output.</h2>
      *
      * <p>This control request outputs a constant current to the motor. The voltage required to produce the current is
-     * calculated based on the motor's configuration and velocity.</p>
+     * calculated based on the motor's configuration and velocity.
      *
      * @param current the requested current to apply to the motor
      */
@@ -67,11 +74,14 @@ public sealed interface ControlRequest {
     }
 
     /**
+     *
+     *
      * <h2>Represents a position control request with voltage control.</h2>
      *
-     * <p>This control request uses a closed-loop voltage controller to drive the motor to a specified position.</p>
+     * <p>This control request uses a closed-loop voltage controller to drive the motor to a specified position.
      *
-     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withPositionVoltageController(Per, Per)}.</p>
+     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withPositionVoltageController(Per,
+     * Per)}.
      *
      * @param setPoint the target position in encoder angle
      */
@@ -93,11 +103,14 @@ public sealed interface ControlRequest {
     }
 
     /**
+     *
+     *
      * <h2>Represents a position control request with current control.</h2>
      *
-     * <p>This control request uses a closed-loop current controller to drive the motor to a specified position.</p>
+     * <p>This control request uses a closed-loop current controller to drive the motor to a specified position.
      *
-     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withPositionCurrentController(Per, Per)}.</p>
+     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withPositionCurrentController(Per,
+     * Per)}.
      *
      * @param setPoint the target position in encoder angle
      */
@@ -120,11 +133,13 @@ public sealed interface ControlRequest {
     }
 
     /**
+     *
+     *
      * <h2>Represents a velocity control request with voltage control.</h2>
      *
-     * <p>This control request uses a closed-loop voltage controller to drive the motor to a specified velocity.</p>
+     * <p>This control request uses a closed-loop voltage controller to drive the motor to a specified velocity.
      *
-     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withVelocityVoltageController(Per)}.</p>
+     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withVelocityVoltageController(Per)}.
      *
      * @param setPoint the target velocity in encoder velocity (rotations per second)
      */
@@ -144,11 +159,13 @@ public sealed interface ControlRequest {
     }
 
     /**
+     *
+     *
      * <h2>Represents a velocity control request with current control.</h2>
      *
-     * <p>This control request uses a closed-loop current controller to drive the motor to a specified velocity.</p>
+     * <p>This control request uses a closed-loop current controller to drive the motor to a specified velocity.
      *
-     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withVelocityCurrentController(Per)}.</p>
+     * <p>The controller needs to be pre-configured through {@link SimMotorConfigs#withVelocityCurrentController(Per)}.
      *
      * @param setPoint the target velocity in encoder velocity (rotations per second)
      */

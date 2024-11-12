@@ -70,13 +70,13 @@ public class SwerveModuleSimulation {
             WHEELS_COEFFICIENT_OF_FRICTION,
             WHEEL_RADIUS_METERS;
     private double driveMotorAppliedVolts = 0.0,
-            driveMotorSupplyCurrentAmps = 0.0,
+            driveMotorStatorCurrentAmps = 0.0,
             steerRelativeEncoderPositionRad = 0.0,
             steerRelativeEncoderSpeedRadPerSec = 0.0,
             steerAbsoluteEncoderSpeedRadPerSec = 0.0,
             driveEncoderUnGearedPositionRad = 0.0,
             driveEncoderUnGearedSpeedRadPerSec = 0.0;
-    private ControlRequest driveMotorRequest;
+    private ControlRequest driveMotorRequest = new ControlRequest.VoltageOut(Volts.zero());
     private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
 
     private final double steerRelativeEncoderOffSet = (Math.random() - 0.5) * 30;
@@ -127,7 +127,7 @@ public class SwerveModuleSimulation {
 
         this.driveMotorConfigs = new SimMotorConfigs(
                 DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage));
-        SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(driveMotorSupplyCurrentAmps));
+        SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(getDriveMotorSupplyCurrentAmps()));
         this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
                         steerMotor,
                         steerGearRatio,
@@ -216,7 +216,18 @@ public class SwerveModuleSimulation {
      * @return the current supplied to the drive motor, in amperes
      */
     public double getDriveMotorSupplyCurrentAmps() {
-        return driveMotorSupplyCurrentAmps;
+        return getDriveMotorStatorCurrentAmps() * driveMotorAppliedVolts / 12;
+    }
+
+    /**
+     *
+     *
+     * <h2>Obtains the Stator current the Drive Motor.</h2>
+     *
+     * @return the stator current of the drive motor, in amperes
+     */
+    public double getDriveMotorStatorCurrentAmps() {
+        return driveMotorStatorCurrentAmps;
     }
 
     /**
@@ -462,13 +473,10 @@ public class SwerveModuleSimulation {
      */
     private Vector2 getPropellingForce(
             double grippingForceNewtons, Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity) {
-        final double driveWheelTorque = getDriveWheelTorque(),
-                theoreticalMaxPropellingForceNewtons = driveWheelTorque / WHEEL_RADIUS_METERS;
-        final boolean skidding = Math.abs(theoreticalMaxPropellingForceNewtons) > grippingForceNewtons;
-        final double propellingForceNewtons;
-        if (skidding)
-            propellingForceNewtons = Math.copySign(grippingForceNewtons, theoreticalMaxPropellingForceNewtons);
-        else propellingForceNewtons = theoreticalMaxPropellingForceNewtons;
+        final double driveWheelTorque = getDriveWheelTorque();
+        double propellingForceNewtons = driveWheelTorque / WHEEL_RADIUS_METERS;
+        final boolean skidding = Math.abs(propellingForceNewtons) > grippingForceNewtons;
+        if (skidding) propellingForceNewtons = Math.copySign(grippingForceNewtons, propellingForceNewtons);
 
         final double floorVelocityProjectionOnWheelDirectionMPS = moduleCurrentGroundVelocity.getMagnitude()
                 * Math.cos(moduleCurrentGroundVelocity.getAngleBetween(new Vector2(moduleWorldFacing.getRadians())));
@@ -478,9 +486,18 @@ public class SwerveModuleSimulation {
                 floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
 
         // if the module is skidding
-        if (skidding)
-            this.driveEncoderUnGearedSpeedRadPerSec =
-                    0.5 * driveEncoderUnGearedSpeedRadPerSec + 0.5 * DRIVE_MOTOR.getSpeed(0, driveMotorAppliedVolts);
+        // TODO: this part has some problems
+        if (skidding) {
+            System.out.println("torque: " + grippingForceNewtons * WHEEL_RADIUS_METERS / DRIVE_GEAR_RATIO);
+            System.out.println("gripping force newtons:" + grippingForceNewtons);
+
+            this.driveEncoderUnGearedSpeedRadPerSec = DRIVE_MOTOR.getSpeed(
+                    propellingForceNewtons
+                            * WHEEL_RADIUS_METERS
+                            / DRIVE_GEAR_RATIO, // the amount of torque needed to overcome friction
+                    driveMotorAppliedVolts);
+            System.out.println("speed: " + Units.radiansPerSecondToRotationsPerMinute(DRIVE_MOTOR.getSpeed(3, 12)));
+        }
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
     }
@@ -498,8 +515,8 @@ public class SwerveModuleSimulation {
     private double getDriveWheelTorque() {
         driveMotorAppliedVolts = MapleMotorSim.constrainOutputVoltage(
                         new SimMotorState(
-                                Radians.of(driveEncoderUnGearedPositionRad),
-                                RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec)),
+                                Radians.of(getDriveWheelFinalPositionRad()),
+                                RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec())),
                         driveMotorRequest.updateSignal(
                                 driveMotorConfigs,
                                 Radians.of(driveEncoderUnGearedPositionRad),
@@ -507,13 +524,13 @@ public class SwerveModuleSimulation {
                         driveMotorConfigs)
                 .in(Volts);
 
-        /* calculate the actual supply current */
-        driveMotorSupplyCurrentAmps = DRIVE_MOTOR.getCurrent(
+        /* calculate the stator current */
+        driveMotorStatorCurrentAmps = DRIVE_MOTOR.getCurrent(
                 this.driveEncoderUnGearedSpeedRadPerSec,
                 MathUtil.applyDeadband(driveMotorAppliedVolts, DRIVE_FRICTION_VOLTAGE, 12));
 
         /* calculate the torque generated */
-        final double torqueOnRotter = DRIVE_MOTOR.getTorque(driveMotorSupplyCurrentAmps);
+        final double torqueOnRotter = DRIVE_MOTOR.getTorque(driveMotorStatorCurrentAmps);
         return torqueOnRotter * DRIVE_GEAR_RATIO;
     }
 

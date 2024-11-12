@@ -84,13 +84,8 @@ public class MapleMotorSim {
      *
      * <h2>(Utility Function) Constrains the Output Voltage of a Motor.</h2>
      *
-     * <p>Constrains the output voltage of a motor such that:
-     *
-     * <ul>
-     *   <li>The <strong>stator</strong> current does not exceed the limit configured in
-     *       {@link SimMotorConfigs#withStatorCurrentLimit(Current)}.
-     *   <li>The applied voltage does not exceed the battery voltage obtained from {@link SimulatedBattery}.
-     * </ul>
+     * <p>Constrains the output voltage of a motor such that the <strong>stator</strong> current does not exceed the
+     * limit configured in {@link SimMotorConfigs#withStatorCurrentLimit(Current)}.
      *
      * @param state the {@link SimMotorState} of the motor
      * @param requestedVoltage the requested voltage
@@ -126,7 +121,7 @@ public class MapleMotorSim {
         if (state.finalAngularPosition().lte(configs.reverseHardwareLimit) && limitedVoltage < 0) limitedVoltage = 0;
 
         // constrain the output voltage to the battery voltage
-        return Volts.of(SimulatedBattery.getInstance().constrainVoltage(limitedVoltage));
+        return Volts.of(limitedVoltage);
     }
 
     /**
@@ -220,9 +215,7 @@ public class MapleMotorSim {
      */
     public Current getSupplyCurrent() {
         // https://www.chiefdelphi.com/t/current-limiting-talonfx-values/374780/10
-        return getStatorCurrent()
-                .times(appliedVoltage.divide(
-                        Volts.of(SimulatedBattery.getInstance().getBatteryVoltage())));
+        return getStatorCurrent().times(appliedVoltage.divide(Volts.of(12)));
     }
 
     /**

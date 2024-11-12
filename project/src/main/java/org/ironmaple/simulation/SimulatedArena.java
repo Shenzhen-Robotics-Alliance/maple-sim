@@ -3,6 +3,7 @@ package org.ironmaple.simulation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.*;
@@ -31,7 +32,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * <p>The default instance can be obtained using the {@link #getInstance()} method.
  *
  * <p>Simulates all interactions within the arena field.
- *
+ *g
  * <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
  *
  * <ul>
@@ -51,9 +52,15 @@ public abstract class SimulatedArena {
      * <p>Multiple instances of {@link SimulatedArena} can exist elsewhere.
      *
      * @return the main simulation arena instance
+     * @throws IllegalStateException if the method is call when running on a real robot
      */
     public static SimulatedArena getInstance() {
-        if (instance == null) instance = new Arena2024Crescendo();
+        if (RobotBase.isReal())
+            throw new IllegalStateException("MapleSim should not be running on a real robot!");
+
+        if (instance == null)
+            instance = new Arena2024Crescendo();
+
         return instance;
     }
 

@@ -34,13 +34,12 @@ For an in-depth description of the simulations, please refer to [Simulation Deta
 
 Please follow the guides below for quick setup:
 
-1. [Hardware Abstractions](https://shenzhen-robotics-alliance.github.io/maple-sim/1_HARDWARE_ABSTRACTIONS.html)
-2. [Installing maple-sim](https://shenzhen-robotics-alliance.github.io/maple-sim/2_INSTALLING_MAPLE_SIM.html)
-3. [Using the Simulated Arena](https://shenzhen-robotics-alliance.github.io/maple-sim/3_USING_THE_SIMULATED_ARENA.html)
-4. [Simulating Swerve Drivetrain](https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_SWERVE_DRIVETRAIN.html)
-5. [Simulating Intake](https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_INTAKE.html)
-6. [Simulating Projectiles](https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_PROJECTILES.html)
-6. [Simulating Opponent Robots](https://shenzhen-robotics-alliance.github.io/maple-sim/7_SIMULATING_OPPONENT_ROBOTS.html)
+1. [Installing maple-sim](https://shenzhen-robotics-alliance.github.io/maple-sim/1_INSTALLING_MAPLE_SIM.html)
+2. [Using the Simulated Arena](https://shenzhen-robotics-alliance.github.io/maple-sim/2_USING_THE_SIMULATED_ARENA.html)
+3. [Simulating Swerve Drivetrain](https://shenzhen-robotics-alliance.github.io/maple-sim/3_SWERVE_SIMULATION_OVERVIEW.html)
+4. [Simulating Intake](https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html)
+5. [Simulating Projectiles](https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_PROJECTILES.html)
+6. [Simulating Opponent Robots](https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_OPPONENT_ROBOTS.html)
 
 # Java Docs
 > 🙏  Big thanks to [nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.

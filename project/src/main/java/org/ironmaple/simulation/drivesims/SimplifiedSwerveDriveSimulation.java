@@ -19,9 +19,11 @@ import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.ControlRequest;
+import org.ironmaple.simulation.motorsims.SimMotorConfigs;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -94,6 +96,9 @@ public class SimplifiedSwerveDriveSimulation {
 
         this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
+
+        this.withDefaultDriveFeedForward()
+                .withDrivePID(Volts.per(RotationsPerSecond).ofNative(6.0 / 80.0));
     }
 
     /**
@@ -285,7 +290,7 @@ public class SimplifiedSwerveDriveSimulation {
                     chassisSpeeds, SimulatedArena.getSimulationDt() * SimulatedArena.getSimulationSubTicksIn1Period());
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
         for (int i = 0; i < moduleSimulations.length; i++)
-            setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
+            setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i], i);
     }
 
     /**
@@ -438,18 +443,33 @@ public class SimplifiedSwerveDriveSimulation {
      * @return the optimized swerve module state after control execution
      */
     private SwerveModuleState optimizeAndRunModuleState(
-            SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
+            SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint, int moduleIndex) {
         setPoint.optimize(moduleSimulation.getSteerAbsoluteFacing());
         final double
                 cosProjectedSpeedMPS =
                         SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
-                driveMotorVelocitySetPointRadPerSec =
-                        cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
+                driveWheelVelocitySetPointRadPerSec = cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS;
 
         moduleSimulation.requestSteerControl(
                 new ControlRequest.PositionVoltage(Radians.of(setPoint.angle.getRadians())));
-        moduleSimulation.requestDriveControl(
-                new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveMotorVelocitySetPointRadPerSec)));
+        moduleSimulation.requestDriveControl(new ControlRequest.VoltageOut(Volts.of(cosProjectedSpeedMPS / 4.5 * 12)));
+        //        moduleSimulation.requestDriveControl(
+        //                new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveWheelVelocitySetPointRadPerSec)));
+
+        SmartDashboard.putNumber("Module" + moduleIndex + "/Steer Position SetPoint", setPoint.angle.getDegrees());
+        SmartDashboard.putNumber(
+                "Module" + moduleIndex + "/Steer Position Position",
+                Math.toDegrees(
+                        moduleSimulation.getDriveEncoderUnGearedPositionRad() / moduleSimulation.STEER_GEAR_RATIO));
+        SmartDashboard.putNumber(
+                "Module" + moduleIndex + "/Drive Applied Volts", moduleSimulation.getSteerMotorAppliedVolts());
+
+        SmartDashboard.putNumber("Module" + moduleIndex + "/Drive Requested Volts", cosProjectedSpeedMPS / 4.5 * 12);
+        SmartDashboard.putNumber("Module" + moduleIndex + "/Drive Speed SetPoint", driveWheelVelocitySetPointRadPerSec);
+        SmartDashboard.putNumber(
+                "Module" + moduleIndex + "/Drive Speed Measured", moduleSimulation.getDriveWheelFinalSpeedRadPerSec());
+        SmartDashboard.putNumber(
+                "Module" + moduleIndex + "/Steer Applied Volts", moduleSimulation.getDriveMotorAppliedVolts());
         return setPoint;
     }
 
@@ -606,6 +626,20 @@ public class SimplifiedSwerveDriveSimulation {
             moduleSimulations[i]
                     .getDriveMotorConfigs()
                     .withFeedForward(kS, kV, kA, Seconds.of(SimulatedArena.getSimulationDt()));
+        return this;
+    }
+
+    /**
+     *
+     *
+     * <h2>Configures the feedforward controller for the drive velocity control.</h2>
+     *
+     * <p>This method wraps around {@link SimMotorConfigs#withDefaultFeedForward()}.
+     *
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SimplifiedSwerveDriveSimulation withDefaultDriveFeedForward() {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withDefaultFeedForward();
         return this;
     }
 }

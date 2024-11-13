@@ -43,10 +43,12 @@ SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
 
 <details>
     <summary><strong>Option1: The easy way</strong></summary>
+    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html">Swerve Simulation: Simplified Swerve Simulation</a> >></p>
 </details>
 
 <details>
     <summary><strong>Option2: The recommended solution</strong></summary>
+    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.2_SWERVE_SIM_HARDWARE_ABSTRACTION.html">Swerve Simulation: Hardware Abstractions</a> >></p>
 </details>
 
 <div style="display:flex">

@@ -101,7 +101,7 @@ public class SwerveModuleSimulation {
      * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter, in volts
      * @param tireCoefficientOfFriction the <a
      *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
-     *     of friction</a> of the tires, normally around 1.5
+     *     of friction</a> of the tires, normally around 1.2
      * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using
      *     {@link Units#inchesToMeters(double)}.
      * @param steerRotationalInertia the rotational inertia of the steering mechanism
@@ -126,7 +126,9 @@ public class SwerveModuleSimulation {
         WHEEL_RADIUS_METERS = wheelsRadiusMeters;
 
         this.driveMotorConfigs = new SimMotorConfigs(
-                DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage));
+                        DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage))
+                .withDefaultFeedForward();
+
         SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(getDriveMotorSupplyCurrentAmps()));
         this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
                         steerMotor,
@@ -134,6 +136,7 @@ public class SwerveModuleSimulation {
                         KilogramSquareMeters.of(steerRotationalInertia),
                         Volts.of(steerFrictionVoltage))
                 .withControllerContinousInput()
+                .withDefaultFeedForward()
                 .withPositionVoltageController(
                         Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0)));
 
@@ -488,15 +491,16 @@ public class SwerveModuleSimulation {
         // if the module is skidding
         // TODO: this part has some problems
         if (skidding) {
-            System.out.println("torque: " + grippingForceNewtons * WHEEL_RADIUS_METERS / DRIVE_GEAR_RATIO);
+            System.out.println("torque: " + propellingForceNewtons * WHEEL_RADIUS_METERS / DRIVE_GEAR_RATIO);
             System.out.println("gripping force newtons:" + grippingForceNewtons);
 
-            this.driveEncoderUnGearedSpeedRadPerSec = DRIVE_MOTOR.getSpeed(
+            final double skiddingEquilibriumSpeedRadPerSec = DRIVE_MOTOR.getSpeed(
                     propellingForceNewtons
                             * WHEEL_RADIUS_METERS
                             / DRIVE_GEAR_RATIO, // the amount of torque needed to overcome friction
                     driveMotorAppliedVolts);
-            System.out.println("speed: " + Units.radiansPerSecondToRotationsPerMinute(DRIVE_MOTOR.getSpeed(3, 12)));
+            if (Math.abs(skiddingEquilibriumSpeedRadPerSec) < Math.abs(driveEncoderUnGearedSpeedRadPerSec))
+                this.driveEncoderUnGearedSpeedRadPerSec = skiddingEquilibriumSpeedRadPerSec;
         }
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());

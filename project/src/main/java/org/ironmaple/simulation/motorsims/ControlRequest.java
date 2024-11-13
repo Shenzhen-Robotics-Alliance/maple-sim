@@ -34,11 +34,11 @@ public sealed interface ControlRequest {
      * control signal (voltage) that should be applied to the motor.
      *
      * @param configs the motor's configuration
-     * @param encoderPosition the position of the motor, measured by the encoder
-     * @param encoderVelocity the velocity of the motor, measured by the encoder
+     * @param mechanismAngle the final position of the mechanism
+     * @param mechanismVelocity the final velocity of the mechanism
      * @return the updated control signal in volts
      */
-    Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity);
+    Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity);
 
     /**
      *
@@ -51,7 +51,7 @@ public sealed interface ControlRequest {
      */
     record VoltageOut(Voltage voltage) implements ControlRequest {
         @Override
-        public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
+        public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
             return voltage;
         }
     }
@@ -68,8 +68,8 @@ public sealed interface ControlRequest {
      */
     record CurrentOut(Current current) implements ControlRequest {
         @Override
-        public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
-            return configs.calculateVoltage(current, encoderVelocity);
+        public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
+            return configs.calculateVoltage(current, mechanismVelocity);
         }
     }
 
@@ -87,14 +87,14 @@ public sealed interface ControlRequest {
      */
     record PositionVoltage(Angle setPoint) implements ControlRequest {
         @Override
-        public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
+        public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
             // Compute the control signal (voltage) to achieve the target position
             Voltage voltage = Volts.of(
-                    configs.positionVoltageController.calculate(encoderPosition.in(Radians), setPoint.in(Radians)));
+                    configs.positionVoltageController.calculate(mechanismAngle.in(Radians), setPoint.in(Radians)));
 
             // Calculate the feedforward voltage to account for known motor characteristics
             Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(
-                    configs.calculateVelocity(configs.calculateCurrent(encoderVelocity, voltage), voltage)
+                    configs.calculateVelocity(configs.calculateCurrent(mechanismVelocity, voltage), voltage)
                             .in(RadiansPerSecond)));
 
             // Return the sum of feedback and feedforward voltages
@@ -116,16 +116,17 @@ public sealed interface ControlRequest {
      */
     record PositionCurrent(Angle setPoint) implements ControlRequest {
         @Override
-        public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
+        public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
             // Calculate the current required to achieve the target position
             Current current = Amps.of(
-                    configs.positionCurrentController.calculate(encoderPosition.in(Radians), setPoint.in(Radians)));
+                    configs.positionCurrentController.calculate(mechanismAngle.in(Radians), setPoint.in(Radians)));
 
             // Calculate the voltage required to apply the current
-            Voltage currentVoltage = configs.calculateVoltage(current, encoderVelocity);
+            Voltage currentVoltage = configs.calculateVoltage(current, mechanismVelocity);
 
             // Calculate the feedforward voltage based on the motor's velocity
-            Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(encoderVelocity.in(RadiansPerSecond)));
+            Voltage feedforwardVoltage =
+                    Volts.of(configs.feedforward.calculate(mechanismVelocity.in(RadiansPerSecond)));
 
             // Return the sum of the voltage and feedforward voltages
             return currentVoltage.plus(feedforwardVoltage);
@@ -145,10 +146,10 @@ public sealed interface ControlRequest {
      */
     record VelocityVoltage(AngularVelocity setPoint) implements ControlRequest {
         @Override
-        public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
+        public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
             // Calculate the feedback voltage to drive the motor to the target velocity
             Voltage feedbackVoltage = Volts.of(configs.velocityVoltageController.calculate(
-                    encoderVelocity.in(RadiansPerSecond), setPoint.in(RadiansPerSecond)));
+                    mechanismVelocity.in(RadiansPerSecond), setPoint.in(RadiansPerSecond)));
 
             // Calculate the feedforward voltage based on the target velocity
             Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(setPoint.in(RadiansPerSecond)));
@@ -171,13 +172,13 @@ public sealed interface ControlRequest {
      */
     record VelocityCurrent(AngularVelocity setPoint) implements ControlRequest {
         @Override
-        public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
+        public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
             // Calculate the current required to achieve the target velocity
             Current current = Amps.of(configs.velocityCurrentController.calculate(
-                    encoderVelocity.in(RadiansPerSecond), setPoint.in(RadiansPerSecond)));
+                    mechanismVelocity.in(RadiansPerSecond), setPoint.in(RadiansPerSecond)));
 
             // Calculate the voltage required to apply the current
-            Voltage currentVoltage = configs.calculateVoltage(current, encoderVelocity);
+            Voltage currentVoltage = configs.calculateVoltage(current, mechanismVelocity);
 
             // Calculate the feedforward voltage based on the target velocity
             Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(setPoint.in(RadiansPerSecond)));

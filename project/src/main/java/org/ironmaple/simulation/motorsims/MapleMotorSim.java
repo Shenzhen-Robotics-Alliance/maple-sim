@@ -53,12 +53,12 @@ public class MapleMotorSim {
      * <p>This is equivalent to{@link edu.wpi.first.wpilibj.simulation.DCMotorSim#update(double)}.
      */
     public void update(Time dt) {
-        final Angle motorAndEncoderPosition = state.finalAngularPosition().times(configs.gearing);
-        final AngularVelocity motorAndEncoderVelocity =
-                state.finalAngularVelocity().times(configs.gearing);
         this.appliedVoltage = constrainOutputVoltage(
-                state, request.updateSignal(configs, motorAndEncoderPosition, motorAndEncoderVelocity), configs);
-        this.statorCurrent = configs.calculateCurrent(motorAndEncoderVelocity, appliedVoltage);
+                state,
+                request.updateSignal(configs, state.finalAngularPosition(), state.finalAngularVelocity()),
+                configs);
+        this.statorCurrent =
+                configs.calculateCurrent(state.finalAngularVelocity().times(configs.gearing), appliedVoltage);
         this.state = this.state.step(
                 configs.calculateTorque(statorCurrent).times(configs.gearing), configs.friction, configs.loadMOI, dt);
 
@@ -127,7 +127,7 @@ public class MapleMotorSim {
     /**
      *
      *
-     * <h2>Obtains the <strong>final</strong> position of the rotter.</h2>
+     * <h2>Obtains the <strong>final</strong> position of the mechanism.</h2>
      *
      * <p>This is equivalent to {@link edu.wpi.first.wpilibj.simulation.DCMotorSim#getAngularPosition()}.
      *
@@ -151,7 +151,7 @@ public class MapleMotorSim {
     /**
      *
      *
-     * <h2>Obtains the <strong>final</strong> velocity of the rotter.</h2>
+     * <h2>Obtains the <strong>final</strong> velocity of the mechanism.</h2>
      *
      * <p>This is equivalent to {@link edu.wpi.first.wpilibj.simulation.DCMotorSim#getAngularVelocity()}.
      *

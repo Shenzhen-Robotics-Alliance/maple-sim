@@ -178,9 +178,10 @@ public final class SimMotorConfigs {
      * <p>The feed-forward calculator is configured with the following parameters:
      *
      * @param kS the static voltage offset for the motor.
-     * @param kV the velocity-dependent voltage coefficient for the motor, <b>in voltage / un-geared motor velocity</b>.
-     * @param kA the acceleration-dependent voltage coefficient for the motor, <b>in voltage / un-geared motor
-     *     acceleration</b>.
+     * @param kV the velocity-dependent voltage coefficient for the motor, <b>in voltage / velocity</b>.
+     * @param kA the acceleration-dependent voltage coefficient for the motor, <b>in voltage / acceleration</b>.
+     * @param gainsUnGeared if the gains above are specified in volts-or-current / <b>un-geared</b>
+     *     position-velocity-or-acceleration of the motor
      * @param dt the time step used for simulation.
      * @return the updated {@link SimMotorConfigs} object with the specified feed-forward calculator configured.
      */
@@ -188,11 +189,14 @@ public final class SimMotorConfigs {
             Voltage kS,
             Per<VoltageUnit, AngularVelocityUnit> kV,
             Per<VoltageUnit, AngularAccelerationUnit> kA,
+            boolean gainsUnGeared,
             Time dt) {
         var kVUnit = PerUnit.combine(Volts, RadiansPerSecond);
         var kAUnit = PerUnit.combine(Volts, RadiansPerSecondPerSecond);
+
+        final double gainMultiplier = gainsUnGeared ? gearing : 1;
         this.feedforward = new SimpleMotorFeedforward(
-                kS.in(Volts), kV.in(kVUnit) * gearing, kA.in(kAUnit) * gearing, dt.in(Seconds));
+                kS.in(Volts), kV.in(kVUnit) * gainMultiplier, kA.in(kAUnit) * gainMultiplier, dt.in(Seconds));
         return this;
     }
 
@@ -215,6 +219,7 @@ public final class SimMotorConfigs {
                 VoltsPerRadianPerSecond.ofNative(motor.nominalVoltageVolts / motor.freeSpeedRadPerSec),
                 VoltsPerRadianPerSecondSquared.ofNative(motor.nominalVoltageVolts
                         / (motor.stallTorqueNewtonMeters / this.loadMOI.in(KilogramSquareMeters))),
+                true,
                 Seconds.of(SimulatedArena.getSimulationDt()));
     }
 
@@ -234,15 +239,18 @@ public final class SimMotorConfigs {
      * </code></pre>
      *
      * @param kP the proportional gain, <b>in voltage / final rotter position</b>
-     * @param kD the derivative gain, <b>in voltage / final rotter velocity</b>
+     * @param kD the derivative gain, <b>in voltage / final rotter velocity</b>\
+     * @param gainsUnGeared if the gains above are specified in volts-or-current / <b>un-geared</b>
+     *     position-velocity-or-acceleration of the motor
      * @return this instance for method chaining
      */
     public SimMotorConfigs withPositionVoltageController(
-            Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
+            Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD, boolean gainsUnGeared) {
         var kPUnit = PerUnit.combine(Volts, Radians);
         var kDUnit = PerUnit.combine(Volts, RadiansPerSecond);
-        positionVoltageController.setP(kP.in(kPUnit));
-        positionVoltageController.setD(kD.in(kDUnit));
+        final double gainsMultiplier = gainsUnGeared ? gearing : 1;
+        positionVoltageController.setP(kP.in(kPUnit) * gainsMultiplier);
+        positionVoltageController.setD(kD.in(kDUnit) * gainsMultiplier);
         return this;
     }
 
@@ -261,11 +269,15 @@ public final class SimMotorConfigs {
      * </code></pre>
      *
      * @param kP the proportional gain, <b>in voltage / final rotter velocity</b>
+     * @param gainsUnGeared if the gains above are specified in volts-or-current / <b>un-geared</b>
+     *     position-velocity-or-acceleration of the motor
      * @return this instance for method chaining
      */
-    public SimMotorConfigs withVelocityVoltageController(Per<VoltageUnit, AngularVelocityUnit> kP) {
+    public SimMotorConfigs withVelocityVoltageController(
+            Per<VoltageUnit, AngularVelocityUnit> kP, boolean gainsUnGeared) {
         var kPUnit = PerUnit.combine(Volts, RadiansPerSecond);
-        velocityVoltageController.setP(kP.in(kPUnit));
+        final double gainsMultiplier = gainsUnGeared ? gearing : 1;
+        velocityVoltageController.setP(kP.in(kPUnit) * gainsMultiplier);
         return this;
     }
 
@@ -286,14 +298,17 @@ public final class SimMotorConfigs {
      *
      * @param kP the proportional gain, <b>in current / final rotter position</b>
      * @param kD the derivative gain, <b>in current / final rotter velocity</b>
+     * @param gainsUnGeared if the gains above are specified in volts-or-current / <b>un-geared</b>
+     *     position-velocity-or-acceleration of the motor
      * @return this instance for method chaining
      */
     public SimMotorConfigs withPositionCurrentController(
-            Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD) {
+            Per<CurrentUnit, AngleUnit> kP, Per<CurrentUnit, AngularVelocityUnit> kD, boolean gainsUnGeared) {
         var kPUnit = PerUnit.combine(Amps, Radians);
         var kDUnit = PerUnit.combine(Amps, RadiansPerSecond);
-        positionCurrentController.setP(kP.in(kPUnit));
-        positionCurrentController.setD(kD.in(kDUnit));
+        final double gainsMultiplier = gainsUnGeared ? gearing : 1;
+        positionCurrentController.setP(kP.in(kPUnit) * gainsMultiplier);
+        positionCurrentController.setD(kD.in(kDUnit) * gainsMultiplier);
         return this;
     }
 
@@ -312,11 +327,15 @@ public final class SimMotorConfigs {
      * </code></pre>
      *
      * @param kP the proportional gain, <b>in current / final rotter velocity</b>
+     * @param gainsUnGeared if the gains above are specified in volts-or-current / <b>un-geared</b>
+     *     position-velocity-or-acceleration of the motor
      * @return this instance for method chaining
      */
-    public SimMotorConfigs withVelocityCurrentController(Per<CurrentUnit, AngularVelocityUnit> kP) {
+    public SimMotorConfigs withVelocityCurrentController(
+            Per<CurrentUnit, AngularVelocityUnit> kP, boolean gainsUnGeared) {
         var kPUnit = PerUnit.combine(Amps, RadiansPerSecond);
-        velocityCurrentController.setP(kP.in(kPUnit));
+        final double gainsMultiplier = gainsUnGeared ? gearing : 1;
+        velocityCurrentController.setP(kP.in(kPUnit) * gainsMultiplier);
         return this;
     }
 
@@ -401,17 +420,22 @@ public final class SimMotorConfigs {
                         Volts.of(feedforward.getKs()),
                         VoltsPerRadianPerSecond.ofNative(feedforward.getKv()),
                         VoltsPerRadianPerSecondSquared.ofNative(feedforward.getKa()),
+                        false,
                         Seconds.of(feedforward.getDt()))
                 .withHardLimits(forwardHardwareLimit, reverseHardwareLimit)
                 .withStatorCurrentLimit(currentLimit)
                 .withPositionVoltageController(
                         Volts.per(Radians).ofNative(positionVoltageController.getP()),
-                        Volts.per(RadiansPerSecond).ofNative(positionVoltageController.getD()))
-                .withVelocityVoltageController(Volts.per(RadiansPerSecond).ofNative(velocityVoltageController.getP()))
+                        Volts.per(RadiansPerSecond).ofNative(positionVoltageController.getD()),
+                        false)
+                .withVelocityVoltageController(
+                        Volts.per(RadiansPerSecond).ofNative(velocityVoltageController.getP()), false)
                 .withPositionCurrentController(
                         Amps.per(Radians).ofNative(positionCurrentController.getP()),
-                        Amps.per(RadiansPerSecond).ofNative(positionCurrentController.getD()))
-                .withVelocityCurrentController(Amps.per(RadiansPerSecond).ofNative(velocityCurrentController.getP()));
+                        Amps.per(RadiansPerSecond).ofNative(positionCurrentController.getD()),
+                        false)
+                .withVelocityCurrentController(
+                        Amps.per(RadiansPerSecond).ofNative(velocityCurrentController.getP()), false);
 
         if (positionVoltageController.isContinuousInputEnabled()) cfg.withControllerContinousInput();
 

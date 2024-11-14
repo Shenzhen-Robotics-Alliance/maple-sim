@@ -97,7 +97,7 @@ public class SimplifiedSwerveDriveSimulation {
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
 
         this.withDefaultDriveFeedForward(Volts.zero())
-                .withDrivePID(Volts.per(RPM).ofNative(8.0 / 1000.0));
+                .withDriveVelocityVoltageKP(Volts.per(RPM).ofNative(8.0 / 6000.0), true);
     }
 
     /**
@@ -565,7 +565,7 @@ public class SimplifiedSwerveDriveSimulation {
      * <h2>Configures the PID controller for steer heading control.</h2>
      *
      * <p>This method wraps around
-     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionVoltageController(Per, Per)}
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionVoltageController(Per, Per, boolean)}
      *
      * @param kP the proportional gain
      * @param kD the derivative gain
@@ -573,7 +573,8 @@ public class SimplifiedSwerveDriveSimulation {
      */
     public SimplifiedSwerveDriveSimulation withSteerPID(
             Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
-        for (int i = 0; i < 4; i++) moduleSimulations[i].getSteerMotorConfigs().withPositionVoltageController(kP, kD);
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i].getSteerMotorConfigs().withPositionVoltageController(kP, kD, false);
         return this;
     }
 
@@ -583,13 +584,15 @@ public class SimplifiedSwerveDriveSimulation {
      * <h2>Configures the PID controllers for drive velocity control.</h2>
      *
      * <p>This method wraps around
-     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withVelocityVoltageController(Per)}.
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withVelocityVoltageController(Per, boolean)}.
      *
      * @param kP the proportional gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDrivePID(Per<VoltageUnit, AngularVelocityUnit> kP) {
-        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withVelocityVoltageController(kP);
+    public SimplifiedSwerveDriveSimulation withDriveVelocityVoltageKP(
+            Per<VoltageUnit, AngularVelocityUnit> kP, boolean gainsUnGeared) {
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i].getDriveMotorConfigs().withVelocityVoltageController(kP, gainsUnGeared);
         return this;
     }
 
@@ -599,16 +602,19 @@ public class SimplifiedSwerveDriveSimulation {
      * <h2>Configures the feedforward controller for the drive velocity control.</h2>
      *
      * <p>This method wraps around {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withFeedForward(Voltage,
-     * Per, Per, Time)}.
+     * Per, Per, boolean, Time)}.
      *
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
     public SimplifiedSwerveDriveSimulation withDriveFeedForward(
-            Voltage kS, Per<VoltageUnit, AngularVelocityUnit> kV, Per<VoltageUnit, AngularAccelerationUnit> kA) {
+            Voltage kS,
+            Per<VoltageUnit, AngularVelocityUnit> kV,
+            Per<VoltageUnit, AngularAccelerationUnit> kA,
+            boolean gainsUnGeared) {
         for (int i = 0; i < 4; i++)
             moduleSimulations[i]
                     .getDriveMotorConfigs()
-                    .withFeedForward(kS, kV, kA, Seconds.of(SimulatedArena.getSimulationDt()));
+                    .withFeedForward(kS, kV, kA, gainsUnGeared, Seconds.of(SimulatedArena.getSimulationDt()));
         return this;
     }
 

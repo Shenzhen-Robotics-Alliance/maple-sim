@@ -142,7 +142,7 @@ public class SwerveModuleSimulation {
                         Volts.of(steerFrictionVoltage))
                 .withControllerContinousInput()
                 .withPositionVoltageController(
-                        Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0)));
+                        Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0), false));
 
         this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)

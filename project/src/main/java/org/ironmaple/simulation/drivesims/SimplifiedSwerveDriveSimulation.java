@@ -97,8 +97,7 @@ public class SimplifiedSwerveDriveSimulation {
         this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
 
-        this.withDefaultDriveFeedForward()
-                .withDrivePID(Volts.per(RotationsPerSecond).ofNative(6.0 / 80.0));
+        this.withDefaultDriveFeedForward().withDrivePID(Volts.per(RPM).ofNative(8.0 / 1000.0));
     }
 
     /**
@@ -290,7 +289,7 @@ public class SimplifiedSwerveDriveSimulation {
                     chassisSpeeds, SimulatedArena.getSimulationDt() * SimulatedArena.getSimulationSubTicksIn1Period());
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
         for (int i = 0; i < moduleSimulations.length; i++)
-            setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i], i);
+            setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
     }
 
     /**
@@ -443,7 +442,7 @@ public class SimplifiedSwerveDriveSimulation {
      * @return the optimized swerve module state after control execution
      */
     private SwerveModuleState optimizeAndRunModuleState(
-            SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint, int moduleIndex) {
+            SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
         setPoint.optimize(moduleSimulation.getSteerAbsoluteFacing());
         final double
                 cosProjectedSpeedMPS =
@@ -452,24 +451,8 @@ public class SimplifiedSwerveDriveSimulation {
 
         moduleSimulation.requestSteerControl(
                 new ControlRequest.PositionVoltage(Radians.of(setPoint.angle.getRadians())));
-        moduleSimulation.requestDriveControl(new ControlRequest.VoltageOut(Volts.of(cosProjectedSpeedMPS / 4.5 * 12)));
-        //        moduleSimulation.requestDriveControl(
-        //                new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveWheelVelocitySetPointRadPerSec)));
-
-        SmartDashboard.putNumber("Module" + moduleIndex + "/Steer Position SetPoint", setPoint.angle.getDegrees());
-        SmartDashboard.putNumber(
-                "Module" + moduleIndex + "/Steer Position Position",
-                Math.toDegrees(
-                        moduleSimulation.getDriveEncoderUnGearedPositionRad() / moduleSimulation.STEER_GEAR_RATIO));
-        SmartDashboard.putNumber(
-                "Module" + moduleIndex + "/Drive Applied Volts", moduleSimulation.getSteerMotorAppliedVolts());
-
-        SmartDashboard.putNumber("Module" + moduleIndex + "/Drive Requested Volts", cosProjectedSpeedMPS / 4.5 * 12);
-        SmartDashboard.putNumber("Module" + moduleIndex + "/Drive Speed SetPoint", driveWheelVelocitySetPointRadPerSec);
-        SmartDashboard.putNumber(
-                "Module" + moduleIndex + "/Drive Speed Measured", moduleSimulation.getDriveWheelFinalSpeedRadPerSec());
-        SmartDashboard.putNumber(
-                "Module" + moduleIndex + "/Steer Applied Volts", moduleSimulation.getDriveMotorAppliedVolts());
+        moduleSimulation.requestDriveControl(
+                new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveWheelVelocitySetPointRadPerSec)));
         return setPoint;
     }
 

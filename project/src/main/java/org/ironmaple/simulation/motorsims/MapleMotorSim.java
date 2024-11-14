@@ -57,10 +57,8 @@ public class MapleMotorSim {
                 state,
                 request.updateSignal(configs, state.finalAngularPosition(), state.finalAngularVelocity()),
                 configs);
-        this.statorCurrent =
-                configs.calculateCurrent(state.finalAngularVelocity().times(configs.gearing), appliedVoltage);
-        this.state = this.state.step(
-                configs.calculateTorque(statorCurrent).times(configs.gearing), configs.friction, configs.loadMOI, dt);
+        this.statorCurrent = configs.calculateCurrent(state.finalAngularVelocity(), appliedVoltage);
+        this.state = this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
 
         if (state.finalAngularPosition().lte(configs.reverseHardwareLimit))
             state = new SimMotorState(configs.reverseHardwareLimit, RadiansPerSecond.zero());

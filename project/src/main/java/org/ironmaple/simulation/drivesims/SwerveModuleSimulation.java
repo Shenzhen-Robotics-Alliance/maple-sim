@@ -491,15 +491,13 @@ public class SwerveModuleSimulation {
         // if the module is skidding
         // TODO: this part has some problems
         if (skidding) {
-            System.out.println("torque: " + propellingForceNewtons * WHEEL_RADIUS_METERS / DRIVE_GEAR_RATIO);
-            System.out.println("gripping force newtons:" + grippingForceNewtons);
-
+            System.out.println("skidding!");
             final double skiddingEquilibriumSpeedRadPerSec = DRIVE_MOTOR.getSpeed(
                     propellingForceNewtons
                             * WHEEL_RADIUS_METERS
                             / DRIVE_GEAR_RATIO, // the amount of torque needed to overcome friction
                     driveMotorAppliedVolts);
-            if (Math.abs(skiddingEquilibriumSpeedRadPerSec) < Math.abs(driveEncoderUnGearedSpeedRadPerSec))
+            if (Math.abs(skiddingEquilibriumSpeedRadPerSec) > Math.abs(driveEncoderUnGearedSpeedRadPerSec))
                 this.driveEncoderUnGearedSpeedRadPerSec = skiddingEquilibriumSpeedRadPerSec;
         }
 
@@ -523,8 +521,8 @@ public class SwerveModuleSimulation {
                                 RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec())),
                         driveMotorRequest.updateSignal(
                                 driveMotorConfigs,
-                                Radians.of(driveEncoderUnGearedPositionRad),
-                                RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec)),
+                                Radians.of(getDriveWheelFinalPositionRad()),
+                                RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec())),
                         driveMotorConfigs)
                 .in(Volts);
 

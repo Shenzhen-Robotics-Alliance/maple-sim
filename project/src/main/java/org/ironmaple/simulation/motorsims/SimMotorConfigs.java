@@ -201,14 +201,17 @@ public final class SimMotorConfigs {
      *
      * <h2>Configures a default set of feed-forward gains.</h2>
      *
-     * <p>The feed-forward gains (`ks`, `kv`, and `ka`) are automatically calculated using the data from the
-     * {@link DCMotor} model.
+     * <p>The feed-forward gains (`kv`, and `ka`) are automatically calculated using the data from the {@link DCMotor}
+     * model.
      *
+     * <p>kV is specified manually for accuracy.
+     *
+     * @param kS the static voltage offset for the motor.
      * @return this instance for method chaining, with the default feed-forward gains configured.
      */
-    public SimMotorConfigs withDefaultFeedForward() {
+    public SimMotorConfigs withDefaultFeedForward(Voltage kS) {
         return this.withFeedForward(
-                this.calculateVoltage(calculateCurrent(friction), RadiansPerSecond.zero()),
+                kS,
                 VoltsPerRadianPerSecond.ofNative(motor.nominalVoltageVolts / motor.freeSpeedRadPerSec),
                 VoltsPerRadianPerSecondSquared.ofNative(motor.nominalVoltageVolts
                         / (motor.stallTorqueNewtonMeters / this.loadMOI.in(KilogramSquareMeters))),
@@ -329,8 +332,8 @@ public final class SimMotorConfigs {
      * @see PIDController#enableContinuousInput(double, double)
      */
     public SimMotorConfigs withControllerContinousInput() {
-        positionVoltageController.enableContinuousInput(0, 2 * Math.PI);
-        positionCurrentController.enableContinuousInput(0, 2 * Math.PI);
+        positionVoltageController.enableContinuousInput(-Math.PI, Math.PI);
+        positionCurrentController.enableContinuousInput(-Math.PI, Math.PI);
         return this;
     }
 

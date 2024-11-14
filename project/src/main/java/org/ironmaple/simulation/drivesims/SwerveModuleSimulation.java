@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -60,6 +61,8 @@ import org.ironmaple.simulation.motorsims.SimulatedBattery;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
+    private static int instances = 0;
+    public final int index;
     public final DCMotor DRIVE_MOTOR;
     public final SimMotorConfigs driveMotorConfigs;
     private final MapleMotorSim steerMotorSim;
@@ -117,6 +120,8 @@ public class SwerveModuleSimulation {
             double tireCoefficientOfFriction,
             double wheelsRadiusMeters,
             double steerRotationalInertia) {
+        this.index = instances++;
+
         DRIVE_MOTOR = driveMotor;
         DRIVE_CURRENT_LIMIT = driveCurrentLimit;
         DRIVE_GEAR_RATIO = driveGearRatio;
@@ -127,7 +132,7 @@ public class SwerveModuleSimulation {
 
         this.driveMotorConfigs = new SimMotorConfigs(
                         DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage))
-                .withDefaultFeedForward();
+                .withDefaultFeedForward(Volts.zero());
 
         SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(getDriveMotorSupplyCurrentAmps()));
         this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
@@ -136,7 +141,6 @@ public class SwerveModuleSimulation {
                         KilogramSquareMeters.of(steerRotationalInertia),
                         Volts.of(steerFrictionVoltage))
                 .withControllerContinousInput()
-                .withDefaultFeedForward()
                 .withPositionVoltageController(
                         Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0)));
 
@@ -451,6 +455,16 @@ public class SwerveModuleSimulation {
         this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);
         this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
 
+        if (steerMotorSim.getRequestedControl() instanceof ControlRequest.PositionVoltage positionVoltage)
+            SmartDashboard.putNumber(
+                    "Module " + index + " SetPoint", positionVoltage.setPoint().in(Degrees));
+        SmartDashboard.putNumber(
+                "Module " + index + " Steer Position Deg",
+                steerMotorSim.getAngularPosition().in(Degree));
+        SmartDashboard.putNumber(
+                "Module " + index + " Applied Volts",
+                steerMotorSim.getAppliedVoltage().in(Volts));
+
         /* cache sensor readings to queue for high-frequency odometry */
         this.cachedSteerAbsolutePositions.poll();
         this.cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
@@ -497,7 +511,8 @@ public class SwerveModuleSimulation {
                             * WHEEL_RADIUS_METERS
                             / DRIVE_GEAR_RATIO, // the amount of torque needed to overcome friction
                     driveMotorAppliedVolts);
-            if (Math.abs(skiddingEquilibriumSpeedRadPerSec) > Math.abs(driveEncoderUnGearedSpeedRadPerSec))
+            if (Math.abs(skiddingEquilibriumSpeedRadPerSec) > Math.abs(driveEncoderUnGearedSpeedRadPerSec)
+                    && Math.abs(driveMotorAppliedVolts) > 3)
                 this.driveEncoderUnGearedSpeedRadPerSec = skiddingEquilibriumSpeedRadPerSec;
         }
 

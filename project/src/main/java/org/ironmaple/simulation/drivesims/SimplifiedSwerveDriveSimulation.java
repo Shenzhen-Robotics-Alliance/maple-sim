@@ -19,7 +19,6 @@ import edu.wpi.first.units.measure.Per;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.ControlRequest;
@@ -97,7 +96,8 @@ public class SimplifiedSwerveDriveSimulation {
         this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
 
-        this.withDefaultDriveFeedForward().withDrivePID(Volts.per(RPM).ofNative(8.0 / 1000.0));
+        this.withDefaultDriveFeedForward(Volts.zero())
+                .withDrivePID(Volts.per(RPM).ofNative(8.0 / 1000.0));
     }
 
     /**
@@ -617,12 +617,12 @@ public class SimplifiedSwerveDriveSimulation {
      *
      * <h2>Configures the feedforward controller for the drive velocity control.</h2>
      *
-     * <p>This method wraps around {@link SimMotorConfigs#withDefaultFeedForward()}.
+     * <p>This method wraps around {@link SimMotorConfigs#withDefaultFeedForward(Voltage)} )}.
      *
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDefaultDriveFeedForward() {
-        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withDefaultFeedForward();
+    public SimplifiedSwerveDriveSimulation withDefaultDriveFeedForward(Voltage kV) {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withDefaultFeedForward(kV);
         return this;
     }
 }

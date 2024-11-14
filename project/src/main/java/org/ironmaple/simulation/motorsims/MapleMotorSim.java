@@ -216,6 +216,10 @@ public class MapleMotorSim {
         return getStatorCurrent().times(appliedVoltage.divide(Volts.of(12)));
     }
 
+    public ControlRequest getRequestedControl() {
+        return request;
+    }
+
     /**
      *
      *

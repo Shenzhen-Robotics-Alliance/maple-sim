@@ -41,15 +41,17 @@ SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
 ```
 
 ## Manipulating the Simulated Swerve
-
-<details>
-    <summary><strong>Option1: The easy way</strong></summary>
-</details>
-
-<details>
-    <summary><strong>Option2: The recommended solution</strong></summary>
-</details>
+<strong>
+<a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html">
+    Option 1: SimplifiedSwerveSimulation(the easy way)
+</a> 
+<br />
+<a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.2_SWERVE_SIM_HARDWARE_ABSTRACTION.html">
+    Option 2: Hardware Abstraction(AdvantageKit)
+</a>
+</strong>
 
 <div style="display:flex">
     <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/2_USING_THE_SIMULATED_ARENA.html">Using the Simulated Arena Object</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html">Simulating Intakes</a> >></h3>
 </div>

@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -47,13 +48,13 @@ import org.ironmaple.simulation.motorsims.requests.ControlRequest;
  * <h3>3. Simulating Odometry</h3>
  *
  * <ul>
- *   <li>Retrieve the encoder readings from {@link #getDriveEncoderUnGearedPositionRad()}} and
+ *   <li>Retrieve the encoder readings from {@link #getDriveEncoderUnGearedPosition()}} and
  *       {@link #getSteerAbsoluteFacing()}.
  *   <li>Use {@link SwerveDriveOdometry} to estimate the pose of your robot.
  *   <li><a
  *       href="https://v6.docs.ctr-electronics.com/en/latest/docs/application-notes/update-frequency-impact.html">250Hz
  *       Odometry</a> is supported. You can retrive cached encoder readings from every sub-tick through
- *       {@link #getCachedDriveEncoderUnGearedPositionsRad()} and {@link #getCachedSteerAbsolutePositions()}.
+ *       {@link #getCachedDriveEncoderUnGearedPositions()} and {@link #getCachedSteerAbsolutePositions()}.
  * </ul>
  *
  * <p>An example of how to simulate odometry using this class is the <a
@@ -197,10 +198,10 @@ public class SwerveModuleSimulation {
      * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
      * the system.
      *
-     * @return the actual output voltage of the drive motor, in volts
+     * @return the actual output voltage of the drive motor
      */
-    public double getDriveMotorAppliedVolts() {
-        return driveMotorAppliedVolts;
+    public Voltage getDriveMotorAppliedVoltage() {
+        return Volts.of(driveMotorAppliedVolts);
     }
 
     /**
@@ -214,10 +215,10 @@ public class SwerveModuleSimulation {
      * <p>If the motor's supply current is too high, the motor will automatically reduce its output voltage to protect
      * the system.
      *
-     * @return the actual output voltage of the steering motor, in volts
+     * @return the actual output voltage of the steering motor
      */
-    public double getSteerMotorAppliedVolts() {
-        return steerMotorSim.getAppliedVoltage().in(Volts);
+    public Voltage getSteerMotorAppliedVoltage() {
+        return steerMotorSim.getAppliedVoltage();
     }
 
     /**
@@ -227,10 +228,10 @@ public class SwerveModuleSimulation {
      *
      * <h3>Think of it as the getSupplyCurrent() of your physical drive motor.</h3>
      *
-     * @return the current supplied to the drive motor, in amperes
+     * @return the current supplied to the drive motor
      */
-    public double getDriveMotorSupplyCurrentAmps() {
-        return driveMotorSupplyCurrentAmps;
+    public Current getDriveMotorSupplyCurrent() {
+        return Amps.of(driveMotorSupplyCurrentAmps);
     }
 
     /**
@@ -242,10 +243,10 @@ public class SwerveModuleSimulation {
      *
      * <p>This method wraps around {@link MapleMotorSim#getSupplyCurrent()}.
      *
-     * @return the current supplied to the steer motor, in amperes
+     * @return the current supplied to the steer motor
      */
-    public double getSteerMotorSupplyCurrentAmps() {
-        return steerMotorSim.getSupplyCurrent().in(Amps);
+    public Current getSteerMotorSupplyCurrent() {
+        return steerMotorSim.getSupplyCurrent();
     }
 
     /**
@@ -260,12 +261,12 @@ public class SwerveModuleSimulation {
      * <p>This value represents the un-geared position of the encoder, i.e., the amount of radians the drive motor's
      * encoder has rotated.
      *
-     * <p>To get the final wheel rotations, use {@link #getDriveWheelFinalPositionRad()}.
+     * <p>To get the final wheel rotations, use {@link #getDriveWheelFinalPosition()}.
      *
-     * @return the position of the drive motor's encoder, in radians (un-geared)
+     * @return the position of the drive motor's encoder (un-geared)
      */
-    public double getDriveEncoderUnGearedPositionRad() {
-        return driveEncoderUnGearedPositionRad;
+    public Angle getDriveEncoderUnGearedPosition() {
+        return Radians.of(driveEncoderUnGearedPositionRad);
     }
 
     /**
@@ -277,12 +278,12 @@ public class SwerveModuleSimulation {
      * drive encoder in terms of wheel rotations.
      *
      * <p>The value is calculated by dividing the un-geared encoder position (obtained from
-     * {@link #getDriveEncoderUnGearedPositionRad()}) by the drive gear ratio.
+     * {@link #getDriveEncoderUnGearedPosition()}) by the drive gear ratio.
      *
-     * @return the final position of the drive encoder (wheel rotations), in radians
+     * @return the final position of the drive encoder (wheel rotations)
      */
-    public double getDriveWheelFinalPositionRad() {
-        return getDriveEncoderUnGearedPositionRad() / DRIVE_GEAR_RATIO;
+    public Angle getDriveWheelFinalPosition() {
+        return getDriveEncoderUnGearedPosition().divide(DRIVE_GEAR_RATIO);
     }
 
     /**
@@ -295,10 +296,10 @@ public class SwerveModuleSimulation {
      * <p>This method returns the current speed of the drive encoder in radians per second, without accounting for the
      * drive gear ratio.
      *
-     * @return the un-geared speed of the drive encoder, in radians per second
+     * @return the un-geared speed of the drive encoder
      */
-    public double getDriveEncoderUnGearedSpeedRadPerSec() {
-        return driveEncoderUnGearedSpeedRadPerSec;
+    public AngularVelocity getDriveEncoderUnGearedSpeed() {
+        return RadiansPerSecond.of(driveEncoderUnGearedSpeedRadPerSec);
     }
 
     /**
@@ -306,10 +307,10 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Final Speed of the Wheel, in Radians per Second.</h2>
      *
-     * @return the final speed of the drive wheel, in radians per second
+     * @return the final speed of the drive wheel
      */
-    public double getDriveWheelFinalSpeedRadPerSec() {
-        return getDriveEncoderUnGearedSpeedRadPerSec() / DRIVE_GEAR_RATIO;
+    public AngularVelocity getDriveWheelFinalSpeed() {
+        return getDriveEncoderUnGearedSpeed().divide(DRIVE_GEAR_RATIO);
     }
 
     /**
@@ -319,10 +320,10 @@ public class SwerveModuleSimulation {
      *
      * <h3>Think of it as the <code>getPosition()</code> of your physical steer motor.</h3>
      *
-     * @return the relative encoder position of the steer motor, in radians
+     * @return the relative encoder position of the steer motor
      */
-    public double getSteerRelativeEncoderPositionRad() {
-        return steerRelativeEncoderPositionRad;
+    public Angle getSteerRelativeEncoderPosition() {
+        return Radians.of(steerRelativeEncoderPositionRad);
     }
 
     /**
@@ -332,10 +333,10 @@ public class SwerveModuleSimulation {
      *
      * <h3>Think of it as the <code>getVelocity()</code> of your physical steer motor.</h3>
      *
-     * @return the speed of the steer relative encoder, in radians per second (geared)
+     * @return the speed of the steer relative encoder (geared)
      */
-    public double getSteerRelativeEncoderSpeedRadPerSec() {
-        return steerRelativeEncoderSpeedRadPerSec;
+    public AngularVelocity getSteerRelativeEncoderSpeed() {
+        return RadiansPerSecond.of(steerRelativeEncoderSpeedRadPerSec);
     }
 
     /**
@@ -358,10 +359,10 @@ public class SwerveModuleSimulation {
      *
      * <h3>Think of it as the <code>getVelocity()</code> of your CanCoder.</h3>
      *
-     * @return the absolute angular velocity of the steer mechanism, in radians per second
+     * @return the absolute angular velocity of the steer mechanism
      */
-    public double getSteerAbsoluteEncoderSpeedRadPerSec() {
-        return steerAbsoluteEncoderSpeedRadPerSec;
+    public AngularVelocity getSteerAbsoluteEncoderSpeed() {
+        return RadiansPerSecond.of(steerAbsoluteEncoderSpeedRadPerSec);
     }
 
     /**
@@ -369,7 +370,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Drive Encoder's Un-Geared Position.</h2>
      *
-     * <p>The values of {@link #getDriveEncoderUnGearedPositionRad()} are cached at each sub-tick and can be retrieved
+     * <p>The values of {@link #getDriveEncoderUnGearedPosition()} are cached at each sub-tick and can be retrieved
      * using this method.
      *
      * @return an array of cached drive encoder un-geared positions, in radians
@@ -385,7 +386,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Drive Encoder's Final Position (Wheel Rotations).</h2>
      *
-     * <p>The values of {@link #getDriveEncoderUnGearedPositionRad()} are cached at each sub-tick and are divided by the
+     * <p>The values of {@link #getDriveEncoderUnGearedPosition()} are cached at each sub-tick and are divided by the
      * gear ratio to obtain the final wheel rotations.
      *
      * @return an array of cached drive encoder final positions (wheel rotations), in radians
@@ -401,7 +402,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Steer Relative Encoder's Position.</h2>
      *
-     * <p>The values of {@link #getSteerRelativeEncoderPositionRad()} are cached at each sub-tick and can be retrieved
+     * <p>The values of {@link #getSteerRelativeEncoderPosition()} are cached at each sub-tick and can be retrieved
      * using this method.
      *
      * @return an array of cached steer relative encoder positions, in radians
@@ -565,7 +566,8 @@ public class SwerveModuleSimulation {
 
     /** @return the current module state of this simulation module */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(getDriveWheelFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS, steerAbsoluteFacing);
+        return new SwerveModuleState(
+            MetersPerSecond.of(getDriveWheelFinalSpeed().in(RadiansPerSecond) * (WHEEL_RADIUS_METERS)), steerAbsoluteFacing);
     }
 
     /**

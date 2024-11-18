@@ -14,7 +14,7 @@ public record VelocityCurrent(AngularVelocity setPoint) implements ControlReques
         Current current = Amps.of(configs.velocityCurrentController.calculate(
                 encoderVelocity.in(RadiansPerSecond), setPoint.in(RadiansPerSecond)));
         Voltage currentVoltage = configs.calculateVoltage(current, encoderVelocity);
-        Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(setPoint.in(RadiansPerSecond)));
+        Voltage feedforwardVoltage = configs.feedforward.calculate(setPoint);
         return currentVoltage.plus(feedforwardVoltage);
     }
 }

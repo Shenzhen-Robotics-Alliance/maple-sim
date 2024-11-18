@@ -12,7 +12,7 @@ public record VelocityVoltage(AngularVelocity setPoint) implements ControlReques
     public Voltage updateSignal(SimMotorConfigs configs, Angle encoderPosition, AngularVelocity encoderVelocity) {
         Voltage feedbackVoltage = Volts.of(configs.velocityVoltageController.calculate(
                 encoderVelocity.in(RadiansPerSecond), setPoint.in(RadiansPerSecond)));
-        Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(setPoint.in(RadiansPerSecond)));
+        Voltage feedforwardVoltage = configs.feedforward.calculate(setPoint);
         return feedbackVoltage.plus(feedforwardVoltage.copy());
     }
 }

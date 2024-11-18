@@ -14,7 +14,7 @@ public record PositionCurrent(Angle setPoint) implements ControlRequest {
         Current current =
                 Amps.of(configs.positionCurrentController.calculate(encoderPosition.in(Radians), setPoint.in(Radians)));
         Voltage currentVoltage = configs.calculateVoltage(current, encoderVelocity);
-        Voltage feedforwardVoltage = Volts.of(configs.feedforward.calculate(encoderVelocity.in(RadiansPerSecond)));
+        Voltage feedforwardVoltage = configs.feedforward.calculate(encoderVelocity);
         return currentVoltage.plus(feedforwardVoltage);
     }
 }

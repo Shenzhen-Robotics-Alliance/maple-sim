@@ -8,8 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.*;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -46,13 +45,13 @@ import org.ironmaple.simulation.motorsims.SimulatedBattery;
  * <h3>3. Simulating Odometry</h3>
  *
  * <ul>
- *   <li>Retrieve the encoder readings from {@link #getDriveEncoderUnGearedPositionRad()}} and
+ *   <li>Retrieve the encoder readings from {@link #getDriveEncoderUnGearedPosition()}} and
  *       {@link #getSteerAbsoluteFacing()}.
  *   <li>Use {@link SwerveDriveOdometry} to estimate the pose of your robot.
  *   <li><a
  *       href="https://v6.docs.ctr-electronics.com/en/latest/docs/application-notes/update-frequency-impact.html">250Hz
  *       Odometry</a> is supported. You can retrive cached encoder readings from every sub-tick through
- *       {@link #getCachedDriveEncoderUnGearedPositionsRad()} and {@link #getCachedSteerAbsolutePositions()}.
+ *       {@link #getCachedDriveEncoderUnGearedPositions()} and {@link #getCachedSteerAbsolutePositions()}.
  * </ul>
  *
  * <p>An example of how to simulate odometry using this class is the <a
@@ -60,102 +59,87 @@ import org.ironmaple.simulation.motorsims.SimulatedBattery;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-    private static int instances = 0;
-    public final int index;
-    public final DCMotor DRIVE_MOTOR;
     public final SimMotorConfigs driveMotorConfigs;
+    public final double DRIVE_GEAR_RATIO, STEER_GEAR_RATIO, WHEELS_COEFFICIENT_OF_FRICTION;
+    public final Current DRIVE_CURRENT_LIMIT;
+    public final Voltage DRIVE_FRICTION_VOLTAGE;
+    public final Distance WHEEL_RADIUS;
+
     private final MapleMotorSim steerMotorSim;
-    public final double DRIVE_CURRENT_LIMIT,
-            DRIVE_GEAR_RATIO,
-            STEER_GEAR_RATIO,
-            DRIVE_FRICTION_VOLTAGE,
-            WHEELS_COEFFICIENT_OF_FRICTION,
-            WHEEL_RADIUS_METERS;
-    private double driveMotorAppliedVolts = 0.0,
-            driveMotorStatorCurrentAmps = 0.0,
-            steerRelativeEncoderPositionRad = 0.0,
-            steerRelativeEncoderSpeedRadPerSec = 0.0,
-            steerAbsoluteEncoderSpeedRadPerSec = 0.0,
-            driveEncoderUnGearedPositionRad = 0.0,
-            driveEncoderUnGearedSpeedRadPerSec = 0.0;
+
+    private Voltage driveMotorAppliedVoltage = Volts.zero();
+    private Current driveMotorStatorCurrent = Amps.zero();
+    private Angle driveWheelFinalPosition = Radians.zero();
+    private AngularVelocity steerVelocity = RadiansPerSecond.zero(), driveWheelFinalSpeed = RadiansPerSecond.zero();
+
     private ControlRequest driveMotorRequest = new ControlRequest.VoltageOut(Volts.zero());
+
     private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
-
-    private final double steerRelativeEncoderOffSet = (Math.random() - 0.5) * 30;
-
-    private final Queue<Double> cachedSteerRelativeEncoderPositionsRad, cachedDriveEncoderUnGearedPositionsRad;
-    private final Queue<Rotation2d> cachedSteerAbsolutePositions;
+    private final Angle steerRelativeEncoderOffSet = Radians.of((Math.random() - 0.5) * 30);
+    private final Queue<Angle> driveWheelFinalPositionCache;
+    private final Queue<Rotation2d> steerAbsolutePositionCache;
 
     /**
      *
      *
      * <h2>Constructs a Swerve Module Simulation.</h2>
      *
-     * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(double, int)} to use custom timings, you must
+     * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(Time, int)} to use custom timings, you must
      * call the method before constructing any swerve module simulations using this constructor.
      *
      * @param driveMotor the model of the driving motor
      * @param steerMotor the model of the steering motor
-     * @param driveCurrentLimit the current limit for the driving motor, in amperes
      * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
      * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
-     * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving rotter, in volts
-     * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter, in volts
+     * @param driveCurrentLimit the stator current limit for the driving motor
+     * @param steerCurrentLimit the stator current limit for the steering motor
+     * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving rotter
+     * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter
+     * @param wheelRadius the radius of the wheels.
+     * @param steerRotationalInertia the rotational inertia of the entire steering mechanism
      * @param tireCoefficientOfFriction the <a
      *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
-     *     of friction</a> of the tires, normally around 1.2
-     * @param wheelsRadiusMeters the radius of the wheels, in meters. Calculate it using
-     *     {@link Units#inchesToMeters(double)}.
-     * @param steerRotationalInertia the rotational inertia of the steering mechanism
+     *     of friction</a> of the tires, normally around 1.2 {@link Units#inchesToMeters(double)}.
      */
     public SwerveModuleSimulation(
             DCMotor driveMotor,
             DCMotor steerMotor,
-            double driveCurrentLimit,
             double driveGearRatio,
             double steerGearRatio,
-            double driveFrictionVoltage,
-            double steerFrictionVoltage,
-            double tireCoefficientOfFriction,
-            double wheelsRadiusMeters,
-            double steerRotationalInertia) {
-        this.index = instances++;
+            Current driveCurrentLimit,
+            Current steerCurrentLimit,
+            Voltage driveFrictionVoltage,
+            Voltage steerFrictionVoltage,
+            Distance wheelRadius,
+            MomentOfInertia steerRotationalInertia,
+            double tireCoefficientOfFriction) {
 
-        DRIVE_MOTOR = driveMotor;
         DRIVE_CURRENT_LIMIT = driveCurrentLimit;
         DRIVE_GEAR_RATIO = driveGearRatio;
         STEER_GEAR_RATIO = steerGearRatio;
         DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
         WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
-        WHEEL_RADIUS_METERS = wheelsRadiusMeters;
+        WHEEL_RADIUS = wheelRadius;
 
         this.driveMotorConfigs = new SimMotorConfigs(
-                        DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage))
-                .withStatorCurrentLimit(Amps.of(DRIVE_CURRENT_LIMIT))
+                        driveMotor, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), driveFrictionVoltage)
+                .withStatorCurrentLimit(DRIVE_CURRENT_LIMIT)
                 .withDefaultFeedForward(Volts.zero());
 
-        SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(getDriveMotorSupplyCurrentAmps()));
-        this.steerMotorSim = new MapleMotorSim(new SimMotorConfigs(
-                        steerMotor,
-                        steerGearRatio,
-                        KilogramSquareMeters.of(steerRotationalInertia),
-                        Volts.of(steerFrictionVoltage))
-                .withStatorCurrentLimit(Amps.of(20))
-                .withControllerContinousInput()
-                .withPositionVoltageController(
-                        Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0), false));
+        SimulatedBattery.getInstance().addElectricalAppliances(this::getDriveMotorSupplyCurrent);
+        this.steerMotorSim = new MapleMotorSim(
+                new SimMotorConfigs(steerMotor, steerGearRatio, steerRotationalInertia, steerFrictionVoltage)
+                        .withStatorCurrentLimit(steerCurrentLimit)
+                        .withControllerContinousInput()
+                        .withPositionVoltageController(
+                                Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0), false));
 
-        this.cachedDriveEncoderUnGearedPositionsRad = new ConcurrentLinkedQueue<>();
+        this.driveWheelFinalPositionCache = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
-            cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
-        this.cachedSteerRelativeEncoderPositionsRad = new ConcurrentLinkedQueue<>();
+            driveWheelFinalPositionCache.offer(driveWheelFinalPosition);
+        this.steerAbsolutePositionCache = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
-            cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
-        this.cachedSteerAbsolutePositions = new ConcurrentLinkedQueue<>();
-        for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
-            cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
-
-        this.steerRelativeEncoderPositionRad = steerAbsoluteFacing.getRadians() + steerRelativeEncoderOffSet;
+            steerAbsolutePositionCache.offer(steerAbsoluteFacing);
     }
 
     public SimMotorConfigs getDriveMotorConfigs() {
@@ -198,10 +182,10 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Actual Output Voltage of the Drive Motor.</h2>
      *
-     * @return the actual output voltage of the drive motor, in volts
+     * @return the actual output voltage of the drive motor
      */
-    public double getDriveMotorAppliedVolts() {
-        return driveMotorAppliedVolts;
+    public Voltage getDriveMotorAppliedVoltage() {
+        return driveMotorAppliedVoltage;
     }
 
     /**
@@ -209,11 +193,11 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Actual Output Voltage of the Steering Motor.</h2>
      *
-     * @return the actual output voltage of the steering motor, in volts
+     * @return the actual output voltage of the steering motor
      * @see MapleMotorSim#getAppliedVoltage()
      */
-    public double getSteerMotorAppliedVolts() {
-        return steerMotorSim.getAppliedVoltage().in(Volts);
+    public Voltage getSteerMotorAppliedVoltage() {
+        return steerMotorSim.getAppliedVoltage();
     }
 
     /**
@@ -221,10 +205,12 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Amount of Current Supplied to the Drive Motor.</h2>
      *
-     * @return the current supplied to the drive motor, in amperes
+     * @return the current supplied to the drive motor
      */
-    public double getDriveMotorSupplyCurrentAmps() {
-        return getDriveMotorStatorCurrentAmps() * driveMotorAppliedVolts / 12;
+    public Current getDriveMotorSupplyCurrent() {
+        return getDriveMotorStatorCurrent()
+                .times(driveMotorAppliedVoltage.divide(
+                        SimulatedBattery.getInstance().getBatteryVoltage()));
     }
 
     /**
@@ -232,10 +218,10 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Stator current the Drive Motor.</h2>
      *
-     * @return the stator current of the drive motor, in amperes
+     * @return the stator current of the drive motor
      */
-    public double getDriveMotorStatorCurrentAmps() {
-        return driveMotorStatorCurrentAmps;
+    public Current getDriveMotorStatorCurrent() {
+        return driveMotorStatorCurrent;
     }
 
     /**
@@ -243,11 +229,11 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Amount of Current Supplied to the Steer Motor.</h2>
      *
-     * @return the current supplied to the steer motor, in amperes
+     * @return the current supplied to the steer motor
      * @see MapleMotorSim#getSupplyCurrent()
      */
-    public double getSteerMotorSupplyCurrentAmps() {
-        return steerMotorSim.getSupplyCurrent().in(Amps);
+    public Current getSteerMotorSupplyCurrent() {
+        return steerMotorSim.getSupplyCurrent();
     }
 
     /**
@@ -255,11 +241,11 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Stator current the Steer Motor.</h2>
      *
-     * @return the stator current of the drive motor, in amperes
+     * @return the stator current of the drive motor
      * @see MapleMotorSim#getSupplyCurrent()
      */
-    public double getSteerMotorStatorCurrentAmps() {
-        return steerMotorSim.getStatorCurrent().in(Amps);
+    public Current getSteerMotorStatorCurrent() {
+        return steerMotorSim.getStatorCurrent();
     }
 
     /**
@@ -270,69 +256,69 @@ public class SwerveModuleSimulation {
      * <p>This value represents the un-geared position of the encoder, i.e., the amount of radians the drive motor's
      * encoder has rotated.
      *
-     * @return the position of the drive motor's encoder, in radians (un-geared)
+     * @return the position of the drive motor's encoder (un-geared)
      */
-    public double getDriveEncoderUnGearedPositionRad() {
-        return driveEncoderUnGearedPositionRad;
+    public Angle getDriveEncoderUnGearedPosition() {
+        return getDriveWheelFinalPosition().times(DRIVE_GEAR_RATIO);
     }
 
     /**
      *
      *
-     * <h2>Obtains the Final Position of the Drive Encoder (Wheel Rotations).</h2>
+     * <h2>Obtains the Final Position of the Wheel.</h2>
      *
      * <p>This method provides the final position of the drive encoder in terms of wheel angle.
      *
-     * @return the final position of the drive encoder (wheel rotations), in radians
+     * @return the final position of the drive encoder (wheel rotations)
      */
-    public double getDriveWheelFinalPositionRad() {
-        return getDriveEncoderUnGearedPositionRad() / DRIVE_GEAR_RATIO;
+    public Angle getDriveWheelFinalPosition() {
+        return driveWheelFinalPosition;
     }
 
     /**
      *
      *
-     * <h2>Obtains the Speed of the Drive Encoder (Un-Geared), in Radians per Second.</h2>
+     * <h2>Obtains the Speed of the Drive Encoder.</h2>
      *
-     * @return the un-geared speed of the drive encoder, in radians per second
+     * @return the un-geared speed of the drive encoder
      */
-    public double getDriveEncoderUnGearedSpeedRadPerSec() {
-        return driveEncoderUnGearedSpeedRadPerSec;
+    public AngularVelocity getDriveEncoderUnGearedSpeed() {
+        return getDriveWheelFinalSpeed().times(DRIVE_GEAR_RATIO);
     }
 
     /**
      *
      *
-     * <h2>Obtains the Final Speed of the Wheel, in Radians per Second.</h2>
+     * <h2>Obtains the Final Speed of the Wheel.</h2>
      *
-     * @return the final speed of the drive wheel, in radians per second
+     * @return the final speed of the drive wheel
      */
-    public double getDriveWheelFinalSpeedRadPerSec() {
-        return getDriveEncoderUnGearedSpeedRadPerSec() / DRIVE_GEAR_RATIO;
+    public AngularVelocity getDriveWheelFinalSpeed() {
+        return driveWheelFinalSpeed;
     }
 
     /**
      *
      *
-     * <h2>Obtains the Relative Position of the Steer Encoder, in Radians.</h2>
+     * <h2>Obtains the Relative Position of the Steer Encoder.</h2>
      *
-     * @return the relative encoder position of the steer motor, in radians
+     * @return the relative encoder position of the steer motor
      * @see MapleMotorSim#getEncoderPosition()
      */
-    public double getSteerRelativeEncoderPositionRad() {
-        return steerRelativeEncoderPositionRad;
+    public Angle getSteerRelativeEncoderPosition() {
+        return getSteerAbsoluteFacing().getMeasure().times(STEER_GEAR_RATIO).plus(steerRelativeEncoderOffSet);
     }
 
     /**
      *
      *
-     * <h2>Obtains the Speed of the Steer Relative Encoder, in Radians per Second (Geared).</h2>
+     * <h2>Obtains the Speed of the Steer Relative Encoder (Geared).</h2>
      *
-     * @return the speed of the steer relative encoder, in radians per second (geared)
+     * @return the speed of the steer relative encoder
      * @see MapleMotorSim#getEncoderVelocity()
      */
-    public double getSteerRelativeEncoderSpeedRadPerSec() {
-        return steerRelativeEncoderSpeedRadPerSec;
+    public AngularVelocity getSteerRelativeEncoderSpeed() {
+        return getSteerAbsoluteEncoderSpeed().times(STEER_GEAR_RATIO);
     }
 
     /**
@@ -351,10 +337,10 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Absolute Rotational Velocity of the Steer Mechanism.</h2>
      *
-     * @return the absolute angular velocity of the steer mechanism, in radians per second
+     * @return the absolute angular velocity of the steer mechanism
      */
-    public double getSteerAbsoluteEncoderSpeedRadPerSec() {
-        return steerAbsoluteEncoderSpeedRadPerSec;
+    public AngularVelocity getSteerAbsoluteEncoderSpeed() {
+        return steerVelocity;
     }
 
     /**
@@ -362,15 +348,15 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Drive Encoder's Un-Geared Position.</h2>
      *
-     * <p>The values of {@link #getDriveEncoderUnGearedPositionRad()} are cached at each sub-tick and can be retrieved
-     * using this method.
+     * <p>The values of {@link #getCachedDriveEncoderUnGearedPositions()} are cached at each sub-tick and can be
+     * retrieved using this method.
      *
-     * @return an array of cached drive encoder un-geared positions, in radians
+     * @return an array of cached drive encoder un-geared positions
      */
-    public double[] getCachedDriveEncoderUnGearedPositionsRad() {
-        return cachedDriveEncoderUnGearedPositionsRad.stream()
-                .mapToDouble(value -> value)
-                .toArray();
+    public Angle[] getCachedDriveEncoderUnGearedPositions() {
+        return driveWheelFinalPositionCache.stream()
+                .map(value -> value.times(DRIVE_GEAR_RATIO))
+                .toArray(Angle[]::new);
     }
 
     /**
@@ -378,15 +364,13 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Drive Encoder's Final Position (Wheel Rotations).</h2>
      *
-     * <p>The values of {@link #getDriveEncoderUnGearedPositionRad()} are cached at each sub-tick and are divided by the
-     * gear ratio to obtain the final wheel rotations.
+     * <p>The values of {@link #getDriveWheelFinalPosition()} are cached at each sub-tick and are divided by the gear
+     * ratio to obtain the final wheel rotations.
      *
-     * @return an array of cached drive encoder final positions (wheel rotations), in radians
+     * @return an array of cached drive encoder final positions (wheel rotations)
      */
-    public double[] getCachedDriveWheelFinalPositionsRad() {
-        return cachedDriveEncoderUnGearedPositionsRad.stream()
-                .mapToDouble(value -> value / DRIVE_GEAR_RATIO)
-                .toArray();
+    public Angle[] getCachedDriveWheelFinalPositions() {
+        return driveWheelFinalPositionCache.toArray(Angle[]::new);
     }
 
     /**
@@ -394,15 +378,16 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Steer Relative Encoder's Position.</h2>
      *
-     * <p>The values of {@link #getSteerRelativeEncoderPositionRad()} are cached at each sub-tick and can be retrieved
+     * <p>The values of {@link #getSteerRelativeEncoderPosition()} are cached at each sub-tick and can be retrieved
      * using this method.
      *
-     * @return an array of cached steer relative encoder positions, in radians
+     * @return an array of cached steer relative encoder positions
      */
-    public double[] getCachedSteerRelativeEncoderPositions() {
-        return cachedSteerRelativeEncoderPositionsRad.stream()
-                .mapToDouble(value -> value)
-                .toArray();
+    public Angle[] getCachedSteerRelativeEncoderPositions() {
+        return steerAbsolutePositionCache.stream()
+                .map(absoluteFacing ->
+                        absoluteFacing.getMeasure().times(STEER_GEAR_RATIO).plus(steerRelativeEncoderOffSet))
+                .toArray(Angle[]::new);
     }
 
     /**
@@ -416,7 +401,7 @@ public class SwerveModuleSimulation {
      * @return an array of cached absolute steer positions, as {@link Rotation2d} objects
      */
     public Rotation2d[] getCachedSteerAbsolutePositions() {
-        return cachedSteerAbsolutePositions.toArray(Rotation2d[]::new);
+        return steerAbsolutePositionCache.toArray(Rotation2d[]::new);
     }
 
     protected double getGrippingForceNewtons(double gravityForceOnModuleNewtons) {
@@ -449,7 +434,7 @@ public class SwerveModuleSimulation {
                 getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
 
         /* Step3: Updates and caches the encoder readings for odometry simulation. */
-        updateDriveEncoders();
+        updateEncoderCaches();
 
         return propellingForce;
     }
@@ -461,18 +446,9 @@ public class SwerveModuleSimulation {
      */
     private void updateSteerSimulation() {
         /* update the readings of the sensor */
-        steerMotorSim.update(Seconds.of(SimulatedArena.getSimulationDt()));
+        steerMotorSim.update(SimulatedArena.getSimulationDt());
         this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getAngularPosition());
-        this.steerRelativeEncoderPositionRad =
-                steerMotorSim.getAngularPosition().in(Radians) + steerRelativeEncoderOffSet;
-        this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);
-        this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
-
-        /* cache sensor readings to queue for high-frequency odometry */
-        this.cachedSteerAbsolutePositions.poll();
-        this.cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
-        this.cachedSteerRelativeEncoderPositionsRad.poll();
-        this.cachedSteerRelativeEncoderPositionsRad.offer(steerRelativeEncoderPositionRad);
+        this.steerVelocity = steerMotorSim.getVelocity();
     }
 
     /**
@@ -494,7 +470,7 @@ public class SwerveModuleSimulation {
     private Vector2 getPropellingForce(
             double grippingForceNewtons, Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity) {
         final double driveWheelTorque = getDriveWheelTorque();
-        double propellingForceNewtons = driveWheelTorque / WHEEL_RADIUS_METERS;
+        double propellingForceNewtons = driveWheelTorque / WHEEL_RADIUS.in(Meters);
         final boolean skidding = Math.abs(propellingForceNewtons) > grippingForceNewtons;
         if (skidding) propellingForceNewtons = Math.copySign(grippingForceNewtons, propellingForceNewtons);
 
@@ -502,18 +478,16 @@ public class SwerveModuleSimulation {
                 * Math.cos(moduleCurrentGroundVelocity.getAngleBetween(new Vector2(moduleWorldFacing.getRadians())));
 
         // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
-        this.driveEncoderUnGearedSpeedRadPerSec =
-                floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
+        this.driveWheelFinalSpeed =
+                RadiansPerSecond.of(floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS.in(Meters));
 
         // if the module is skidding
         if (skidding) {
-            final double skiddingEquilibriumSpeedRadPerSec = DRIVE_MOTOR.getSpeed(
-                    propellingForceNewtons
-                            * WHEEL_RADIUS_METERS
-                            / DRIVE_GEAR_RATIO, // the amount of torque needed to overcome friction
-                    driveMotorAppliedVolts);
-            this.driveEncoderUnGearedSpeedRadPerSec =
-                    skiddingEquilibriumSpeedRadPerSec * 0.5 + driveEncoderUnGearedSpeedRadPerSec * 0.5;
+            final AngularVelocity skiddingEquilibriumWheelSpeed = driveMotorConfigs.calculateMechanismVelocity(
+                    driveMotorConfigs.calculateCurrent(
+                            NewtonMeters.of(propellingForceNewtons * WHEEL_RADIUS.in(Meters))),
+                    driveMotorAppliedVoltage);
+            this.driveWheelFinalSpeed = driveWheelFinalSpeed.times(0.5).plus(skiddingEquilibriumWheelSpeed.times(0.5));
         }
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
@@ -530,28 +504,26 @@ public class SwerveModuleSimulation {
      * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
      */
     private double getDriveWheelTorque() {
-        driveMotorAppliedVolts = MathUtil.applyDeadband(driveMotorAppliedVolts, DRIVE_FRICTION_VOLTAGE, 12);
+        driveMotorAppliedVoltage = Volts.of(
+                MathUtil.applyDeadband(driveMotorAppliedVoltage.in(Volts), DRIVE_FRICTION_VOLTAGE.in(Volts), 12));
 
-        final SimMotorState state = new SimMotorState(
-                Radians.of(getDriveWheelFinalPositionRad()), RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec()));
-        driveMotorAppliedVolts = driveMotorConfigs
-                .constrainOutputVoltage(state, driveMotorRequest.updateSignal(driveMotorConfigs, state))
-                .in(Volts);
+        final SimMotorState state = new SimMotorState(driveWheelFinalPosition, driveWheelFinalSpeed);
+        driveMotorAppliedVoltage = driveMotorConfigs.constrainOutputVoltage(
+                state, driveMotorRequest.updateSignal(driveMotorConfigs, state));
 
         /* calculate the stator current */
-        driveMotorStatorCurrentAmps = driveMotorConfigs
-                .calculateCurrent(state.finalAngularVelocity(), Volts.of(driveMotorAppliedVolts))
-                .in(Amps);
+        driveMotorStatorCurrent =
+                driveMotorConfigs.calculateCurrent(state.finalAngularVelocity(), driveMotorAppliedVoltage);
 
         /* calculate the torque generated */
-        return driveMotorConfigs
-                .calculateTorque(Amps.of(driveMotorStatorCurrentAmps))
-                .in(NewtonMeters);
+        return driveMotorConfigs.calculateTorque(driveMotorStatorCurrent).in(NewtonMeters);
     }
 
     /** @return the current module state of this simulation module */
     public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(getDriveWheelFinalSpeedRadPerSec() * WHEEL_RADIUS_METERS, steerAbsoluteFacing);
+        return new SwerveModuleState(
+                MetersPerSecond.of(getDriveWheelFinalSpeed().in(RadiansPerSecond) * WHEEL_RADIUS.in(Meters)),
+                steerAbsoluteFacing);
     }
 
     /**
@@ -566,26 +538,33 @@ public class SwerveModuleSimulation {
      */
     protected SwerveModuleState getFreeSpinState() {
         return new SwerveModuleState(
-                DRIVE_MOTOR.getSpeed(
-                                DRIVE_MOTOR.getTorque(DRIVE_MOTOR.getCurrent(0, DRIVE_FRICTION_VOLTAGE)),
-                                driveMotorAppliedVolts)
-                        / DRIVE_GEAR_RATIO
-                        * WHEEL_RADIUS_METERS,
+                driveMotorConfigs
+                                .calculateMechanismVelocity(
+                                        driveMotorConfigs.calculateCurrent(driveMotorConfigs.friction),
+                                        driveMotorAppliedVoltage)
+                                .in(RadiansPerSecond)
+                        * WHEEL_RADIUS.in(Meters),
                 steerAbsoluteFacing);
     }
 
     /**
      *
      *
-     * <h2>Cache the encoder values.</h2>
+     * <h2>Cache the encoder values for high-frequency odometry.</h2>
      *
      * <p>An internal method to cache the encoder values to their queues.
      */
-    private void updateDriveEncoders() {
-        this.driveEncoderUnGearedPositionRad +=
-                this.driveEncoderUnGearedSpeedRadPerSec * SimulatedArena.getSimulationDt();
-        this.cachedDriveEncoderUnGearedPositionsRad.poll();
-        this.cachedDriveEncoderUnGearedPositionsRad.offer(driveEncoderUnGearedPositionRad);
+    private void updateEncoderCaches() {
+        /* Increment of drive wheel position */
+        this.driveWheelFinalPosition =
+                this.driveWheelFinalPosition.plus(this.driveWheelFinalSpeed.times(SimulatedArena.getSimulationDt()));
+
+        /* cache sensor readings to queue for high-frequency odometry */
+        this.steerAbsolutePositionCache.poll();
+        this.steerAbsolutePositionCache.offer(steerAbsoluteFacing);
+
+        this.driveWheelFinalPositionCache.poll();
+        this.driveWheelFinalPositionCache.offer(driveWheelFinalPosition);
     }
 
     /**
@@ -595,8 +574,9 @@ public class SwerveModuleSimulation {
      *
      * @return the theoretical maximum ground speed that the module can achieve, in m/s
      */
-    public double getModuleTheoreticalSpeedMPS() {
-        return DRIVE_MOTOR.freeSpeedRadPerSec / DRIVE_GEAR_RATIO * WHEEL_RADIUS_METERS;
+    public LinearVelocity maximumGroundSpeed() {
+        return MetersPerSecond.of(
+                driveMotorConfigs.freeSpinMechanismVelocity().in(RadiansPerSecond) * WHEEL_RADIUS.in(Meters));
     }
 
     /**
@@ -607,16 +587,20 @@ public class SwerveModuleSimulation {
      * <p>Calculates the maximum propelling force with respect to the gripping force and the drive motor's torque under
      * its current limit.
      *
-     * @param robotMassKg the mass of the robot, is kilograms
+     * @param robotMass the mass of the robot
      * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
      * @return the maximum propelling force of EACH module
      */
-    public double getTheoreticalPropellingForcePerModule(double robotMassKg, int modulesCount) {
+    public Force getTheoreticalPropellingForcePerModule(Mass robotMass, int modulesCount) {
         final double
-                maxThrustNewtons = DRIVE_MOTOR.getTorque(DRIVE_CURRENT_LIMIT) * DRIVE_GEAR_RATIO / WHEEL_RADIUS_METERS,
-                maxGrippingNewtons = 9.8 * robotMassKg / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
+                maxThrustNewtons =
+                        driveMotorConfigs
+                                        .calculateTorque(driveMotorStatorCurrent)
+                                        .in(NewtonMeters)
+                                / WHEEL_RADIUS.in(Meters),
+                maxGrippingNewtons = 9.8 * robotMass.in(Kilograms) / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
 
-        return Math.min(maxThrustNewtons, maxGrippingNewtons);
+        return Newtons.of(Math.min(maxThrustNewtons, maxGrippingNewtons));
     }
 
     /**
@@ -625,13 +609,15 @@ public class SwerveModuleSimulation {
      * <h2>Obtains the theatrical linear acceleration that the robot can achieve.</h2>
      *
      * <p>Calculates the maximum linear acceleration of a robot, with respect to its mass and
-     * {@link #getTheoreticalPropellingForcePerModule(double, int)}.
+     * {@link #getTheoreticalPropellingForcePerModule(Mass, int)}.
      *
-     * @param robotMassKg the mass of the robot, is kilograms
+     * @param robotMass the mass of the robot
      * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
      */
-    public double getModuleMaxAccelerationMPSsq(double robotMassKg, int modulesCount) {
-        return getTheoreticalPropellingForcePerModule(robotMassKg, modulesCount) * modulesCount / robotMassKg;
+    public LinearAcceleration maxAcceleration(Mass robotMass, int modulesCount) {
+        return getTheoreticalPropellingForcePerModule(robotMass, modulesCount)
+                .times(modulesCount)
+                .divide(robotMass);
     }
 
     /**
@@ -659,7 +645,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 8.14;
                     case 2 -> 6.75;
@@ -668,11 +653,13 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 12.8,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -684,7 +671,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 8.14;
                     case 2 -> 6.75;
@@ -693,11 +679,13 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 150.0 / 7.0,
-                0.2,
-                1,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.025);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -709,7 +697,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 7.13;
                     case 2 -> 5.9;
@@ -717,11 +704,13 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 18.75,
-                0.25,
-                1,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.025);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -737,7 +726,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 7.85;
                     case 2 -> 7.13;
@@ -751,11 +739,13 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 11.3142,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -771,7 +761,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 8.1;
                     case 2 -> 7.36;
@@ -785,11 +774,13 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 11.3714,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -804,7 +795,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 6.0;
                     case 2 -> 5.54;
@@ -815,11 +805,13 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 41.25,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(1.5),
-                0.03);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -836,28 +828,23 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
-                    case 1 -> 7.67;
-                    case 2 -> 6.98;
-                    case 3 -> 6.39;
-                    case 4 -> 6.82;
-                    case 5 -> 6.20;
-                    case 6 -> 5.68;
-                    case 7 -> 6.48;
-                    case 8 -> 5.89;
-                    case 9 -> 5.40;
-                    case 10 -> 5.67;
-                    case 11 -> 5.15;
-                    case 12 -> 4.73;
+                    case 1 -> 6.0;
+                    case 2 -> 5.54;
+                    case 3 -> 5.14;
+                    case 4 -> 4.71;
+                    case 5 -> 4.4;
+                    case 6 -> 4.13;
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
-                12.1,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(2),
-                0.03);
+                41.25,
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 
     /**
@@ -873,7 +860,6 @@ public class SwerveModuleSimulation {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
-                driveCurrentLimit.in(Amps),
                 switch (gearRatioLevel) {
                     case 1 -> 6.0;
                     case 2 -> 5.63;
@@ -887,10 +873,12 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 25.9,
-                0.2,
-                0.3,
-                wheelCOF,
-                Units.inchesToMeters(1.875),
-                0.03);
+                driveCurrentLimit,
+                Amps.of(20),
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
     }
 }

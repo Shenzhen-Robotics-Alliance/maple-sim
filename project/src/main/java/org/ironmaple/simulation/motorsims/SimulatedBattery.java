@@ -1,9 +1,11 @@
 package org.ironmaple.simulation.motorsims;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -20,7 +22,7 @@ public class SimulatedBattery {
     }
 
     private final List<Supplier<Current>> electricalAppliances = new ArrayList<>();
-    private double batteryVoltage = 12.0;
+    private double batteryVoltageVolts = 12.0;
 
     public void addElectricalAppliances(Supplier<Current> customElectricalAppliances) {
         this.electricalAppliances.add(customElectricalAppliances);
@@ -36,14 +38,14 @@ public class SimulatedBattery {
                 .sum();
 
         SmartDashboard.putNumber("BatterySim/TotalCurrentAmps", totalCurrentAmps);
-        batteryVoltage = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
+        batteryVoltageVolts = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
 
-        batteryVoltage = MathUtil.clamp(batteryVoltage, 0, 12);
+        batteryVoltageVolts = MathUtil.clamp(batteryVoltageVolts, 0, 12);
 
-        RoboRioSim.setVInVoltage(batteryVoltage);
+        RoboRioSim.setVInVoltage(batteryVoltageVolts);
     }
 
-    public double getBatteryVoltage() {
-        return batteryVoltage;
+    public Voltage getBatteryVoltage() {
+        return Volts.of(batteryVoltageVolts);
     }
 }

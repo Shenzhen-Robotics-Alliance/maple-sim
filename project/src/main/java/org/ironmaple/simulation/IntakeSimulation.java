@@ -125,13 +125,13 @@ public class IntakeSimulation extends BodyFixture {
         intakeRectangle.translate(
                 switch (side) {
                     case LEFT -> new Vector2(
-                            0, driveTrainSimulation.config.bumperWidthYMeters / 2 + distanceTransformed);
+                            0, driveTrainSimulation.config.bumperWidthY.in(Meters) / 2 + distanceTransformed);
                     case RIGHT -> new Vector2(
-                            0, -driveTrainSimulation.config.bumperWidthYMeters / 2 - distanceTransformed);
+                            0, -driveTrainSimulation.config.bumperWidthY.in(Meters) / 2 - distanceTransformed);
                     case FRONT -> new Vector2(
-                            driveTrainSimulation.config.bumperLengthXMeters / 2 + distanceTransformed, 0);
+                            driveTrainSimulation.config.bumperLengthX.in(Meters) / 2 + distanceTransformed, 0);
                     case BACK -> new Vector2(
-                            -driveTrainSimulation.config.bumperLengthXMeters / 2 - distanceTransformed / 2, 0);
+                            -driveTrainSimulation.config.bumperLengthX.in(Meters) / 2 - distanceTransformed / 2, 0);
                 });
 
         return intakeRectangle;

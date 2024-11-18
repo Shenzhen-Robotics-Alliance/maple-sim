@@ -271,7 +271,7 @@ public final class SimMotorConfigs {
                 VoltsPerRadianPerSecondSquared.ofNative(motor.nominalVoltageVolts
                         / (motor.stallTorqueNewtonMeters / this.loadMOI.in(KilogramSquareMeters))),
                 true,
-                Seconds.of(SimulatedArena.getSimulationDt()));
+                SimulatedArena.getSimulationDt());
     }
 
     /**
@@ -461,6 +461,26 @@ public final class SimMotorConfigs {
         this.forwardHardwareLimit = forwardLimit;
         this.reverseHardwareLimit = reverseLimit;
         return this;
+    }
+
+    public AngularVelocity freeSpinMechanismVelocity() {
+        return RadiansPerSecond.of(motor.freeSpeedRadPerSec / gearing);
+    }
+
+    public Current freeSpinCurrent() {
+        return Amps.of(motor.freeCurrentAmps);
+    }
+
+    public Current stallCurrent() {
+        return Amps.of(motor.stallCurrentAmps);
+    }
+
+    public Torque stallTorque() {
+        return NewtonMeters.of(motor.stallTorqueNewtonMeters);
+    }
+
+    public Voltage nominalVoltage() {
+        return Volts.of(motor.nominalVoltageVolts);
     }
 
     @Override

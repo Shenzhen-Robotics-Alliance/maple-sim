@@ -1,8 +1,11 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -87,9 +90,9 @@ public abstract class SimulatedArena {
         return SIMULATION_SUB_TICKS_IN_1_PERIOD;
     }
     /** The period length of each sub-tick, in seconds. */
-    private static double SIMULATION_DT = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+    private static Time SIMULATION_DT = Seconds.of(TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD);
 
-    public static double getSimulationDt() {
+    public static Time getSimulationDt() {
         return SIMULATION_DT;
     }
 
@@ -111,14 +114,14 @@ public abstract class SimulatedArena {
      *
      * <p>It is also recommended to keep the simulation frequency above 200 Hz for accurate simulation results.
      *
-     * @param robotPeriodSeconds the time between two calls of {@link #simulationPeriodic()}, usually obtained from
+     * @param robotPeriod the time between two calls of {@link #simulationPeriodic()}, usually obtained from
      *     {@link TimedRobot#getPeriod()}
      * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick()} that the simulation
      *     runs per each call to {@link #simulationPeriodic()}
      */
-    public static void overrideSimulationTimings(double robotPeriodSeconds, int simulationSubTicksPerPeriod) {
+    public static void overrideSimulationTimings(Time robotPeriod, int simulationSubTicksPerPeriod) {
         SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
-        SIMULATION_DT = robotPeriodSeconds / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+        SIMULATION_DT = robotPeriod.divide(SIMULATION_SUB_TICKS_IN_1_PERIOD);
     }
 
     protected final World<Body> physicsWorld;
@@ -269,8 +272,8 @@ public abstract class SimulatedArena {
      * LoggedRobot.simulationPeriodic()</code> if using <a
      * href='https://github.com/Mechanical-Advantage/AdvantageKit'>Advantage-Kit</a>)
      *
-     * <p>If not configured through {@link SimulatedArena#overrideSimulationTimings(double robotPeriodSeconds, int
-     * simulationSubTicksPerPeriod)}, the simulator will iterate through 5 Sub-ticks by default.
+     * <p>If not configured through {@link SimulatedArena#overrideSimulationTimings(Time, int)} , the simulator will
+     * iterate through 5 Sub-ticks by default.
      *
      * <p>The amount of CPU Time that the Dyn4j engine uses in displayed in <code>
      * SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern
@@ -307,7 +310,7 @@ public abstract class SimulatedArena {
 
         GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceProjectile);
 
-        this.physicsWorld.step(1, SIMULATION_DT);
+        this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
         for (IntakeSimulation intakeSimulation : intakeSimulations)
             while (!intakeSimulation.getGamePiecesToRemove().isEmpty())

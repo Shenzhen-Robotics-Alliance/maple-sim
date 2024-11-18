@@ -23,7 +23,8 @@ import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
  * performance testing and evaluation.
  */
 public class DriveTrainSimulationConfig {
-    public double robotMassKg, bumperLengthXMeters, bumperWidthYMeters;
+    public Mass robotMass;
+    public Distance bumperLengthX, bumperWidthY;
     public Supplier<SwerveModuleSimulation> swerveModuleSimulationFactory;
     public Supplier<GyroSimulation> gyroSimulationFactory;
     public Translation2d[] moduleTranslations;
@@ -52,9 +53,9 @@ public class DriveTrainSimulationConfig {
             Distance trackWidthY,
             Supplier<SwerveModuleSimulation> swerveModuleSimulationFactory,
             Supplier<GyroSimulation> gyroSimulationFactory) {
-        this.robotMassKg = robotMass.in(Kilograms);
-        this.bumperLengthXMeters = bumperLengthX.in(Meters);
-        this.bumperWidthYMeters = bumperWidthY.in(Meters);
+        this.robotMass = robotMass;
+        this.bumperLengthX = bumperLengthX;
+        this.bumperWidthY = bumperWidthY;
 
         this.swerveModuleSimulationFactory = swerveModuleSimulationFactory;
         this.gyroSimulationFactory = gyroSimulationFactory;
@@ -111,7 +112,7 @@ public class DriveTrainSimulationConfig {
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
     public DriveTrainSimulationConfig withRobotMass(Mass robotMass) {
-        this.robotMassKg = robotMass.in(Kilograms);
+        this.robotMass = robotMass;
         return this;
     }
 
@@ -127,8 +128,8 @@ public class DriveTrainSimulationConfig {
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
     public DriveTrainSimulationConfig withBumperSize(Distance bumperLengthX, Distance bumperWidthY) {
-        this.bumperLengthXMeters = bumperLengthX.in(Meters);
-        this.bumperWidthYMeters = bumperWidthY.in(Meters);
+        this.bumperLengthX = bumperLengthX;
+        this.bumperWidthY = bumperWidthY;
         return this;
     }
 
@@ -162,7 +163,7 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Updates the translations of the swerve modules with user-defined values.
      *
-     * <p>For ordinary rectangular modules configuration, use {@link #withTrackLengthTrackWidth(double, double)}
+     * <p>For ordinary rectangular modules configuration, use {@link #withTrackLengthTrackWidth(Distance, Distance)}
      * instead.
      *
      * @param moduleTranslations the custom translations for the swerve modules.
@@ -212,8 +213,8 @@ public class DriveTrainSimulationConfig {
      *
      * @return the density in kilograms per square meter.
      */
-    public double getDensity() {
-        return robotMassKg / (bumperLengthXMeters * bumperWidthYMeters);
+    public double getDensityKgPerSquaredMeters() {
+        return robotMass.in(Kilograms) / (bumperLengthX.in(Meters) * bumperWidthY.in(Meters));
     }
 
     /**
@@ -226,7 +227,7 @@ public class DriveTrainSimulationConfig {
      * @return the track length.
      * @throws IllegalStateException if the module translations are empty.
      */
-    public Distance getTrackLengthX() {
+    public Distance trackLengthX() {
         final OptionalDouble maxModuleX = Arrays.stream(moduleTranslations)
                 .mapToDouble(Translation2d::getX)
                 .max();
@@ -248,7 +249,7 @@ public class DriveTrainSimulationConfig {
      * @return the track width.
      * @throws IllegalStateException if the module translations are empty.
      */
-    public Distance getTrackWidthY() {
+    public Distance trackWidthY() {
         final OptionalDouble maxModuleY = Arrays.stream(moduleTranslations)
                 .mapToDouble(Translation2d::getY)
                 .max();
@@ -258,5 +259,9 @@ public class DriveTrainSimulationConfig {
         if (maxModuleY.isEmpty() || minModuleY.isEmpty())
             throw new IllegalStateException("Modules translations are empty");
         return Meters.of(maxModuleY.getAsDouble() - minModuleY.getAsDouble());
+    }
+
+    public Distance driveBaseRadius() {
+        return Meters.of(Math.hypot(trackLengthX().in(Meters), trackWidthY().in(Meters)));
     }
 }

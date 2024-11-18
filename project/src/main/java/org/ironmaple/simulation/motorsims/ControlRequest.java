@@ -24,6 +24,21 @@ import edu.wpi.first.units.measure.*;
  * </ul>
  */
 public sealed interface ControlRequest {
+    /**
+     *
+     *
+     * <h2>Updates the control signal based on the motor's state.</h2>
+     *
+     * <p>Given the motor's current configuration and state (angular position and velocity), this method calculates the
+     * control signal (voltage) that should be applied to the motor.
+     *
+     * @param configs the motor's configuration
+     * @param state the state of the motor
+     * @return the updated control signal in volts
+     */
+    default Voltage updateSignal(SimMotorConfigs configs, SimMotorState state) {
+        return updateSignal(configs, state.finalAngularPosition(), state.finalAngularVelocity());
+    }
 
     /**
      *

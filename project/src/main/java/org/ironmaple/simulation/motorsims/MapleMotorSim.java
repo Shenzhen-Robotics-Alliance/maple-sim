@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 /**
  *
@@ -53,10 +52,7 @@ public class MapleMotorSim {
      * <p>This is equivalent to{@link edu.wpi.first.wpilibj.simulation.DCMotorSim#update(double)}.
      */
     public void update(Time dt) {
-        this.appliedVoltage = constrainOutputVoltage(
-                state,
-                request.updateSignal(configs, state.finalAngularPosition(), state.finalAngularVelocity()),
-                configs);
+        this.appliedVoltage = configs.constrainOutputVoltage(state, request.updateSignal(configs, state));
         this.statorCurrent = configs.calculateCurrent(state.finalAngularVelocity(), appliedVoltage);
         this.state = this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
 
@@ -75,51 +71,6 @@ public class MapleMotorSim {
      */
     public void requestOutput(ControlRequest request) {
         this.request = request;
-    }
-
-    /**
-     *
-     *
-     * <h2>(Utility Function) Constrains the Output Voltage of a Motor.</h2>
-     *
-     * <p>Constrains the output voltage of a motor such that the <strong>stator</strong> current does not exceed the
-     * limit configured in {@link SimMotorConfigs#withStatorCurrentLimit(Current)}.
-     *
-     * @param state the {@link SimMotorState} of the motor
-     * @param requestedVoltage the requested voltage
-     * @param configs the configuration for the motor
-     * @return the constrained voltage that satisfied the limits
-     */
-    public static Voltage constrainOutputVoltage(
-            SimMotorState state, Voltage requestedVoltage, SimMotorConfigs configs) {
-        final double kCurrentThreshold = 1.2;
-
-        // don't use WpiLib Units for calculations
-        final double motorCurrentVelocityRadPerSec =
-                state.finalAngularVelocity().in(RadiansPerSecond) * configs.gearing;
-        final double currentLimitAmps = configs.currentLimit.in(Amps);
-        final double requestedOutputVoltageVolts = requestedVoltage.in(Volts);
-        final double currentAtRequestedVoltageAmps =
-                configs.motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltageVolts);
-
-        // Resource for current limiting:
-        // https://file.tavsys.net/control/controls-engineering-in-frc.pdf (sec 12.1.3)
-        final boolean currentTooHigh = currentAtRequestedVoltageAmps > (kCurrentThreshold * currentLimitAmps);
-        final double limitedCurrent =
-                MapleCommonMath.constrainMagnitude(currentAtRequestedVoltageAmps, currentLimitAmps);
-        double limitedVoltage =
-                configs.motor.getVoltage(configs.motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
-
-        // ensure the current limit doesn't cause an increase to output voltage
-        if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltageVolts))
-            limitedVoltage = requestedOutputVoltageVolts;
-
-        // apply software limits
-        if (state.finalAngularPosition().gte(configs.forwardSoftwareLimit) && limitedVoltage > 0) limitedVoltage = 0;
-        if (state.finalAngularPosition().lte(configs.reverseHardwareLimit) && limitedVoltage < 0) limitedVoltage = 0;
-
-        // constrain the output voltage to the battery voltage
-        return Volts.of(limitedVoltage);
     }
 
     /**
@@ -212,7 +163,10 @@ public class MapleMotorSim {
      * @return the supply current of the motor
      */
     public Current getSupplyCurrent() {
-        // https://www.chiefdelphi.com/t/current-limiting-talonfx-values/374780/10
+        // Supply Power = Stator Power (Conservation of Energy)
+        // Hence,
+        // Battery Voltage x Supply Current = Applied Voltage x Stator Current
+        // Supply Current = Stator Current * Applied Voltage / Battery Voltage
         return getStatorCurrent().times(appliedVoltage.divide(Volts.of(12)));
     }
 

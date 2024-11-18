@@ -169,6 +169,57 @@ public final class SimMotorConfigs {
     /**
      *
      *
+     * <h2>(Utility Function) Constrains the Output Voltage of a Motor.</h2>
+     *
+     * <p>Constrains the output voltage of a motor such that the <strong>stator</strong> current does not exceed the
+     * limit configured in {@link SimMotorConfigs#withStatorCurrentLimit(Current)}.
+     *
+     * @param state the {@link SimMotorState} of the motor
+     * @param requestedVoltage the requested voltage
+     * @return the constrained voltage that satisfied the limits
+     */
+    public Voltage constrainOutputVoltage(SimMotorState state, Voltage requestedVoltage) {
+        final double kCurrentThreshold = 1.2;
+
+        // don't use WpiLib Units for calculations
+        final double motorCurrentVelocityRadPerSec =
+                state.finalAngularVelocity().in(RadiansPerSecond) * gearing;
+        final double currentLimitAmps = currentLimit.in(Amps);
+        final double requestedOutputVoltageVolts = requestedVoltage.in(Volts);
+        final double currentAtRequestedVoltageAmps =
+                motor.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltageVolts);
+
+        // Resource for current limiting:
+        // https://file.tavsys.net/control/controls-engineering-in-frc.pdf (sec 12.1.3)
+        double limitedVoltage = requestedOutputVoltageVolts;
+        final boolean currentTooHigh = Math.abs(currentAtRequestedVoltageAmps) > (kCurrentThreshold * currentLimitAmps);
+        if (currentTooHigh) {
+            final double limitedCurrent = Math.copySign(currentLimitAmps, currentAtRequestedVoltageAmps);
+            limitedVoltage = motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
+            System.out.print("motor vel: "
+                    + edu.wpi.first.math.util.Units.radiansPerSecondToRotationsPerMinute(
+                            motorCurrentVelocityRadPerSec));
+            System.out.print(", limiting current to: " + limitedCurrent + ", with voltage: " + limitedVoltage);
+            System.out.println(", current at this voltage: "
+                    + calculateCurrent(state.finalAngularVelocity(), Volts.of(limitedVoltage))
+                            .in(Amps));
+        }
+
+        // ensure the current limit doesn't cause an increase to output voltage
+        if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltageVolts))
+            limitedVoltage = requestedOutputVoltageVolts;
+
+        // apply software limits
+        if (state.finalAngularPosition().gte(forwardSoftwareLimit) && limitedVoltage > 0) limitedVoltage = 0;
+        if (state.finalAngularPosition().lte(reverseHardwareLimit) && limitedVoltage < 0) limitedVoltage = 0;
+
+        // constrain the output voltage to the battery voltage
+        return Volts.of(limitedVoltage);
+    }
+
+    /**
+     *
+     *
      * <h2>Configures the feed-forward calculator for the motor.</h2>
      *
      * <p>This method sets up a feed-forward calculator for the motor, which helps in estimating the required voltage to

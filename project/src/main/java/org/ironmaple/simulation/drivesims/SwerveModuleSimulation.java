@@ -10,7 +10,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
@@ -132,6 +131,7 @@ public class SwerveModuleSimulation {
 
         this.driveMotorConfigs = new SimMotorConfigs(
                         DRIVE_MOTOR, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), Volts.of(driveFrictionVoltage))
+                .withStatorCurrentLimit(Amps.of(DRIVE_CURRENT_LIMIT))
                 .withDefaultFeedForward(Volts.zero());
 
         SimulatedBattery.getInstance().addElectricalAppliances(() -> Amps.of(getDriveMotorSupplyCurrentAmps()));
@@ -140,6 +140,7 @@ public class SwerveModuleSimulation {
                         steerGearRatio,
                         KilogramSquareMeters.of(steerRotationalInertia),
                         Volts.of(steerFrictionVoltage))
+                .withStatorCurrentLimit(Amps.of(20))
                 .withControllerContinousInput()
                 .withPositionVoltageController(
                         Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0), false));
@@ -247,6 +248,18 @@ public class SwerveModuleSimulation {
      */
     public double getSteerMotorSupplyCurrentAmps() {
         return steerMotorSim.getSupplyCurrent().in(Amps);
+    }
+
+    /**
+     *
+     *
+     * <h2>Obtains the Stator current the Steer Motor.</h2>
+     *
+     * @return the stator current of the drive motor, in amperes
+     * @see MapleMotorSim#getSupplyCurrent()
+     */
+    public double getSteerMotorStatorCurrentAmps() {
+        return steerMotorSim.getStatorCurrent().in(Amps);
     }
 
     /**
@@ -455,16 +468,6 @@ public class SwerveModuleSimulation {
         this.steerAbsoluteEncoderSpeedRadPerSec = steerMotorSim.getVelocity().in(RadiansPerSecond);
         this.steerRelativeEncoderSpeedRadPerSec = steerAbsoluteEncoderSpeedRadPerSec * STEER_GEAR_RATIO;
 
-        if (steerMotorSim.getRequestedControl() instanceof ControlRequest.PositionVoltage positionVoltage)
-            SmartDashboard.putNumber(
-                    "Module " + index + " SetPoint", positionVoltage.setPoint().in(Degrees));
-        SmartDashboard.putNumber(
-                "Module " + index + " Steer Position Deg",
-                steerMotorSim.getAngularPosition().in(Degree));
-        SmartDashboard.putNumber(
-                "Module " + index + " Applied Volts",
-                steerMotorSim.getAppliedVoltage().in(Volts));
-
         /* cache sensor readings to queue for high-frequency odometry */
         this.cachedSteerAbsolutePositions.poll();
         this.cachedSteerAbsolutePositions.offer(steerAbsoluteFacing);
@@ -503,17 +506,14 @@ public class SwerveModuleSimulation {
                 floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS_METERS * DRIVE_GEAR_RATIO;
 
         // if the module is skidding
-        // TODO: this part has some problems
         if (skidding) {
-            System.out.println("skidding!");
             final double skiddingEquilibriumSpeedRadPerSec = DRIVE_MOTOR.getSpeed(
                     propellingForceNewtons
                             * WHEEL_RADIUS_METERS
                             / DRIVE_GEAR_RATIO, // the amount of torque needed to overcome friction
                     driveMotorAppliedVolts);
-            if (Math.abs(skiddingEquilibriumSpeedRadPerSec) > Math.abs(driveEncoderUnGearedSpeedRadPerSec)
-                    && Math.abs(driveMotorAppliedVolts) > 3)
-                this.driveEncoderUnGearedSpeedRadPerSec = skiddingEquilibriumSpeedRadPerSec;
+            this.driveEncoderUnGearedSpeedRadPerSec =
+                    skiddingEquilibriumSpeedRadPerSec * 0.5 + driveEncoderUnGearedSpeedRadPerSec * 0.5;
         }
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
@@ -525,30 +525,28 @@ public class SwerveModuleSimulation {
      * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
      *
      * <p>Before calculating the torque of the motor, the output voltage of the drive motor is constrained for the
-     * current limit through {@link MapleMotorSim#constrainOutputVoltage(SimMotorState, Voltage, SimMotorConfigs)}
+     * current limit through {@link SimMotorConfigs#constrainOutputVoltage(SimMotorState, Voltage)}.
      *
      * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
      */
     private double getDriveWheelTorque() {
-        driveMotorAppliedVolts = MapleMotorSim.constrainOutputVoltage(
-                        new SimMotorState(
-                                Radians.of(getDriveWheelFinalPositionRad()),
-                                RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec())),
-                        driveMotorRequest.updateSignal(
-                                driveMotorConfigs,
-                                Radians.of(getDriveWheelFinalPositionRad()),
-                                RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec())),
-                        driveMotorConfigs)
+        driveMotorAppliedVolts = MathUtil.applyDeadband(driveMotorAppliedVolts, DRIVE_FRICTION_VOLTAGE, 12);
+
+        final SimMotorState state = new SimMotorState(
+                Radians.of(getDriveWheelFinalPositionRad()), RadiansPerSecond.of(getDriveWheelFinalSpeedRadPerSec()));
+        driveMotorAppliedVolts = driveMotorConfigs
+                .constrainOutputVoltage(state, driveMotorRequest.updateSignal(driveMotorConfigs, state))
                 .in(Volts);
 
         /* calculate the stator current */
-        driveMotorStatorCurrentAmps = DRIVE_MOTOR.getCurrent(
-                this.driveEncoderUnGearedSpeedRadPerSec,
-                MathUtil.applyDeadband(driveMotorAppliedVolts, DRIVE_FRICTION_VOLTAGE, 12));
+        driveMotorStatorCurrentAmps = driveMotorConfigs
+                .calculateCurrent(state.finalAngularVelocity(), Volts.of(driveMotorAppliedVolts))
+                .in(Amps);
 
         /* calculate the torque generated */
-        final double torqueOnRotter = DRIVE_MOTOR.getTorque(driveMotorStatorCurrentAmps);
-        return torqueOnRotter * DRIVE_GEAR_RATIO;
+        return driveMotorConfigs
+                .calculateTorque(Amps.of(driveMotorStatorCurrentAmps))
+                .in(NewtonMeters);
     }
 
     /** @return the current module state of this simulation module */

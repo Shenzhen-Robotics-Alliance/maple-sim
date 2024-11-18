@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f57e4d3f-16ad-409c-82f6-da91213bb687" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/MapleMotorSim.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/MapleMotorSim.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/drivesims/SwerveModuleSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/drivesims/SwerveModuleSimulation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/motorsims/ControlRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/motorsims/ControlRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/motorsims/MapleMotorSim.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/motorsims/MapleMotorSim.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/motorsims/SimMotorConfigs.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/motorsims/SimMotorConfigs.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,9 +62,10 @@
     "Gradle.project [build].executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "simplified-swerve-sim",
+    "git-widget-placeholder": "motor-sim-control-loops",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/FRC Programming/maple-sim/project",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0"
@@ -96,14 +99,6 @@
         <item itemvalue="Gradle.project [build]" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-20.0.2-corretto-20.0.2.1-4caba194b151-5bc9ecd2" />
-        <option value="jdk-21.0.2-corretto-21.0.2-4caba194b151-51586f01" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

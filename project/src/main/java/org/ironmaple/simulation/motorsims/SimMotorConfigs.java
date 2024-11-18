@@ -196,13 +196,6 @@ public final class SimMotorConfigs {
         if (currentTooHigh) {
             final double limitedCurrent = Math.copySign(currentLimitAmps, currentAtRequestedVoltageAmps);
             limitedVoltage = motor.getVoltage(motor.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
-            System.out.print("motor vel: "
-                    + edu.wpi.first.math.util.Units.radiansPerSecondToRotationsPerMinute(
-                            motorCurrentVelocityRadPerSec));
-            System.out.print(", limiting current to: " + limitedCurrent + ", with voltage: " + limitedVoltage);
-            System.out.println(", current at this voltage: "
-                    + calculateCurrent(state.finalAngularVelocity(), Volts.of(limitedVoltage))
-                            .in(Amps));
         }
 
         // ensure the current limit doesn't cause an increase to output voltage

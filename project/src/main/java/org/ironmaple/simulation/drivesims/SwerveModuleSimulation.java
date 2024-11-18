@@ -317,7 +317,7 @@ public class SwerveModuleSimulation {
      * @return the speed of the steer relative encoder
      * @see MapleMotorSim#getEncoderVelocity()
      */
-    public AngularVelocity getSteerRelativeEncoderSpeed() {
+    public AngularVelocity getSteerRelativeEncoderVelocity() {
         return getSteerAbsoluteEncoderSpeed().times(STEER_GEAR_RATIO);
     }
 

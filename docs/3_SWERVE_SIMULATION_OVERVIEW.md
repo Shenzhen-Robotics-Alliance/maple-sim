@@ -57,21 +57,22 @@ SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
 ```
 
 ## Manipulating the Simulated Swerve
-
-The `SwerveDriveSimulation` only contains only neccessary code to model the physics behavior of a swerve drive, it does not contain code to drive it. 
-
-Users need to manipulate the simulated swerve drive to make the simulation work.  There are two ways to do it:
-
 <details>
-    <summary><strong>Option1: The easy way</strong></summary>
-    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html">Swerve Simulation: Simplified Swerve Simulation</a> >></p>
+    <summary><strong>Option 1: The simple approach</strong></summary>
+    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html">Swerve Simulation: SimplifiedSwerveSimulation</a></p>
+    <p>Comming Soon.</p>
 </details>
-
 <details>
-    <summary><strong>Option2: The recommended solution</strong></summary>
-    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.2_SWERVE_SIM_HARDWARE_ABSTRACTION.html">Swerve Simulation: Hardware Abstractions</a> >></p>
+    <summary><strong>Option 2: The professional approach</strong></summary>
+    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.2_SWERVE_SIM_HARDWARE_ABSTRACTION.html">Swerve Simulation: Hardware Abstraction</a></p>
+    <p>This approach to simulating swerve drive accurately mimics the behavior of your drivetrain code by running the exact same code used on the real robot directly on the simulated robot. While this ensures high fidelity in the simulation, it does require a significant amount of effort to set up properly.</p>
+</details>
+<details>
+    <summary><strong>Option 3: Simulation with CTRE devices</strong></summary>
+    <p>Comming Soon.</p>
 </details>
 
 <div style="display:flex">
     <h3 style="width:49%"><< Prev: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/2_USING_THE_SIMULATED_ARENA.html">Using the Simulated Arena Object</a></h3>
+    <h3 style="width:49%" align="right">Next: <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html">Simulating Intake</a> >></h3>
 </div>

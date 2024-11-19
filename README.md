@@ -5,7 +5,7 @@
 
 ### Elevating FRC Java Robot Simulations to the Next Level with Physics Engines
 
-# Why a Physics Engine?
+## Why a Physics Engine?
 A simulation engine is a powerful tool that provides realistic approximations of physical systems. With **maple-sim**, we integrate the open-source Java rigid-body dynamics engine, [dyn4j](https://github.com/dyn4j/dyn4j), capable of simulating 2D forces and collisions between rigid shapes. This integration transforms the scope of robot simulations by enabling realistic interactions between robots, field elements, and game pieces.
 
 ![physics engine illustration](docs/media/physics%20engine.png)
@@ -26,11 +26,11 @@ With this advanced level of simulation, the possibilities are endless. You can:
 
 **And the best part? You can achieve all of this without needing a real robot on hand.**
 
-# Simulation Details
+## Simulation Details
 
 For an in-depth description of the simulations, please refer to [Simulation Details](https://shenzhen-robotics-alliance.github.io/maple-sim/0_SIMULATION_DETIALS.html).
 
-# Quick Start
+## Quick Start
 
 Please follow the guides below for quick setup:
 
@@ -41,11 +41,11 @@ Please follow the guides below for quick setup:
 5. [Simulating Projectiles](https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_PROJECTILES.html)
 6. [Simulating Opponent Robots](https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_OPPONENT_ROBOTS.html)
 
-# Java Docs
+## Java Docs
 > 🙏  Big thanks to [nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
 [Official Java Docs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
 
-# Examples and Templates
+## Examples and Templates
 
 1. [Advanced Swerve Drive Project](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_AdvancedSwerveDriveProject): 6328's swerve drive project utilizing AdvantageKit, modified with advanced drivetrain simulations. View the changelog from the original project [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/commit/1667aa80170e6733d8eaee866da0297e762402fa). 
 2. [Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton):  Our custom swerve drive project based on the Advanced Swerve Drive Project, featuring drivetrain simulation, vision simulation, and convenient control features.
@@ -53,12 +53,12 @@ Please follow the guides below for quick setup:
 
 > 🏃 Support for YAGSL in actively under development, coming soon!
 
-# Contributing
-We welcome your contributions! Here’s how you can help:
+## Bugs Developing and Contributing
 
-[Submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) if you’ve found a bug or have a feature request.
+- If you've encountered a bug while using maple-sim in your robot code, please [submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) and select the "Bug Report" option.  We review issues regularly and will respond as quickly as possible.
 
-[Create a pull request](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/pulls) if you have something to contribute.
+- If you have an idea for a new feature, please [submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) and select the "Feature Request" option.
 
-[Join our Discord server](https://discord.gg/tWn45Qm6ub) to connect with the community and collaborate on projects!
+- If you think the API for an existing feature could be improved for better readability or usability, please [submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) and select the "API Enhancement" option.
 
+- For detailed guidelines on contributing to the project, please refer to the [contribution guide](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/docs/CONTRIBUTION.html).

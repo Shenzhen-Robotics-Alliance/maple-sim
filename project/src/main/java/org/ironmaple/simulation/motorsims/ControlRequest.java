@@ -3,6 +3,7 @@ package org.ironmaple.simulation.motorsims;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.*;
+import org.ironmaple.simulation.SimulatedArena;
 
 /**
  *
@@ -186,5 +187,30 @@ public sealed interface ControlRequest {
             // Return the sum of the current and feedforward voltages
             return currentVoltage.plus(feedforwardVoltage);
         }
+    }
+
+    non-sealed interface CustomMotorController extends ControlRequest {
+        @Override
+        default Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
+            feedMechanismPosition(mechanismAngle);
+            feedMechanismVelocity(mechanismVelocity);
+            feedEncoderPosition(mechanismAngle.times(configs.gearing));
+            feedEncoderVelocity(mechanismVelocity.times(configs.gearing));
+
+            updateSimulation(SimulatedArena.getSimulationDt());
+            return getMotorVoltage();
+        }
+
+        void feedEncoderPosition(Angle encoderPosition);
+
+        void feedEncoderVelocity(AngularVelocity encoderVelocity);
+
+        void feedMechanismPosition(Angle mechanismPosition);
+
+        void feedMechanismVelocity(AngularVelocity mechanismVelocity);
+
+        void updateSimulation(Time dt);
+
+        Voltage getMotorVoltage();
     }
 }

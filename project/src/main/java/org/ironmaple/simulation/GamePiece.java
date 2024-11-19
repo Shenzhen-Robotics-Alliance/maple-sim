@@ -1,9 +1,14 @@
 package org.ironmaple.simulation;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -37,13 +42,14 @@ public class GamePiece {
      */
     public record GamePieceTarget(Rectangle2d area, Pair<Double, Double> heightRange) {
         public GamePieceTarget(Translation3d first, Translation3d second) {
-            this(new Rectangle2d(first.toTranslation2d(), second.toTranslation2d()), new Pair<>(first.getZ(), second.getZ()));
+            this(new Rectangle2d(first.toTranslation2d(), second.toTranslation2d()),
+                    new Pair<>(first.getZ(), second.getZ()));
         }
 
         public boolean isInside(Translation3d position) {
             return area.contains(position.toTranslation2d())
-                && position.getZ() >= heightRange.getFirst()
-                && position.getZ() <= heightRange.getSecond();
+                    && position.getZ() >= heightRange.getFirst()
+                    && position.getZ() <= heightRange.getSecond();
         }
     }
 
@@ -63,12 +69,16 @@ public class GamePiece {
             return other instanceof GamePieceVariant
                     && ((GamePieceVariant) other).type.equals(type);
         }
+
+        public boolean isOfVariant(GamePiece gp) {
+            return gp.isOfVariant(this);
+        }
     }
 
     /**
      * A union type representing the different states a game piece can be in.
      */
-    protected sealed interface GamePieceState {
+    protected sealed interface GamePieceStateData {
         /**
          * Called when a game piece enters this state.
          * @param gp the game piece entering this state
@@ -105,28 +115,28 @@ public class GamePiece {
          * Returns the tag of this state.
          * @return the tag of this state
          */
-        GamePieceStateTag tag();
+        GamePieceState tag();
 
         /**
          * A state representing a game piece that is not in play
          * but still *exists*.
          */
-        public record Limbo() implements GamePieceState {
+        public record Limbo() implements GamePieceStateData {
             @Override
             public Pose3d pose(GamePiece gp, SimulationArena arena) {
                 return new Pose3d(-1.0, -1.0, -1.0, new Rotation3d());
             }
 
             @Override
-            public GamePieceStateTag tag() {
-                return GamePieceStateTag.LIMBO;
+            public GamePieceState tag() {
+                return GamePieceState.LIMBO;
             }
         }
 
         /**
          * A state representing a game piece that is on the field and available for intake.
          */
-        public record OnField(GamePieceCollisionBody body) implements GamePieceState {
+        public record OnField(GamePieceCollisionBody body) implements GamePieceStateData {
             @Override
             public void onEnter(GamePiece gp, SimulationArena arena) {
                 arena.world().addBody(body);
@@ -150,15 +160,15 @@ public class GamePiece {
             }
 
             @Override
-            public GamePieceStateTag tag() {
-                return GamePieceStateTag.ON_FIELD;
+            public GamePieceState tag() {
+                return GamePieceState.ON_FIELD;
             }
         }
 
         /**
          * A state representing a game piece that is in the air, moving towards a target.
          */
-        public static final class InFlight implements GamePieceState {
+        public static final class InFlight implements GamePieceStateData {
             private final ProjectileDynamics dynamics;
             private Pose3d pose;
             private Velocity3d velocity;
@@ -189,23 +199,24 @@ public class GamePiece {
             }
 
             @Override
-            public GamePieceStateTag tag() {
-                return GamePieceStateTag.IN_FLIGHT;
+            public GamePieceState tag() {
+                return GamePieceState.IN_FLIGHT;
             }
         }
 
         /**
          * A state representing a game piece that is being held by a robot.
          */
-        public record Held(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset) implements GamePieceState {
+        public record Held(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset)
+                implements GamePieceStateData {
             @Override
             public Pose3d pose(GamePiece gp, SimulationArena arena) {
                 return robotPoseSupplier.get().transformBy(offset.get());
             }
 
             @Override
-            public GamePieceStateTag tag() {
-                return GamePieceStateTag.HELD;
+            public GamePieceState tag() {
+                return GamePieceState.HELD;
             }
         }
     }
@@ -221,7 +232,7 @@ public class GamePiece {
      * <li>{@link #HELD}: The game piece is being held by a robot.
      * </ul>
      */
-    public enum GamePieceStateTag {
+    public enum GamePieceState {
         /**
          * The game piece is not in play.
          */
@@ -237,73 +248,11 @@ public class GamePiece {
         /**
          * The game piece is being held by a robot.
          */
-        HELD
-    }
+        HELD;
 
-    /**
-     * An enum representing the different events a game piece can trigger.
-     * 
-     * <p>These events include:
-     * <ul>
-     * <li>{@link #TARGET_REACHED}: The game piece has reached a target,
-     * this can only be triggered by a game piece in flight.
-     * <li>{@link #LANDED}: The game piece has landed on the field,
-     * this can only be triggered by a game piece in flight when it's Z coordinated hits the floor.
-     * <li>{@link #INTAKEN}: The game piece has been intaken by a robot,
-     * this can only be triggered by a game piece on the field.
-     * <li>{@link #SHOT}: The game piece has been shot by a robot,
-     * this can only be triggered by a game piece being held by a robot.
-     * <li>{@link #EXPELLED}: The game piece has been expelled by a robot,
-     * this can only be triggered by a game piece being held by a robot.
-     * </ul>
-     */
-    public static enum GamePieceEvent {
-        /**
-         * The game piece has reached a target.
-         * This can only be triggered by a game piece in flight
-         * when it travels through a target volume.
-         * 
-         * <p>When this event is triggered, the game piece will transition to the {@link GamePieceStateTag#LIMBO} state.
-         */
-        TARGET_REACHED,
-        /**
-         * The game piece has landed on the field.
-         * This can only be triggered by a game piece in flight
-         * when it's Z coordinate hits the floor.
-         * 
-         * <p>When this event is triggered, the game piece will transition to the {@link GamePieceStateTag#ON_FIELD} state.
-         */
-        LANDED,
-        /**
-         * The game piece has been intaken by a robot.
-         * This can only be triggered by a game piece on the field
-         * when it's intaken by a robot.
-         * 
-         * <p>When this event is triggered, the game piece will transition to the {@link GamePieceStateTag#HELD} state.
-         */
-        INTAKEN,
-        /**
-         * The game piece has been shot by a robot.
-         * This can only be triggered by a game piece being held by a robot.
-         * 
-         * <p>When this event is triggered, the game piece will transition to the {@link GamePieceStateTag#IN_FLIGHT} state.
-         */
-        SHOT,
-        /**
-         * The game piece has been expelled by a robot.
-         * This can only be triggered by a game piece being held by a robot.
-         * 
-         * <p>When this event is triggered, the game piece will transition to the {@link GamePieceStateTag#ON_FIELD} state.
-         */
-        EXPELLED
-    }
-
-    /**
-     * A functional interface for handling game piece events.
-     */
-    @FunctionalInterface
-    public interface GamePieceEventHandler {
-        void handle(GamePieceVariant variant, Pose3d pose);
+        public boolean isInState(GamePiece gp) {
+            return gp.isInState(this);
+        }
     }
 
     /**
@@ -317,62 +266,49 @@ public class GamePiece {
             super();
             this.gp = gp;
         }
+
+        protected static GamePieceCollisionBody createBody(GamePiece gp, Translation2d initialPosition,
+                Velocity2d initialVelocity) {
+            final double LINEAR_DAMPING = 3.5;
+            final double ANGULAR_DAMPING = 5;
+            final double COEFFICIENT_OF_FRICTION = 0.8;
+            final double COEFFICIENT_OF_RESTITUTION = 0.3;
+            final double MINIMUM_BOUNCING_VELOCITY = 0.2;
+
+            var body = new GamePieceCollisionBody(gp);
+
+            BodyFixture bodyFixture = body.addFixture(gp.variant.shape);
+
+            bodyFixture.setFriction(COEFFICIENT_OF_FRICTION);
+            bodyFixture.setRestitution(COEFFICIENT_OF_RESTITUTION);
+            bodyFixture.setRestitutionVelocity(MINIMUM_BOUNCING_VELOCITY);
+
+            bodyFixture.setDensity(gp.variant.mass / gp.variant.shape.getArea());
+            body.setMass(MassType.NORMAL);
+
+            body.translate(GeometryConvertor.toDyn4jVector2(initialPosition));
+
+            body.setLinearDamping(LINEAR_DAMPING);
+            body.setAngularDamping(ANGULAR_DAMPING);
+            body.setBullet(true);
+
+            body.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocity));
+
+            return body;
+        }
     }
 
     protected final GamePieceVariant variant;
     protected final SimulationArena arena;
-    protected GamePieceState state = new GamePieceState.Limbo();
+    protected GamePieceStateData state = new GamePieceStateData.Limbo();
     protected boolean userControlled = false;
-    protected EnumMap<GamePieceEvent, ArrayList<GamePieceEventHandler>> eventHandlers = new EnumMap<>(
-            GamePieceEvent.class) {
-        {
-            for (GamePieceEvent event : GamePieceEvent.values()) {
-                put(event, new ArrayList<>());
-            }
-        }
-    };
 
     public GamePiece(GamePieceVariant variant, SimulationArena arena) {
         this.variant = variant;
         this.arena = arena;
     }
 
-    protected GamePieceCollisionBody createBody(Translation2d initialPosition, Velocity2d initialVelocity) {
-        final double LINEAR_DAMPING = 3.5;
-        final double ANGULAR_DAMPING = 5;
-        final double COEFFICIENT_OF_FRICTION = 0.8;
-        final double COEFFICIENT_OF_RESTITUTION = 0.3;
-        final double MINIMUM_BOUNCING_VELOCITY = 0.2;
-
-        var body = new GamePieceCollisionBody(this);
-
-        BodyFixture bodyFixture = body.addFixture(variant.shape);
-
-        bodyFixture.setFriction(COEFFICIENT_OF_FRICTION);
-        bodyFixture.setRestitution(COEFFICIENT_OF_RESTITUTION);
-        bodyFixture.setRestitutionVelocity(MINIMUM_BOUNCING_VELOCITY);
-
-        bodyFixture.setDensity(variant.mass / variant.shape.getArea());
-        body.setMass(MassType.NORMAL);
-
-        body.translate(GeometryConvertor.toDyn4jVector2(initialPosition));
-
-        body.setLinearDamping(LINEAR_DAMPING);
-        body.setAngularDamping(ANGULAR_DAMPING);
-        body.setBullet(true);
-
-        body.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocity));
-
-        return body;
-    }
-
-    protected boolean insideVolume(Translation3d position, Pair<Translation3d, Translation3d> volume) {
-        return position.getX() >= volume.getFirst().getX() && position.getX() <= volume.getSecond().getX()
-                && position.getY() >= volume.getFirst().getY() && position.getY() <= volume.getSecond().getY()
-                && position.getZ() >= volume.getFirst().getZ() && position.getZ() <= volume.getSecond().getZ();
-    }
-
-    protected void transitionState(GamePieceState newState) {
+    protected void transitionState(GamePieceStateData newState) {
         state.onExit(this, arena);
         state = newState;
         state.onEnter(this, arena);
@@ -380,8 +316,6 @@ public class GamePiece {
     }
 
     /**
-     * Returns the pose of the {@link GamePiece} in the simulation.
-     * 
      * @return the pose of the {@link GamePiece} in the simulation
      */
     public Pose3d pose() {
@@ -389,44 +323,25 @@ public class GamePiece {
     }
 
     /**
-     * Returns a tag representing the state of the {@link GamePiece}.
-     * 
      * @return a tag representing the state of the {@link GamePiece}
      */
-    public GamePieceStateTag stateTag() {
+    public GamePieceState state() {
         return state.tag();
     }
 
     /**
-     * Returns the {@link GamePieceVariant} of the {@link GamePiece}.
-     * 
      * @return the {@link GamePieceVariant} of the {@link GamePiece}
      */
     public GamePieceVariant variant() {
         return variant;
     }
 
-    /**
-     * Adds an event handler to the {@link GamePiece}.
-     * 
-     * @param event the event to add a handler for
-     * @param handler the handler to add
-     * @return this {@link GamePiece} object
-     */
-    public GamePiece addEventHandler(GamePieceEvent event, GamePieceEventHandler handler) {
-        eventHandlers.get(event).add(handler);
-        return this;
+    public boolean isInState(GamePieceState... tags) {
+        return List.of(tags).contains(state.tag());
     }
 
-    /**
-     * Triggers an event on the {@link GamePiece}.
-     * 
-     * @param event the event to trigger
-     */
-    void triggerEvent(GamePieceEvent event) {
-        for (GamePieceEventHandler handler : eventHandlers.get(event)) {
-            handler.handle(variant, this.pose());
-        }
+    public boolean isOfVariant(GamePieceVariant... variants) {
+        return List.of(variants).contains(variant);
     }
 
     /**
@@ -439,13 +354,19 @@ public class GamePiece {
         return this;
     }
 
+    GamePiece withLib(Consumer<GamePiece> consumer) {
+        boolean prevControl = userControlled;
+        userControlled = true;
+        consumer.accept(this);
+        userControlled = prevControl;
+        return this;
+    }
+
     /**
      * Releases control of the {@link GamePiece} back to the library only.
      * 
      * <p> The user should never have to call this method but it is not dangerous to do so
      * therefore it is public.
-     * 
-     * @return this {@link GamePiece} object
      */
     public void releaseControl() {
         userControlled = false;
@@ -460,63 +381,23 @@ public class GamePiece {
         return userControlled;
     }
 
-    /**
-     * Places the {@link GamePiece} on the field at the given position
-     * no matter the who has control of the {@link GamePiece}.
-     * 
-     * @param pose the position to place the {@link GamePiece} at
-     * @return this {@link GamePiece} object
-     */
-    GamePiece placeSudo(Translation2d pose) {
-        transitionState(new GamePieceState.OnField(createBody(pose, new Velocity2d())));
-        return this;
+    public boolean isLibraryControlled() {
+        return !userControlled;
     }
 
     /**
-     * Slides the {@link GamePiece} on the field at the given position and velocity
-     * no matter the who has control of the {@link GamePiece}.
+     * Intakes the {@link GamePiece} if the user has control of the {@link GamePiece}.
      * 
-     * @param initialPose the position to place the {@link GamePiece} at
-     * @param initialVelo the velocity to slide the {@link GamePiece} at
-     * @return this {@link GamePiece} object
+     * @param robotPoseSupplier a supplier for the pose of the robot
+     * @param offset a supplier for the offset of the game piece from the robot
      */
-    GamePiece slideSudo(Translation2d initialPose, Velocity2d initialVelo) {
-        transitionState(new GamePieceState.OnField(createBody(initialPose, initialVelo)));
-        return this;
-    }
-
-    /**
-     * Launches the {@link GamePiece} from the given pose and velocity
-     * no matter the who has control of the {@link GamePiece}.
-     * 
-     * @param initialPose the pose to launch the {@link GamePiece} from
-     * @param initialVelocity the velocity to launch the {@link GamePiece} at
-     * @param dynamics the dynamics of the projectile
-     * @return this {@link GamePiece} object
-     */
-    GamePiece launchSudo(Pose3d initialPose, Velocity3d initialVelocity, ProjectileDynamics dynamics) {
-        transitionState(new GamePieceState.InFlight(initialPose, initialVelocity, dynamics));
-        return this;
-    }
-
-    /**
-     * Intakes the {@link GamePiece} with the given robot pose supplier and offset
-     * no matter the who has control of the {@link GamePiece}.
-     * 
-     * @param robotPoseSupplier the supplier of the robot pose
-     * @param offset the supplier of the offset
-     * @return this {@link GamePiece} object
-     */
-    GamePiece intakeSudo(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset) {
-        transitionState(new GamePieceState.Held(robotPoseSupplier, offset));
-        return this;
-    }
-
-    /**
-     * Deletes the {@link GamePiece} no matter the who has control of the {@link GamePiece}
-     */
-    void deleteSudo() {
-        transitionState(new GamePieceState.Limbo());
+    public void intake(Supplier<Pose3d> robotPoseSupplier, Supplier<Transform3d> offset) {
+        if (userControlled) {
+            transitionState(new GamePieceStateData.Held(robotPoseSupplier, offset));
+            releaseControl();
+        } else {
+            RuntimeLog.warn("Tried to intake a game piece without control");
+        }
     }
 
     /**
@@ -527,7 +408,8 @@ public class GamePiece {
      */
     public void place(Translation2d pose) {
         if (userControlled) {
-            transitionState(new GamePieceState.OnField(createBody(pose, new Velocity2d())));
+            transitionState(
+                    new GamePieceStateData.OnField(GamePieceCollisionBody.createBody(this, pose, new Velocity2d())));
             releaseControl();
         } else {
             RuntimeLog.warn("Tried to place a game piece without control");
@@ -543,7 +425,8 @@ public class GamePiece {
      */
     public void slide(Translation2d initialPosition, Velocity2d initialVelocity) {
         if (userControlled) {
-            transitionState(new GamePieceState.OnField(createBody(initialPosition, initialVelocity)));
+            transitionState(new GamePieceStateData.OnField(
+                    GamePieceCollisionBody.createBody(this, initialPosition, initialVelocity)));
             releaseControl();
         } else {
             RuntimeLog.warn("Tried to slide a game piece without control");
@@ -553,13 +436,14 @@ public class GamePiece {
     /**
      * Launches the {@link GamePiece} from the given pose and velocity
      * if the user has control of the {@link GamePiece}.
+     * 
      * @param initialPose the pose to launch the {@link GamePiece} from
      * @param initialVelocity the velocity to launch the {@link GamePiece} at
      * @param dynamics the dynamics of the projectile
      */
     public void launch(Pose3d initialPose, Velocity3d initialVelocity, ProjectileDynamics dynamics) {
         if (userControlled) {
-            transitionState(new GamePieceState.InFlight(initialPose, initialVelocity, dynamics));
+            transitionState(new GamePieceStateData.InFlight(initialPose, initialVelocity, dynamics));
             releaseControl();
         } else {
             RuntimeLog.warn("Tried to launch a game piece without control");
@@ -571,7 +455,7 @@ public class GamePiece {
      */
     public void delete() {
         if (userControlled) {
-            transitionState(new GamePieceState.Limbo());
+            transitionState(new GamePieceStateData.Limbo());
             releaseControl();
         } else {
             RuntimeLog.warn("Tried to delete a game piece without control");
@@ -580,20 +464,52 @@ public class GamePiece {
 
     void simulationSubTick() {
         state.tick(this, arena);
-        if (state instanceof GamePieceState.InFlight state) {
+        if (state instanceof GamePieceStateData.InFlight state) {
             var pose = state.pose(this, arena);
             if (pose.getTranslation().getZ() < 0.0) {
-                triggerEvent(GamePieceEvent.LANDED);
-                transitionState(new GamePieceState.OnField(createBody(
+                transitionState(new GamePieceStateData.OnField(GamePieceCollisionBody.createBody(
+                        this,
                         pose.getTranslation().toTranslation2d(),
                         state.velocity.toVelocity2d().times(variant.landingDampening))));
                 RuntimeLog.debug("GamePiece: Landed");
             }
             if (variant.targets.stream().anyMatch(target -> target.isInside(pose.getTranslation()))) {
-                triggerEvent(GamePieceEvent.TARGET_REACHED);
-                transitionState(new GamePieceState.Limbo());
+                transitionState(new GamePieceStateData.Limbo());
+                userControlled();
                 RuntimeLog.debug("GamePiece: Target reached");
             }
         }
+    }
+
+    public static Collector<GamePiece, ArrayList<Pose3d>, Pose3d[]> poseStreamCollector() {
+        return new Collector<GamePiece, ArrayList<Pose3d>, Pose3d[]>() {
+            @Override
+            public Supplier<ArrayList<Pose3d>> supplier() {
+                return () -> new ArrayList<>();
+            }
+
+            @Override
+            public BiConsumer<ArrayList<Pose3d>, GamePiece> accumulator() {
+                return (poses, gamePiece) -> poses.add(gamePiece.pose());
+            }
+
+            @Override
+            public Set<Characteristics> characteristics() {
+                return Set.of();
+            }
+
+            @Override
+            public BinaryOperator<ArrayList<Pose3d>> combiner() {
+                return (poses1, poses2) -> {
+                    poses1.addAll(poses2);
+                    return poses1;
+                };
+            }
+
+            @Override
+            public Function<ArrayList<Pose3d>, Pose3d[]> finisher() {
+                return poses -> poses.toArray(new Pose3d[0]);
+            }
+        };
     }
 }

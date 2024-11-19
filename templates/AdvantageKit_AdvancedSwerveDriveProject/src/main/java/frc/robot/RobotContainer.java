@@ -105,7 +105,7 @@ public class RobotContainer {
                                 DCMotor.getKrakenX60(1), // drive motor is a Kraken x60
                                 DCMotor.getFalcon500(1), // steer motor is a Falcon 500
                                 Amps.of(60), // current limit: 60 Amps
-                                SwerveModuleSimulation.WHEEL_GRIP.RUBBER_WHEEL.cof, // use COF of rubber wheels
+                                SwerveModuleSimulation.WHEEL_GRIP.COLSONS.cof, // use COF of Colson Wheels
                                 3 // l3 gear ratio
                                 ))
                         .withCustomModuleTranslations(Drive.getModuleTranslations())

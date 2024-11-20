@@ -1,14 +1,14 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Seconds;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.lang.ref.WeakReference;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -20,6 +20,7 @@ import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
+import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
@@ -34,8 +35,8 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *
  * <p>The default instance can be obtained using the {@link #getInstance()} method.
  *
- * <p>Simulates all interactions within the arena field.
- *g
+ * <p>Simulates all interactions within the arena field. g
+ *
  * <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
  *
  * <ul>
@@ -58,11 +59,9 @@ public abstract class SimulatedArena {
      * @throws IllegalStateException if the method is call when running on a real robot
      */
     public static SimulatedArena getInstance() {
-        if (RobotBase.isReal())
-            throw new IllegalStateException("MapleSim should not be running on a real robot!");
+        if (RobotBase.isReal()) throw new IllegalStateException("MapleSim should not be running on a real robot!");
 
-        if (instance == null)
-            instance = new Arena2024Crescendo();
+        if (instance == null) instance = new Arena2024Crescendo();
 
         return instance;
     }
@@ -91,9 +90,9 @@ public abstract class SimulatedArena {
         return SIMULATION_SUB_TICKS_IN_1_PERIOD;
     }
     /** The period length of each sub-tick, in seconds. */
-    private static double SIMULATION_DT = TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+    private static Time SIMULATION_DT = Seconds.of(TimedRobot.kDefaultPeriod / SIMULATION_SUB_TICKS_IN_1_PERIOD);
 
-    public static double getSimulationDt() {
+    public static Time getSimulationDt() {
         return SIMULATION_DT;
     }
 
@@ -115,14 +114,14 @@ public abstract class SimulatedArena {
      *
      * <p>It is also recommended to keep the simulation frequency above 200 Hz for accurate simulation results.
      *
-     * @param robotPeriodSeconds the time between two calls of {@link #simulationPeriodic()}, usually obtained from
+     * @param robotPeriod the time between two calls of {@link #simulationPeriodic()}, usually obtained from
      *     {@link TimedRobot#getPeriod()}
      * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick()} that the simulation
      *     runs per each call to {@link #simulationPeriodic()}
      */
-    public static void overrideSimulationTimings(double robotPeriodSeconds, int simulationSubTicksPerPeriod) {
+    public static void overrideSimulationTimings(Time robotPeriod, int simulationSubTicksPerPeriod) {
         SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
-        SIMULATION_DT = robotPeriodSeconds / SIMULATION_SUB_TICKS_IN_1_PERIOD;
+        SIMULATION_DT = robotPeriod.divide(SIMULATION_SUB_TICKS_IN_1_PERIOD);
     }
 
     protected final World<Body> physicsWorld;
@@ -130,7 +129,6 @@ public abstract class SimulatedArena {
     protected final Set<GamePieceOnFieldSimulation> gamePieces;
     protected final Set<GamePieceProjectile> gamePieceProjectile;
     protected final List<Runnable> simulationSubTickActions;
-    protected final List<WeakReference<MapleMotorSim>> motors;
     private final List<IntakeSimulation> intakeSimulations;
 
     /**
@@ -153,7 +151,6 @@ public abstract class SimulatedArena {
         this.gamePieces = new HashSet<>();
         this.gamePieceProjectile = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
-        motors = new ArrayList<>();
     }
 
     /**
@@ -266,10 +263,6 @@ public abstract class SimulatedArena {
         this.gamePieces.clear();
     }
 
-    public void addMotor(MapleMotorSim motor) {
-        motors.add(new WeakReference<>(motor));
-    }
-
     /**
      *
      *
@@ -279,8 +272,8 @@ public abstract class SimulatedArena {
      * LoggedRobot.simulationPeriodic()</code> if using <a
      * href='https://github.com/Mechanical-Advantage/AdvantageKit'>Advantage-Kit</a>)
      *
-     * <p>If not configured through {@link SimulatedArena#overrideSimulationTimings(double robotPeriodSeconds, int
-     * simulationSubTicksPerPeriod)}, the simulator will iterate through 5 Sub-ticks by default.
+     * <p>If not configured through {@link SimulatedArena#overrideSimulationTimings(Time, int)} , the simulator will
+     * iterate through 5 Sub-ticks by default.
      *
      * <p>The amount of CPU Time that the Dyn4j engine uses in displayed in <code>
      * SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern
@@ -288,6 +281,7 @@ public abstract class SimulatedArena {
     public void simulationPeriodic() {
         final long t0 = System.nanoTime();
         competitionPeriodic();
+        SimulatedBattery.getInstance().flush();
         // move through a few sub-periods in each update
         for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick();
 
@@ -311,25 +305,12 @@ public abstract class SimulatedArena {
      * </ul>
      */
     private void simulationSubTick() {
-        ArrayList<Double> motorCurrents = new ArrayList<>();
-        for (var motor : motors) {
-            MapleMotorSim motorRef = motor.get();
-            if (motorRef != null) {
-                motorRef.update();
-            }
-        }
-        double vin = BatterySim.calculateLoadedBatteryVoltage(
-                12.2,
-                0.015,
-                motorCurrents.stream().mapToDouble(Double::doubleValue).toArray());
-        RoboRioSim.setVInVoltage(vin);
-
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 
         GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceProjectile);
 
-        this.physicsWorld.step(1, SIMULATION_DT);
+        this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
         for (IntakeSimulation intakeSimulation : intakeSimulations)
             while (!intakeSimulation.getGamePiecesToRemove().isEmpty())

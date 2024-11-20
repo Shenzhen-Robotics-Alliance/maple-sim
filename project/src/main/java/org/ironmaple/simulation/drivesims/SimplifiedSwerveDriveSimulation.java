@@ -1,9 +1,9 @@
 package org.ironmaple.simulation.drivesims;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -11,9 +11,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.units.*;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.motorsims.ControlRequest;
+import org.ironmaple.simulation.motorsims.SimMotorConfigs;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
 /**
@@ -37,10 +42,6 @@ public class SimplifiedSwerveDriveSimulation {
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
     private final SwerveModuleState[] setPointsOptimized;
-
-    private PIDController steerHeadingCloseLoop;
-    private PIDController driveCloseLoop;
-    private final SimpleMotorFeedforward driveOpenLoop;
 
     /**
      *
@@ -78,13 +79,6 @@ public class SimplifiedSwerveDriveSimulation {
         this.swerveDriveSimulation = swerveDriveSimulation;
         this.moduleSimulations = swerveDriveSimulation.getModules();
 
-        this.steerHeadingCloseLoop = new PIDController(5.0, 0, 0);
-        this.steerHeadingCloseLoop.enableContinuousInput(-Math.PI, Math.PI);
-        this.driveCloseLoop = new PIDController(0, 0, 0);
-        this.driveOpenLoop = new SimpleMotorFeedforward(
-                moduleSimulations[0].DRIVE_FRICTION_VOLTAGE,
-                moduleSimulations[0].DRIVE_MOTOR.nominalVoltageVolts
-                        / moduleSimulations[0].DRIVE_MOTOR.freeSpeedRadPerSec);
         this.kinematics = swerveDriveSimulation.kinematics;
 
         this.poseEstimator = new SwerveDrivePoseEstimator(
@@ -97,6 +91,9 @@ public class SimplifiedSwerveDriveSimulation {
 
         this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
         Arrays.fill(setPointsOptimized, new SwerveModuleState());
+
+        this.withDefaultDriveFeedForward(Volts.zero())
+                .withDriveVelocityVoltageKP(Volts.per(RPM).ofNative(8.0 / 6000.0), true);
     }
 
     /**
@@ -113,7 +110,8 @@ public class SimplifiedSwerveDriveSimulation {
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             poseEstimator.updateWithTime(
                     Timer.getFPGATimestamp()
-                            - SimulatedArena.getSimulationDt() * (SimulatedArena.getSimulationDt() - i),
+                            - SimulatedArena.getSimulationDt().in(Seconds)
+                                    * (SimulatedArena.getSimulationDt().in(Seconds) - i),
                     swerveDriveSimulation.gyroSimulation.getCachedGyroReadings()[i],
                     cachedModulePositions[i]);
     }
@@ -130,7 +128,8 @@ public class SimplifiedSwerveDriveSimulation {
     public SwerveModulePosition[] getLatestModulePositions() {
         return Arrays.stream(moduleSimulations)
                 .map(moduleSimulation -> new SwerveModulePosition(
-                        moduleSimulation.getDriveWheelFinalPositionRad() * moduleSimulation.WHEEL_RADIUS_METERS,
+                        moduleSimulation.getDriveWheelFinalPosition().in(Radians)
+                                * moduleSimulation.WHEEL_RADIUS.in(Meters),
                         moduleSimulation.getSteerAbsoluteFacing()))
                 .toArray(SwerveModulePosition[]::new);
     }
@@ -156,11 +155,11 @@ public class SimplifiedSwerveDriveSimulation {
                 new SwerveModulePosition[SimulatedArena.getSimulationSubTicksIn1Period()][moduleSimulations.length];
 
         for (int moduleIndex = 0; moduleIndex < moduleSimulations.length; moduleIndex++) {
-            final double[] wheelPositionRads = moduleSimulations[moduleIndex].getCachedDriveWheelFinalPositionsRad();
+            final Angle[] wheelPosition = moduleSimulations[moduleIndex].getCachedDriveWheelFinalPositions();
             final Rotation2d[] swerveModuleFacings = moduleSimulations[moduleIndex].getCachedSteerAbsolutePositions();
             for (int timeStamp = 0; timeStamp < SimulatedArena.getSimulationSubTicksIn1Period(); timeStamp++)
                 cachedModulePositions[timeStamp][moduleIndex] = new SwerveModulePosition(
-                        wheelPositionRads[timeStamp] * moduleSimulations[0].WHEEL_RADIUS_METERS,
+                        wheelPosition[timeStamp].in(Radians) * moduleSimulations[0].WHEEL_RADIUS.in(Meters),
                         swerveModuleFacings[timeStamp]);
         }
 
@@ -212,7 +211,8 @@ public class SimplifiedSwerveDriveSimulation {
      *
      * <h2>Resets the odometry to a specified position.</h2>
      *
-     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, WheelPositions, Pose2d)}.
+     * <p>This method wraps around {@link SwerveDrivePoseEstimator#resetPosition(Rotation2d, SwerveModulePosition[],
+     * Pose2d)}.
      *
      * <p>It resets the position of the pose estimator to the given pose.
      *
@@ -284,8 +284,22 @@ public class SimplifiedSwerveDriveSimulation {
                     chassisSpeeds, getOdometryEstimatedPose().getRotation());
         if (discretizeSpeeds)
             chassisSpeeds = ChassisSpeeds.discretize(
-                    chassisSpeeds, SimulatedArena.getSimulationDt() * SimulatedArena.getSimulationSubTicksIn1Period());
+                    chassisSpeeds,
+                    SimulatedArena.getSimulationDt().in(Seconds) * SimulatedArena.getSimulationSubTicksIn1Period());
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
+        runSwerveStates(setPoints);
+    }
+
+    /**
+     *
+     *
+     * <h2>Runs a raw module states on the chassis.</h2>
+     *
+     * <p>Runs the specified module states on the modules.
+     *
+     * @param setPoints an array of {@link SwerveModuleState} yielding the requested states
+     */
+    public void runSwerveStates(SwerveModuleState[] setPoints) {
         for (int i = 0; i < moduleSimulations.length; i++)
             setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
     }
@@ -355,7 +369,10 @@ public class SimplifiedSwerveDriveSimulation {
                 swerveSpeeds.vxMetersPerSecond,
                 swerveSpeeds.vyMetersPerSecond,
                 useGyroForAngularVelocity
-                        ? swerveDriveSimulation.gyroSimulation.getMeasuredAngularVelocityRadPerSec()
+                        ? swerveDriveSimulation
+                                .gyroSimulation
+                                .getMeasuredAngularVelocity()
+                                .in(RadiansPerSecond)
                         : swerveSpeeds.omegaRadiansPerSecond);
     }
 
@@ -441,156 +458,125 @@ public class SimplifiedSwerveDriveSimulation {
      */
     private SwerveModuleState optimizeAndRunModuleState(
             SwerveModuleSimulation moduleSimulation, SwerveModuleState setPoint) {
-        setPoint = SwerveModuleState.optimize(setPoint, moduleSimulation.getSteerAbsoluteFacing());
+        setPoint.optimize(moduleSimulation.getSteerAbsoluteFacing());
         final double
                 cosProjectedSpeedMPS =
                         SwerveStateProjection.project(setPoint, moduleSimulation.getSteerAbsoluteFacing()),
-                driveMotorVelocitySetPointRadPerSec =
-                        cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS_METERS * moduleSimulation.DRIVE_GEAR_RATIO;
-        final double driveFeedForwardVoltage = driveOpenLoop.calculate(driveMotorVelocitySetPointRadPerSec),
-                driveFeedBackVoltage =
-                        driveCloseLoop.calculate(
-                                moduleSimulation.getDriveWheelFinalSpeedRadPerSec(),
-                                driveMotorVelocitySetPointRadPerSec),
-                steerFeedBackVoltage =
-                        steerHeadingCloseLoop.calculate(
-                                moduleSimulation.getSteerAbsoluteFacing().getRadians(), setPoint.angle.getRadians());
+                driveWheelVelocitySetPointRadPerSec = cosProjectedSpeedMPS / moduleSimulation.WHEEL_RADIUS.in(Meters);
 
-        moduleSimulation.requestDriveVoltageOut(driveFeedForwardVoltage + driveFeedBackVoltage);
-        moduleSimulation.requestSteerVoltageOut(steerFeedBackVoltage);
+        moduleSimulation.requestSteerControl(
+                new ControlRequest.PositionVoltage(Radians.of(setPoint.angle.getRadians())));
+        moduleSimulation.requestDriveControl(
+                new ControlRequest.VelocityVoltage(RadiansPerSecond.of(driveWheelVelocitySetPointRadPerSec)));
         return setPoint;
     }
 
-    /**
-     *
-     *
-     * <h2>Obtains the maximum linear velocity of the swerve modules.</h2>
-     *
-     * <p>This method retrieves the theoretical maximum linear velocity of the swerve module in meters per second.
-     *
-     * @return the maximum linear velocity in meters per second.
-     */
-    public double getMaximumLinearVelocityMetersPerSecond() {
-        return moduleSimulations[0].getModuleTheoreticalSpeedMPS();
+    /** @see SwerveDriveSimulation#maxLinearVelocity() */
+    public LinearVelocity maxLinearVelocity() {
+        return swerveDriveSimulation.maxLinearVelocity();
+    }
+
+    /** @see SwerveDriveSimulation#maxLinearAcceleration() */
+    public LinearAcceleration maxLinearAcceleration() {
+        return swerveDriveSimulation.maxLinearAcceleration();
+    }
+
+    /** @see DriveTrainSimulationConfig#trackWidthY() */
+    public Distance trackWidthY() {
+        return swerveDriveSimulation.config.trackWidthY();
+    }
+
+    /** @see DriveTrainSimulationConfig#trackLengthX() */
+    public Distance trackLengthX() {
+        return swerveDriveSimulation.config.trackLengthX();
+    }
+
+    /** @see SwerveDriveSimulation#driveBaseRadius() */
+    public Distance driveBaseRadius() {
+        return swerveDriveSimulation.config.driveBaseRadius();
+    }
+
+    /** @see SwerveDriveSimulation#maxAngularVelocity() */
+    public AngularVelocity maxAngularVelocity() {
+        return RadiansPerSecond.of(
+                maxLinearVelocity().in(MetersPerSecond) / driveBaseRadius().in(Meters));
+    }
+
+    /** @see SwerveDriveSimulation#maxAngularAcceleration() */
+    public AngularAcceleration maxAngularAcceleration() {
+        return swerveDriveSimulation.maxAngularAcceleration();
     }
 
     /**
      *
      *
-     * <h2>Obtains the maximum linear acceleration of the swerve modules.</h2>
+     * <h2>Configures the PID controller for steer heading control.</h2>
      *
-     * <p>This method calculates the maximum linear acceleration of the swerve module in meters per second squared.
+     * <p>This method wraps around
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withPositionVoltageController(Per, Per, boolean)}
      *
-     * @return the maximum linear acceleration in meters per second squared.
-     */
-    public double getMaximumLinearAccelerationMetersPerSecondSquare() {
-        return moduleSimulations[0].getModuleMaxAccelerationMPSsq(
-                swerveDriveSimulation.config.robotMassKg, moduleSimulations.length);
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the track width of the swerve drive.</h2>
-     *
-     * <p>This method calculates the total track width of the robot in meters, which is the distance between the left
-     * and right swerve modules.
-     *
-     * @return the track width in meters.
-     */
-    public double getTrackWidthYMeters() {
-        return swerveDriveSimulation.moduleTranslations[0].getY() * 2;
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the track length of the swerve drive.</h2>
-     *
-     * <p>This method calculates the total track length of the robot in meters, which is the distance between the front
-     * and back swerve modules.
-     *
-     * @return the track length in meters.
-     */
-    public double getTrackLengthXMeters() {
-        return swerveDriveSimulation.moduleTranslations[0].getX() * 2;
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the drive base radius of the swerve drive.</h2>
-     *
-     * <p>This method calculates the radius of the drive base, which is the distance from the center of rotation to the
-     * swerve modules, in meters.
-     *
-     * @return the drive base radius in meters.
-     */
-    public double getDriveBaseRadiusMeters() {
-        return swerveDriveSimulation.moduleTranslations[0].getNorm();
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the maximum angular velocity of the swerve drive.</h2>
-     *
-     * <p>This method calculates the maximum angular velocity of the robot based on the maximum linear velocity and
-     * drive base radius, in radians per second.
-     *
-     * @return the maximum angular velocity in radians per second.
-     */
-    public double getMaximumAngularVelocityRadPerSec() {
-        return getMaximumLinearVelocityMetersPerSecond() / getDriveBaseRadiusMeters();
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the maximum angular acceleration of the swerve drive.</h2>
-     *
-     * <p>This method calculates the maximum angular acceleration of the robot based on the maximum propelling torque
-     * and the robot's moment of inertia, in radians per second squared.
-     *
-     * @return the maximum angular acceleration in radians per second squared.
-     */
-    public double getMaximumAngularAccelerationRadPerSec() {
-        final double
-                maxPropellingForce =
-                        moduleSimulations[0].getTheoreticalPropellingForcePerModule(
-                                swerveDriveSimulation.config.robotMassKg, moduleSimulations.length),
-                maxPropellingTorque = maxPropellingForce * getDriveBaseRadiusMeters();
-        // angular acc = torque / inertia
-        return maxPropellingTorque / swerveDriveSimulation.getMass().getInertia();
-    }
-
-    /**
-     *
-     *
-     * <h2>Configures the swerve drive simulation with a PID controller for steering.</h2>
-     *
-     * <p>This method sets the PID controller used for the steering closed-loop control of the swerve drive.
-     *
-     * @param steerHeadingCloseLoop the PID controller for steering control.
+     * @param kP the proportional gain
+     * @param kD the derivative gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withSteerPID(PIDController steerHeadingCloseLoop) {
-        this.steerHeadingCloseLoop = steerHeadingCloseLoop;
+    public SimplifiedSwerveDriveSimulation withSteerPID(
+            Per<VoltageUnit, AngleUnit> kP, Per<VoltageUnit, AngularVelocityUnit> kD) {
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i].getSteerMotorConfigs().withPositionVoltageController(kP, kD, false);
         return this;
     }
 
     /**
      *
      *
-     * <h2>Configures the swerve drive simulation with a PID controller for driving.</h2>
+     * <h2>Configures the PID controllers for drive velocity control.</h2>
      *
-     * <p>This method sets the PID controller used for the driving closed-loop control of the swerve drive.
+     * <p>This method wraps around
+     * {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withVelocityVoltageController(Per, boolean)}.
      *
-     * @param driveCloseLoop the PID controller for driving control.
+     * @param kP the proportional gain
      * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
      */
-    public SimplifiedSwerveDriveSimulation withDrivePID(PIDController driveCloseLoop) {
-        this.driveCloseLoop = driveCloseLoop;
+    public SimplifiedSwerveDriveSimulation withDriveVelocityVoltageKP(
+            Per<VoltageUnit, AngularVelocityUnit> kP, boolean gainsUnGeared) {
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i].getDriveMotorConfigs().withVelocityVoltageController(kP, gainsUnGeared);
+        return this;
+    }
+
+    /**
+     *
+     *
+     * <h2>Configures the feedforward controller for the drive velocity control.</h2>
+     *
+     * <p>This method wraps around {@link org.ironmaple.simulation.motorsims.SimMotorConfigs#withFeedForward(Voltage,
+     * Per, Per, boolean, Time)}.
+     *
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SimplifiedSwerveDriveSimulation withDriveFeedForward(
+            Voltage kS,
+            Per<VoltageUnit, AngularVelocityUnit> kV,
+            Per<VoltageUnit, AngularAccelerationUnit> kA,
+            boolean gainsUnGeared) {
+        for (int i = 0; i < 4; i++)
+            moduleSimulations[i]
+                    .getDriveMotorConfigs()
+                    .withFeedForward(kS, kV, kA, gainsUnGeared, SimulatedArena.getSimulationDt());
+        return this;
+    }
+
+    /**
+     *
+     *
+     * <h2>Configures the feedforward controller for the drive velocity control.</h2>
+     *
+     * <p>This method wraps around {@link SimMotorConfigs#withDefaultFeedForward(Voltage)} )}.
+     *
+     * @return the current instance of {@link SimplifiedSwerveDriveSimulation} for method chaining.
+     */
+    public SimplifiedSwerveDriveSimulation withDefaultDriveFeedForward(Voltage kV) {
+        for (int i = 0; i < 4; i++) moduleSimulations[i].getDriveMotorConfigs().withDefaultFeedForward(kV);
         return this;
     }
 }

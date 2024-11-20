@@ -1,5 +1,7 @@
 package org.ironmaple.simulation.drivesims;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -48,12 +50,12 @@ public abstract class AbstractDriveTrainSimulation extends Body {
 
         this.config = config;
         /* width and height in world reference is flipped */
-        final double WIDTH_IN_WORLD_REFERENCE = config.bumperLengthXMeters,
-                HEIGHT_IN_WORLD_REFERENCE = config.bumperWidthYMeters;
+        final double WIDTH_IN_WORLD_REFERENCE = config.bumperLengthX.in(Meters),
+                HEIGHT_IN_WORLD_REFERENCE = config.bumperWidthY.in(Meters);
 
         super.addFixture(
                 Geometry.createRectangle(WIDTH_IN_WORLD_REFERENCE, HEIGHT_IN_WORLD_REFERENCE),
-                config.getDensity(),
+                config.getDensityKgPerSquaredMeters(),
                 BUMPER_COEFFICIENT_OF_FRICTION,
                 BUMPER_COEFFICIENT_OF_RESTITUTION);
 

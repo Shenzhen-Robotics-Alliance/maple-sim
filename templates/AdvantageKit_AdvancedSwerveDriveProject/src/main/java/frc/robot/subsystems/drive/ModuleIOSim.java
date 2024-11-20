@@ -16,50 +16,59 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.OdometryTimeStampsSim;
 import java.util.Arrays;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.motorsims.ControlRequest.VoltageOut;
 
 /** Wrapper class around {@link SwerveModuleSimulation} that implements ModuleIO */
 public class ModuleIOSim implements ModuleIO {
-  private final SwerveModuleSimulation moduleSimulation;
+    private final SwerveModuleSimulation moduleSimulation;
 
-  public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
-    this.moduleSimulation = moduleSimulation;
-  }
+    public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
+        this.moduleSimulation = moduleSimulation;
+    }
 
-  @Override
-  public void updateInputs(ModuleIOInputs inputs) {
-    inputs.drivePositionRad = moduleSimulation.getDriveWheelFinalPositionRad();
-    inputs.driveVelocityRadPerSec = moduleSimulation.getDriveWheelFinalSpeedRadPerSec();
-    inputs.driveAppliedVolts = moduleSimulation.getDriveMotorAppliedVolts();
-    inputs.driveCurrentAmps =
-        new double[] {Math.abs(moduleSimulation.getDriveMotorSupplyCurrentAmps())};
+    @Override
+    public void updateInputs(ModuleIOInputs inputs) {
+        inputs.drivePositionRad = moduleSimulation.getDriveWheelFinalPosition().in(Radians);
+        inputs.driveVelocityRadPerSec =
+                moduleSimulation.getDriveWheelFinalSpeed().in(RadiansPerSecond);
+        inputs.driveAppliedVolts =
+                moduleSimulation.getDriveMotorAppliedVoltage().in(Volts);
+        inputs.driveCurrentAmps = new double[] {
+            Math.abs(moduleSimulation.getDriveMotorSupplyCurrent().in(Amps))
+        };
 
-    inputs.turnAbsolutePosition = moduleSimulation.getSteerAbsoluteFacing();
-    inputs.turnPosition =
-        Rotation2d.fromRadians(moduleSimulation.getSteerRelativeEncoderPositionRad());
-    inputs.turnVelocityRadPerSec = moduleSimulation.getSteerRelativeEncoderSpeedRadPerSec();
-    inputs.turnAppliedVolts = moduleSimulation.getSteerMotorAppliedVolts();
-    inputs.turnCurrentAmps =
-        new double[] {Math.abs(moduleSimulation.getSteerMotorSupplyCurrentAmps())};
+        inputs.turnAbsolutePosition = moduleSimulation.getSteerAbsoluteFacing();
+        inputs.turnPosition = new Rotation2d(
+                moduleSimulation.getSteerRelativeEncoderPosition().divide(moduleSimulation.STEER_GEAR_RATIO));
+        inputs.turnVelocityRadPerSec =
+                moduleSimulation.getSteerRelativeEncoderVelocity().in(RadiansPerSecond);
+        inputs.turnAppliedVolts = moduleSimulation.getSteerMotorAppliedVoltage().in(Volts);
+        inputs.turnCurrentAmps = new double[] {
+            Math.abs(moduleSimulation.getSteerMotorSupplyCurrent().in(Amps))
+        };
 
-    inputs.odometryTimestamps = OdometryTimeStampsSim.getTimeStamps();
-    inputs.odometryDrivePositionsRad = moduleSimulation.getCachedDriveWheelFinalPositionsRad();
-    inputs.odometryTurnPositions =
-        Arrays.stream(moduleSimulation.getCachedSteerRelativeEncoderPositions())
-            .mapToObj(Rotation2d::fromRadians)
-            .toArray(Rotation2d[]::new);
-  }
+        inputs.odometryTimestamps = OdometryTimeStampsSim.getTimeStamps();
+        inputs.odometryDrivePositionsRad = Arrays.stream(moduleSimulation.getCachedDriveEncoderUnGearedPositions())
+                .mapToDouble(angle -> angle.in(Radians) / moduleSimulation.STEER_GEAR_RATIO)
+                .toArray();
+        inputs.odometryTurnPositions = Arrays.stream(moduleSimulation.getCachedSteerRelativeEncoderPositions())
+                .map(Rotation2d::new)
+                .toArray(Rotation2d[]::new);
+    }
 
-  @Override
-  public void setDriveVoltage(double volts) {
-    moduleSimulation.requestDriveVoltageOut(volts);
-  }
+    @Override
+    public void setDriveVoltage(double volts) {
+        moduleSimulation.requestDriveControl(new VoltageOut(Volts.of(volts)));
+    }
 
-  @Override
-  public void setTurnVoltage(double volts) {
-    moduleSimulation.requestSteerVoltageOut(volts);
-  }
+    @Override
+    public void setTurnVoltage(double volts) {
+        moduleSimulation.requestSteerControl(new VoltageOut(Volts.of(volts)));
+    }
 }

@@ -8,6 +8,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
@@ -97,4 +98,24 @@ public interface SwerveDrive extends Subsystem {
 
     void addVisionMeasurement(
             Pose2d visionRobotPoseMeters, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs);
+
+    default void initSwerveWidget(String key) {
+        SmartDashboard.putData(key, (builder) -> {
+            builder.setSmartDashboardType("SwerveDrive");
+
+            builder.addDoubleProperty("Front Left Angle", () -> getModuleStates()[0].angle.getRadians(), null);
+            builder.addDoubleProperty("Front Left Velocity", () -> getModuleStates()[0].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty("Front Right Angle", () -> getModuleStates()[1].angle.getRadians(), null);
+            builder.addDoubleProperty("Front Right Velocity", () -> getModuleStates()[0].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty("Back Left Angle", () -> getModuleStates()[2].angle.getRadians(), null);
+            builder.addDoubleProperty("Back Left Velocity", () -> getModuleStates()[0].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty("Back Right Angle", () -> getModuleStates()[3].angle.getRadians(), null);
+            builder.addDoubleProperty("Back Right Velocity", () -> getModuleStates()[0].speedMetersPerSecond, null);
+
+            builder.addDoubleProperty("Robot Angle", () -> getHeading().getRadians(), null);
+        });
+    }
 }

@@ -4,19 +4,19 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.subsystems.drive.TalonSwerve;
+import frc.robot.subsystems.drive.SwerveDrive;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class TeleopSwerve extends Command {
-    private TalonSwerve s_Swerve;
+    private SwerveDrive s_Swerve;
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
 
     public TeleopSwerve(
-            TalonSwerve s_Swerve,
+            SwerveDrive s_Swerve,
             DoubleSupplier translationSup,
             DoubleSupplier strafeSup,
             DoubleSupplier rotationSup,

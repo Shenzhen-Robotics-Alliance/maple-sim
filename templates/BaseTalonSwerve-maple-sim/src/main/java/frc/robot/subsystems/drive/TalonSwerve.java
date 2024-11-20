@@ -1,26 +1,29 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
 
-public class SwerveFalcon extends SubsystemBase {
-    public SwerveDriveOdometry swerveOdometry;
+public class TalonSwerve extends SubsystemBase implements SwerveDrive {
+    public SwerveDrivePoseEstimator swervePoseEstimator;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
 
-    public SwerveFalcon() {
+    public TalonSwerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
@@ -32,9 +35,11 @@ public class SwerveFalcon extends SubsystemBase {
             new SwerveModule(3, Constants.Swerve.Mod3.constants)
         };
 
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
+        swervePoseEstimator = new SwerveDrivePoseEstimator(
+                Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d());
     }
 
+    @Override
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                 fieldRelative
@@ -48,7 +53,7 @@ public class SwerveFalcon extends SubsystemBase {
         }
     }
 
-    /* Used by SwerveControllerCommand in Auto */
+    @Override
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
 
@@ -57,6 +62,7 @@ public class SwerveFalcon extends SubsystemBase {
         }
     }
 
+    @Override
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
         for (SwerveModule mod : mSwerveMods) {
@@ -65,6 +71,7 @@ public class SwerveFalcon extends SubsystemBase {
         return states;
     }
 
+    @Override
     public SwerveModulePosition[] getModulePositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
         for (SwerveModule mod : mSwerveMods) {
@@ -73,30 +80,19 @@ public class SwerveFalcon extends SubsystemBase {
         return positions;
     }
 
+    @Override
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return swervePoseEstimator.getEstimatedPosition();
     }
 
+    @Override
     public void setPose(Pose2d pose) {
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+        swervePoseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
-    public Rotation2d getHeading() {
-        return getPose().getRotation();
-    }
-
-    public void setHeading(Rotation2d heading) {
-        swerveOdometry.resetPosition(
-                getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
-    }
-
-    public void zeroHeading() {
-        swerveOdometry.resetPosition(
-                getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
-    }
-
+    @Override
     public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
+        return new Rotation2d(gyro.getYaw().getValue());
     }
 
     public void resetModulesToAbsolute() {
@@ -107,7 +103,7 @@ public class SwerveFalcon extends SubsystemBase {
 
     @Override
     public void periodic() {
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
+        swervePoseEstimator.update(getGyroYaw(), getModulePositions());
 
         for (SwerveModule mod : mSwerveMods) {
             SmartDashboard.putNumber(
@@ -117,5 +113,16 @@ public class SwerveFalcon extends SubsystemBase {
                     mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
         }
+    }
+
+    @Override
+    public void addVisionMeasurement(Pose2d visionRobotPose, double timeStampSeconds) {
+        swervePoseEstimator.addVisionMeasurement(visionRobotPose, timeStampSeconds);
+    }
+
+    @Override
+    public void addVisionMeasurement(
+            Pose2d visionRobotPoseMeters, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs) {
+        swervePoseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }
 }

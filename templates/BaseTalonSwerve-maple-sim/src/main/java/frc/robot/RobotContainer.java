@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.drive.TalonSwerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -29,7 +29,7 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
     /* Subsystems */
-    private final SwerveFalcon s_Swerve = new SwerveFalcon();
+    private final TalonSwerve s_Swerve = new TalonSwerve();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {

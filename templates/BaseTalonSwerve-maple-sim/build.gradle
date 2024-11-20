@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2024.1.1"
+    id "edu.wpi.first.GradleRIO" version "2025.1.1-beta-1"
     id("com.diffplug.spotless") version "7.0.0.BETA4"
 }
 
@@ -129,4 +129,8 @@ spotless {
         trimTrailingWhitespace()
         endWithNewline()
     }
+}
+
+repositories {
+    mavenLocal()
 }

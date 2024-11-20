@@ -1,5 +1,8 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -68,7 +71,7 @@ public class SwerveModule {
     }
 
     public Rotation2d getCANcoder() {
-        return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
+        return new Rotation2d(angleEncoder.getAbsolutePosition().getValue());
     }
 
     public void resetToAbsolute() {
@@ -78,14 +81,16 @@ public class SwerveModule {
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-                Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.Swerve.wheelCircumference),
-                Rotation2d.fromRotations(mAngleMotor.getPosition().getValue()));
+                Conversions.RPSToMPS(
+                        mDriveMotor.getVelocity().getValue().in(RotationsPerSecond),
+                        Constants.Swerve.wheelCircumference),
+                new Rotation2d(mAngleMotor.getPosition().getValue()));
     }
 
     public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
                 Conversions.rotationsToMeters(
-                        mDriveMotor.getPosition().getValue(), Constants.Swerve.wheelCircumference),
-                Rotation2d.fromRotations(mAngleMotor.getPosition().getValue()));
+                        mDriveMotor.getPosition().getValue().in(Rotations), Constants.Swerve.wheelCircumference),
+                new Rotation2d(mAngleMotor.getPosition().getValue()));
     }
 }

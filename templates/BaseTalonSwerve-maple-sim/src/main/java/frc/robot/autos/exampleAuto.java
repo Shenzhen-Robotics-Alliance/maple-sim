@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants;
-import frc.robot.subsystems.SwerveFalcon;
+import frc.robot.subsystems.drive.TalonSwerve;
 import java.util.List;
 
 public class exampleAuto extends SequentialCommandGroup {
-    public exampleAuto(SwerveFalcon s_Swerve) {
+    public exampleAuto(TalonSwerve s_Swerve) {
         TrajectoryConfig config = new TrajectoryConfig(
                         Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                         Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)

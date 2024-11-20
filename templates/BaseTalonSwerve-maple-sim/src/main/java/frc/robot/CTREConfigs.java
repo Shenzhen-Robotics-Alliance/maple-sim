@@ -8,7 +8,7 @@ public final class CTREConfigs {
     public TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
     public CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
-    public CTREConfigs(){
+    public CTREConfigs() {
         /** Swerve CANCoder Configuration */
         swerveCANcoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.cancoderInvert;
 
@@ -20,7 +20,7 @@ public final class CTREConfigs {
         /* Gear Ratio and Wrapping Config */
         swerveAngleFXConfig.Feedback.SensorToMechanismRatio = Constants.Swerve.angleGearRatio;
         swerveAngleFXConfig.ClosedLoopGeneral.ContinuousWrap = true;
-        
+
         /* Current Limiting */
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.angleEnableCurrentLimit;
         swerveAngleFXConfig.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.angleCurrentLimit;

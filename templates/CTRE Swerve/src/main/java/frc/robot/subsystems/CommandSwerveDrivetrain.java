@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Map;
 import java.util.function.Supplier;
+
+import org.ironmaple.simulation.SimulatedArena;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -27,6 +30,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.subsystems.MapleSwerveSim.SwerveSimulationConfig;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -130,6 +134,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             startSimThread();
         }
         configureAutoBuilder();
+        new MapleSwerveSim(this, new SwerveSimulationConfig(), modules);
     }
 
     /**
@@ -151,6 +156,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             startSimThread();
         }
         configureAutoBuilder();
+        new MapleSwerveSim(this, new SwerveSimulationConfig(), modules);
     }
 
     /**
@@ -177,6 +183,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             startSimThread();
         }
         configureAutoBuilder();
+        new MapleSwerveSim(this, new SwerveSimulationConfig(), modules);
     }
 
     private void configureAutoBuilder() {
@@ -261,18 +268,23 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         }
     }
 
+    @Override
+    public void simulationPeriodic() {
+        SimulatedArena.getInstance().simulationPeriodic();
+    }
+
     private void startSimThread() {
-        m_lastSimTime = Utils.getCurrentTimeSeconds();
+        // m_lastSimTime = Utils.getCurrentTimeSeconds();
 
-        /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> {
-            final double currentTime = Utils.getCurrentTimeSeconds();
-            double deltaTime = currentTime - m_lastSimTime;
-            m_lastSimTime = currentTime;
+        // /* Run simulation at a faster rate so PID gains behave more reasonably */
+        // m_simNotifier = new Notifier(() -> {
+        //     final double currentTime = Utils.getCurrentTimeSeconds();
+        //     double deltaTime = currentTime - m_lastSimTime;
+        //     m_lastSimTime = currentTime;
 
-            /* use the measured time delta, get battery voltage from WPILib */
-            updateSimState(deltaTime, RobotController.getBatteryVoltage());
-        });
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
+        //     /* use the measured time delta, get battery voltage from WPILib */
+        //     updateSimState(deltaTime, RobotController.getBatteryVoltage());
+        // });
+        // m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 }

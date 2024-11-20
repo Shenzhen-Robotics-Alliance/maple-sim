@@ -6,11 +6,15 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import org.ironmaple.simulation.SimulatedArena;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import dev.doglog.DogLog;
+import dev.doglog.DogLogOptions;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,8 +50,10 @@ public class RobotContainer {
     public RobotContainer() {
         autoChooser = AutoBuilder.buildAutoChooser("Tests");
         SmartDashboard.putData("Auto Mode", autoChooser);
-
+        //TODO TEMP FOR DEBUG
+        DogLog.setOptions(new DogLogOptions(true, false, true, false, true, 2000));
         configureBindings();
+        SimulatedArena.overrideSimulationTimings(0.02, 10);
     }
 
     private void configureBindings() {

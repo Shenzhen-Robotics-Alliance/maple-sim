@@ -4,6 +4,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
@@ -12,17 +13,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
- * The {@code Drive} interface represents a subsystem responsible for controlling the drive system of a robot. This
- * includes methods for controlling the movement, managing swerve drive modules, tracking the robot's position and
- * orientation, and other related tasks.
+ * Represents a subsystem responsible for controlling the drive system of a robot. This includes methods for controlling
+ * the movement, managing swerve drive modules, tracking the robot's position and orientation, and other related tasks.
  */
 public interface SwerveDrive extends Subsystem {
 
     /**
      * Controls the robot's movement based on the provided translation and rotation values.
      *
-     * @param translation The translation of the robot, represented as a 2D vector with x and y components.
-     * @param rotation The rotation of the robot around its center.
+     * @param translation The desired translational velocity, represented as a 2D vector with x and y components.
+     * @param rotation The desired rotational velocity
      * @param fieldRelative Whether the movement is field-relative or robot-relative.
      * @param isOpenLoop Whether the drive should use open-loop control (without feedback).
      */
@@ -51,6 +51,9 @@ public interface SwerveDrive extends Subsystem {
      *     swerve module.
      */
     SwerveModuleState[] getModuleStates();
+
+    /** Retrieves the measured chassis speeds, robot-relative */
+    ChassisSpeeds getMeasuredSpeeds();
 
     /**
      * Retrieves the current yaw angle from the robot's gyro, note that this might not reflect the actual rotation of a

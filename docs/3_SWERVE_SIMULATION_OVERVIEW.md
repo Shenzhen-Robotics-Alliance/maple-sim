@@ -12,64 +12,67 @@
 
 ## Creating the Configuration for a Swerve Drive Simulation
 
-The `DriveTrainSimulationConfig` object represents the contains the physical properties of a swerve drivetrain.
-You can store a `DriveTrainSimulationConfig` in your constant file or create it in the subsystem code, like this:
+The `DriveTrainSimulationConfig` object encapsulates the physical properties and configuration of a swerve drivetrain within the simulation environment. It allows you to specify key components such as motor types, gyro configuration, swerve module dynamics, and robot geometry. 
 
 ```java
-// Create and configures a drivetrain simulation configuration
+// Create and configure a drivetrain simulation configuration
 final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulationConfig.Default()
-        // specify gyro type (for realistic gyro drifiting and error simulation)
+        // Specify gyro type (for realistic gyro drifting and error simulation)
         .withGyro(GyroSimulation.getPigeon2())
-        // specify swerve module (for realistic swerve dynamics)
+        
+        // Specify swerve module (for realistic swerve dynamics)
         .withSwerveModule(SwerveModuleSimulation.getMark4(
-                DCMotor.getKrakenX60(1), // drive motor is a Kraken x60
-                DCMotor.getFalcon500(1), // steer motor is a Falcon 500
+                DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+                DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
                 Amps.of(60), // The stator current limit for the drive motor is 60A
-                SwerveModuleSimulation.WHEEL_GRIP.RUBBER_WHEEL.cof, // use the COF for rubber wheels
-                3 // l3 gear ratio
+                SwerveModuleSimulation.WHEEL_GRIP.COLSONS.cof, // Use the COF for Colson Wheels
+                3 // Gear ratio (l3 gear ratio)
         ))
-        // configures the track length of track width (spacing between swerve modules)
+        
+        // Configures the track length and track width (spacing between swerve modules)
         .withTrackLengthTrackWidth(Inches.of(24), Inches.of(24))
-        // configures the bumper size
+        
+        // Configures the bumper size (dimensions of the robot bumper)
         .withBumperSize(Inches.of(30), Inches.of(30));
-
 ```
 
 ## Instantiate and Register a Swerve Drive Simulation
 
-The `SwerveDriveSimulation` class represents a simulated swerve drivetrain on field.  It contains neccessary simulation code for motors and encoders to mimic the dynamics and controls of a real robot.  It also has collision space in the physics engine, so that it can interact with the field.
+The `SwerveDriveSimulation` class represents a simulated swerve drivetrain within the simulation environment. It provides the necessary code to simulate motors, encoders, and the dynamic behavior of a real robot, including accurate handling of controls, motor response, and motion. Additionally, it interacts with the field through its collision space, allowing the simulation to react with other objects in the physics engine.
 
-You can create the swerve drive like this:
+You can instantiate the swerve drive simulation using the following code:
 
 ```java
 /* Create a swerve drive simulation */
 this.swerveDriveSimulation = new SwerveDriveSimulation(
+        // Specify Configuration
         driveTrainSimulationConfig, 
+        // Specify starting pose
         new Pose2d(3, 3, new Rotation2d())
 );
 ```
 
-The simulation needs to be added to a simulation world to work correctly: 
+The simulation must be registered to the simulation world for it to function correctly:
 
 ```java
-// Register the drivetrain simulation
+// Register the drivetrain simulation to the default simulation world
 SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation); 
 ```
 
 ## Manipulating the Simulated Swerve
 <details>
     <summary><strong>Option 1: The simple approach</strong></summary>
-    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html">Swerve Simulation: SimplifiedSwerveSimulation</a></p>
-    <p>Comming Soon.</p>
+    <p><em>This approach emphasizes ease of use while maintaining a reasonably accurate model of robot behavior. Although the physics simulation is realistic enough to accurately mimic your drivetrain, the code used to manipulate the simulated drivetrain is embedded into maple-sim for convenience. As a result, it may differ slightly from the code running on your real robot.</em></p>
+    <h4>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html">Swerve Simulation: SimplifiedSwerveSimulation</a></h4>
 </details>
 <details>
     <summary><strong>Option 2: The professional approach</strong></summary>
-    <p>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.2_SWERVE_SIM_HARDWARE_ABSTRACTION.html">Swerve Simulation: Hardware Abstraction</a></p>
-    <p>This approach to simulating swerve drive accurately mimics the behavior of your drivetrain code by running the exact same code used on the real robot directly on the simulated robot. While this ensures high fidelity in the simulation, it does require a significant amount of effort to set up properly.</p>
+    <p><em>This approach to simulating swerve drive accurately mimics the behavior of your drivetrain code by running the exact same code used on the real robot directly on the simulated robot. While this ensures high fidelity in the simulation, it does require a significant amount of effort to set up properly.</em></p>
+    <h4>See <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3.2_SWERVE_SIM_HARDWARE_ABSTRACTION.html">Swerve Simulation: Hardware Abstraction</a></h4>
 </details>
 <details>
     <summary><strong>Option 3: Simulation with CTRE devices</strong></summary>
-    <p>Comming Soon.</p>
+    <p>Comming soon, <a href='https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/CTRE-simulation-support'>view progess</a></p>
 </details>
 
 <div style="display:flex">

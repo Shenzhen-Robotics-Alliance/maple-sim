@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -60,6 +61,7 @@ public class MapleSimSwerve implements SwerveDrive {
                 new Translation2d(),
                 fieldRelative,
                 true);
+        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(DriverStation.Alliance.Red)
     }
 
     @Override
@@ -75,6 +77,11 @@ public class MapleSimSwerve implements SwerveDrive {
     @Override
     public SwerveModuleState[] getModuleStates() {
         return simulatedDrive.getMeasuredStates();
+    }
+
+    @Override
+    public ChassisSpeeds getMeasuredSpeeds() {
+        return simulatedDrive.getMeasuredSpeedsFieldRelative(true);
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnField;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
@@ -41,9 +42,9 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *
  * <ul>
  *   <li>{@link AbstractDriveTrainSimulation}: Represents abstract drivetrain simulations with collision detection.
- *   <li>{@link GamePieceOnFieldSimulation}: Represents abstract game pieces with collision detection.
+ *   <li>{@link GamePieceOnField}: Represents abstract game pieces with collision detection.
  *   <li>{@link IntakeSimulation}: Represents an intake simulation that responds to contact with
- *       {@link GamePieceOnFieldSimulation}.
+ *       {@link GamePieceOnField}.
  * </ul>
  */
 public abstract class SimulatedArena {
@@ -126,7 +127,7 @@ public abstract class SimulatedArena {
 
     protected final World<Body> physicsWorld;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
-    protected final Set<GamePieceOnFieldSimulation> gamePieces;
+    protected final Set<GamePieceOnField> gamePieces;
     protected final Set<GamePieceProjectile> gamePieceProjectile;
     protected final List<Runnable> simulationSubTickActions;
     private final List<IntakeSimulation> intakeSimulations;
@@ -209,7 +210,7 @@ public abstract class SimulatedArena {
     /**
      *
      *
-     * <h2>Registers a {@link GamePieceOnFieldSimulation} to the Simulation.</h2>
+     * <h2>Registers a {@link GamePieceOnField} to the Simulation.</h2>
      *
      * <p>The collision space of the game piece is immediately added to the simulation world.
      *
@@ -218,7 +219,7 @@ public abstract class SimulatedArena {
      *
      * @param gamePiece the game piece to be registered in the simulation
      */
-    public synchronized void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
+    public synchronized void addGamePiece(GamePieceOnField gamePiece) {
         this.physicsWorld.addBody(gamePiece);
         this.gamePieces.add(gamePiece);
     }
@@ -240,13 +241,13 @@ public abstract class SimulatedArena {
     /**
      *
      *
-     * <h2>Removes a {@link GamePieceOnFieldSimulation} from the Simulation.</h2>
+     * <h2>Removes a {@link GamePieceOnField} from the Simulation.</h2>
      *
      * <p>Removes the game piece from the physics world and the simulation's game piece collection.
      *
      * @param gamePiece the game piece to be removed from the simulation
      */
-    public synchronized void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
+    public synchronized void removeGamePiece(GamePieceOnField gamePiece) {
         this.physicsWorld.removeBody(gamePiece);
         this.gamePieces.remove(gamePiece);
     }
@@ -254,14 +255,25 @@ public abstract class SimulatedArena {
     /**
      *
      *
-     * <h2>Removes All {@link GamePieceOnFieldSimulation} Objects from the Simulation.</h2>
+     * <h2>Removes All {@link GamePieceOnField} Objects from the Simulation.</h2>
      *
      * <p>This method clears all game pieces from the physics world and the simulation's game piece collection.
      */
     public synchronized void clearGamePieces() {
-        for (GamePieceOnFieldSimulation gamePiece : this.gamePieces) this.physicsWorld.removeBody(gamePiece);
+        for (GamePieceOnField gamePiece : this.gamePieces) this.physicsWorld.removeBody(gamePiece);
         this.gamePieces.clear();
     }
+    
+    /**
+     * @deprecated use {@link GamePieceOnField} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public synchronized void addGamePiece(GamePieceOnFieldSimulation gamePiece) {}
+    
+    /**
+     * @deprecated use {@link GamePieceOnField} instead.
+     */
+    public synchronized void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {}
 
     /**
      *
@@ -332,27 +344,43 @@ public abstract class SimulatedArena {
      * <p>Also, if you have a game-piece detection vision system <strong>(wow!)</strong>, this is the how you can
      * simulate it.
      *
-     * <p>Both {@link GamePieceOnFieldSimulation} and {@link GamePieceProjectile} of the specified type will be
+     * <p>Both {@link GamePieceOnField} and {@link GamePieceProjectile} of the specified type will be
      * included.
      *
      * <ul>
-     *   <li>The type is determined in the constructor of {@link GamePieceOnFieldSimulation}.
+     *   <li>The type is determined in the constructor of {@link GamePieceOnField}.
      *   <li>For example, {@link org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField} has the
      *       type "Note".
      * </ul>
      *
-     * @param type the type of game piece, as determined by the constructor of {@link GamePieceOnFieldSimulation}
+     * @param type the type of game piece, as determined by the constructor of {@link GamePieceOnField}
      * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the game pieces
      */
-    public synchronized List<Pose3d> getGamePiecesByType(String type) {
+    public synchronized List<Pose3d> getGamePiecePoses(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceOnFieldSimulation gamePiece : gamePieces)
+        for (GamePieceOnField gamePiece : gamePieces)
             if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
         for (GamePieceProjectile gamePiece : gamePieceProjectile)
             if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
         return gamePiecesPoses;
+    }
+    
+    /**
+     * <h2>Obtains the 3D Poses of all Crescendo notes.</h2>
+     * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the notes
+     */
+    public synchronized List<Pose3d> getNotePoses() {
+        return getGamePiecePoses("Note");
+    }
+    
+    /**
+     * @deprecated Use {@link SimulatedArena#getGamePiecePoses} instead.
+     */
+    @Deprecated(forRemoval = true)
+    public synchronized List<Pose3d> getGamePiecesByType(String type) {
+        return List.of();
     }
 
     /**

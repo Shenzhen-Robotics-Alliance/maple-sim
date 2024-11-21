@@ -58,8 +58,12 @@ Your robot can interact with these pieces by bumping into them or grabbing them 
 To add or clear game pieces from the field:
 
 ```java
-// Add a Crescendo note to the field
-SimulatedArena.getInstance().addGamePiece(new CrescendoNoteOnField(new Translation2d(3, 3)));
+// Add a Crescendo note and a custom object to the field
+GamePieceOnField note = new CrescendoNoteOnField(new Translation2d(3, 3));
+SimulatedArena.getInstance().addGamePiece(note);
+
+// Removes the game pieces from the field
+SimulatedArena.getInstance().removeGamePiece(note);
 
 // Clear all game pieces from the field
 SimulatedArena.getInstance().clearGamePieces();
@@ -77,7 +81,7 @@ You can retrieve the positions of game pieces, including those on the ground and
 
 ```java
 // Get the positions of the notes (both on the field and in the air)
-List<Pose3d> notesPoses = SimulatedArena.getInstance().getGamePiecesByType("Note");
+Pose3d[] notesPoses = SimulatedArena.getInstance().getNotePoses();
 
 // Publish to telemetry using AdvantageKit
 Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses);

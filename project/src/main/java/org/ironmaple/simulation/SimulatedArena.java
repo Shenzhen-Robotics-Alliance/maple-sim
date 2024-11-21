@@ -357,7 +357,7 @@ public abstract class SimulatedArena {
      * @param type the type of game piece, as determined by the constructor of {@link GamePieceOnField}
      * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the game pieces
      */
-    public synchronized List<Pose3d> getGamePiecePoses(String type) {
+    public synchronized Pose3d[] getGamePiecePoses(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
         for (GamePieceOnField gamePiece : gamePieces)
             if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
@@ -365,14 +365,14 @@ public abstract class SimulatedArena {
         for (GamePieceProjectile gamePiece : gamePieceProjectile)
             if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
-        return gamePiecesPoses;
+        return gamePiecesPoses.toArray(new Pose3d[]{});
     }
     
     /**
      * <h2>Obtains the 3D Poses of all Crescendo notes.</h2>
      * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the notes
      */
-    public synchronized List<Pose3d> getNotePoses() {
+    public synchronized Pose3d[] getNotePoses() {
         return getGamePiecePoses("Note");
     }
     

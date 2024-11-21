@@ -83,7 +83,7 @@ public class Telemetry {
         Pose2d pose = state.Pose;
         m_poseArray[0] = pose.getX();
         m_poseArray[1] = pose.getY();
-        m_poseArray[2] = pose.getRotation().getDegrees();
+        m_poseArray[2] = pose.getRotation().getRadians();
 
         fieldTypePub.set("Field2d");
         fieldPub.set(m_poseArray);

@@ -73,6 +73,8 @@ public class MapleSwerveSim {
     }
 
     private static Angle getDeltaAngle(Angle start, Angle end) {
+        start = Units.Radians.of(MathUtil.angleModulus(start.in(Units.Radians)));
+        end = Units.Radians.of(MathUtil.angleModulus(end.in(Units.Radians)));
         double errorBound = (0.5 - (-0.5)) / 2.0;
         return Units.Rotations.of(MathUtil.inputModulus(end.in(Units.Rotations) - start.in(Units.Rotations), -errorBound, errorBound));
     }
@@ -99,22 +101,22 @@ public class MapleSwerveSim {
         @Override
         public void simulationSubTick() {
             double supplyVoltage = RobotController.getBatteryVoltage();
-            Rotation2d prevGyroAngle = gyro.getRotation2d();
+            Angle prevGyroAngle = gyro.getYaw().getValue();
             for (BreakerSwerveModuleSim moduleSim: moduleSims) {
                 moduleSim.updateModel(supplyVoltage);
             }
             gyroSim.setSupplyVoltage(supplyVoltage);
             super.simulationSubTick();
-            Angle gyroDelta = getDeltaAngle(Units.Radians.of(MathUtil.angleModulus(prevGyroAngle.getRadians())), getGyroSimulation().getGyroReading().getMeasure());
+            Angle gyroDelta = getDeltaAngle(prevGyroAngle, getGyroSimulation().getGyroReading().getMeasure());
             for (BreakerSwerveModuleSim moduleSim: moduleSims) {
                 moduleSim.updateHardware();
             }
-            gyroSim.setRawYaw(prevGyroAngle.getMeasure().plus(gyroDelta));
+            gyroSim.setRawYaw(prevGyroAngle.plus(gyroDelta));
             gyroSim.setAngularVelocityZ(Units.RadiansPerSecond.of(gyroSimulation.getMeasuredAngularVelocityRadPerSec()));
             DogLog.log("Sim/GroundTruthPose", getSimulatedDriveTrainPose());
             DogLog.log("Sim/TgtModuleStates", drivetrain.getState().ModuleTargets);
-
             DogLog.log("Sim/RealModuleStates", drivetrain.getState().ModuleStates);
+            DogLog.log("Sim/GyroYaw", MathUtil.inputModulus(prevGyroAngle.in(Units.Degrees), -180, 180));
         } 
     }
 
@@ -160,7 +162,8 @@ public class MapleSwerveSim {
             steerSim.setRotorVelocity(moduleSim.getSteerRelativeEncoderSpeedRadPerSec() / (2 * Math.PI));
 
             Angle delta = getDeltaAngle(encoder.getAbsolutePosition().getValue(), moduleSim.getSteerAbsoluteFacing().getMeasure());
-            encoderSim.setRawPosition( moduleSim.getSteerAbsoluteFacing().getMeasure());
+            encoderSim.setRawPosition(encoder.getPositionSinceBoot().getValue().plus(delta));
+            //encoderSim.addPosition(delta);
             encoderSim.setVelocity(moduleSim.getSteerAbsoluteEncoderSpeedRadPerSec() / (2 * Math.PI));
         }
     }

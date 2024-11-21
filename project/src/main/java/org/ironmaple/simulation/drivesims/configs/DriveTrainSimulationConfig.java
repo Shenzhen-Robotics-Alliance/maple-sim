@@ -96,7 +96,7 @@ public class DriveTrainSimulationConfig {
                         DCMotor.getFalcon500(1),
                         DCMotor.getFalcon500(1),
                         Amps.of(60),
-                        SwerveModuleSimulation.WHEEL_GRIP.RUBBER_WHEEL.cof,
+                        SwerveModuleSimulation.WHEEL_GRIP.COLSONS.cof,
                         2),
                 GyroSimulation.getPigeon2());
     }

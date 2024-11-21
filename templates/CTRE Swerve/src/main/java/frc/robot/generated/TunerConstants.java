@@ -25,13 +25,14 @@ public class TunerConstants {
     // The steer motor uses any SwerveModule.SteerRequestType control request with the
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     private static final Slot0Configs steerGains = new Slot0Configs()
-        .withKP(100).withKI(0).withKD(2.0)
-        .withKS(1).withKV(2.5).withKA(0);
+        .withKP(300).withKI(0).withKD(2.0)
+        .withKS(0.12).withKV(1.5).withKA(0);
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     private static final Slot0Configs driveGains = new Slot0Configs()
         .withKP(0.1).withKI(0).withKD(0)
-        .withKS(0.2).withKV(0.12);
+        .withKS(0.1).withKV(0.12);
+
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -86,7 +87,7 @@ public class TunerConstants {
     private static final double kSteerInertia = 0.025;
     private static final double kDriveInertia = 0.01;
     // Simulated voltage necessary to overcome friction
-    private static final Voltage kSteerFrictionVoltage = Volts.of(1);
+    private static final Voltage kSteerFrictionVoltage = Volts.of(0.12);
     private static final Voltage kDriveFrictionVoltage = Volts.of(0.2);
 
     public static final SwerveDrivetrainConstants DrivetrainConstants = new SwerveDrivetrainConstants()

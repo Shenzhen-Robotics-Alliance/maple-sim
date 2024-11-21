@@ -53,7 +53,7 @@ public class RobotContainer {
         //TODO TEMP FOR DEBUG
         DogLog.setOptions(new DogLogOptions(true, false, true, false, true, 2000));
         configureBindings();
-        SimulatedArena.overrideSimulationTimings(0.02, 20);
+        SimulatedArena.overrideSimulationTimings(0.02, 10);
     }
 
     private void configureBindings() {

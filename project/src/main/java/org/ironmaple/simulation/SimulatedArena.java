@@ -273,6 +273,7 @@ public abstract class SimulatedArena {
     /**
      * @deprecated use {@link GamePieceOnField} instead.
      */
+    @Deprecated(forRemoval = true)
     public synchronized void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {}
 
     /**

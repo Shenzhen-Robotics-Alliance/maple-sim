@@ -80,8 +80,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block"><h1><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/DCMotorSim.html" title="class or interface in edu.wpi.first.wpilibj.simulation" class="external-link"><code>DCMotorSim</code></a> with a bit of extra spice.</h1>
 
- <p>This class extends the functionality of the original <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/DCMotorSim.html" title="class or interface in edu.wpi.first.wpilibj.simulation" class="external-link"><code>DCMotorSim</code></a> and models the
- following aspects in addition:
+ <p>This class extends the functionality of the original <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/simulation/DCMotorSim.html" title="class or interface in edu.wpi.first.wpilibj.simulation" class="external-link"><code>DCMotorSim</code></a> and models the following aspects in
+ addition:
 
  <ul>
    <li>Friction force on the rotor.
@@ -278,6 +278,32 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="withOverrideAngle(edu.wpi.first.units.measure.Angle)">
+<h3>withOverrideAngle</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a></span>&nbsp;<span class="element-name">withOverrideAngle</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Angle&nbsp;angle)</span></div>
+<div class="block">Configures the angle of the motor.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>angle</code> - the angle of the motor</dd>
+<dt>Returns:</dt>
+<dd>this instance for method chaining</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="withOverrideAngularVelocity(edu.wpi.first.units.measure.AngularVelocity)">
+<h3>withOverrideAngularVelocity</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a></span>&nbsp;<span class="element-name">withOverrideAngularVelocity</span><wbr><span class="parameters">(edu.wpi.first.units.measure.AngularVelocity&nbsp;angularVelocity)</span></div>
+<div class="block">Configures the angular velocity of the motor.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>angularVelocity</code> - the angular velocity of the motor</dd>
+<dt>Returns:</dt>
+<dd>this instance for method chaining</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="withFeedForward(edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Per,edu.wpi.first.units.measure.Per)">
 <h3>withFeedForward</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a></span>&nbsp;<span class="element-name">withFeedForward</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Voltage&nbsp;kS,
@@ -397,32 +423,6 @@ loadScripts(document, 'script');</script>
 <li><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/controller/PIDController.html#enableContinuousInput(double,double)" title="class or interface in edu.wpi.first.math.controller" class="external-link"><code>PIDController.enableContinuousInput(double, double)</code></a></li>
 </ul>
 </dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="withOverrideAngle(edu.wpi.first.units.measure.Angle)">
-<h3>withOverrideAngle</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a></span>&nbsp;<span class="element-name">withOverrideAngle</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Angle&nbsp;angle)</span></div>
-<div class="block">Configures the angle of the motor.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>angle</code> - the angle of the motor</dd>
-<dt>Returns:</dt>
-<dd>this instance for method chaining</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="withOverrideAngularVelocity(edu.wpi.first.units.measure.AngularVelocity)">
-<h3>withOverrideAngularVelocity</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a></span>&nbsp;<span class="element-name">withOverrideAngularVelocity</span><wbr><span class="parameters">(edu.wpi.first.units.measure.AngularVelocity&nbsp;angularVelocity)</span></div>
-<div class="block">Configures the angular velocity of the motor.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>angularVelocity</code> - the angular velocity of the motor</dd>
-<dt>Returns:</dt>
-<dd>this instance for method chaining</dd>
 </dl>
 </section>
 </li>

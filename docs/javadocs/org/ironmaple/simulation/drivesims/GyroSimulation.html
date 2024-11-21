@@ -128,8 +128,8 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Estimated Rotation of the Gyro.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMeasuredAngularVelocityRadPerSec()" class="member-name-link">getMeasuredAngularVelocityRadPerSec</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMeasuredAngularVelocity()" class="member-name-link">getMeasuredAngularVelocity</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the Measured Angular Velocity of the Gyro.</div>
 </div>
@@ -226,9 +226,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getMeasuredAngularVelocityRadPerSec()">
-<h3>getMeasuredAngularVelocityRadPerSec</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getMeasuredAngularVelocityRadPerSec</span>()</div>
+<section class="detail" id="getMeasuredAngularVelocity()">
+<h3>getMeasuredAngularVelocity</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.AngularVelocity</span>&nbsp;<span class="element-name">getMeasuredAngularVelocity</span>()</div>
 <div class="block"><h2>Gets the Measured Angular Velocity of the Gyro.</h2>
 
  <p>This method returns the angular velocity measured by the gyro, in radians per second.
@@ -236,7 +236,7 @@ loadScripts(document, 'script');</script>
  <p>The measurement includes random errors based on the configured settings of the gyro.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the measured angular velocity in radians per second</dd>
+<dd>the measured angular velocity</dd>
 </dl>
 </section>
 </li>
@@ -262,7 +262,7 @@ loadScripts(document, 'script');</script>
 
  <p>If you are using this class outside of <a href="../SimulatedArena.html" title="class in org.ironmaple.simulation"><code>SimulatedArena</code></a>: make sure to call it 5
  times in each robot period (if using default timings), or refer to
- <a href="../SimulatedArena.html#overrideSimulationTimings(double,int)"><code>SimulatedArena.overrideSimulationTimings(double, int)</code></a>.</div>
+ <a href="../SimulatedArena.html#overrideSimulationTimings(edu.wpi.first.units.measure.Time,int)"><code>SimulatedArena.overrideSimulationTimings(Time, int)</code></a>.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>actualAngularVelocityRadPerSec</code> - the actual angular velocity in radians per second, usually obtained from

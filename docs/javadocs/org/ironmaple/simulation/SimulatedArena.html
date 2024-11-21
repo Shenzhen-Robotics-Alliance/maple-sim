@@ -90,7 +90,7 @@ loadScripts(document, 'script');</script>
 
  <p>The default instance can be obtained using the <a href="#getInstance()"><code>getInstance()</code></a> method.
 
- <p>Simulates all interactions within the arena field.
+ <p>Simulates all interactions within the arena field. g
 
  <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
 
@@ -138,15 +138,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#gamePieces" class="member-name-link">gamePieces</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/ref/WeakReference.html" title="class or interface in java.lang.ref" class="external-link">WeakReference</a>&lt;<a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a>&gt;&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#motors" class="member-name-link">motors</a></code></div>
+<div class="col-first odd-row-color"><code>protected final org.dyn4j.world.World&lt;org.dyn4j.dynamics.Body&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#physicsWorld" class="member-name-link">physicsWorld</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final org.dyn4j.world.World&lt;org.dyn4j.dynamics.Body&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#physicsWorld" class="member-name-link">physicsWorld</a></code></div>
+<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#simulationSubTickActions" class="member-name-link">simulationSubTickActions</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#simulationSubTickActions" class="member-name-link">simulationSubTickActions</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -198,69 +195,66 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers an <a href="IntakeSimulation.html" title="class in org.ironmaple.simulation"><code>IntakeSimulation</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMotor(org.ironmaple.simulation.MapleMotorSim)" class="member-name-link">addMotor</a><wbr>(<a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a>&nbsp;motor)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addSimulationSubTickAction(java.lang.Runnable)" class="member-name-link">addSimulationSubTickAction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addSimulationSubTickAction(java.lang.Runnable)" class="member-name-link">addSimulationSubTickAction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
 <div class="block"><span class="deprecated-label">Deprecated.</span></div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearGamePieces()" class="member-name-link">clearGamePieces</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearGamePieces()" class="member-name-link">clearGamePieces</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes All <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> Objects from the Simulation.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#competitionPeriodic()" class="member-name-link">competitionPeriodic</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#competitionPeriodic()" class="member-name-link">competitionPeriodic</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Season-Specific Actions to Execute in <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose3d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose3d</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGamePiecesByType(java.lang.String)" class="member-name-link">getGamePiecesByType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose3d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose3d</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGamePiecesByType(java.lang.String)" class="member-name-link">getGamePiecesByType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the 3D Poses of a Specific Type of Game Piece.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getInstance()" class="member-name-link">getInstance</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getInstance()" class="member-name-link">getInstance</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Gets/Creates the Default Simulation World</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static double</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSimulationDt()" class="member-name-link">getSimulationDt</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSimulationSubTicksIn1Period()" class="member-name-link">getSimulationSubTicksIn1Period</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static edu.wpi.first.units.measure.Time</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSimulationDt()" class="member-name-link">getSimulationDt</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overrideInstance(org.ironmaple.simulation.SimulatedArena)" class="member-name-link">overrideInstance</a><wbr>(<a href="SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a>&nbsp;newInstance)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSimulationSubTicksIn1Period()" class="member-name-link">getSimulationSubTicksIn1Period</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overrideInstance(org.ironmaple.simulation.SimulatedArena)" class="member-name-link">overrideInstance</a><wbr>(<a href="SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a>&nbsp;newInstance)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Overrides the Default Simulation World</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overrideSimulationTimings(double,int)" class="member-name-link">overrideSimulationTimings</a><wbr>(double&nbsp;robotPeriodSeconds,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#overrideSimulationTimings(edu.wpi.first.units.measure.Time,int)" class="member-name-link">overrideSimulationTimings</a><wbr>(edu.wpi.first.units.measure.Time&nbsp;robotPeriod,
  int&nbsp;simulationSubTicksPerPeriod)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Overrides the Timing Configurations of the Simulations.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#placeGamePiecesOnField()" class="member-name-link">placeGamePiecesOnField</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#placeGamePiecesOnField()" class="member-name-link">placeGamePiecesOnField</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Places Game Pieces on the Field for Autonomous Mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeGamePiece(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation)" class="member-name-link">removeGamePiece</a><wbr>(<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&nbsp;gamePiece)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeGamePiece(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation)" class="member-name-link">removeGamePiece</a><wbr>(<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&nbsp;gamePiece)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Removes a <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> from the Simulation.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetFieldForAuto()" class="member-name-link">resetFieldForAuto</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetFieldForAuto()" class="member-name-link">resetFieldForAuto</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Resets the Field for Autonomous Mode.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#simulationPeriodic()" class="member-name-link">simulationPeriodic</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#simulationPeriodic()" class="member-name-link">simulationPeriodic</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Update the simulation world.</div>
 </div>
 </div>
@@ -310,12 +304,6 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</span>&nbsp;<span class="element-name">simulationSubTickActions</span></div>
 </section>
 </li>
-<li>
-<section class="detail" id="motors">
-<h3>motors</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/ref/WeakReference.html" title="class or interface in java.lang.ref" class="external-link">WeakReference</a>&lt;<a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a>&gt;&gt;</span>&nbsp;<span class="element-name">motors</span></div>
-</section>
-</li>
 </ul>
 </section>
 </li>
@@ -357,6 +345,8 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the main simulation arena instance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the method is call when running on a real robot</dd>
 </dl>
 </section>
 </li>
@@ -386,13 +376,13 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="getSimulationDt()">
 <h3>getSimulationDt</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getSimulationDt</span>()</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Time</span>&nbsp;<span class="element-name">getSimulationDt</span>()</div>
 </section>
 </li>
 <li>
-<section class="detail" id="overrideSimulationTimings(double,int)">
+<section class="detail" id="overrideSimulationTimings(edu.wpi.first.units.measure.Time,int)">
 <h3>overrideSimulationTimings</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">overrideSimulationTimings</span><wbr><span class="parameters">(double&nbsp;robotPeriodSeconds,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">overrideSimulationTimings</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Time&nbsp;robotPeriod,
  int&nbsp;simulationSubTicksPerPeriod)</span></div>
 <div class="block"><h2>Overrides the Timing Configurations of the Simulations.</h2>
 
@@ -410,7 +400,7 @@ loadScripts(document, 'script');</script>
  <p>It is also recommended to keep the simulation frequency above 200 Hz for accurate simulation results.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>robotPeriodSeconds</code> - the time between two calls of <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a>, usually obtained from
+<dd><code>robotPeriod</code> - the time between two calls of <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a>, usually obtained from
      <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/IterativeRobotBase.html#getPeriod()" title="class or interface in edu.wpi.first.wpilibj" class="external-link"><code>IterativeRobotBase.getPeriod()</code></a></dd>
 <dd><code>simulationSubTicksPerPeriod</code> - the number of Iterations, or <code>simulationSubTick()</code> that the simulation
      runs per each call to <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a></dd>
@@ -521,12 +511,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addMotor(org.ironmaple.simulation.MapleMotorSim)">
-<h3>addMotor</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addMotor</span><wbr><span class="parameters">(<a href="MapleMotorSim.html" title="class in org.ironmaple.simulation">MapleMotorSim</a>&nbsp;motor)</span></div>
-</section>
-</li>
-<li>
 <section class="detail" id="simulationPeriodic()">
 <h3>simulationPeriodic</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">simulationPeriodic</span>()</div>
@@ -535,7 +519,8 @@ loadScripts(document, 'script');</script>
  <p>This method should be called ONCE in <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/IterativeRobotBase.html#simulationPeriodic()" title="class or interface in edu.wpi.first.wpilibj" class="external-link"><code>IterativeRobotBase.simulationPeriodic()</code></a> (or <code>
  LoggedRobot.simulationPeriodic()</code> if using <a href='https://github.com/Mechanical-Advantage/AdvantageKit'>Advantage-Kit</a>)
 
- <p>If not configured through <a href="#overrideSimulationTimings(double,int)"><code>overrideSimulationTimings(double robotPeriodSeconds, int simulationSubTicksPerPeriod)</code></a>, the simulator will iterate through 5 Sub-ticks by default.
+ <p>If not configured through <a href="#overrideSimulationTimings(edu.wpi.first.units.measure.Time,int)"><code>overrideSimulationTimings(Time, int)</code></a> , the simulator will
+ iterate through 5 Sub-ticks by default.
 
  <p>The amount of CPU Time that the Dyn4j engine uses in displayed in <code>
  SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern</div>

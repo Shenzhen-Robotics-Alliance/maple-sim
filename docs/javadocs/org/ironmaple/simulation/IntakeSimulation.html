@@ -156,18 +156,18 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,double,double,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)" class="member-name-link">IntakeSimulation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;targetedGamePieceType,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)" class="member-name-link">IntakeSimulation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;targetedGamePieceType,
  <a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&nbsp;driveTrainSimulation,
- double&nbsp;width,
- double&nbsp;lengthExtended,
+ edu.wpi.first.units.measure.Distance&nbsp;width,
+ edu.wpi.first.units.measure.Distance&nbsp;lengthExtended,
  <a href="IntakeSimulation.IntakeSide.html" title="enum class in org.ironmaple.simulation">IntakeSimulation.IntakeSide</a>&nbsp;side,
  int&nbsp;capacity)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates an Intake Simulation that Extends Out of the Chassis Frame.</div>
 </div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,double,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)" class="member-name-link">IntakeSimulation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;targetedGamePieceType,
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,edu.wpi.first.units.measure.Distance,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)" class="member-name-link">IntakeSimulation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;targetedGamePieceType,
  <a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&nbsp;driveTrainSimulation,
- double&nbsp;width,
+ edu.wpi.first.units.measure.Distance&nbsp;width,
  <a href="IntakeSimulation.IntakeSide.html" title="enum class in org.ironmaple.simulation">IntakeSimulation.IntakeSide</a>&nbsp;side,
  int&nbsp;capacity)</code></div>
 <div class="col-last odd-row-color">
@@ -262,11 +262,11 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,double,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)">
+<section class="detail" id="&lt;init&gt;(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,edu.wpi.first.units.measure.Distance,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)">
 <h3>IntakeSimulation</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">IntakeSimulation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;targetedGamePieceType,
  <a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&nbsp;driveTrainSimulation,
- double&nbsp;width,
+ edu.wpi.first.units.measure.Distance&nbsp;width,
  <a href="IntakeSimulation.IntakeSide.html" title="enum class in org.ironmaple.simulation">IntakeSimulation.IntakeSide</a>&nbsp;side,
  int&nbsp;capacity)</span></div>
 <div class="block"><h2>Creates an Intake Simulation that Tightly Attaches to One Side of the Chassis.</h2></div>
@@ -274,19 +274,19 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>targetedGamePieceType</code> - the type of game pieces that this intake can collect</dd>
 <dd><code>driveTrainSimulation</code> - the chassis to which this intake is attached</dd>
-<dd><code>width</code> - the width of the intake, in meters</dd>
+<dd><code>width</code> - the width of the intake</dd>
 <dd><code>side</code> - the side of the chassis where the intake is attached</dd>
 <dd><code>capacity</code> - the maximum number of game pieces that the intake can hold</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,double,double,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)">
+<section class="detail" id="&lt;init&gt;(java.lang.String,org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,org.ironmaple.simulation.IntakeSimulation.IntakeSide,int)">
 <h3>IntakeSimulation</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">IntakeSimulation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;targetedGamePieceType,
  <a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&nbsp;driveTrainSimulation,
- double&nbsp;width,
- double&nbsp;lengthExtended,
+ edu.wpi.first.units.measure.Distance&nbsp;width,
+ edu.wpi.first.units.measure.Distance&nbsp;lengthExtended,
  <a href="IntakeSimulation.IntakeSide.html" title="enum class in org.ironmaple.simulation">IntakeSimulation.IntakeSide</a>&nbsp;side,
  int&nbsp;capacity)</span></div>
 <div class="block"><h2>Creates an Intake Simulation that Extends Out of the Chassis Frame.</h2></div>
@@ -294,8 +294,8 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>targetedGamePieceType</code> - the type of game pieces that this intake can collect</dd>
 <dd><code>driveTrainSimulation</code> - the chassis to which this intake is attached</dd>
-<dd><code>width</code> - the valid width of the intake, in meters</dd>
-<dd><code>lengthExtended</code> - the length the intake extends out from the chassis when activated, in meters</dd>
+<dd><code>width</code> - the valid width of the intake</dd>
+<dd><code>lengthExtended</code> - the length the intake extends out from the chassis when activated</dd>
 <dd><code>side</code> - the side of the chassis where the intake is attached</dd>
 <dd><code>capacity</code> - the maximum number of game pieces that the intake can hold</dd>
 </dl>

@@ -55,7 +55,7 @@ import org.ironmaple.utils.mathutils.MapleCommonMath;
  *
  * <h3>Vision Simulation</h3>
  *
- * <p>You can obtain the real robot pose from {@link #getSimulatedDriveTrainPose()} and feed it to the <a
+ * <p>You can obtain the real robot pose from {@link #getSimulatedPose()} and feed it to the <a
  * href="https://docs.photonvision.org/en/latest/docs/simulation/simulation-java.html#updating-the-simulation-world">PhotonVision
  * simulation</a> to simulate vision.
  */
@@ -154,7 +154,7 @@ public class SwerveDriveSimulation extends DriveTrainSimulation {
         final Translation2d floorAndModuleSpeedsDiffFieldRelative = new Translation2d(
                 differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vxMetersPerSecond,
                 differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vyMetersPerSecond)
-                .rotateBy(getSimulatedDriveTrainPose().getRotation());
+                .rotateBy(getSimulatedPose().getRotation());
         final double FRICTION_FORCE_GAIN = 3.0,
                 totalGrippingForce = moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
                         * moduleSimulations.length;
@@ -166,7 +166,7 @@ public class SwerveDriveSimulation extends DriveTrainSimulation {
 
         /* the centripetal friction force during turning */
         final ChassisSpeeds moduleSpeedsFieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(
-                moduleSpeeds, getSimulatedDriveTrainPose().getRotation());
+                moduleSpeeds, getSimulatedPose().getRotation());
         final Rotation2d dTheta = MapleCommonMath.getAngle(
                 GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
                 .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
@@ -246,7 +246,7 @@ public class SwerveDriveSimulation extends DriveTrainSimulation {
             final Vector2 moduleWorldPosition = getWorldPoint(GeometryConvertor.toDyn4jVector2(moduleTranslations[i]));
             final Vector2 moduleForce = moduleSimulations[i].updateSimulationSubTickGetModuleForce(
                     super.getLinearVelocity(moduleWorldPosition),
-                    getSimulatedDriveTrainPose().getRotation(),
+                    getSimulatedPose().getRotation(),
                     gravityForceOnEachModule);
             super.applyForce(moduleForce, moduleWorldPosition);
         }

@@ -1,7 +1,6 @@
 package org.ironmaple.simulation;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.ironmaple.simulation.GamePiece.GamePieceVariant;
 import org.ironmaple.simulation.IntakeSimulation.IntakeBehavior;
@@ -13,7 +12,6 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rectangle2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.MomentOfInertia;
 import edu.wpi.first.units.measure.Voltage;
@@ -21,46 +19,16 @@ import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 
 public class SimRobot {
-    private final static class Once<T> {
-        private final String name;
-        private Optional<T> value = Optional.empty();
-
-        public Once(String name) {
-            this.name = name;
-        }
-
-        public T getUnchecked() {
-            return value.get();
-        }
-
-        public T get() {
-            if (value.isEmpty()) {
-                throw new IllegalStateException(name + "is not initialized");
-            }
-            return getUnchecked();
-        }
-
-        public void initialize(T value) {
-            if (this.value.isPresent()) {
-                throw new IllegalStateException(name + "is already initialized");
-            }
-            RuntimeLog.debug("Initialized " + name);
-            this.value = Optional.of(value);
-        }
-
-        public boolean isInitialized() {
-            return value.isPresent();
-        }
-    }
-
     private final SimulationArena arena;
-    private final Once<DriveTrainSimulation> driveTrain = new Once<>("DriveTrainSimulation");
-    private final Once<GamePieceStorage> gamePieceStorage = new Once<>("GamePieceStorage");
+    private final DriveTrainSimulation driveTrain;
+    private final GamePieceStorage gamePieceStorage;
     private final ArrayList<IntakeSimulation> intakes = new ArrayList<>();
     private final ArrayList<MechanismSim> mechanisms = new ArrayList<>();
 
-    protected SimRobot(SimulationArena arena) {
+    protected <T extends DriveTrainSimulation, C extends DriveTrainSimulationConfig<T, C>> SimRobot(SimulationArena arena, C drivetrainConfig, int gamePieceStorageCapacity) {
         this.arena = arena;
+        this.driveTrain = DriveTrainSimulation.createDriveTrainSimulation(this, drivetrainConfig, new Pose2d());
+        this.gamePieceStorage = new GamePieceStorage(() -> driveTrain.getSimulatedPose3d(), gamePieceStorageCapacity);
     }
 
     public SimulationTiming timing() {
@@ -68,9 +36,7 @@ public class SimRobot {
     }
 
     void simulationSubTick() {
-        if (driveTrain.isInitialized()) {
-            driveTrain.get().simulationSubTick();
-        }
+        driveTrain.simulationSubTick();
         ArrayList<Double> mechanismCurrents = new ArrayList<>();
         for (var mechanism : mechanisms) {
             mechanism.simulationSubTick();
@@ -83,32 +49,10 @@ public class SimRobot {
         RoboRioSim.setVInVoltage(vin);
     }
 
-    public <T extends DriveTrainSimulation, C extends DriveTrainSimulationConfig<T, C>> SimRobot initializeDrivetrain(C config) {
-        driveTrain.initialize(DriveTrainSimulation.createDriveTrainSimulation(this, config, new Pose2d()));
-        arena.world().addBody(driveTrain.getUnchecked());
-        return this;
-    }
-
-    public <T extends DriveTrainSimulation, C extends DriveTrainSimulationConfig<T, C>> SimRobot initializeDrivetrain(C config, Pose2d initialPose) {
-        driveTrain.initialize(DriveTrainSimulation.createDriveTrainSimulation(this, config, initialPose));
-        arena.world().addBody(driveTrain.getUnchecked());
-        return this;
-    }
-
-    public SimRobot initializeGamePieceStorage(int numPieces) {
-        gamePieceStorage.initialize(new GamePieceStorage(() -> driveTrain.get().getSimulatedDriveTrainPose3d(), numPieces));
-        return this;
-    }
-
-    public SimRobot initializeGamePieceStorage(Transform3d firstTransform, Transform3d... otherTransforms) {
-        gamePieceStorage.initialize(new GamePieceStorage(() -> driveTrain.get().getSimulatedDriveTrainPose3d(), firstTransform, otherTransforms));
-        return this;
-    }
-
     public IntakeSimulation createIntake(Rectangle2d boundingBox, IntakeBehavior behavior, GamePieceVariant... acceptedGamePieceVariants) {
         var intake = new IntakeSimulation(
-            driveTrain.get(),
-            gamePieceStorage.get(),
+            driveTrain,
+            gamePieceStorage,
             GeometryConvertor.toDyn4jRectangle(boundingBox),
             behavior,
             acceptedGamePieceVariants
@@ -128,10 +72,10 @@ public class SimRobot {
 
     @SuppressWarnings("unchecked")
     public <T extends DriveTrainSimulation> T getDriveTrain() {
-        return (T) driveTrain.get();
+        return (T) driveTrain;
     }
 
     public GamePieceStorage getGamePieceStorage() {
-        return gamePieceStorage.get();
+        return gamePieceStorage;
     }
 }

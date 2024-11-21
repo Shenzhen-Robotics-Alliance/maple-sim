@@ -13,7 +13,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
-import org.ironmaple.simulation.SimulationArena;
 import org.ironmaple.simulation.SimulationArena.SimulationTiming;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 
@@ -383,7 +382,7 @@ public class SimplifiedSwerveDriveSimulation {
      * {@link #getOdometryEstimatedPose()}.
      */
     public Pose2d getActualPoseInSimulationWorld() {
-        return swerveDriveSimulation.getSimulatedDriveTrainPose();
+        return swerveDriveSimulation.getSimulatedPose();
     }
 
     /**

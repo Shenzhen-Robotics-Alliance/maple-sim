@@ -4,40 +4,33 @@ import java.util.function.Supplier;
 
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
-import org.ironmaple.simulation.drivesims.SimplifiedSwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.ctre.phoenix6.swerve.SimSwerveDrivetrain;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.wpilibj.RobotController;
 
 public class MapleSwerveSim {
-    private final BreakerSwerveDriveSimulationBase driveSim;
+    private final SwerveDriveSimulationBase driveSim;
     public MapleSwerveSim(CommandSwerveDrivetrain drivetrain, SwerveSimulationConfig config, SwerveModuleConstants... swerveModuleConstants) {
         SwerveModuleConstants leadModuleConstants = swerveModuleConstants[0];
 
@@ -55,21 +48,30 @@ public class MapleSwerveSim {
             leadModuleConstants.WheelRadius, 
             leadModuleConstants.SteerInertia);
 
-            driveSim = new BreakerSwerveDriveSimulationBase(
-            new DriveTrainSimulationConfig(
-                config.getRobotMass().in(Units.Kilograms), 
-                config.getBumperLengthX().in(Units.Meters), 
-                config.getBumperWidthY().in(Units.Meters), 
-                Math.abs(leadModuleConstants.LocationX * 2), 
-                Math.abs(leadModuleConstants.LocationY * 2), 
-                swerveModuleSim, 
-                gyroSim),
-            new Pose2d(2,2,new Rotation2d()),
-            drivetrain,
-            swerveModuleConstants
-            );
+        Translation2d[] moduleLocations = new Translation2d[swerveModuleConstants.length];
+        for (int i = 0; i < swerveModuleConstants.length; i++) {
+            moduleLocations[i] = new Translation2d(swerveModuleConstants[i].LocationX, swerveModuleConstants[i].LocationY);
+        }
+
+        driveSim = new SwerveDriveSimulationBase(
+        new DriveTrainSimulationConfig(
+            config.getRobotMass().in(Units.Kilograms), 
+            config.getBumperLengthX().in(Units.Meters), 
+            config.getBumperWidthY().in(Units.Meters), 
+            1.0, 
+            1.0, 
+            swerveModuleSim, 
+            gyroSim)
+            .withCustomModuleTranslations(moduleLocations),
+        new Pose2d(2,2,new Rotation2d()),
+        drivetrain,
+        swerveModuleConstants
+        );
+
+        
           
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSim);
+        SimulatedArena.getInstance().clearGamePieces();
     }
 
     private static Angle getDeltaAngle(Angle start, Angle end) {
@@ -80,18 +82,18 @@ public class MapleSwerveSim {
     }
 
 
-    private static class BreakerSwerveDriveSimulationBase extends SwerveDriveSimulation {
-        private BreakerSwerveModuleSim[] moduleSims;
+    private static class SwerveDriveSimulationBase extends SwerveDriveSimulation {
+        private SwerveModuleSim[] moduleSims;
         private Pigeon2SimState gyroSim;
         private Pigeon2 gyro;
         private CommandSwerveDrivetrain drivetrain;
-        public BreakerSwerveDriveSimulationBase(DriveTrainSimulationConfig config, Pose2d initialPoseOnField, CommandSwerveDrivetrain drivetrain, SwerveModuleConstants[] moduleConstants) {
+        public SwerveDriveSimulationBase(DriveTrainSimulationConfig config, Pose2d initialPoseOnField, CommandSwerveDrivetrain drivetrain, SwerveModuleConstants[] moduleConstants) {
             super(config, initialPoseOnField);
-            moduleSims = new BreakerSwerveModuleSim[config.moduleTranslations.length];
+            moduleSims = new SwerveModuleSim[config.moduleTranslations.length];
             SwerveModuleSimulation[] mapleModuleSims = getModules();
             SwerveModule[] modules = drivetrain.getModules();
             for (int i = 0; i < config.moduleTranslations.length; i++) {
-                moduleSims[i] = new BreakerSwerveModuleSim(mapleModuleSims[i], modules[i], moduleConstants[i]);
+                moduleSims[i] = new SwerveModuleSim(mapleModuleSims[i], modules[i], moduleConstants[i]);
             }
             gyro = drivetrain.getPigeon2();
             gyroSim = gyro.getSimState();
@@ -102,13 +104,13 @@ public class MapleSwerveSim {
         public void simulationSubTick() {
             double supplyVoltage = RobotController.getBatteryVoltage();
             Angle prevGyroAngle = gyro.getYaw().getValue();
-            for (BreakerSwerveModuleSim moduleSim: moduleSims) {
+            for (SwerveModuleSim moduleSim: moduleSims) {
                 moduleSim.updateModel(supplyVoltage);
             }
             gyroSim.setSupplyVoltage(supplyVoltage);
             super.simulationSubTick();
             Angle gyroDelta = getDeltaAngle(prevGyroAngle, getGyroSimulation().getGyroReading().getMeasure());
-            for (BreakerSwerveModuleSim moduleSim: moduleSims) {
+            for (SwerveModuleSim moduleSim: moduleSims) {
                 moduleSim.updateHardware();
             }
             gyroSim.setRawYaw(prevGyroAngle.plus(gyroDelta));
@@ -120,20 +122,17 @@ public class MapleSwerveSim {
         } 
     }
 
-    public static class BreakerSwerveModuleSim {
+    private static class SwerveModuleSim {
         private SwerveModuleSimulation moduleSim;
-        private SwerveModule module;
         private SwerveModuleConstants constants;
         private TalonFXSimState driveSim;
         private TalonFXSimState steerSim;
         private CANcoderSimState encoderSim;
         private CANcoder encoder;
 
-        public BreakerSwerveModuleSim(SwerveModuleSimulation moduleSim, SwerveModule module, SwerveModuleConstants constants) {
+        public SwerveModuleSim(SwerveModuleSimulation moduleSim, SwerveModule module, SwerveModuleConstants constants) {
             this.moduleSim = moduleSim;
-            this.module = module;
             this.constants = constants;
-            this.module = module;
             driveSim = module.getDriveMotor().getSimState();
             steerSim = module.getSteerMotor().getSimState();
             encoder = module.getCANcoder();
@@ -163,7 +162,6 @@ public class MapleSwerveSim {
 
             Angle delta = getDeltaAngle(encoder.getAbsolutePosition().getValue(), moduleSim.getSteerAbsoluteFacing().getMeasure());
             encoderSim.setRawPosition(encoder.getPositionSinceBoot().getValue().plus(delta));
-            //encoderSim.addPosition(delta);
             encoderSim.setVelocity(moduleSim.getSteerAbsoluteEncoderSpeedRadPerSec() / (2 * Math.PI));
         }
     }

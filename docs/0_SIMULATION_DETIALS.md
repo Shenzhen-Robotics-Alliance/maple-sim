@@ -15,7 +15,7 @@ The realistic simulation dynamics allow you to test and refine auto paths as the
 ![path following simulation.gif](media%2Fpath%20following%20simulation.gif)
 
 <div align="right">
-    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_SWERVE_DRIVETRAIN.md">View Full Document on Swerve Simulation</a> >>></h3>
+    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/3_SWERVE_SIMULATION_OVERVIEW.html">View Full Document on Swerve Simulation</a> >>></h3>
 </div>
 
 ## Odometry + Vision Simulation
@@ -30,10 +30,6 @@ Beyond odometry, you can integrate [photonlib](https://docs.photonvision.org/en/
 
 ![vision simulation.gif](media%2Fvision%20simulation.gif)
 
-<div align="right">
-    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/8_SIMULATING_VISION.html">View Full Document on Vision Simulation</a> >>></h3>
-</div>
-
 ## Game Pieces and Intake Simulation
 In **maple-sim**, game pieces on the field have collision boundaries and can interact with the robot.
 The simulator also supports a fixed intake module, allowing the robot to automatically collect game pieces upon contact.
@@ -43,7 +39,7 @@ The simulator also supports a fixed intake module, allowing the robot to automat
 ![intakesim.gif](media/intakesim.gif)
 
 <div align="right">
-    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_INTAKE.html">View Full Document on Intake Simulation</a> >>></h3>
+    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html">View Full Document on Intake Simulation</a> >>></h3>
 </div>
 
 ## Projectile Simulation
@@ -53,7 +49,7 @@ In FRC, game pieces are often launched into the air.
 ![projectile simulation.gif](media%2Fprojectile%20simulation.gif)
 
 <div align="right">
-    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_PROJECTILES.html">View Full Document on Projectile Simulation</a> >>></h3>
+    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_PROJECTILES.html">View Full Document on Projectile Simulation</a> >>></h3>
 </div>
 
 ## Opponent Robots Simulation
@@ -63,5 +59,5 @@ Just like real robots, these opponents have collision boundaries, enabling drive
 ![opponentrobotsim.gif](media/opponent%20robot%20simulation.gif)
 
 <div align="right">
-    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/7_SIMULATING_OPPONENT_ROBOTS.html">View Full Document on Opponent Robots Simulation</a> >>></h3>
+    <h3><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_OPPONENT_ROBOTS.html">View Full Document on Opponent Robots Simulation</a> >>></h3>
 </div>

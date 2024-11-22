@@ -119,7 +119,7 @@ public abstract class SimulatedArena {
      * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick()} that the simulation
      *     runs per each call to {@link #simulationPeriodic()}
      */
-    public static void overrideSimulationTimings(Time robotPeriod, int simulationSubTicksPerPeriod) {
+    public static synchronized void overrideSimulationTimings(Time robotPeriod, int simulationSubTicksPerPeriod) {
         SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
         SIMULATION_DT = robotPeriod.divide(SIMULATION_SUB_TICKS_IN_1_PERIOD);
     }
@@ -163,7 +163,7 @@ public abstract class SimulatedArena {
      * @param action the {@link Runnable} action to be executed in each simulation sub-tick
      */
     @Deprecated
-    public void addSimulationSubTickAction(Runnable action) {
+    public synchronized void addSimulationSubTickAction(Runnable action) {
         this.simulationSubTickActions.add(action);
     }
 
@@ -183,7 +183,7 @@ public abstract class SimulatedArena {
      *
      * @param intakeSimulation the intake simulation to be registered
      */
-    protected void addIntakeSimulation(IntakeSimulation intakeSimulation) {
+    protected synchronized void addIntakeSimulation(IntakeSimulation intakeSimulation) {
         this.intakeSimulations.add(intakeSimulation);
         this.physicsWorld.addContactListener(intakeSimulation.getGamePieceContactListener());
     }
@@ -201,7 +201,7 @@ public abstract class SimulatedArena {
      *
      * @param driveTrainSimulation the drivetrain simulation to be registered
      */
-    public void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {
+    public synchronized void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {
         this.physicsWorld.addBody(driveTrainSimulation);
         this.driveTrainSimulations.add(driveTrainSimulation);
     }
@@ -218,7 +218,7 @@ public abstract class SimulatedArena {
      *
      * @param gamePiece the game piece to be registered in the simulation
      */
-    public void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
+    public synchronized void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.addBody(gamePiece);
         this.gamePieces.add(gamePiece);
     }
@@ -232,7 +232,7 @@ public abstract class SimulatedArena {
      *
      * @param gamePieceProjectile the projectile to be registered and launched in the simulation
      */
-    public void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
+    public synchronized void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
         this.gamePieceProjectile.add(gamePieceProjectile);
         gamePieceProjectile.launch();
     }
@@ -246,7 +246,7 @@ public abstract class SimulatedArena {
      *
      * @param gamePiece the game piece to be removed from the simulation
      */
-    public void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
+    public synchronized void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.removeBody(gamePiece);
         this.gamePieces.remove(gamePiece);
     }
@@ -258,7 +258,7 @@ public abstract class SimulatedArena {
      *
      * <p>This method clears all game pieces from the physics world and the simulation's game piece collection.
      */
-    public void clearGamePieces() {
+    public synchronized void clearGamePieces() {
         for (GamePieceOnFieldSimulation gamePiece : this.gamePieces) this.physicsWorld.removeBody(gamePiece);
         this.gamePieces.clear();
     }
@@ -278,14 +278,17 @@ public abstract class SimulatedArena {
      * <p>The amount of CPU Time that the Dyn4j engine uses in displayed in <code>
      * SmartDashboard/MapleArenaSimulation/Dyn4jEngineCPUTimeMS</code>, usually performance is not a concern
      */
-    public void simulationPeriodic() {
-        final long t0 = System.nanoTime();
-        competitionPeriodic();
-        SimulatedBattery.getInstance().flush();
-        // move through a few sub-periods in each update
-        for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick();
+    public synchronized void simulationPeriodic() {
+        /* obtain lock to the simulated arena class to block any calls to overrideTimings() */
+        synchronized (SimulatedArena.class) {
+            final long t0 = System.nanoTime();
+            competitionPeriodic();
+            SimulatedBattery.getInstance().flush();
+            // move through a few sub-periods in each update
+            for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick();
 
-        SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
+            SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
+        }
     }
 
     /**
@@ -341,7 +344,7 @@ public abstract class SimulatedArena {
      * @param type the type of game piece, as determined by the constructor of {@link GamePieceOnFieldSimulation}
      * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the game pieces
      */
-    public List<Pose3d> getGamePiecesByType(String type) {
+    public synchronized List<Pose3d> getGamePiecesByType(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
         for (GamePieceOnFieldSimulation gamePiece : gamePieces)
             if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
@@ -360,7 +363,7 @@ public abstract class SimulatedArena {
      * <p>This method clears all current game pieces from the field and places new game pieces in their starting
      * positions for the autonomous mode.
      */
-    public void resetFieldForAuto() {
+    public synchronized void resetFieldForAuto() {
         clearGamePieces();
         placeGamePiecesOnField();
     }

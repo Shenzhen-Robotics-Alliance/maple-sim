@@ -22,6 +22,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -87,6 +88,7 @@ public class MapleSwerveSim {
         private Pigeon2SimState gyroSim;
         private Pigeon2 gyro;
         private CommandSwerveDrivetrain drivetrain;
+        private ChassisSpeeds prevSpeeds = new ChassisSpeeds();
         public SwerveDriveSimulationBase(DriveTrainSimulationConfig config, Pose2d initialPoseOnField, CommandSwerveDrivetrain drivetrain, SwerveModuleConstants[] moduleConstants) {
             super(config, initialPoseOnField);
             moduleSims = new SwerveModuleSim[config.moduleTranslations.length];
@@ -119,6 +121,9 @@ public class MapleSwerveSim {
             DogLog.log("Sim/TgtModuleStates", drivetrain.getState().ModuleTargets);
             DogLog.log("Sim/RealModuleStates", drivetrain.getState().ModuleStates);
             DogLog.log("Sim/GyroYaw", MathUtil.inputModulus(prevGyroAngle.in(Units.Degrees), -180, 180));
+            DogLog.log("Sim/GroundTruthAccels", getDriveTrainSimulatedChassisSpeedsFieldRelative().minus(prevSpeeds).div(SimulatedArena.getSimulationDt()));
+            prevSpeeds = getDriveTrainSimulatedChassisSpeedsFieldRelative();
+            prevSpeeds = new ChassisSpeeds(prevSpeeds.vxMetersPerSecond, prevSpeeds.vyMetersPerSecond, prevSpeeds.omegaRadiansPerSecond);
         } 
     }
 

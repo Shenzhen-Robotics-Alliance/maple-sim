@@ -94,11 +94,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>double</code></div>
-<div class="col-second even-row-color"><code><a href="#bumperLengthXMeters" class="member-name-link">bumperLengthXMeters</a></code></div>
+<div class="col-first even-row-color"><code>edu.wpi.first.units.measure.Distance</code></div>
+<div class="col-second even-row-color"><code><a href="#bumperLengthX" class="member-name-link">bumperLengthX</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>double</code></div>
-<div class="col-second odd-row-color"><code><a href="#bumperWidthYMeters" class="member-name-link">bumperWidthYMeters</a></code></div>
+<div class="col-first odd-row-color"><code>edu.wpi.first.units.measure.Distance</code></div>
+<div class="col-second odd-row-color"><code><a href="#bumperWidthY" class="member-name-link">bumperWidthY</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#gyroSimulationFactory" class="member-name-link">gyroSimulationFactory</a></code></div>
@@ -106,8 +106,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>[]</code></div>
 <div class="col-second odd-row-color"><code><a href="#moduleTranslations" class="member-name-link">moduleTranslations</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>double</code></div>
-<div class="col-second even-row-color"><code><a href="#robotMassKg" class="member-name-link">robotMassKg</a></code></div>
+<div class="col-first even-row-color"><code>edu.wpi.first.units.measure.Mass</code></div>
+<div class="col-second even-row-color"><code><a href="#robotMass" class="member-name-link">robotMass</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#swerveModuleSimulationFactory" class="member-name-link">swerveModuleSimulationFactory</a></code></div>
@@ -123,11 +123,11 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(double,double,double,double,double,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">DriveTrainSimulationConfig</a><wbr>(double&nbsp;robotMassKg,
- double&nbsp;bumperLengthXMeters,
- double&nbsp;bumperWidthYMeters,
- double&nbsp;trackLengthXMeters,
- double&nbsp;trackWidthYMeters,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(edu.wpi.first.units.measure.Mass,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,java.util.function.Supplier,java.util.function.Supplier)" class="member-name-link">DriveTrainSimulationConfig</a><wbr>(edu.wpi.first.units.measure.Mass&nbsp;robotMass,
+ edu.wpi.first.units.measure.Distance&nbsp;bumperLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;bumperWidthY,
+ edu.wpi.first.units.measure.Distance&nbsp;trackLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;trackWidthY,
  <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleSimulationFactory,
  <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&gt;&nbsp;gyroSimulationFactory)</code></div>
 <div class="col-last even-row-color">
@@ -152,51 +152,54 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Default Constructor.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDensity()" class="member-name-link">getDensity</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Distance</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#driveBaseRadius()" class="member-name-link">driveBaseRadius</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDensityKgPerSquaredMeters()" class="member-name-link">getDensityKgPerSquaredMeters</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Calculates the density of the robot.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTrackLengthX()" class="member-name-link">getTrackLengthX</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Distance</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trackLengthX()" class="member-name-link">trackLengthX</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Calculates the track length in the X direction.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>double</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTrackWidthY()" class="member-name-link">getTrackWidthY</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Distance</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trackWidthY()" class="member-name-link">trackWidthY</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Calculates the track width in the Y direction.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withBumperSize(double,double)" class="member-name-link">withBumperSize</a><wbr>(double&nbsp;bumperLengthXMeters,
- double&nbsp;bumperWidthYMeters)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withBumperSize(edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance)" class="member-name-link">withBumperSize</a><wbr>(edu.wpi.first.units.measure.Distance&nbsp;bumperLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;bumperWidthY)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the bumper size.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCustomModuleTranslations(edu.wpi.first.math.geometry.Translation2d%5B%5D)" class="member-name-link">withCustomModuleTranslations</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>[]&nbsp;moduleTranslations)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCustomModuleTranslations(edu.wpi.first.math.geometry.Translation2d%5B%5D)" class="member-name-link">withCustomModuleTranslations</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>[]&nbsp;moduleTranslations)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets custom module translations.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withGyro(java.util.function.Supplier)" class="member-name-link">withGyro</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&gt;&nbsp;gyroSimulationFactory)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withGyro(java.util.function.Supplier)" class="member-name-link">withGyro</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&gt;&nbsp;gyroSimulationFactory)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the gyro simulation factory.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withRobotMass(double)" class="member-name-link">withRobotMass</a><wbr>(double&nbsp;robotMassKg)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withRobotMass(edu.wpi.first.units.measure.Mass)" class="member-name-link">withRobotMass</a><wbr>(edu.wpi.first.units.measure.Mass&nbsp;robotMass)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the robot mass.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withSwerveModule(java.util.function.Supplier)" class="member-name-link">withSwerveModule</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleSimulationFactory)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withSwerveModule(java.util.function.Supplier)" class="member-name-link">withSwerveModule</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleSimulationFactory)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the swerve module simulation factory.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withTrackLengthTrackWidth(double,double)" class="member-name-link">withTrackLengthTrackWidth</a><wbr>(double&nbsp;trackLengthXMeters,
- double&nbsp;trackWidthYMeters)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withTrackLengthTrackWidth(edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance)" class="member-name-link">withTrackLengthTrackWidth</a><wbr>(edu.wpi.first.units.measure.Distance&nbsp;trackLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;trackWidthY)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the track length and width.</div>
 </div>
 </div>
@@ -217,21 +220,21 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="robotMassKg">
-<h3>robotMassKg</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">robotMassKg</span></div>
+<section class="detail" id="robotMass">
+<h3>robotMass</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Mass</span>&nbsp;<span class="element-name">robotMass</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="bumperLengthXMeters">
-<h3>bumperLengthXMeters</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">bumperLengthXMeters</span></div>
+<section class="detail" id="bumperLengthX">
+<h3>bumperLengthX</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Distance</span>&nbsp;<span class="element-name">bumperLengthX</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="bumperWidthYMeters">
-<h3>bumperWidthYMeters</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">bumperWidthYMeters</span></div>
+<section class="detail" id="bumperWidthY">
+<h3>bumperWidthY</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Distance</span>&nbsp;<span class="element-name">bumperWidthY</span></div>
 </section>
 </li>
 <li>
@@ -261,13 +264,13 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(double,double,double,double,double,java.util.function.Supplier,java.util.function.Supplier)">
+<section class="detail" id="&lt;init&gt;(edu.wpi.first.units.measure.Mass,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance,java.util.function.Supplier,java.util.function.Supplier)">
 <h3>DriveTrainSimulationConfig</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DriveTrainSimulationConfig</span><wbr><span class="parameters">(double&nbsp;robotMassKg,
- double&nbsp;bumperLengthXMeters,
- double&nbsp;bumperWidthYMeters,
- double&nbsp;trackLengthXMeters,
- double&nbsp;trackWidthYMeters,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DriveTrainSimulationConfig</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Mass&nbsp;robotMass,
+ edu.wpi.first.units.measure.Distance&nbsp;bumperLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;bumperWidthY,
+ edu.wpi.first.units.measure.Distance&nbsp;trackLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;trackWidthY,
  <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleSimulationFactory,
  <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a>&gt;&nbsp;gyroSimulationFactory)</span></div>
 <div class="block"><h2>Ordinary Constructor</h2>
@@ -275,11 +278,11 @@ loadScripts(document, 'script');</script>
  <p>Creates an instance of <a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs"><code>DriveTrainSimulationConfig</code></a> with specified parameters.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>robotMassKg</code> - the mass of the robot in kilograms, including bumpers.</dd>
-<dd><code>bumperLengthXMeters</code> - the length of the bumper in meters (distance from front to back).</dd>
-<dd><code>bumperWidthYMeters</code> - the width of the bumper in meters (distance from left to right).</dd>
-<dd><code>trackLengthXMeters</code> - the distance between the front and rear wheels, in meters.</dd>
-<dd><code>trackWidthYMeters</code> - the distance between the left and right wheels, in meters.</dd>
+<dd><code>robotMass</code> - the mass of the robot, including bumpers.</dd>
+<dd><code>bumperLengthX</code> - the length of the bumper (distance from front to back).</dd>
+<dd><code>bumperWidthY</code> - the width of the bumper (distance from left to right).</dd>
+<dd><code>trackLengthX</code> - the distance between the front and rear wheels.</dd>
+<dd><code>trackWidthY</code> - the distance between the left and right wheels.</dd>
 <dd><code>swerveModuleSimulationFactory</code> - the factory that creates appropriate swerve module simulation for the
      drivetrain.</dd>
 <dd><code>gyroSimulationFactory</code> - the factory that creates appropriate gyro simulation for the drivetrain.</dd>
@@ -322,42 +325,42 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="withRobotMass(double)">
+<section class="detail" id="withRobotMass(edu.wpi.first.units.measure.Mass)">
 <h3>withRobotMass</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withRobotMass</span><wbr><span class="parameters">(double&nbsp;robotMassKg)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withRobotMass</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Mass&nbsp;robotMass)</span></div>
 <div class="block"><h2>Sets the robot mass.</h2>
 
  <p>Updates the mass of the robot in kilograms.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>robotMassKg</code> - the new mass of the robot in kilograms.</dd>
+<dd><code>robotMass</code> - the new mass of the robot.</dd>
 <dt>Returns:</dt>
 <dd>the current instance of <a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs"><code>DriveTrainSimulationConfig</code></a> for method chaining.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="withBumperSize(double,double)">
+<section class="detail" id="withBumperSize(edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance)">
 <h3>withBumperSize</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withBumperSize</span><wbr><span class="parameters">(double&nbsp;bumperLengthXMeters,
- double&nbsp;bumperWidthYMeters)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withBumperSize</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Distance&nbsp;bumperLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;bumperWidthY)</span></div>
 <div class="block"><h2>Sets the bumper size.</h2>
 
  <p>Updates the dimensions of the bumper.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>bumperLengthXMeters</code> - the length of the bumper in meters.</dd>
-<dd><code>bumperWidthYMeters</code> - the width of the bumper in meters.</dd>
+<dd><code>bumperLengthX</code> - the length of the bumper.</dd>
+<dd><code>bumperWidthY</code> - the width of the bumper.</dd>
 <dt>Returns:</dt>
 <dd>the current instance of <a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs"><code>DriveTrainSimulationConfig</code></a> for method chaining.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="withTrackLengthTrackWidth(double,double)">
+<section class="detail" id="withTrackLengthTrackWidth(edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance)">
 <h3>withTrackLengthTrackWidth</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withTrackLengthTrackWidth</span><wbr><span class="parameters">(double&nbsp;trackLengthXMeters,
- double&nbsp;trackWidthYMeters)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withTrackLengthTrackWidth</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Distance&nbsp;trackLengthX,
+ edu.wpi.first.units.measure.Distance&nbsp;trackWidthY)</span></div>
 <div class="block"><h2>Sets the track length and width.</h2>
 
  <p>Updates the translations for the swerve modules based on the specified track length and track width.
@@ -365,8 +368,8 @@ loadScripts(document, 'script');</script>
  <p>For non-rectangular chassis configuration, use <a href="#withCustomModuleTranslations(edu.wpi.first.math.geometry.Translation2d%5B%5D)"><code>withCustomModuleTranslations(Translation2d[])</code></a> instead.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>trackLengthXMeters</code> - the distance between the front and rear wheels, in meters.</dd>
-<dd><code>trackWidthYMeters</code> - the distance between the left and right wheels, in meters.</dd>
+<dd><code>trackLengthX</code> - the distance between the front and rear wheels.</dd>
+<dd><code>trackWidthY</code> - the distance between the left and right wheels.</dd>
 <dt>Returns:</dt>
 <dd>the current instance of <a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs"><code>DriveTrainSimulationConfig</code></a> for method chaining.</dd>
 </dl>
@@ -380,7 +383,7 @@ loadScripts(document, 'script');</script>
 
  <p>Updates the translations of the swerve modules with user-defined values.
 
- <p>For ordinary rectangular modules configuration, use <a href="#withTrackLengthTrackWidth(double,double)"><code>withTrackLengthTrackWidth(double, double)</code></a>
+ <p>For ordinary rectangular modules configuration, use <a href="#withTrackLengthTrackWidth(edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance)"><code>withTrackLengthTrackWidth(Distance, Distance)</code></a>
  instead.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -421,9 +424,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getDensity()">
-<h3>getDensity</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getDensity</span>()</div>
+<section class="detail" id="getDensityKgPerSquaredMeters()">
+<h3>getDensityKgPerSquaredMeters</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getDensityKgPerSquaredMeters</span>()</div>
 <div class="block"><h2>Calculates the density of the robot.</h2>
 
  <p>Returns the density of the robot based on its mass and bumper dimensions.</div>
@@ -434,33 +437,39 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getTrackLengthX()">
-<h3>getTrackLengthX</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getTrackLengthX</span>()</div>
+<section class="detail" id="trackLengthX()">
+<h3>trackLengthX</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Distance</span>&nbsp;<span class="element-name">trackLengthX</span>()</div>
 <div class="block"><h2>Calculates the track length in the X direction.</h2>
 
  <p>Returns the total distance between the frontmost and rearmost module translations in the X direction.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the track length in meters.</dd>
+<dd>the track length.</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the module translations are empty.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getTrackWidthY()">
-<h3>getTrackWidthY</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getTrackWidthY</span>()</div>
+<section class="detail" id="trackWidthY()">
+<h3>trackWidthY</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Distance</span>&nbsp;<span class="element-name">trackWidthY</span>()</div>
 <div class="block"><h2>Calculates the track width in the Y direction.</h2>
 
  <p>Returns the total distance between the leftmost and rightmost module translations in the Y direction.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the track width in meters.</dd>
+<dd>the track width.</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - if the module translations are empty.</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="driveBaseRadius()">
+<h3>driveBaseRadius</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Distance</span>&nbsp;<span class="element-name">driveBaseRadius</span>()</div>
 </section>
 </li>
 </ul>

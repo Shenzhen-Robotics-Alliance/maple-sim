@@ -2,7 +2,7 @@ apply plugin: 'maven-publish'
 
 ext.licenseFile = files("$rootDir/LICENSE.txt")
 
-def pubVersion = '0.1.7prev'
+def pubVersion = '0.2.0'
 
 def outputsFolder = file("$buildDir/outputs")
 
@@ -165,7 +165,6 @@ task moveJavadocsToDocsDirectory(type: Copy) {
 // Configure the `publish` task to depend on `moveJavadocsToDocsDirectory`
 publish.dependsOn moveJavadocsToDocsDirectory
 
-publish.dependsOn cleanReleaseRepo
 
 publish.dependsOn outputJar
 publish.dependsOn outputSourcesJar

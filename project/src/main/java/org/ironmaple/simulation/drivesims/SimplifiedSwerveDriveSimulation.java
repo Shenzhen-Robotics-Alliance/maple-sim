@@ -287,6 +287,19 @@ public class SimplifiedSwerveDriveSimulation {
                     chassisSpeeds,
                     SimulatedArena.getSimulationDt().in(Seconds) * SimulatedArena.getSimulationSubTicksIn1Period());
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
+        runSwerveStates(setPoints);
+    }
+
+    /**
+     *
+     *
+     * <h2>Runs a raw module states on the chassis.</h2>
+     *
+     * <p>Runs the specified module states on the modules.
+     *
+     * @param setPoints an array of {@link SwerveModuleState} yielding the requested states
+     */
+    public void runSwerveStates(SwerveModuleState[] setPoints) {
         for (int i = 0; i < moduleSimulations.length; i++)
             setPointsOptimized[i] = optimizeAndRunModuleState(moduleSimulations[i], setPoints[i]);
     }

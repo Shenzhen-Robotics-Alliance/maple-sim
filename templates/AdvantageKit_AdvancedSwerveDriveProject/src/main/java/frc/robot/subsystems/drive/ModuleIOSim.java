@@ -54,11 +54,13 @@ public class ModuleIOSim implements ModuleIO {
         };
 
         inputs.odometryTimestamps = OdometryTimeStampsSim.getTimeStamps();
-        inputs.odometryDrivePositionsRad = Arrays.stream(moduleSimulation.getCachedDriveEncoderUnGearedPositions())
-                .mapToDouble(angle -> angle.in(Radians) / moduleSimulation.STEER_GEAR_RATIO)
+        inputs.odometryDrivePositionsRad = Arrays.stream(moduleSimulation.getCachedDriveWheelFinalPositions())
+                .mapToDouble(wheelPosition -> wheelPosition.in(Radians))
                 .toArray();
+
         inputs.odometryTurnPositions = Arrays.stream(moduleSimulation.getCachedSteerRelativeEncoderPositions())
-                .map(Rotation2d::new)
+                .map(relativeEncoderPosition ->
+                        new Rotation2d(relativeEncoderPosition.divide(moduleSimulation.STEER_GEAR_RATIO)))
                 .toArray(Rotation2d[]::new);
     }
 

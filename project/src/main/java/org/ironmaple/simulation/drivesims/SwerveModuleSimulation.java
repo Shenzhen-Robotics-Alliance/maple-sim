@@ -348,7 +348,7 @@ public class SwerveModuleSimulation {
      *
      * <h2>Obtains the Cached Readings of the Drive Encoder's Un-Geared Position.</h2>
      *
-     * <p>The values of {@link #getCachedDriveEncoderUnGearedPositions()} are cached at each sub-tick and can be
+     * <p>The values of {@link #getDriveEncoderUnGearedPosition()} are cached at each sub-tick and can be
      * retrieved using this method.
      *
      * @return an array of cached drive encoder un-geared positions

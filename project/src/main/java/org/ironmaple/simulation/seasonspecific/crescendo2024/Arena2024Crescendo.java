@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnField;
 
 public class Arena2024Crescendo extends SimulatedArena {
     /** the obstacles on the 2024 competition field */
@@ -95,7 +95,7 @@ public class Arena2024Crescendo extends SimulatedArena {
 
         final Translation2d sourcePosition = toCurrentAllianceTranslation(BLUE_SOURCE_POSITION);
         /* if there is any game-piece 0.5 meters within the human player station, we don't throw a new note */
-        for (GamePieceOnFieldSimulation gamePiece : super.gamePieces)
+        for (GamePieceOnField gamePiece : super.gamePieces)
             if (gamePiece instanceof CrescendoNoteOnField
                     && gamePiece.getPoseOnField().getTranslation().getDistance(sourcePosition) < 1) return;
 

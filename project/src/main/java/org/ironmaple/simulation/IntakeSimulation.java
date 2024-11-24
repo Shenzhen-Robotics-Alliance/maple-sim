@@ -18,7 +18,7 @@ import org.dyn4j.geometry.Vector2;
 import org.dyn4j.world.ContactCollisionData;
 import org.dyn4j.world.listener.ContactListener;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnField;
 
 /**
  *
@@ -34,15 +34,15 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  * <p>The intake can be turned on through {@link #startIntake()}, which causes it to extend, expanding the collision
  * space of the robot's chassis. When turned off via {@link #stopIntake()}, the intake retracts.
  *
- * <p>The intake can "collect" {@link GamePieceOnFieldSimulation} instances from the field, removing them and
+ * <p>The intake can "collect" {@link GamePieceOnField} instances from the field, removing them and
  * incrementing the {@link #gamePiecesInIntakeCount}.
  *
  * <p>A game piece is collected if the following conditions are met:
  *
  * <ul>
- *   <li>1. The type of the game piece ({@link org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation#type})
+ *   <li>1. The type of the game piece ({@link GamePieceOnField#type})
  *       matches {@link #targetedGamePieceType}.
- *   <li>2. The {@link org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation} is in contact with the intake
+ *   <li>2. The {@link GamePieceOnField} is in contact with the intake
  *       (and not other parts of the robot).
  *   <li>3. The intake is turned on via {@link #startIntake()}.
  *   <li>4. The number of game pieces in the intake ({@link #gamePiecesInIntakeCount}) is less than {@link #capacity}.
@@ -56,7 +56,7 @@ public class IntakeSimulation extends BodyFixture {
     private int gamePiecesInIntakeCount;
     private boolean intakeRunning;
 
-    private final Queue<GamePieceOnFieldSimulation> gamePiecesToRemove;
+    private final Queue<GamePieceOnField> gamePiecesToRemove;
     private final AbstractDriveTrainSimulation driveTrainSimulation;
     private final String targetedGamePieceType;
 
@@ -136,7 +136,7 @@ public class IntakeSimulation extends BodyFixture {
 
         return intakeRectangle;
     }
-    ;
+    
 
     /**
      *
@@ -178,7 +178,7 @@ public class IntakeSimulation extends BodyFixture {
      * <p>Extends the intake out from the chassis, making it part of the chassis's collision space.
      *
      * <p>Once activated, the intake is considered running and will listen for contact with
-     * {@link GamePieceOnFieldSimulation} instances, allowing it to collect game pieces.
+     * {@link GamePieceOnField} instances, allowing it to collect game pieces.
      */
     public void startIntake() {
         if (intakeRunning) return;
@@ -195,7 +195,7 @@ public class IntakeSimulation extends BodyFixture {
      * <p>Retracts the intake into the chassis, removing it from the chassis's collision space.
      *
      * <p>Once turned off, the intake will no longer listen for or respond to contacts with
-     * {@link GamePieceOnFieldSimulation} instances.
+     * {@link GamePieceOnField} instances.
      */
     public void stopIntake() {
         if (!intakeRunning) return;
@@ -236,9 +236,9 @@ public class IntakeSimulation extends BodyFixture {
      * <h2>The {@link ContactListener} for the Intake Simulation.</h2>
      *
      * <p>This class can be added to the simulation world to detect and manage contacts between the intake and
-     * {@link GamePieceOnFieldSimulation} instances of the type {@link #targetedGamePieceType}.
+     * {@link GamePieceOnField} instances of the type {@link #targetedGamePieceType}.
      *
-     * <p>If contact is detected and the intake is running, the {@link GamePieceOnFieldSimulation} will be marked for
+     * <p>If contact is detected and the intake is running, the {@link GamePieceOnField} will be marked for
      * removal from the field.
      */
     public final class GamePieceContactListener implements ContactListener<Body> {
@@ -250,15 +250,15 @@ public class IntakeSimulation extends BodyFixture {
             final CollisionBody<?> collisionBody1 = collision.getBody1(), collisionBody2 = collision.getBody2();
             final Fixture fixture1 = collision.getFixture1(), fixture2 = collision.getFixture2();
 
-            if (collisionBody1 instanceof GamePieceOnFieldSimulation gamePiece
+            if (collisionBody1 instanceof GamePieceOnField gamePiece
                     && Objects.equals(gamePiece.type, targetedGamePieceType)
                     && fixture2 == IntakeSimulation.this) flagGamePieceForRemoval(gamePiece);
-            else if (collisionBody2 instanceof GamePieceOnFieldSimulation gamePiece
+            else if (collisionBody2 instanceof GamePieceOnField gamePiece
                     && Objects.equals(gamePiece.type, targetedGamePieceType)
                     && fixture1 == IntakeSimulation.this) flagGamePieceForRemoval(gamePiece);
         }
 
-        private void flagGamePieceForRemoval(GamePieceOnFieldSimulation gamePiece) {
+        private void flagGamePieceForRemoval(GamePieceOnField gamePiece) {
             gamePiecesToRemove.add(gamePiece);
             gamePiecesInIntakeCount++;
         }
@@ -297,7 +297,7 @@ public class IntakeSimulation extends BodyFixture {
     /**
      *
      *
-     * <h2>Obtains the {@link GamePieceOnFieldSimulation} Instances to Be Removed from the Field.</h2>
+     * <h2>Obtains the {@link GamePieceOnField} Instances to Be Removed from the Field.</h2>
      *
      * <p>This method is called from {@link SimulatedArena#simulationPeriodic()} to retrieve game pieces that have been
      * marked for removal.
@@ -308,7 +308,7 @@ public class IntakeSimulation extends BodyFixture {
      *
      * @return a {@link Queue} of game pieces to be removed from the field
      */
-    public Queue<GamePieceOnFieldSimulation> getGamePiecesToRemove() {
+    public Queue<GamePieceOnField> getGamePiecesToRemove() {
         return gamePiecesToRemove;
     }
 

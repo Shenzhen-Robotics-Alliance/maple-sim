@@ -3,9 +3,9 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import org.dyn4j.geometry.Geometry;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceOnField;
 
-public class CrescendoNoteOnField extends GamePieceOnFieldSimulation {
+public class CrescendoNoteOnField extends GamePieceOnField {
     /* https://www.andymark.com/products/frc-2024-am-4999 */
     public static final double NOTE_HEIGHT = Units.inchesToMeters(2),
             NOTE_DIAMETER = Units.inchesToMeters(14),

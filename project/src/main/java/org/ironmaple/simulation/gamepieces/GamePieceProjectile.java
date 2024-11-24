@@ -26,7 +26,7 @@ import org.ironmaple.utils.FieldMirroringUtils;
  * <h3>Additional Features:</h3>
  *
  * <ul>
- *   <li>Optionally, it can be configured to become a {@link GamePieceOnFieldSimulation} upon touching the ground.
+ *   <li>Optionally, it can be configured to become a {@link GamePieceOnField} upon touching the ground.
  *   <li>Optionally, it can be configured to have a "desired target." Upon hitting the target, it can be configured to
  *       run a callback.
  * </ul>
@@ -99,7 +99,7 @@ public class GamePieceProjectile {
      * <h2>Creates a Game Piece Projectile Ejected from a Shooter.</h2>
      *
      * @param gamePieceType the type of game piece, which will affect the
-     *     {@link SimulatedArena#getGamePiecesByType(String)}
+     *     {@link SimulatedArena#getGamePiecePoses(String)}
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
@@ -173,7 +173,7 @@ public class GamePieceProjectile {
      * <h2>Creates a Game Piece Projectile Ejected from a Shooter.</h2>
      *
      * @param gamePieceType the type of game piece, which will affect the
-     *     {@link SimulatedArena#getGamePiecesByType(String)}
+     *     {@link SimulatedArena#getGamePiecePoses(String)}
      * @param initialPosition the position of the game piece at the moment it is launched into the air
      * @param initialLaunchingVelocityMPS the horizontal component of the initial velocity in the X-Y plane, in meters
      *     per second (m/s)
@@ -375,14 +375,14 @@ public class GamePieceProjectile {
     /**
      *
      *
-     * <h2>Adds a {@link GamePieceOnFieldSimulation} to a {@link SimulatedArena} to Simulate the Game Piece After
+     * <h2>Adds a {@link GamePieceOnField} to a {@link SimulatedArena} to Simulate the Game Piece After
      * Touch-Ground.</h2>
      *
-     * <p>The added {@link GamePieceOnFieldSimulation} will have the initial velocity of the game piece projectile.
+     * <p>The added {@link GamePieceOnField} will have the initial velocity of the game piece projectile.
      *
      * <p>The game piece will start falling from mid-air until it touches the ground.
      *
-     * <p>The added {@link GamePieceOnFieldSimulation} will always have collision space on the field, even before
+     * <p>The added {@link GamePieceOnField} will always have collision space on the field, even before
      * touching the ground.
      *
      * @param simulatedArena the arena simulation to which the game piece will be added, usually obtained from
@@ -390,7 +390,7 @@ public class GamePieceProjectile {
      */
     public void addGamePieceAfterTouchGround(SimulatedArena simulatedArena) {
         if (!becomesGamePieceOnGroundAfterTouchGround) return;
-        simulatedArena.addGamePiece(new GamePieceOnFieldSimulation(
+        simulatedArena.addGamePiece(new GamePieceOnField(
                 gamePieceType,
                 shape,
                 () -> Math.max(
@@ -410,7 +410,7 @@ public class GamePieceProjectile {
      * {@link #withHitTargetCallBack(Runnable)}
      *
      * <p>2. If a game piece {@link #hasHitGround()}, remove it and create a corresponding
-     * {@link GamePieceOnFieldSimulation} using {@link #addGamePieceAfterTouchGround(SimulatedArena)}
+     * {@link GamePieceOnField} using {@link #addGamePieceAfterTouchGround(SimulatedArena)}
      *
      * <p>3. If a game piece {@link #hasGoneOutOfField()}, remove it.
      */
@@ -436,10 +436,10 @@ public class GamePieceProjectile {
     /**
      *
      *
-     * <h2>Configures the Game Piece Projectile to Automatically Become a {@link GamePieceOnFieldSimulation} Upon
+     * <h2>Configures the Game Piece Projectile to Automatically Become a {@link GamePieceOnField} Upon
      * Touching Ground.</h2>
      *
-     * <p>This method configures the game piece projectile to transform into a {@link GamePieceOnFieldSimulation} when
+     * <p>This method configures the game piece projectile to transform into a {@link GamePieceOnField} when
      * it touches the ground.
      *
      * @param shape the shape of the game piece's collision space
@@ -588,7 +588,7 @@ public class GamePieceProjectile {
      * landed.
      *
      * <p>When the game piece is below this height, it will either be deleted or, if configured, transformed into a
-     * {@link GamePieceOnFieldSimulation} using {@link #enableBecomesGamePieceOnFieldAfterTouchGround(Convex, double,
+     * {@link GamePieceOnField} using {@link #enableBecomesGamePieceOnFieldAfterTouchGround(Convex, double,
      * double)}.
      *
      * @param heightAsTouchGround the height (in meters) at which the projectile is considered to touch the ground

@@ -40,7 +40,8 @@ def pubVersion = 'my-new-feature-preview'
 ```
 
 Next, open the project in [IntelliJ](https://www.jetbrains.com/idea/) and click "Publish to Maven Local."
-<img src='./media/publish%20to%20maven%20local.png' style='width: 30%'>
+
+![](./media/publish%20to%20maven%20local.png){ width="30%" }
 
 Now that the library is on your local machine, copy `./docs/vendordep/maple-sim.json` to the vendordeps directory of one of the [templates](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates) to test your code.
 

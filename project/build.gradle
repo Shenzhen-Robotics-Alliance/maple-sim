@@ -60,7 +60,7 @@ nativeUtils {
 }
 
 javadoc {
-    destinationDir = new File("$rootDir/../javadocs")
+    destinationDir = new File("$rootDir/../docs/javadocs")
 
     exclude 'org/json/simple/**'
     options {

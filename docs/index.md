@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="./docs/media/team_logo.png" width="20%"  alt="team logo"/>
-  <img src="./docs/media/icon.png" width="79%"  alt="project logo"/>
+  <img src="./media/team_logo.png" width="20%"  alt="team logo"/>
+  <img src="./media/icon.png" width="79%"  alt="project logo"/>
 </p>
 
 ### Elevating FRC Java Robot Simulations to the Next Level with Physics Engines
@@ -8,14 +8,14 @@
 ## Why a Physics Engine?
 A simulation engine is a powerful tool that provides realistic approximations of physical systems. With **maple-sim**, we integrate the open-source Java rigid-body dynamics engine, [dyn4j](https://github.com/dyn4j/dyn4j), capable of simulating 2D forces and collisions between rigid shapes. This integration transforms the scope of robot simulations by enabling realistic interactions between robots, field elements, and game pieces.
 
-![physics engine illustration](./docs/media/physics%20engine.png)
+![physics engine illustration](./media/physics%20engine.png)
 
 Before **maple-sim**, most FRC robot simulations focused solely on the robot itself—its sensors, movements, and internal operations. 
 Now, through the power of physics simulation, **maple-sim** allows your robot to engage directly with its environment. 
 Imagine testing robot interactions with obstacles, field elements, and game pieces, all within the simulated world.
 A simulation that is realistic enough to **feel like a video game.**
 
-[![Demo Video 1](./docs/media/demo%20video%20cover.png)](https://www.youtube.com/watch?v=CBx1_Dosgec)
+[![Demo Video 1](./media/demo%20video%20cover.png)](https://www.youtube.com/watch?v=CBx1_Dosgec)
 
 
 With this advanced level of simulation, the possibilities are endless. You can:

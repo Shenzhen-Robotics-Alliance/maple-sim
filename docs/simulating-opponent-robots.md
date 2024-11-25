@@ -12,6 +12,8 @@ Opponent robots can be added to the field for realistic driver practice. They ca
 - Automatically run feed-cycles to deliver feed-shot notes, assisting with front-field cleanup and feeder strategies.
 - Be controlled by a joystick to play defense, allowing drivers to practice defense and counter-defense skills.
 
+![](./media/opponent%20robot%20simulation.gif)
+
 **This document discusses ONE APPROACH to achieve opponent robot simulation based on the [AIRobotInSimulation class from Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/blob/main/src/main/java/frc/robot/utils/AIRobotInSimulation.java).  However, once you understand the principles, we encourage you to create your own simulation utility classes to fit your specific needs.**
 
 ---
@@ -172,6 +174,11 @@ private Command feedShot() {
 ## 5. Managing Opponent Robots
 
 Opponent robots can be managed using a "behavior chooser," which is displayed on the dashboard. This allows for easy selection of behaviors such as disabling robots, running auto-cycles, or joystick driving.
+
+![alt text](./media/opponent%20robots.png)
+
+To enable opponent robots to follow specific paths, we need to create their paths in PathPlanner.
+![](./media/opponent%20robot%20path.gif)
 
 ```java
 /** Build the behavior chooser of this opponent robot and send it to the dashboard */

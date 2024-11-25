@@ -24,8 +24,6 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: cd ./project/
-      - run: ./gradlew javadoc
 
       - run: pip install mkdocs-material 
       - run: mkdocs gh-deploy --force

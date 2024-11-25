@@ -28,7 +28,7 @@ With this advanced level of simulation, the possibilities are endless. You can:
 
 ## Simulation Details
 
-For an in-depth description of the simulations, please refer to [Simulation Details](https://shenzhen-robotics-alliance.github.io/maple-sim/0_SIMULATION_DETIALS.html).
+For an in-depth description of the simulations, please refer to [Simulation Details](./simulation-details.md).
 
 ## Quick Start
 

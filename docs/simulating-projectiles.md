@@ -3,6 +3,7 @@
 
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
+---
 ## 0. Overview
 
 Projectiles are game pieces launched into the air, typically from flywheels. In maple-sim, these game pieces are modeled using basic projectile motion with gravity only.

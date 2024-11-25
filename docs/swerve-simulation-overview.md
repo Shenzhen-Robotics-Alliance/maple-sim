@@ -6,7 +6,8 @@
 !!! tip
       This realistic simulation allows you to accomplish a variety of tasks without the real robot. You can practice driving, test autonomous routines, and fine-tune advanced functions such as auto-alignment, just to name a few.
 
-## Creating the Configuration for a Swerve Drive Simulation
+---
+## 0. Creating the Configuration for a Swerve Drive Simulation
 
 The `DriveTrainSimulationConfig` object encapsulates the physical properties and configuration of a swerve drivetrain within the simulation environment. It allows you to specify key components such as motor types, gyro configuration, swerve module dynamics, and robot geometry.
 
@@ -32,7 +33,8 @@ final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulati
         .withBumperSize(Inches.of(30), Inches.of(30));
 ```
 
-## Instantiate and Register a Swerve Drive Simulation
+---
+## 1. Instantiate and Register a Swerve Drive Simulation
 
 The `SwerveDriveSimulation` class represents a simulated swerve drivetrain within the simulation environment. It provides the necessary code to simulate motors, encoders, and the dynamic behavior of a real robot, including accurate handling of controls, motor response, and motion. Additionally, it interacts with the field through its collision space, allowing the simulation to react with other objects in the physics engine.
 
@@ -55,7 +57,8 @@ The simulation must be registered to the simulation world for it to function cor
 SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
 ```
 
-## Manipulating the Simulated Swerve
+---
+## 2. Manipulating the Simulated Swerve
 
 ??? "Option 1: The simple approach"
     *This approach emphasizes ease of use while maintaining a reasonably accurate model of robot behavior. Although the physics simulation is realistic enough to accurately mimic your drivetrain, the code used to manipulate the simulated drivetrain is embedded into maple-sim for convenience. As a result, it may differ slightly from the code running on your real robot.*

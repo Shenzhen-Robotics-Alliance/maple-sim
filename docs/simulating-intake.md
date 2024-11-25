@@ -2,7 +2,8 @@
 !!! warning
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
-## Overview
+---
+## 0. Overview
 Intakes, or mechanisms that extend from the robot to collect game pieces from the field, are simulated by the `IntakeSimulation` class.
 
 The intake is modeled as a 2D shape attached to one side of the robot's chassis. Intakes are represented as rectangles with a fixed width.
@@ -22,7 +23,8 @@ This class simulates an idealized "touch it, get it" intake, meaning that when t
       This simulation is intended for testing code and does not exactly replicate how your real intake mechanism works.
 
 
-## Creating Intake Simulation
+---
+## 1. Creating Intake Simulation
 You need to create an instance of `IntakeSimulation` in your `IntakeIOSim`.
 
 ```java
@@ -43,7 +45,8 @@ public class IntakeIOSim {
 }
 ```
 
-## Using intake simulation
+---
+## 2. Using intake simulation
 Next, implement the methods defined by the `IntakeIO` interface.
 
 Intakes can be turned on and off by calling `startIntake()` and `stopIntake()`.

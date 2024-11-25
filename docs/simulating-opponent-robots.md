@@ -4,7 +4,6 @@
     You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
 ---
-
 ## 0. Overview
 
 Opponent robots can be added to the field for realistic driver practice. They can be programmed to perform the following tasks:
@@ -13,7 +12,7 @@ Opponent robots can be added to the field for realistic driver practice. They ca
 - Automatically run feed-cycles to deliver feed-shot notes, assisting with front-field cleanup and feeder strategies.
 - Be controlled by a joystick to play defense, allowing drivers to practice defense and counter-defense skills.
 
-**This document discusses **one approach** to achieve opponent robot simulation based on the [AIRobotInSimulation class from Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/blob/main/src/main/java/frc/robot/utils/AIRobotInSimulation.java).  However, once you understand the principles, we encourage you to create your own simulation utility classes to fit your specific needs.**
+**This document discusses ONE APPROACH to achieve opponent robot simulation based on the [AIRobotInSimulation class from Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/blob/main/src/main/java/frc/robot/utils/AIRobotInSimulation.java).  However, once you understand the principles, we encourage you to create your own simulation utility classes to fit your specific needs.**
 
 ---
 

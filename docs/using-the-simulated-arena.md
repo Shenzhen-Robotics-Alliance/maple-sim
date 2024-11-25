@@ -3,11 +3,13 @@
 !!! warning
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
-## The simulation world
+---
+## 0. The simulation world
 maple-sim simulates the interaction between the robot and its surrounding environment.
 For FRC, this environment represents the FRC Arena of the current year's game.
 
-## The `SimulatedArena` instance
+---
+## 1. The `SimulatedArena` instance
 The simulation world, containing obstacles, game pieces, and robots, is stored in a `SimulatedArena` object. Most of the time, you'll only need one simulation world instance.
 
 ```java
@@ -17,7 +19,8 @@ SimulatedArena.getInstance();
 SimulatedArena.overrideInstance(SimulatedArena newInstance); 
 ```
 
-## Updating the `SimulatedArena` instance
+---
+## 2.Updating the `SimulatedArena` instance
 
 You need to call the update function to keep the simulation world updated.
 
@@ -50,7 +53,8 @@ SimulatedArena.overrideSimulationTimings(0.01, 3);
 > 
 > DO NOT override the timing if you are using AdvantageKit, as it only supports 50Hz robots.
 
-## Adding Game Pieces to the Field
+---
+## 3. Adding Game Pieces to the Field
 Game pieces, such as Crescendo Notes, can be added to the field as rigid bodies with collision detection.
 Your robot can interact with these pieces by bumping into them or grabbing them (see [Intake Simulation](./simulating-intake.md)).
 
@@ -68,8 +72,8 @@ SimulatedArena.getInstance().clearGamePieces();
       In the Crescendo Simulation Arena, notes are automatically dropped from the human player station when no notes are near the source zone.
       In addition to notes on field, **maple-sim** also provides simulation for projectiles, see [Simulating GamePiece Projectiles](./simulating-projectiles.md)
 
-
-## Visualizing game pieces
+---
+## 4. Visualizing game pieces
 
 You can retrieve the positions of game pieces, including those on the ground and those launched into the air:
 

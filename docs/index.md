@@ -1,6 +1,6 @@
-<p align="center">
-  <img src="./media/team_logo.png" width="20%"  alt="team logo"/>
-  <img src="./media/icon.png" width="79%"  alt="project logo"/>
+<p align="center" markdown>
+  ![team logo](./media/team_logo.png){ width="20%"}
+  ![project logo](./media/icon.png){ width="79%"}
 </p>
 
 ### Elevating FRC Java Robot Simulations to the Next Level with Physics Engines
@@ -34,14 +34,14 @@ For an in-depth description of the simulations, please refer to [Simulation Deta
 
 Please follow the guides below for quick setup:
 
-1. [Installing maple-sim](https://shenzhen-robotics-alliance.github.io/maple-sim/1_INSTALLING_MAPLE_SIM.html)
-2. [Using the Simulated Arena](https://shenzhen-robotics-alliance.github.io/maple-sim/2_USING_THE_SIMULATED_ARENA.html)
-3. [Simulating Swerve Drivetrain](https://shenzhen-robotics-alliance.github.io/maple-sim/3_SWERVE_SIMULATION_OVERVIEW.html)
-4. [Simulating Intake](https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html)
-5. [Simulating Projectiles](https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_PROJECTILES.html)
-6. [Simulating Opponent Robots](https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_OPPONENT_ROBOTS.html)
+1. [Installing maple-sim](./installing-maple-sim.md)
+2. [Using the Simulated Arena](./using-the-simulated-arena.md)
+3. [Simulating Swerve Drivetrain](./swerve-simulation-overview.md)
+4. [Simulating Intake](./simulating-intake.md)
+5. [Simulating Projectiles](./simulating-projectiles.md)
+6. [Simulating Opponent Robots](./simulating-opponent-robots.md)
 
-## Java Docs
+# Java Docs
 > 🙏  Big thanks to [nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
 [Official Java Docs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
 

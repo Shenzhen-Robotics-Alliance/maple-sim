@@ -5,7 +5,7 @@
 
 ### Elevating FRC Java Robot Simulations to the Next Level with Physics Engines
 
-## Why a Physics Engine?
+## Why a physics engine
 A simulation engine is a powerful tool that provides realistic approximations of physical systems. With **maple-sim**, we integrate the open-source Java rigid-body dynamics engine, [dyn4j](https://github.com/dyn4j/dyn4j), capable of simulating 2D forces and collisions between rigid shapes. This integration transforms the scope of robot simulations by enabling realistic interactions between robots, field elements, and game pieces.
 
 ![physics engine illustration](./docs/media/physics%20engine.png)
@@ -26,32 +26,15 @@ With this advanced level of simulation, the possibilities are endless. You can:
 
 **And the best part? You can achieve all of this without needing a real robot on hand.**
 
-## Simulation Details
+## Online Documentation
+[Online documentation is here](https://shenzhen-robotics-alliance.github.io/maple-sim/).
+> 🙏  Big thanks to [@GrahamSH-LLK](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the online documentation.
 
-For an in-depth description of the simulations, please refer to [Simulation Details](https://shenzhen-robotics-alliance.github.io/maple-sim/0_SIMULATION_DETIALS.html).
-
-## Quick Start
-
-Please follow the guides below for quick setup:
-
-1. [Installing maple-sim](https://shenzhen-robotics-alliance.github.io/maple-sim/1_INSTALLING_MAPLE_SIM.html)
-2. [Using the Simulated Arena](https://shenzhen-robotics-alliance.github.io/maple-sim/2_USING_THE_SIMULATED_ARENA.html)
-3. [Simulating Swerve Drivetrain](https://shenzhen-robotics-alliance.github.io/maple-sim/3_SWERVE_SIMULATION_OVERVIEW.html)
-4. [Simulating Intake](https://shenzhen-robotics-alliance.github.io/maple-sim/4_SIMULATING_INTAKE.html)
-5. [Simulating Projectiles](https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_PROJECTILES.html)
-6. [Simulating Opponent Robots](https://shenzhen-robotics-alliance.github.io/maple-sim/6_SIMULATING_OPPONENT_ROBOTS.html)
 
 ## Java Docs
-> 🙏  Big thanks to [nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
-[Official Java Docs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
+[Official javadocs is here](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
+> 🙏  Big thanks to [@nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
 
-## Examples and Templates
-
-- [Advanced Swerve Drive Project with maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_AdvancedSwerveDriveProject): 6328's swerve drive project utilizing AdvantageKit, modified with advanced drivetrain simulations. View the changelog from the original project [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/commit/1667aa80170e6733d8eaee866da0297e762402fa).
-- [Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton): Our custom swerve drive project based on the Advanced Swerve Drive Project, featuring drivetrain simulation, vision simulation, and convenient control features.
-- [Base-Talon-Swerve with maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/BaseTalonSwerve-maple-sim): Base-Talon-Swerve, modified with advanced drivetrain simulation. This is an example implementation of the [Simplified Swerve Simulation](https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html).
-- [YAGSL-2025-beta](https://github.com/BroncBotz3481/YAGSL-Example/tree/beta): Official 2025-beta release of the amazing [Yet Another Generic Swerve Drive Library](https://www.chiefdelphi.com/t/yet-another-generic-swerve-library-yagsl-v1-release/450844), with maple-sim implemented for enhanced drivetrain simulation.
-- [5516-2024-OffSeason-RobotCode](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/tree/main/example/5516-2024-OffSeason): Our 2024 off-season robot code, which implements a range of advanced simulations. This code can be run on a real robot and even played like a video game. Watch the [Videos](https://www.youtube.com/watch?v=5jr1L8xWpog&list=PLFS6A0KifAK1ycwlzIlvvFJkWNsQHVjSN)
 
 
 ## Bugs Developing and Contributing

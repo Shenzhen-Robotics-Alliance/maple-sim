@@ -4,9 +4,10 @@
 
 **For a more comprehensive understanding of how this works, please check out the [AdvancedSwerveDrive-maple-sim example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/).**
 
-!!! note
+!!! warning
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
+---
 ## 0. IO Abstraction
 
 !!! tip 
@@ -40,8 +41,7 @@ subsystems/
 
 Reference: [io-interface.md from Advantage Kit Documents](https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/docs/recording-inputs/io-interfaces.md)
 
-
-
+---
 ## 1. Interacting with the Gyro through IO abstraction
 The simulated gyro includes measurement errors and will drift if the robot collides with an obstacle. For accurate odometry simulation, use the simulated gyro to update the odometry.
 
@@ -104,6 +104,7 @@ If you're using AdvantageKit, you'll want to update the `GyroInputs` by retrievi
 
 An example of implementing the Gyro interface in an AdvantageKit environment can be found [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/src/main/java/frc/robot/subsystems/drive/GyroIOSim.java).
 
+---
 ## 2. Interacting with the Simulated Modules through IO abtraction
 
 Similar to the gyro, you also need to create hardware abstractions for the swerve modules.
@@ -192,6 +193,7 @@ public class ModuleIOSim implements ModuleIO {
 }
 ```
 
+---
 ## 3. Instantiating Simulation IO Implementations
 
 When running the simulator, you can instantiate the above simulation IO implementations to allow the robot to run within the simulation environment.

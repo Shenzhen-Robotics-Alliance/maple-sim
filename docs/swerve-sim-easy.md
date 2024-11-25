@@ -4,9 +4,10 @@
 
 **This document is based on the [BaseTalonSwerve-maple-sim Example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/dev/templates/BaseTalonSwerve-maple-sim).  Check the project for a more detailed understanding.**
 
-!!! note
+!!! warning
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
+---
 ## 0. Abstracting your drive subsystem
 Before we start, we need to create a `SwerveDrive` interface or abstract class that specifies the functions of the drive subsystem.
 
@@ -53,6 +54,7 @@ public interface SwerveDrive extends Subsystem {
 
 **Next, we implement the interface using the real hardware of the robot. [View Example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/dev/templates/BaseTalonSwerve-maple-sim/src/main/java/frc/robot/subsystems/drive/TalonSwerve.java)**
 
+---
 ## 1. Creating a simulation drive subsystem implementation
 
 Now, let's create an implementation of the `SwerveDrive` interface using a simulated swerve drivetrain.
@@ -151,7 +153,7 @@ public class MapleSimSwerve implements SwerveDrive {
 }
 ```
 
-
+---
 ## 2. Using the simulated drivetrain
 
 In the `RobotContainer`, we store an instance of the `SwerveDrive` interface. Depending on the robot’s current mode, we instantiate different types of implementations.

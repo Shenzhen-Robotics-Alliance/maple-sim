@@ -1,9 +1,9 @@
 # Simulating GamePiece Projectiles
-!!! note
+!!! warning
 
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
-## Overview
+## 0. Overview
 
 Projectiles are game pieces launched into the air, typically from flywheels. In maple-sim, these game pieces are modeled using basic projectile motion with gravity only.
 
@@ -18,7 +18,9 @@ Projectiles are game pieces launched into the air, typically from flywheels. In 
 
       It **DOES NOT** replicate the projectile motion of a real game piece. You will need to use different constants for shooter optimization in the simulation and on the real robot.
 
-## Creating a GamePiece Projectile
+---
+
+## 1. Creating a GamePiece Projectile
 
 The `GamePieceProjectile` is an abstract class representing any game piece that flies in the air. You will need to create an instance of this class.
 
@@ -45,7 +47,8 @@ NoteOnFly noteOnFly = new NoteOnFly(
 );
 ```
 
-## Configuring the GamePiece
+---
+## 2. Configuring the GamePiece
 
 ### Configuring Target
 You can configure the projectile to have a target. If the projectile is within a tolerance range near the target during its flight, it will hit the target, disappear, and trigger a callback.
@@ -102,7 +105,8 @@ noteOnFly
         .enableBecomeNoteOnFieldAfterTouchGround();
 ```
 
-## Launching the GamePiece
+---
+## 3. Launching the GamePiece
 
 The projectile simulation is updated and visualized within the `SimulatedArena` instance.
 

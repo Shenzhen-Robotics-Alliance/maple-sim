@@ -21,6 +21,9 @@ import org.ironmaple.utils.mathutils.MapleCommonMath;
  *
  * <h1>Simulates a Swerve Drivetrain.</h1>
  *
+ * <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/swerve-simulation-overview/'>Online
+ * Documentation</a>
+ *
  * <h3>1. Purpose</h3>
  *
  * <p>This class simulates a swerve drivetrain composed of more than two {@link SwerveModuleSimulation} modules.

@@ -26,8 +26,7 @@ import org.ironmaple.utils.mathutils.SwerveStateProjection;
  *
  * <h1>An easier way to simulate swerve drive.</h1>
  *
- * <p><a href='https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html'>Check Online
- * Documents</a>
+ * <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/swerve-sim-easy/'>Online Documentation</a>
  *
  * <p>This class owns and controls a {@link SwerveDriveSimulation}, running closed loops/open loops on the simulated
  * motors.

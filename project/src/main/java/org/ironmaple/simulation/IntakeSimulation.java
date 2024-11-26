@@ -25,8 +25,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  *
  * <h2>Simulates an Intake Mechanism on the Robot.</h2>
  *
- * <h3><a href='https://shenzhen-robotics-alliance.github.io/maple-sim/5_SIMULATING_INTAKE.html'>Online
- * Documentation</a></h3>
+ * <p>Check<a href='https://shenzhen-robotics-alliance.github.io/maple-sim/simulating-intake/'>Online Documentation</a>
  *
  * <p>The intake is a 2D component attached to one side of the robot's chassis. It is rectangular in shape and extends
  * from the robot when activated.

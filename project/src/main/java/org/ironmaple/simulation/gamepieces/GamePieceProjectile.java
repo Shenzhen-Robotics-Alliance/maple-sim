@@ -19,6 +19,9 @@ import org.ironmaple.utils.FieldMirroringUtils;
  *
  * <h1>Simulates a Game Piece Launched into the Air</h1>
  *
+ * <p>Check<a href='https://shenzhen-robotics-alliance.github.io/maple-sim/simulating-projectiles/'>Online
+ * Documentation</a>
+ *
  * <p>The movement is modeled by simple projectile motion.
  *
  * <p>If the projectile flies off the field, touches the ground, or hits its target, it will be automatically removed.

@@ -7,8 +7,9 @@ import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.motorsims.SimMotorConfigs;
+import org.ironmaple.simulation.motorsims.ControlRequest.CustomMotorController;
 
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
@@ -26,8 +27,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 
 public class MapleSwerveSim {
@@ -40,14 +45,16 @@ public class MapleSwerveSim {
         Supplier<SwerveModuleSimulation> swerveModuleSim = () -> new SwerveModuleSimulation(
             config.getDriveMotor(), 
             config.getSteerMotor(), 
-            leadModuleConstants.SlipCurrent, 
             leadModuleConstants.DriveMotorGearRatio, 
             leadModuleConstants.SteerMotorGearRatio, 
-            leadModuleConstants.DriveFrictionVoltage, 
-            leadModuleConstants.SteerFrictionVoltage, 
-            config.getTireCoefficientOfFriction(), 
-            leadModuleConstants.WheelRadius, 
-            leadModuleConstants.SteerInertia);
+            Units.Amps.of(leadModuleConstants.SlipCurrent), 
+            config.getSteerMotorCurrentLimit(),
+            Units.Volts.of(leadModuleConstants.DriveFrictionVoltage), 
+            Units.Volts.of(leadModuleConstants.SteerFrictionVoltage), 
+            Units.Meters.of(leadModuleConstants.WheelRadius), 
+            Units.KilogramSquareMeters.of(leadModuleConstants.SteerInertia),
+            config.getTireCoefficientOfFriction() 
+            );
 
         Translation2d[] moduleLocations = new Translation2d[swerveModuleConstants.length];
         for (int i = 0; i < swerveModuleConstants.length; i++) {
@@ -56,11 +63,11 @@ public class MapleSwerveSim {
 
         driveSim = new SwerveDriveSimulationBase(
         new DriveTrainSimulationConfig(
-            config.getRobotMass().in(Units.Kilograms), 
-            config.getBumperLengthX().in(Units.Meters), 
-            config.getBumperWidthY().in(Units.Meters), 
-            1.0, 
-            1.0, 
+            config.getRobotMass(), 
+            config.getBumperLengthX(), 
+            config.getBumperWidthY(), 
+            Units.Meters.of(1.0),
+            Units.Meters.of(1.0),
             swerveModuleSim, 
             gyroSim)
             .withCustomModuleTranslations(moduleLocations),
@@ -106,74 +113,133 @@ public class MapleSwerveSim {
         public void simulationSubTick() {
             double supplyVoltage = RobotController.getBatteryVoltage();
             Angle prevGyroAngle = gyro.getYaw().getValue();
-            for (SwerveModuleSim moduleSim: moduleSims) {
-                moduleSim.updateModel(supplyVoltage);
-            }
             gyroSim.setSupplyVoltage(supplyVoltage);
             super.simulationSubTick();
             Angle gyroDelta = getDeltaAngle(prevGyroAngle, getGyroSimulation().getGyroReading().getMeasure());
-            for (SwerveModuleSim moduleSim: moduleSims) {
-                moduleSim.updateHardware();
-            }
             gyroSim.setRawYaw(prevGyroAngle.plus(gyroDelta));
-            gyroSim.setAngularVelocityZ(Units.RadiansPerSecond.of(gyroSimulation.getMeasuredAngularVelocityRadPerSec()));
+            gyroSim.setAngularVelocityZ(gyroSimulation.getMeasuredAngularVelocity());
             DogLog.log("Sim/GroundTruthPose", getSimulatedDriveTrainPose());
             DogLog.log("Sim/TgtModuleStates", drivetrain.getState().ModuleTargets);
             DogLog.log("Sim/RealModuleStates", drivetrain.getState().ModuleStates);
             DogLog.log("Sim/GyroYaw", MathUtil.inputModulus(prevGyroAngle.in(Units.Degrees), -180, 180));
-            DogLog.log("Sim/GroundTruthAccels", getDriveTrainSimulatedChassisSpeedsFieldRelative().minus(prevSpeeds).div(SimulatedArena.getSimulationDt()));
+            DogLog.log("Sim/GroundTruthAccels", getDriveTrainSimulatedChassisSpeedsFieldRelative().minus(prevSpeeds).div(SimulatedArena.getSimulationDt().in(Units.Seconds)));
             prevSpeeds = getDriveTrainSimulatedChassisSpeedsFieldRelative();
             prevSpeeds = new ChassisSpeeds(prevSpeeds.vxMetersPerSecond, prevSpeeds.vyMetersPerSecond, prevSpeeds.omegaRadiansPerSecond);
         } 
     }
 
     private static class SwerveModuleSim {
-        private SwerveModuleSimulation moduleSim;
-        private SwerveModuleConstants constants;
-        private TalonFXSimState driveSim;
-        private TalonFXSimState steerSim;
-        private CANcoderSimState encoderSim;
-        private CANcoder encoder;
-
         public SwerveModuleSim(SwerveModuleSimulation moduleSim, SwerveModule module, SwerveModuleConstants constants) {
-            this.moduleSim = moduleSim;
-            this.constants = constants;
-            driveSim = module.getDriveMotor().getSimState();
-            steerSim = module.getSteerMotor().getSimState();
-            encoder = module.getCANcoder();
-            encoderSim = encoder.getSimState();
-
-        }
-        
-
-        public void updateModel(double supplyVoltage) {
-            driveSim.Orientation = constants.DriveMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            steerSim.Orientation = constants.SteerMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            
-            driveSim.setSupplyVoltage(supplyVoltage);
-            steerSim.setSupplyVoltage(supplyVoltage);
-            encoderSim.setSupplyVoltage(supplyVoltage);
-
-            moduleSim.requestDriveVoltageOut(driveSim.getMotorVoltage());
-            moduleSim.requestSteerVoltageOut(steerSim.getMotorVoltage());
+            DriveMotorSim driveSim = new DriveMotorSim(module.getDriveMotor().getSimState(), constants.DriveMotorInverted);
+            SteerMotorSim steerSim = new SteerMotorSim(module.getSteerMotor().getSimState(), module.getCANcoder().getSimState(), constants.SteerMotorInverted, constants.CANcoderInverted);
+            moduleSim.requestDriveControl(driveSim);
+            moduleSim.requestSteerControl(steerSim);
         }
 
-        public void updateHardware() {
-            driveSim.setRawRotorPosition(moduleSim.getDriveEncoderUnGearedPositionRad() / (2 * Math.PI));
-            driveSim.setRotorVelocity(moduleSim.getDriveEncoderUnGearedSpeedRadPerSec() / (2 * Math.PI));
-            
-            steerSim.setRawRotorPosition(moduleSim.getSteerRelativeEncoderPositionRad() / (2 * Math.PI));
-            steerSim.setRotorVelocity(moduleSim.getSteerRelativeEncoderSpeedRadPerSec() / (2 * Math.PI));
+        private static class SteerMotorSim implements CustomMotorController {
+            private TalonFXSimState motorSim;
+            private CANcoderSimState encoderSim;
+            private boolean isMotorInverted, isEncoderInverted;
 
-            Angle delta = getDeltaAngle(encoder.getAbsolutePosition().getValue(), moduleSim.getSteerAbsoluteFacing().getMeasure());
-            encoderSim.setRawPosition(encoder.getPositionSinceBoot().getValue().plus(delta));
-            encoderSim.setVelocity(moduleSim.getSteerAbsoluteEncoderSpeedRadPerSec() / (2 * Math.PI));
+            public SteerMotorSim(TalonFXSimState motorSim, CANcoderSimState encoderSim, boolean isMotorInverted, boolean isEncoderInverted) {
+                this.motorSim = motorSim;
+                this.encoderSim = encoderSim;
+                this.isMotorInverted = isMotorInverted;
+                this.isEncoderInverted = isEncoderInverted;
+            }
+
+            @Override
+            public void feedEncoderPosition(Angle encoderPosition) {
+                motorSim.setRawRotorPosition(encoderPosition);
+            }
+
+            @Override
+            public void feedEncoderVelocity(AngularVelocity encoderVelocity) {
+                motorSim.setRotorVelocity(encoderVelocity);
+            }
+
+            @Override
+            public void feedMechanismPosition(Angle mechanismPosition) {
+                encoderSim.setRawPosition(mechanismPosition);
+            }
+
+            @Override
+            public void feedMechanismVelocity(AngularVelocity mechanismVelocity) {
+                encoderSim.setVelocity(mechanismVelocity);
+            }
+
+            @Override
+            public void updateSimulation(Time dt) {
+            }
+
+            @Override
+            public Voltage getMotorVoltage() {
+                return motorSim.getMotorVoltageMeasure();
+            }
+
+            @Override
+            public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
+                motorSim.Orientation = isMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+                encoderSim.Orientation = isEncoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+                double supplyVoltage = RobotController.getBatteryVoltage();
+                motorSim.setSupplyVoltage(supplyVoltage);
+                encoderSim.setSupplyVoltage(supplyVoltage);
+                return CustomMotorController.super.updateSignal(configs, mechanismAngle, mechanismVelocity);
+            }
+
+        }
+
+        private static class DriveMotorSim implements CustomMotorController {
+            private TalonFXSimState motorSim;
+            private boolean isMotorInverted;
+
+            public DriveMotorSim(TalonFXSimState motorSim, boolean isMotorInverted) {
+                this.motorSim = motorSim;
+                this.isMotorInverted = isMotorInverted;
+            }
+
+            @Override
+            public void feedEncoderPosition(Angle encoderPosition) {
+                motorSim.setRawRotorPosition(encoderPosition);
+            }
+
+            @Override
+            public void feedEncoderVelocity(AngularVelocity encoderVelocity) {
+                motorSim.setRotorVelocity(encoderVelocity);
+            }
+
+            @Override
+            public void feedMechanismPosition(Angle mechanismPosition) {
+            }
+
+            @Override
+            public void feedMechanismVelocity(AngularVelocity mechanismVelocity) {
+            }
+
+            @Override
+            public void updateSimulation(Time dt) {
+            }
+
+            @Override
+            public Voltage getMotorVoltage() {
+                return motorSim.getMotorVoltageMeasure();
+            }
+
+            @Override
+            public Voltage updateSignal(SimMotorConfigs configs, Angle mechanismAngle, AngularVelocity mechanismVelocity) {
+                motorSim.Orientation = isMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+                double supplyVoltage = RobotController.getBatteryVoltage();
+                motorSim.setSupplyVoltage(supplyVoltage);
+                return CustomMotorController.super.updateSignal(configs, mechanismAngle, mechanismVelocity);
+            }
+
         }
     }
 
     public static class SwerveSimulationConfig {
         private DCMotor driveMotor = DCMotor.getKrakenX60Foc(1);
         private DCMotor steerMotor = DCMotor.getFalcon500Foc(1);
+        private Current steerMotorCurrentLimit = Units.Amps.of(60);
         private double tireCoefficientOfFriction = 1.01;
         private Mass robotMass = Units.Pound.of(110);
         private Distance bumperLengthX = Units.Inches.of(35);
@@ -185,6 +251,10 @@ public class MapleSwerveSim {
 
         public DCMotor getSteerMotor() {
             return steerMotor;
+        }
+
+        public Current getSteerMotorCurrentLimit() {
+            return steerMotorCurrentLimit;
         }
 
         public double getTireCoefficientOfFriction() {

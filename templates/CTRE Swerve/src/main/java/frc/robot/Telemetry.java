@@ -4,6 +4,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
@@ -83,7 +84,7 @@ public class Telemetry {
         Pose2d pose = state.Pose;
         m_poseArray[0] = pose.getX();
         m_poseArray[1] = pose.getY();
-        m_poseArray[2] = pose.getRotation().getDegrees();
+        m_poseArray[2] = pose.getRotation().getRadians();
 
         fieldTypePub.set("Field2d");
         fieldPub.set(m_poseArray);
@@ -111,6 +112,9 @@ public class Telemetry {
 
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
+
+        DogLog.log("RealModuleStates", state.ModuleStates);
+        DogLog.log("TgtModuleStates", state.ModuleTargets);
 
         SignalLogger.writeDoubleArray("odometry", m_poseArray);
         SignalLogger.writeDouble("odom period", state.OdometryPeriod, "seconds");

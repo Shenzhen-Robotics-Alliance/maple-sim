@@ -167,7 +167,7 @@ public class MapleMotorSim {
         // Hence,
         // Battery Voltage x Supply Current = Applied Voltage x Stator Current
         // Supply Current = Stator Current * Applied Voltage / Battery Voltage
-        return getStatorCurrent().times(appliedVoltage.divide(Volts.of(12)));
+        return getStatorCurrent().times(appliedVoltage.div(Volts.of(12)));
     }
 
     public ControlRequest getRequestedControl() {

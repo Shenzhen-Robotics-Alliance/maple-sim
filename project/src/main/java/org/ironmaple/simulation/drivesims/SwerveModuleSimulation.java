@@ -209,7 +209,7 @@ public class SwerveModuleSimulation {
      */
     public Current getDriveMotorSupplyCurrent() {
         return getDriveMotorStatorCurrent()
-                .times(driveMotorAppliedVoltage.divide(
+                .times(driveMotorAppliedVoltage.div(
                         SimulatedBattery.getInstance().getBatteryVoltage()));
     }
 
@@ -617,7 +617,7 @@ public class SwerveModuleSimulation {
     public LinearAcceleration maxAcceleration(Mass robotMass, int modulesCount) {
         return getTheoreticalPropellingForcePerModule(robotMass, modulesCount)
                 .times(modulesCount)
-                .divide(robotMass);
+                .div(robotMass);
     }
 
     /**

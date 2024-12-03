@@ -117,7 +117,7 @@ public final class SimMotorConfigs {
      */
     public AngularVelocity calculateMechanismVelocity(Current current, Voltage voltage) {
         return RadiansPerSecond.of(motor.getSpeed(motor.getTorque(current.in(Amps)), voltage.in(Volts)))
-                .divide(gearing);
+                .div(gearing);
     }
 
     /**

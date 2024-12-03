@@ -121,7 +121,7 @@ public abstract class SimulatedArena {
      */
     public static synchronized void overrideSimulationTimings(Time robotPeriod, int simulationSubTicksPerPeriod) {
         SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
-        SIMULATION_DT = robotPeriod.divide(SIMULATION_SUB_TICKS_IN_1_PERIOD);
+        SIMULATION_DT = robotPeriod.div(SIMULATION_SUB_TICKS_IN_1_PERIOD);
     }
 
     protected final World<Body> physicsWorld;

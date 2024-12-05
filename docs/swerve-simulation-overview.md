@@ -61,12 +61,12 @@ SimulatedArena.getInstance().addDriveTrainSimulation(swerveDriveSimulation);
 ## 2. Manipulating the Simulated Swerve
 
 ??? "Option 1: The simple approach"
+    **See [Swerve Simulation: SimplifiedSwerveSimulation](./swerve-sim-easy.md)**<br>
     *This approach emphasizes ease of use while maintaining a reasonably accurate model of robot behavior. Although the physics simulation is realistic enough to accurately mimic your drivetrain, the code used to manipulate the simulated drivetrain is embedded into maple-sim for convenience. As a result, it may differ slightly from the code running on your real robot.*
-    **See [Swerve Simulation: SimplifiedSwerveSimulation](./swerve-sim-easy.md)**
-</details>
+
 ??? "Option 2: The professional approach"
+    **See [Swerve Simulation: Hardware Abstraction](./swerve-sim-hardware-abstraction.md)**<br>
     *This approach to simulating swerve drive accurately mimics the behavior of your drivetrain code by running the exact same code used on the real robot directly on the simulated robot. While this ensures high fidelity in the simulation, it does require a significant amount of effort to set up properly.*
-    **See [Swerve Simulation: Hardware Abstraction](./swerve-sim-hardware-abstraction.md)**
-</details>
+
 ??? "Option 3: Simulation with CTRE devices"
        Coming soon, [view progress](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/CTRE-simulation-support)

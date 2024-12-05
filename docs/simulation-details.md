@@ -14,7 +14,7 @@ The realistic simulation dynamics allow you to test and refine auto paths as the
 
 ![path following simulation.gif](media%2Fpath%20following%20simulation.gif)
 
-### [View Full Document on Swerve Simulation](./swerve-simulation-overview.md) >>>
+**[View Full Document on Swerve Simulation](./swerve-simulation-overview.md) >>>**
 
 ## Odometry + Vision Simulation
 
@@ -36,7 +36,7 @@ The simulator also supports a fixed intake module, allowing the robot to automat
 
 ![intakesim.gif](media/intakesim.gif)
 
-### [View Full Document on Intake Simulation](./simulating-intake.md) >>>
+**[View Full Document on Intake Simulation](./simulating-intake.md) >>>**
 
 ## Projectile Simulation
 In FRC, game pieces are often launched into the air. 
@@ -44,7 +44,7 @@ In FRC, game pieces are often launched into the air.
 
 ![projectile simulation.gif](media%2Fprojectile%20simulation.gif)
 
-### [View Full Document on Projectile Simulation](./simulating-projectiles.md) >>>
+**[View Full Document on Projectile Simulation](./simulating-projectiles.md) >>>**
 
 ## Opponent Robots Simulation
 

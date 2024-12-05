@@ -21,6 +21,9 @@ import org.ironmaple.simulation.motorsims.*;
  *
  * <h2>Simulation for a Single Swerve Module.</h2>
  *
+ * <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/swerve-sim-hardware-abstraction/'>Online
+ * Documentation</a>
+ *
  * <p>This class provides a simulation for a single swerve module in the {@link SwerveDriveSimulation}.
  *
  * <h3>1. Purpose</h3>

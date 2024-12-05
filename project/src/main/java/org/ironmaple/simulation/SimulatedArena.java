@@ -29,6 +29,9 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *
  * <h1>Abstract Simulation World</h1>
  *
+ * <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/'>Online
+ * Documentation</a>
+ *
  * <h2>The heart of the simulator.</h2>
  *
  * <p>This class cannot be instantiated directly; it must be created as a specific season's arena.

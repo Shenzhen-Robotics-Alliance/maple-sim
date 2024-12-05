@@ -18,8 +18,8 @@ public interface SimulatedMotorController {
     final class GenericMotorController implements SimulatedMotorController {
         private final DCMotor model;
         private Current currentLimit = Amps.of(150);
-        private Angle forwardSoftwareLimit = Radians.of(-Double.POSITIVE_INFINITY),
-                reverseSoftwareLimit = Radians.of(Double.POSITIVE_INFINITY);
+        private Angle forwardSoftwareLimit = Radians.of(Double.POSITIVE_INFINITY),
+                reverseSoftwareLimit = Radians.of(-Double.POSITIVE_INFINITY);
 
         private Voltage requestedVoltage = Volts.of(0);
 

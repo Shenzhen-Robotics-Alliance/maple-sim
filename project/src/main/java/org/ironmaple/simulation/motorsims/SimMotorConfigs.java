@@ -60,6 +60,9 @@ public final class SimMotorConfigs {
         this.gearing = gearing;
         this.loadMOI = loadMOI;
         this.friction = NewtonMeters.of(motor.getTorque(motor.getCurrent(0, frictionVoltage.in(Volts))));
+
+        forwardHardwareLimit = Radians.of(Double.POSITIVE_INFINITY);
+        reverseHardwareLimit = Radians.of(-Double.POSITIVE_INFINITY);
     }
 
     /**

@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
@@ -41,12 +40,6 @@ public class RobotContainer {
     public RobotContainer() {
         this.s_Swerve = Robot.isReal() ? new TalonSwerve() : new MapleSimSwerve();
         this.s_Swerve.initSwerveWidget("SwerveDrive");
-        s_Swerve.setDefaultCommand(new TeleopSwerve(
-                s_Swerve,
-                () -> -driver.getRawAxis(translationAxis),
-                () -> -driver.getRawAxis(strafeAxis),
-                () -> -driver.getRawAxis(rotationAxis),
-                () -> robotCentric.getAsBoolean()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -58,8 +51,15 @@ public class RobotContainer {
      * and then passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
+        s_Swerve.setDefaultCommand(new TeleopSwerve(
+                s_Swerve,
+                () -> -driver.getRawAxis(translationAxis),
+                () -> -driver.getRawAxis(strafeAxis),
+                () -> -driver.getRawAxis(rotationAxis),
+                robotCentric));
+
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        zeroGyro.onTrue(Commands.runOnce(s_Swerve::zeroHeading).ignoringDisable(true));
 
         final Command placeRobotPose = Commands.runOnce(() -> s_Swerve.setPose(new Pose2d(3, 3, new Rotation2d())));
         resetRobotPose.onTrue(placeRobotPose);

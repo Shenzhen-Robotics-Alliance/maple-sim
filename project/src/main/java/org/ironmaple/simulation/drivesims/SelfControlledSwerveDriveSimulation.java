@@ -441,6 +441,20 @@ public class SelfControlledSwerveDriveSimulation {
         this.swerveDriveSimulation.setSimulationWorldPose(robotPose);
     }
 
+    public SelfControlledSwerveDriveSimulation withSteerPID(PIDController steerController) {
+        for (SelfControlledModuleSimulation moduleSimulation : moduleSimulations)
+            moduleSimulation.withSteerPID(
+                    new PIDController(steerController.getP(), steerController.getI(), steerController.getD()));
+        return this;
+    }
+
+    public SelfControlledSwerveDriveSimulation withCurrentLimits(Current driveCurrentLimit, Current steerCurrentLimit) {
+        for (SelfControlledModuleSimulation moduleSimulation : moduleSimulations)
+            moduleSimulation.withCurrentLimits(driveCurrentLimit, steerCurrentLimit);
+
+        return this;
+    }
+
     public static class SelfControlledModuleSimulation {
         public final SwerveModuleSimulation instance;
 
@@ -459,6 +473,13 @@ public class SelfControlledSwerveDriveSimulation {
 
         public SelfControlledModuleSimulation withSteerPID(PIDController steerController) {
             this.steerController = steerController;
+            steerController.enableContinuousInput(-Math.PI, Math.PI);
+            return this;
+        }
+
+        public SelfControlledModuleSimulation withCurrentLimits(Current driveCurrentLimit, Current steerCurrentLimit) {
+            this.driveMotor.withCurrentLimit(driveCurrentLimit);
+            this.steerMotor.withCurrentLimit(steerCurrentLimit);
             steerController.enableContinuousInput(-Math.PI, Math.PI);
             return this;
         }

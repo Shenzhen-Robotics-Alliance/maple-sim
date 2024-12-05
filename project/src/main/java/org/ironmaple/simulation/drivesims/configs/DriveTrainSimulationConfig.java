@@ -1,6 +1,5 @@
 package org.ironmaple.simulation.drivesims.configs;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 
@@ -95,7 +94,6 @@ public class DriveTrainSimulationConfig {
                 SwerveModuleSimulation.getMark4(
                         DCMotor.getFalcon500(1),
                         DCMotor.getFalcon500(1),
-                        Amps.of(60),
                         SwerveModuleSimulation.WHEEL_GRIP.COLSONS.cof,
                         2),
                 GyroSimulation.getPigeon2());

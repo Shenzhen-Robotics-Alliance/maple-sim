@@ -38,7 +38,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *
  * <p>The default instance can be obtained using the {@link #getInstance()} method.
  *
- * <p>Simulates all interactions within the arena field. g
+ * <p>Simulates all interactions within the arena field.
  *
  * <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
  *
@@ -119,8 +119,8 @@ public abstract class SimulatedArena {
      *
      * @param robotPeriod the time between two calls of {@link #simulationPeriodic()}, usually obtained from
      *     {@link TimedRobot#getPeriod()}
-     * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick()} that the simulation
-     *     runs per each call to {@link #simulationPeriodic()}
+     * @param simulationSubTicksPerPeriod the number of Iterations, or {@link #simulationSubTick(int)} that the
+     *     simulation runs per each call to {@link #simulationPeriodic()}
      */
     public static synchronized void overrideSimulationTimings(Time robotPeriod, int simulationSubTicksPerPeriod) {
         SIMULATION_SUB_TICKS_IN_1_PERIOD = simulationSubTicksPerPeriod;
@@ -131,7 +131,7 @@ public abstract class SimulatedArena {
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
     protected final Set<GamePieceOnFieldSimulation> gamePieces;
     protected final Set<GamePieceProjectile> gamePieceProjectile;
-    protected final List<Runnable> simulationSubTickActions;
+    protected final List<Simulatable> customSimulations;
     private final List<IntakeSimulation> intakeSimulations;
 
     /**
@@ -150,7 +150,7 @@ public abstract class SimulatedArena {
         this.physicsWorld.setGravity(PhysicsWorld.ZERO_GRAVITY);
         for (Body obstacle : obstaclesMap.obstacles) this.physicsWorld.addBody(obstacle);
         this.driveTrainSimulations = new HashSet<>();
-        simulationSubTickActions = new ArrayList<>();
+        customSimulations = new ArrayList<>();
         this.gamePieces = new HashSet<>();
         this.gamePieceProjectile = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
@@ -159,15 +159,36 @@ public abstract class SimulatedArena {
     /**
      *
      *
-     * <h2>Registers a runnable action to be executed during each simulation sub-tick.</h2>
+     * <h2>Represents a custom simulation to be updated during each simulation sub-tick.</h2>
      *
-     * <p><strong>FOR TESTING ONLY: This method will be removed in the final release.</strong>
+     * <p>This allows you to register custom actions that will be executed at a high frequency during each simulation
+     * sub-tick. This is useful for tasks that need to be updated multiple times per simulation cycle.
      *
-     * @param action the {@link Runnable} action to be executed in each simulation sub-tick
+     * <p>Examples of how this method is used:
+     *
+     * <ul>
+     *   <li>Pulling encoder values for high-frequency odometry updates.
+     *   <li>Adding custom simulation objects or handling events in the simulated arena.
+     * </ul>
      */
-    @Deprecated
-    public synchronized void addSimulationSubTickAction(Runnable action) {
-        this.simulationSubTickActions.add(action);
+    public interface Simulatable {
+        /**
+         * Called in {@link #simulationSubTick(int)}.
+         *
+         * @param subTickNum the number of this sub-tick (counting from 0 in each robot period)
+         */
+        void simulationSubTick(int subTickNum);
+    }
+
+    /**
+     *
+     *
+     * <h2>Registers a custom simulation.</h2>
+     *
+     * @param simulatable the custom simulation to register
+     */
+    public synchronized void addCustomSimulation(Simulatable simulatable) {
+        this.customSimulations.add(simulatable);
     }
 
     /**
@@ -288,7 +309,7 @@ public abstract class SimulatedArena {
             competitionPeriodic();
             SimulatedBattery.getInstance().flush();
             // move through a few sub-periods in each update
-            for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick();
+            for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
             SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
         }
@@ -307,10 +328,10 @@ public abstract class SimulatedArena {
      *   <li>Stepping the physics world with the specified sub-tick duration.
      *   <li>Removing any game pieces as detected by the {@link IntakeSimulation} objects.
      *   <li>Executing any additional sub-tick actions registered via
-     *       {@link SimulatedArena#addSimulationSubTickAction(Runnable)}.
+     *       {@link SimulatedArena#addCustomSimulation(Simulatable)} .
      * </ul>
      */
-    private void simulationSubTick() {
+    private void simulationSubTick(int subTickNum) {
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 
@@ -322,7 +343,7 @@ public abstract class SimulatedArena {
             while (!intakeSimulation.getGamePiecesToRemove().isEmpty())
                 removeGamePiece(intakeSimulation.getGamePiecesToRemove().poll());
 
-        for (Runnable runnable : simulationSubTickActions) runnable.run();
+        for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
     }
 
     /**

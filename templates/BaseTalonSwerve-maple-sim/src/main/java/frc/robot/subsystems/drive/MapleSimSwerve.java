@@ -18,13 +18,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
-import org.ironmaple.simulation.drivesims.SimplifiedSwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.SelfControlledSwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 public class MapleSimSwerve implements SwerveDrive {
-    private final SimplifiedSwerveDriveSimulation simulatedDrive;
+    private final SelfControlledSwerveDriveSimulation simulatedDrive;
     private final Field2d field2d;
 
     public MapleSimSwerve() {
@@ -36,16 +36,16 @@ public class MapleSimSwerve implements SwerveDrive {
                         DCMotor.getFalcon500(1),
                         Constants.Swerve.driveGearRatio,
                         Constants.Swerve.angleGearRatio,
-                        Amps.of(Constants.Swerve.driveCurrentLimit),
-                        Amps.of(Constants.Swerve.angleCurrentLimit),
                         Volts.of(0.1),
                         Volts.of(0.1),
                         Meters.of(Constants.Swerve.chosenModule.wheelDiameter / 2),
                         KilogramSquareMeters.of(0.02),
                         1.2));
 
-        this.simulatedDrive = new SimplifiedSwerveDriveSimulation(
+        this.simulatedDrive = new SelfControlledSwerveDriveSimulation(
                 new SwerveDriveSimulation(config, new Pose2d(0, 0, new Rotation2d())));
+
+        this.simulatedDrive.withCurrentLimits(Amps.of(60), Amps.of(20));
 
         // register the drivetrain simulation to the simulation world
         SimulatedArena.getInstance().addDriveTrainSimulation(simulatedDrive.getDriveTrainSimulation());
@@ -61,7 +61,7 @@ public class MapleSimSwerve implements SwerveDrive {
                 new Translation2d(),
                 fieldRelative,
                 true);
-        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(DriverStation.Alliance.Red)
+        DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue).equals(DriverStation.Alliance.Red);
     }
 
     @Override

@@ -14,11 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.motorsims.ControlRequest;
-import org.ironmaple.simulation.motorsims.MapleMotorSim;
-import org.ironmaple.simulation.motorsims.SimMotorConfigs;
-import org.ironmaple.simulation.motorsims.SimMotorState;
-import org.ironmaple.simulation.motorsims.SimulatedBattery;
+import org.ironmaple.simulation.motorsims.*;
 
 /**
  *
@@ -64,7 +60,6 @@ import org.ironmaple.simulation.motorsims.SimulatedBattery;
 public class SwerveModuleSimulation {
     public final SimMotorConfigs driveMotorConfigs;
     public final double DRIVE_GEAR_RATIO, STEER_GEAR_RATIO, WHEELS_COEFFICIENT_OF_FRICTION;
-    public final Current DRIVE_CURRENT_LIMIT;
     public final Voltage DRIVE_FRICTION_VOLTAGE;
     public final Distance WHEEL_RADIUS;
 
@@ -75,7 +70,7 @@ public class SwerveModuleSimulation {
     private Angle driveWheelFinalPosition = Radians.zero();
     private AngularVelocity steerVelocity = RadiansPerSecond.zero(), driveWheelFinalSpeed = RadiansPerSecond.zero();
 
-    private ControlRequest driveMotorRequest = new ControlRequest.VoltageOut(Volts.zero());
+    private SimulatedMotorController driveMotorController;
 
     private Rotation2d steerAbsoluteFacing = Rotation2d.fromRotations(Math.random());
     private final Angle steerRelativeEncoderOffSet = Radians.of((Math.random() - 0.5) * 30);
@@ -90,12 +85,10 @@ public class SwerveModuleSimulation {
      * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(Time, int)} to use custom timings, you must
      * call the method before constructing any swerve module simulations using this constructor.
      *
-     * @param driveMotor the model of the driving motor
-     * @param steerMotor the model of the steering motor
+     * @param driveMotorModel the model of the driving motor
+     * @param steerMotorModel; the model of the steering motor
      * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
      * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
-     * @param driveCurrentLimit the stator current limit for the driving motor
-     * @param steerCurrentLimit the stator current limit for the steering motor
      * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving rotter
      * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter
      * @param wheelRadius the radius of the wheels.
@@ -105,19 +98,15 @@ public class SwerveModuleSimulation {
      *     of friction</a> of the tires, normally around 1.2 {@link Units#inchesToMeters(double)}.
      */
     public SwerveModuleSimulation(
-            DCMotor driveMotor,
-            DCMotor steerMotor,
+            DCMotor driveMotorModel,
+            DCMotor steerMotorModel,
             double driveGearRatio,
             double steerGearRatio,
-            Current driveCurrentLimit,
-            Current steerCurrentLimit,
             Voltage driveFrictionVoltage,
             Voltage steerFrictionVoltage,
             Distance wheelRadius,
             MomentOfInertia steerRotationalInertia,
             double tireCoefficientOfFriction) {
-
-        DRIVE_CURRENT_LIMIT = driveCurrentLimit;
         DRIVE_GEAR_RATIO = driveGearRatio;
         STEER_GEAR_RATIO = steerGearRatio;
         DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
@@ -125,17 +114,11 @@ public class SwerveModuleSimulation {
         WHEEL_RADIUS = wheelRadius;
 
         this.driveMotorConfigs = new SimMotorConfigs(
-                        driveMotor, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), driveFrictionVoltage)
-                .withStatorCurrentLimit(DRIVE_CURRENT_LIMIT)
-                .withDefaultFeedForward(Volts.zero());
+                driveMotorModel, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), driveFrictionVoltage);
 
         SimulatedBattery.getInstance().addElectricalAppliances(this::getDriveMotorSupplyCurrent);
         this.steerMotorSim = new MapleMotorSim(
-                new SimMotorConfigs(steerMotor, steerGearRatio, steerRotationalInertia, steerFrictionVoltage)
-                        .withStatorCurrentLimit(steerCurrentLimit)
-                        .withControllerContinousInput()
-                        .withPositionVoltageController(
-                                Volts.per(Degree).ofNative(8.0 / 60.0), VoltsPerRadianPerSecond.ofNative(0), false));
+                new SimMotorConfigs(steerMotorModel, steerGearRatio, steerRotationalInertia, steerFrictionVoltage));
 
         this.driveWheelFinalPositionCache = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
@@ -143,6 +126,9 @@ public class SwerveModuleSimulation {
         this.steerAbsolutePositionCache = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             steerAbsolutePositionCache.offer(steerAbsoluteFacing);
+
+        this.driveMotorController = new SimulatedMotorController.GenericMotorController(driveMotorModel);
+        this.steerMotorSim.useSimpleDCMotorController();
     }
 
     public SimMotorConfigs getDriveMotorConfigs() {
@@ -156,14 +142,19 @@ public class SwerveModuleSimulation {
     /**
      *
      *
-     * <h2>Requests the Driving Motor to Run at a Specified Output.</h2>
+     * <h2>Sets the motor controller for the drive motor.</h2>
      *
-     * <p>Think of it as the <code>requestOutput()</code> of your physical driving motor.
+     * <p>The configured controller runs control loop on the motor.
      *
-     * @param request the control request to apply
+     * @param driveMotorController the motor controller to control the drive motor
      */
-    public void requestDriveControl(ControlRequest request) {
-        this.driveMotorRequest = request;
+    public <T extends SimulatedMotorController> T useDriveMotorController(T driveMotorController) {
+        this.driveMotorController = driveMotorController;
+        return driveMotorController;
+    }
+
+    public SimulatedMotorController.GenericMotorController useGenericMotorControllerForDrive() {
+        return useDriveMotorController(new SimulatedMotorController.GenericMotorController(driveMotorConfigs.motor));
     }
 
     /**
@@ -173,11 +164,14 @@ public class SwerveModuleSimulation {
      *
      * <p>Think of it as the <code>requestOutput()</code> of your physical steering motor.
      *
-     * @param request the control request to apply
-     * @see MapleMotorSim#requestOutput(ControlRequest)
+     * @param steerMotorController the motor controller to control the steer motor
      */
-    public void requestSteerControl(ControlRequest request) {
-        this.steerMotorSim.requestOutput(request);
+    public <T extends SimulatedMotorController> T useSteerMotorController(T steerMotorController) {
+        return this.steerMotorSim.useMotorController(steerMotorController);
+    }
+
+    public SimulatedMotorController.GenericMotorController useGenericControllerForSteer() {
+        return this.steerMotorSim.useSimpleDCMotorController();
     }
 
     /**
@@ -501,18 +495,18 @@ public class SwerveModuleSimulation {
      *
      * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
      *
-     * <p>Before calculating the torque of the motor, the output voltage of the drive motor is constrained for the
-     * current limit through {@link SimMotorConfigs#constrainOutputVoltage(SimMotorState, Voltage)}.
-     *
      * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
      */
     private double getDriveWheelTorque() {
+        driveMotorAppliedVoltage = driveMotorController.updateControlSignal(
+                driveWheelFinalPosition,
+                driveWheelFinalSpeed,
+                getDriveEncoderUnGearedPosition(),
+                getDriveEncoderUnGearedSpeed());
+
         driveMotorAppliedVoltage = Volts.of(
                 MathUtil.applyDeadband(driveMotorAppliedVoltage.in(Volts), DRIVE_FRICTION_VOLTAGE.in(Volts), 12));
-
         final SimMotorState state = new SimMotorState(driveWheelFinalPosition, driveWheelFinalSpeed);
-        driveMotorAppliedVoltage = driveMotorConfigs.constrainOutputVoltage(
-                state, driveMotorRequest.updateSignal(driveMotorConfigs, state));
 
         /* calculate the stator current */
         driveMotorStatorCurrent =
@@ -664,7 +658,7 @@ public class SwerveModuleSimulation {
      * Swerve Module</a> for simulation
      */
     public static Supplier<SwerveModuleSimulation> getMark4(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -676,8 +670,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 12.8,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -690,7 +682,7 @@ public class SwerveModuleSimulation {
      * Mark4-i Swerve Module</a> for simulation
      */
     public static Supplier<SwerveModuleSimulation> getMark4i(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -702,8 +694,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 150.0 / 7.0,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -716,7 +706,7 @@ public class SwerveModuleSimulation {
      * Module</a> for simulation
      */
     public static Supplier<SwerveModuleSimulation> getMark4n(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -727,8 +717,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 18.75,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -745,7 +733,7 @@ public class SwerveModuleSimulation {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static Supplier<SwerveModuleSimulation> getSwerveX(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -762,8 +750,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 11.3142,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -780,7 +766,7 @@ public class SwerveModuleSimulation {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static Supplier<SwerveModuleSimulation> getSwerveXFlipped(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -797,8 +783,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 11.3714,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -814,7 +798,7 @@ public class SwerveModuleSimulation {
      * X2 Ratios are gearRatioLevel 4-6
      */
     public static Supplier<SwerveModuleSimulation> getSwerveXS(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -828,8 +812,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 41.25,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -847,7 +829,7 @@ public class SwerveModuleSimulation {
      * X4 Ratios are gearRatioLevel 10-12
      */
     public static Supplier<SwerveModuleSimulation> getSwerveX2(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -861,8 +843,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 41.25,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -879,7 +859,7 @@ public class SwerveModuleSimulation {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static Supplier<SwerveModuleSimulation> getSwerveX2S(
-            DCMotor driveMotor, DCMotor steerMotor, Current driveCurrentLimit, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
         return () -> new SwerveModuleSimulation(
                 driveMotor,
                 steerMotor,
@@ -896,8 +876,6 @@ public class SwerveModuleSimulation {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 25.9,
-                driveCurrentLimit,
-                Amps.of(20),
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),

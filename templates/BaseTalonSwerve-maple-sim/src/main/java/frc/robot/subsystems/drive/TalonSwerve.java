@@ -46,11 +46,9 @@ public class TalonSwerve extends SubsystemBase implements SwerveDrive {
 
     @Override
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(
-                fieldRelative
-                        ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                                translation.getX(), translation.getY(), rotation, getHeading())
-                        : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
+        ChassisSpeeds speeds = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
+        if (fieldRelative) speeds.toRobotRelativeSpeeds(getHeading());
+        SwerveModuleState[] swerveModuleStates = Constants.Swerve.swerveKinematics.toSwerveModuleStates(speeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         for (SwerveModule mod : mSwerveMods) {
@@ -74,6 +72,11 @@ public class TalonSwerve extends SubsystemBase implements SwerveDrive {
             states[mod.moduleNumber] = mod.getState();
         }
         return states;
+    }
+
+    @Override
+    public ChassisSpeeds getMeasuredSpeeds() {
+        return Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
     }
 
     @Override

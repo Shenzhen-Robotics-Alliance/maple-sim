@@ -23,7 +23,7 @@ public class MapleMotorSim {
     private final SimMotorConfigs configs;
 
     private SimMotorState state;
-    private ControlRequest request;
+    private SimulatedMotorController controller;
     private Voltage appliedVoltage;
     private Current statorCurrent;
 
@@ -37,7 +37,7 @@ public class MapleMotorSim {
     public MapleMotorSim(SimMotorConfigs configs) {
         this.configs = configs;
         this.state = new SimMotorState(Radians.zero(), RadiansPerSecond.zero());
-        this.request = new ControlRequest.VoltageOut(Volts.zero());
+        this.controller = (mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity) -> Volts.of(0);
         this.appliedVoltage = Volts.zero();
         this.statorCurrent = Amps.zero();
 
@@ -52,7 +52,11 @@ public class MapleMotorSim {
      * <p>This is equivalent to{@link edu.wpi.first.wpilibj.simulation.DCMotorSim#update(double)}.
      */
     public void update(Time dt) {
-        this.appliedVoltage = configs.constrainOutputVoltage(state, request.updateSignal(configs, state));
+        this.appliedVoltage = controller.updateControlSignal(
+                state.finalAngularPosition(),
+                state.finalAngularVelocity(),
+                state.finalAngularPosition().times(configs.gearing),
+                state.finalAngularVelocity().times(configs.gearing));
         this.statorCurrent = configs.calculateCurrent(state.finalAngularVelocity(), appliedVoltage);
         this.state = this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
 
@@ -62,15 +66,13 @@ public class MapleMotorSim {
             state = new SimMotorState(configs.forwardHardwareLimit, RadiansPerSecond.zero());
     }
 
-    /**
-     *
-     *
-     * <h2>Requests an Output for the motor</h2>
-     *
-     * @param request a {@link ControlRequest} instance yielding a requested output
-     */
-    public void requestOutput(ControlRequest request) {
-        this.request = request;
+    public <T extends SimulatedMotorController> T useMotorController(T motorController) {
+        this.controller = motorController;
+        return motorController;
+    }
+
+    public SimulatedMotorController.GenericMotorController useSimpleDCMotorController() {
+        return useMotorController(new SimulatedMotorController.GenericMotorController(configs.motor));
     }
 
     /**
@@ -128,8 +130,8 @@ public class MapleMotorSim {
      *
      * <p>The applied voltage is calculated by the motor controller in the previous call to {@link #update(Time)}
      *
-     * <p>The control request specified by {@link #requestOutput(ControlRequest)} is used to calculate the applied
-     * voltage.
+     * <p>The motor controller specified by {@link #useMotorController(SimulatedMotorController)} is used to calculate
+     * the applied voltage.
      *
      * <p>The applied voltage is also restricted for current limit and battery voltage.
      *
@@ -168,10 +170,6 @@ public class MapleMotorSim {
         // Battery Voltage x Supply Current = Applied Voltage x Stator Current
         // Supply Current = Stator Current * Applied Voltage / Battery Voltage
         return getStatorCurrent().times(appliedVoltage.div(Volts.of(12)));
-    }
-
-    public ControlRequest getRequestedControl() {
-        return request;
     }
 
     /**

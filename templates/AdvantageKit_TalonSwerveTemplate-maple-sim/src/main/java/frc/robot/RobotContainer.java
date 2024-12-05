@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -28,8 +29,12 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
-import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFXReal;
+import frc.robot.subsystems.drive.ModuleIOTalonFXSim;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -40,6 +45,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
     // Subsystems
     private final Drive drive;
+
+    private SwerveDriveSimulation driveSimulation = null;
 
     // Controller
     private final CommandXboxController controller = new CommandXboxController(0);
@@ -62,12 +69,19 @@ public class RobotContainer {
 
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
+                driveSimulation = new SwerveDriveSimulation(
+                        DriveTrainSimulationConfig.Default(), new Pose2d(3, 3, new Rotation2d()));
+                SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
                 drive = new Drive(
                         new GyroIO() {},
-                        new ModuleIOTalonFXSim(TunerConstants.FrontLeft),
-                        new ModuleIOTalonFXSim(TunerConstants.FrontRight),
-                        new ModuleIOTalonFXSim(TunerConstants.BackLeft),
-                        new ModuleIOTalonFXSim(TunerConstants.BackRight));
+                        new ModuleIOTalonFXSim(
+                                TunerConstants.FrontLeft, driveSimulation.getModules()[0]),
+                        new ModuleIOTalonFXSim(
+                                TunerConstants.FrontRight, driveSimulation.getModules()[1]),
+                        new ModuleIOTalonFXSim(
+                                TunerConstants.BackLeft, driveSimulation.getModules()[2]),
+                        new ModuleIOTalonFXSim(
+                                TunerConstants.BackRight, driveSimulation.getModules()[3]));
                 break;
 
             default:
@@ -129,5 +143,12 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autoChooser.get();
+    }
+
+    public void displaySimFieldToAdvantageScope() {
+        Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
+        Logger.recordOutput(
+                "FieldSimulation/Notes",
+                SimulatedArena.getInstance().getGamePiecesByType("Note").toArray(new Pose3d[0]));
     }
 }

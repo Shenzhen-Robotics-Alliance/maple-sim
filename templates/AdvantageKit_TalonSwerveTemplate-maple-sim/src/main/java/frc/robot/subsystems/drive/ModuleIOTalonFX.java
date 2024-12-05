@@ -138,8 +138,10 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     @Override
     public void updateInputs(ModuleIOInputs inputs) {
         // Refresh all signals
-        var driveStatus = BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);;
-        var turnStatus = BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);;
+        var driveStatus = BaseStatusSignal.refreshAll(drivePosition, driveVelocity, driveAppliedVolts, driveCurrent);
+        ;
+        var turnStatus = BaseStatusSignal.refreshAll(turnPosition, turnVelocity, turnAppliedVolts, turnCurrent);
+        ;
         var turnEncoderStatus = BaseStatusSignal.refreshAll(turnAbsolutePosition);
 
         // Update drive inputs
@@ -192,8 +194,7 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
         turnTalon.setControl(
                 switch (constants.SteerMotorClosedLoopOutput) {
                     case Voltage -> positionVoltageRequest.withPosition(rotation.getRotations());
-                    case TorqueCurrentFOC ->positionTorqueCurrentRequest.withPosition(
-                            rotation.getRotations());
+                    case TorqueCurrentFOC -> positionTorqueCurrentRequest.withPosition(rotation.getRotations());
                 });
     }
 }

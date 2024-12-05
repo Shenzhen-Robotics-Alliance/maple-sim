@@ -13,10 +13,10 @@
 
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.sim.CANcoderSimState;
-import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.geometry.Rotation2d;
+import frc.robot.util.CTREMotorSimUtil;
+import java.util.Arrays;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 
 /**
@@ -24,31 +24,31 @@ import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
  * Simulation is always based on voltage control.
  */
 public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
-    private final SwerveModuleSimulation swerveModuleSimulation;
-    private final TalonFXSimState driveTalonSim;
-    private final TalonFXSimState turnTalonSim;
-    private final CANcoderSimState encoderSim;
+    private final SwerveModuleSimulation simulation;
 
-    public ModuleIOTalonFXSim(SwerveModuleConstants constants, SwerveModuleSimulation swerveModuleSimulation) {
+    public ModuleIOTalonFXSim(SwerveModuleConstants constants, SwerveModuleSimulation simulation) {
         super(constants);
 
-        this.swerveModuleSimulation = swerveModuleSimulation;
-        swerveModuleSimulation.requestDriveControl();
-        swerveModuleSimulation.requestSteerControl();
-
-        this.driveTalonSim = super.driveTalon.getSimState();
-        this.turnTalonSim = super.turnTalon.getSimState();
-        this.encoderSim = super.cancoder.getSimState();
-    }
-
-    public void updateSimulation() {
-        this.driveTalonSim
+        this.simulation = simulation;
+        simulation.useDriveMotorController(
+                new CTREMotorSimUtil.TalonFXMotorControllerSim(driveTalon, constants.DriveMotorInverted));
+        simulation.useSteerMotorController(new CTREMotorSimUtil.TalonFXMotorControllerWithRemoteCancoderSim(
+                driveTalon, constants.DriveMotorInverted, cancoder, constants.SteerMotorInverted));
     }
 
     @Override
     public void updateInputs(ModuleIOInputs inputs) {
         super.updateInputs(inputs);
 
-        inputs.odometryTimestamps = new double[] {};
+        // Update odometry inputs
+        inputs.odometryTimestamps = CTREMotorSimUtil.getSimulationOdometryTimeStamps();
+
+        inputs.odometryDrivePositionsRad = Arrays.stream(simulation.getCachedDriveEncoderUnGearedPositions())
+                .mapToDouble(angle -> angle.in(edu.wpi.first.units.Units.Radians))
+                .toArray();
+
+        inputs.odometryTurnPositions = Arrays.stream(simulation.getCachedSteerRelativeEncoderPositions())
+                .map(Rotation2d::new)
+                .toArray(Rotation2d[]::new);
     }
 }

@@ -13,6 +13,9 @@
 
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.CTREMotorSimUtil;
@@ -33,7 +36,11 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
         simulation.useDriveMotorController(
                 new CTREMotorSimUtil.TalonFXMotorControllerSim(driveTalon, constants.DriveMotorInverted));
         simulation.useSteerMotorController(new CTREMotorSimUtil.TalonFXMotorControllerWithRemoteCancoderSim(
-                driveTalon, constants.DriveMotorInverted, cancoder, constants.SteerMotorInverted));
+                driveTalon,
+                constants.DriveMotorInverted,
+                cancoder,
+                constants.CANcoderInverted,
+                Rotations.of(constants.CANcoderOffset)));
     }
 
     @Override
@@ -44,7 +51,7 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
         inputs.odometryTimestamps = CTREMotorSimUtil.getSimulationOdometryTimeStamps();
 
         inputs.odometryDrivePositionsRad = Arrays.stream(simulation.getCachedDriveEncoderUnGearedPositions())
-                .mapToDouble(angle -> angle.in(edu.wpi.first.units.Units.Radians))
+                .mapToDouble(angle -> angle.in(Radians))
                 .toArray();
 
         inputs.odometryTurnPositions = Arrays.stream(simulation.getCachedSteerRelativeEncoderPositions())

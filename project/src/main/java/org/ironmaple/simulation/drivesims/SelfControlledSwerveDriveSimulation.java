@@ -125,11 +125,7 @@ public class SelfControlledSwerveDriveSimulation {
      */
     public SwerveModulePosition[] getLatestModulePositions() {
         return Arrays.stream(moduleSimulations)
-                .map(selfControlledModuleSimulation -> selfControlledModuleSimulation.instance)
-                .map(moduleSimulation -> new SwerveModulePosition(
-                        moduleSimulation.getDriveWheelFinalPosition().in(Radians)
-                                * moduleSimulation.WHEEL_RADIUS.in(Meters),
-                        moduleSimulation.getSteerAbsoluteFacing()))
+                .map(SelfControlledModuleSimulation::getModulePosition)
                 .toArray(SwerveModulePosition[]::new);
     }
 
@@ -312,8 +308,7 @@ public class SelfControlledSwerveDriveSimulation {
      */
     public SwerveModuleState[] getMeasuredStates() {
         return Arrays.stream(moduleSimulations)
-                .map(selfControlledModuleSimulation -> selfControlledModuleSimulation.instance)
-                .map(SwerveModuleSimulation::getCurrentState)
+                .map(SelfControlledModuleSimulation::getMeasuredState)
                 .toArray(SwerveModuleState[]::new);
     }
 
@@ -496,8 +491,13 @@ public class SelfControlledSwerveDriveSimulation {
          * @param setPoint the desired state to optimize and apply
          * @return the optimized swerve module state after control execution
          */
-        private SwerveModuleState optimizeAndRunModuleState(SwerveModuleState setPoint) {
+        public SwerveModuleState optimizeAndRunModuleState(SwerveModuleState setPoint) {
             setPoint.optimize(instance.getSteerAbsoluteFacing());
+            runModuleState(setPoint);
+            return setPoint;
+        }
+
+        public void runModuleState(SwerveModuleState setPoint) {
             final double
                     cosProjectedSpeedMPS = SwerveStateProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
                     driveWheelVelocitySetPointRadPerSec = cosProjectedSpeedMPS / instance.WHEEL_RADIUS.in(Meters);
@@ -507,8 +507,16 @@ public class SelfControlledSwerveDriveSimulation {
 
             steerMotor.requestVoltage(Volts.of(steerController.calculate(
                     instance.getSteerAbsoluteFacing().getRadians(), setPoint.angle.getRadians())));
+        }
 
-            return setPoint;
+        public SwerveModuleState getMeasuredState() {
+            return instance.getCurrentState();
+        }
+
+        public SwerveModulePosition getModulePosition() {
+            return new SwerveModulePosition(
+                    instance.getDriveWheelFinalPosition().in(Radians) * instance.WHEEL_RADIUS.in(Meters),
+                    instance.getSteerAbsoluteFacing());
         }
     }
 

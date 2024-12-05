@@ -45,6 +45,8 @@ public class MapleSimSwerve implements SwerveDrive {
         this.simulatedDrive = new SelfControlledSwerveDriveSimulation(
                 new SwerveDriveSimulation(config, new Pose2d(0, 0, new Rotation2d())));
 
+        this.simulatedDrive.withCurrentLimits(Amps.of(60), Amps.of(20));
+
         // register the drivetrain simulation to the simulation world
         SimulatedArena.getInstance().addDriveTrainSimulation(simulatedDrive.getDriveTrainSimulation());
 

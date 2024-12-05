@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
-import org.ironmaple.simulation.motorsims.ControlRequest;
 import org.ironmaple.simulation.motorsims.SimMotorConfigs;
 import org.ironmaple.utils.mathutils.SwerveStateProjection;
 

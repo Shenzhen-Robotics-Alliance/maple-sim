@@ -84,13 +84,16 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block"><h1>Abstract Simulation World</h1>
 
+ <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/'>Online
+ Documentation</a>
+
  <h2>The heart of the simulator.</h2>
 
  <p>This class cannot be instantiated directly; it must be created as a specific season's arena.
 
  <p>The default instance can be obtained using the <a href="#getInstance()"><code>getInstance()</code></a> method.
 
- <p>Simulates all interactions within the arena field. g
+ <p>Simulates all interactions within the arena field.
 
  <h2>The following objects can be added to the simulation world and will interact with each other: </h2>
 
@@ -117,6 +120,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color">
 <div class="block">Represents an Abstract Field Map</div>
 </div>
+<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="SimulatedArena.Simulatable.html" class="type-name-link" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Represents a custom simulation to be updated during each simulation sub-tick.</div>
+</div>
 </div>
 </section>
 </li>
@@ -129,20 +137,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#driveTrainSimulations" class="member-name-link">driveTrainSimulations</a></code></div>
+<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#customSimulations" class="member-name-link">customSimulations</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#gamePieceProjectile" class="member-name-link">gamePieceProjectile</a></code></div>
+<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#driveTrainSimulations" class="member-name-link">driveTrainSimulations</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#gamePieces" class="member-name-link">gamePieces</a></code></div>
+<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#gamePieceProjectile" class="member-name-link">gamePieceProjectile</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final org.dyn4j.world.World&lt;org.dyn4j.dynamics.Body&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#physicsWorld" class="member-name-link">physicsWorld</a></code></div>
+<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#gamePieces" class="member-name-link">gamePieces</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#simulationSubTickActions" class="member-name-link">simulationSubTickActions</a></code></div>
+<div class="col-first even-row-color"><code>protected final org.dyn4j.world.World&lt;org.dyn4j.dynamics.Body&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#physicsWorld" class="member-name-link">physicsWorld</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -169,36 +177,36 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
-<div id="method-summary-table.tabpanel" role="tabpanel">
-<div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab3" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab3', 3)" class="table-tab">Abstract Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
+<div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDriveTrainSimulation(org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation)" class="member-name-link">addDriveTrainSimulation</a><wbr>(<a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&nbsp;driveTrainSimulation)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addCustomSimulation(org.ironmaple.simulation.SimulatedArena.Simulatable)" class="member-name-link">addCustomSimulation</a><wbr>(<a href="SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a>&nbsp;simulatable)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Registers an <a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>AbstractDriveTrainSimulation</code></a>.</div>
+<div class="block">Registers a custom simulation.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addGamePiece(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation)" class="member-name-link">addGamePiece</a><wbr>(<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&nbsp;gamePiece)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDriveTrainSimulation(org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation)" class="member-name-link">addDriveTrainSimulation</a><wbr>(<a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&nbsp;driveTrainSimulation)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Registers a <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> to the Simulation.</div>
+<div class="block">Registers an <a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>AbstractDriveTrainSimulation</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addGamePieceProjectile(org.ironmaple.simulation.gamepieces.GamePieceProjectile)" class="member-name-link">addGamePieceProjectile</a><wbr>(<a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a>&nbsp;gamePieceProjectile)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addGamePiece(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation)" class="member-name-link">addGamePiece</a><wbr>(<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&nbsp;gamePiece)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Registers a <a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> to the Simulation.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addGamePieceProjectile(org.ironmaple.simulation.gamepieces.GamePieceProjectile)" class="member-name-link">addGamePieceProjectile</a><wbr>(<a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a>&nbsp;gamePieceProjectile)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers a <a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceProjectile</code></a> to the Simulation and Launches It.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addIntakeSimulation(org.ironmaple.simulation.IntakeSimulation)" class="member-name-link">addIntakeSimulation</a><wbr>(<a href="IntakeSimulation.html" title="class in org.ironmaple.simulation">IntakeSimulation</a>&nbsp;intakeSimulation)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addIntakeSimulation(org.ironmaple.simulation.IntakeSimulation)" class="member-name-link">addIntakeSimulation</a><wbr>(<a href="IntakeSimulation.html" title="class in org.ironmaple.simulation">IntakeSimulation</a>&nbsp;intakeSimulation)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers an <a href="IntakeSimulation.html" title="class in org.ironmaple.simulation"><code>IntakeSimulation</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addSimulationSubTickAction(java.lang.Runnable)" class="member-name-link">addSimulationSubTickAction</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
-<div class="block"><span class="deprecated-label">Deprecated.</span></div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearGamePieces()" class="member-name-link">clearGamePieces</a>()</code></div>
@@ -299,9 +307,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="simulationSubTickActions">
-<h3>simulationSubTickActions</h3>
-<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&gt;</span>&nbsp;<span class="element-name">simulationSubTickActions</span></div>
+<section class="detail" id="customSimulations">
+<h3>customSimulations</h3>
+<div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a>&gt;</span>&nbsp;<span class="element-name">customSimulations</span></div>
 </section>
 </li>
 </ul>
@@ -402,23 +410,19 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>robotPeriod</code> - the time between two calls of <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a>, usually obtained from
      <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/IterativeRobotBase.html#getPeriod()" title="class or interface in edu.wpi.first.wpilibj" class="external-link"><code>IterativeRobotBase.getPeriod()</code></a></dd>
-<dd><code>simulationSubTicksPerPeriod</code> - the number of Iterations, or <code>simulationSubTick()</code> that the simulation
-     runs per each call to <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a></dd>
+<dd><code>simulationSubTicksPerPeriod</code> - the number of Iterations, or <code>simulationSubTick(int)</code> that the
+     simulation runs per each call to <a href="#simulationPeriodic()"><code>simulationPeriodic()</code></a></dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="addSimulationSubTickAction(java.lang.Runnable)">
-<h3>addSimulationSubTickAction</h3>
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addSimulationSubTickAction</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link">Runnable</a>&nbsp;action)</span></div>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
-<div class="block"><h2>Registers a runnable action to be executed during each simulation sub-tick.</h2>
-
- <p><strong>FOR TESTING ONLY: This method will be removed in the final release.</strong></div>
+<section class="detail" id="addCustomSimulation(org.ironmaple.simulation.SimulatedArena.Simulatable)">
+<h3>addCustomSimulation</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addCustomSimulation</span><wbr><span class="parameters">(<a href="SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a>&nbsp;simulatable)</span></div>
+<div class="block"><h2>Registers a custom simulation.</h2></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>action</code> - the <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Runnable.html" title="class or interface in java.lang" class="external-link"><code>Runnable</code></a> action to be executed in each simulation sub-tick</dd>
+<dd><code>simulatable</code> - the custom simulation to register</dd>
 </dl>
 </section>
 </li>

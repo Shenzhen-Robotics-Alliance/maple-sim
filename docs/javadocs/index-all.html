@@ -65,6 +65,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.FieldMap.html#addCustomObstacle(org.dyn4j.geometry.Convex,edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">addCustomObstacle(Convex, Pose2d)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.FieldMap.html" title="class in org.ironmaple.simulation">SimulatedArena.FieldMap</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/SimulatedArena.html#addCustomSimulation(org.ironmaple.simulation.SimulatedArena.Simulatable)" class="member-name-link">addCustomSimulation(SimulatedArena.Simulatable)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
+<dd>
+<div class="block">Registers a custom simulation.</div>
+</dd>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.html#addDriveTrainSimulation(org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation)" class="member-name-link">addDriveTrainSimulation(AbstractDriveTrainSimulation)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
 <dd>
 <div class="block">Registers an <a href="org/ironmaple/simulation/drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>AbstractDriveTrainSimulation</code></a>.</div>
@@ -92,15 +96,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.FieldMap.html#addRectangularObstacle(double,double,edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">addRectangularObstacle(double, double, Pose2d)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.FieldMap.html" title="class in org.ironmaple.simulation">SimulatedArena.FieldMap</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/SimulatedArena.html#addSimulationSubTickAction(java.lang.Runnable)" class="member-name-link">addSimulationSubTickAction(Runnable)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
-<dd>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#addVisionEstimation(edu.wpi.first.math.geometry.Pose2d,double)" class="member-name-link">addVisionEstimation(Pose2d, double)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#addVisionEstimation(edu.wpi.first.math.geometry.Pose2d,double)" class="member-name-link">addVisionEstimation(Pose2d, double)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Adds a vision estimation to the pose estimator.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#addVisionEstimation(edu.wpi.first.math.geometry.Pose2d,double,edu.wpi.first.math.Matrix)" class="member-name-link">addVisionEstimation(Pose2d, double, Matrix&lt;N3, N1&gt;)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#addVisionEstimation(edu.wpi.first.math.geometry.Pose2d,double,edu.wpi.first.math.Matrix)" class="member-name-link">addVisionEstimation(Pose2d, double, Matrix&lt;N3, N1&gt;)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Adds a vision estimation to the pose estimator.</div>
 </dd>
@@ -199,39 +199,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Constrains the magnitude of a value.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#constrainOutputVoltage(org.ironmaple.simulation.motorsims.SimMotorState,edu.wpi.first.units.measure.Voltage)" class="member-name-link">constrainOutputVoltage(SimMotorState, Voltage)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html#constrainOutputVoltage(edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity,edu.wpi.first.units.measure.Voltage)" class="member-name-link">constrainOutputVoltage(Angle, AngularVelocity, Voltage)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></dt>
 <dd>
 <div class="block">(Utility Function) Constrains the Output Voltage of a Motor.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.html" class="type-name-link" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a> - Interface in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a control request for a <a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html" title="class in org.ironmaple.simulation.motorsims"><code>MapleMotorSim</code></a> motor simulator.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a> - Record Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a constant current output.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" class="type-name-link" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a> - Interface in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a> - Record Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a position control request with current control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a> - Record Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a position control request with voltage control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a> - Record Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a velocity control request with current control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a> - Record Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a velocity control request with voltage control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a> - Record Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
-<dd>
-<div class="block">Represents a constant voltage output.</div>
 </dd>
 <dt><a href="org/ironmaple/simulation/seasonspecific/crescendo2024/Arena2024Crescendo.CrescendoFieldObstaclesMap.html#%3Cinit%3E()" class="member-name-link">CrescendoFieldObstaclesMap()</a> - Constructor for class org.ironmaple.simulation.seasonspecific.crescendo2024.<a href="org/ironmaple/simulation/seasonspecific/crescendo2024/Arena2024Crescendo.CrescendoFieldObstaclesMap.html" title="class in org.ironmaple.simulation.seasonspecific.crescendo2024">Arena2024Crescendo.CrescendoFieldObstaclesMap</a></dt>
 <dd>&nbsp;</dd>
@@ -239,16 +209,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/seasonspecific/crescendo2024/CrescendoNoteOnField.html#%3Cinit%3E(edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">CrescendoNoteOnField(Translation2d)</a> - Constructor for class org.ironmaple.simulation.seasonspecific.crescendo2024.<a href="org/ironmaple/simulation/seasonspecific/crescendo2024/CrescendoNoteOnField.html" title="class in org.ironmaple.simulation.seasonspecific.crescendo2024">CrescendoNoteOnField</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#current()" class="member-name-link">current()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a></dt>
-<dd>
-<div class="block">Returns the value of the <a href="./org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#param-current"><code>current</code></a> record component.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#currentLimit" class="member-name-link">currentLimit</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
+<dt><a href="org/ironmaple/simulation/SimulatedArena.html#customSimulations" class="member-name-link">customSimulations</a> - Variable in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#%3Cinit%3E(edu.wpi.first.units.measure.Current)" class="member-name-link">CurrentOut(Current)</a> - Constructor for record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a></dt>
-<dd>
-<div class="block">Creates an instance of a <code>CurrentOut</code> record class.</div>
-</dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
@@ -268,15 +230,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Configures the Game Piece Projectile to Disappear Upon Touching Ground.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#DRIVE_CURRENT_LIMIT" class="member-name-link">DRIVE_CURRENT_LIMIT</a> - Variable in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#DRIVE_FRICTION_VOLTAGE" class="member-name-link">DRIVE_FRICTION_VOLTAGE</a> - Variable in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#DRIVE_GEAR_RATIO" class="member-name-link">DRIVE_GEAR_RATIO</a> - Variable in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#driveBaseRadius()" class="member-name-link">driveBaseRadius()</a> - Method in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#driveBaseRadius()" class="member-name-link">driveBaseRadius()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#driveBaseRadius()" class="member-name-link">driveBaseRadius()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#driveBaseRadius()" class="member-name-link">driveBaseRadius()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
 <dd>
@@ -306,30 +266,6 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="org/ironmaple/simulation/IntakeSimulation.GamePieceContactListener.html#end(org.dyn4j.world.ContactCollisionData,org.dyn4j.dynamics.contact.Contact)" class="member-name-link">end(ContactCollisionData, Contact)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/IntakeSimulation.GamePieceContactListener.html" title="class in org.ironmaple.simulation">IntakeSimulation.GamePieceContactListener</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimMotorState.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorState.html" title="class in org.ironmaple.simulation.motorsims">SimMotorState</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
@@ -337,16 +273,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:F">F</h2>
 <dl class="index">
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#feedEncoderPosition(edu.wpi.first.units.measure.Angle)" class="member-name-link">feedEncoderPosition(Angle)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#feedEncoderVelocity(edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">feedEncoderVelocity(AngularVelocity)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#feedforward" class="member-name-link">feedforward</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#feedMechanismPosition(edu.wpi.first.units.measure.Angle)" class="member-name-link">feedMechanismPosition(Angle)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#feedMechanismVelocity(edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">feedMechanismVelocity(AngularVelocity)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/utils/FieldMirroringUtils.html#FIELD_HEIGHT" class="member-name-link">FIELD_HEIGHT</a> - Static variable in class org.ironmaple.utils.<a href="org/ironmaple/utils/FieldMirroringUtils.html" title="class in org.ironmaple.utils">FieldMirroringUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/utils/FieldMirroringUtils.html#FIELD_WIDTH" class="member-name-link">FIELD_WIDTH</a> - Static variable in class org.ironmaple.utils.<a href="org/ironmaple/utils/FieldMirroringUtils.html" title="class in org.ironmaple.utils">FieldMirroringUtils</a></dt>
@@ -368,8 +294,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/ironmaple/simulation/motorsims/SimulatedBattery.html#flush()" class="member-name-link">flush()</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedBattery.html" title="class in org.ironmaple.simulation.motorsims">SimulatedBattery</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#forwardHardwareLimit" class="member-name-link">forwardHardwareLimit</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#forwardSoftwareLimit" class="member-name-link">forwardSoftwareLimit</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#freeSpinCurrent()" class="member-name-link">freeSpinCurrent()</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
 <dd>&nbsp;</dd>
@@ -420,21 +344,23 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">using the random number generator of a fixed seed, generate the next random normal variable</div>
 </dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html#%3Cinit%3E(edu.wpi.first.math.system.plant.DCMotor)" class="member-name-link">GenericMotorController(DCMotor)</a> - Constructor for class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/utils/mathutils/GeometryConvertor.html" class="type-name-link" title="class in org.ironmaple.utils.mathutils">GeometryConvertor</a> - Class in <a href="org/ironmaple/utils/mathutils/package-summary.html">org.ironmaple.utils.mathutils</a></dt>
 <dd>
 <div class="block">utils to convert between WPILIB and dyn4j geometry classes</div>
 </dd>
 <dt><a href="org/ironmaple/utils/mathutils/GeometryConvertor.html#%3Cinit%3E()" class="member-name-link">GeometryConvertor()</a> - Constructor for class org.ironmaple.utils.mathutils.<a href="org/ironmaple/utils/mathutils/GeometryConvertor.html" title="class in org.ironmaple.utils.mathutils">GeometryConvertor</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getActualPoseInSimulationWorld()" class="member-name-link">getActualPoseInSimulationWorld()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getActualPoseInSimulationWorld()" class="member-name-link">getActualPoseInSimulationWorld()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtain the ACTUAL robot pose.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getActualSpeedsFieldRelative()" class="member-name-link">getActualSpeedsFieldRelative()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getActualSpeedsFieldRelative()" class="member-name-link">getActualSpeedsFieldRelative()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Get the ACTUAL field-relative chassis speeds of the robot.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getActualSpeedsRobotRelative()" class="member-name-link">getActualSpeedsRobotRelative()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getActualSpeedsRobotRelative()" class="member-name-link">getActualSpeedsRobotRelative()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Get the ACTUAL robot-relative chassis speeds of the robot.</div>
 </dd>
@@ -465,7 +391,7 @@ loadScripts(document, 'script');</script>
 <div class="block">gyro readings for <a href="https://v6.docs.ctr-electronics.com/en/stable/docs/application-notes/update-frequency-impact.html">high-frequency
  odometers</a>.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getCachedModulePositions()" class="member-name-link">getCachedModulePositions()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getCachedModulePositions()" class="member-name-link">getCachedModulePositions()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtains the CACHED module positions measured by the encoders.</div>
 </dd>
@@ -521,7 +447,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the Actual Robot-Relative Chassis Speeds from the Simulation.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getDriveTrainSimulation()" class="member-name-link">getDriveTrainSimulation()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getDriveTrainSimulation()" class="member-name-link">getDriveTrainSimulation()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtain the <a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>SwerveDriveSimulation</code></a> object controlled by this simplified swerve simulation.</div>
 </dd>
@@ -579,21 +505,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets/Creates the Default Simulation World</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getLatestModulePositions()" class="member-name-link">getLatestModulePositions()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getLatestModulePositions()" class="member-name-link">getLatestModulePositions()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtains the LATEST module positions measured by the encoders.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getMark4(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getMark4(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getMark4(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getMark4(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module">SDS Mark4
  Swerve Module</a> for simulation</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getMark4i(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getMark4i(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getMark4i(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getMark4i(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4i-swerve-module">SDS
  Mark4-i Swerve Module</a> for simulation</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getMark4n(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getMark4n(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getMark4n(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getMark4n(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://www.swervedrivespecialties.com/products/mk4n-swerve-module">SDS Mark4-n Swerve
  Module</a> for simulation</div>
@@ -602,27 +528,29 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the Measured Angular Velocity of the Gyro.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getMeasuredSpeedsFieldRelative(boolean)" class="member-name-link">getMeasuredSpeedsFieldRelative(boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getMeasuredSpeedsFieldRelative(boolean)" class="member-name-link">getMeasuredSpeedsFieldRelative(boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtain the field-relative chassis speeds measured from the encoders.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getMeasuredSpeedsRobotRelative(boolean)" class="member-name-link">getMeasuredSpeedsRobotRelative(boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getMeasuredSpeedsRobotRelative(boolean)" class="member-name-link">getMeasuredSpeedsRobotRelative(boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtain the robot-relative chassis speeds measured from the encoders.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getMeasuredStates()" class="member-name-link">getMeasuredStates()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#getMeasuredState()" class="member-name-link">getMeasuredState()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getMeasuredStates()" class="member-name-link">getMeasuredStates()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtain the MEASURED swerve states.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#getModules()" class="member-name-link">getModules()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#getModulePosition()" class="member-name-link">getModulePosition()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#getMotorVoltage()" class="member-name-link">getMotorVoltage()</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#getModules()" class="member-name-link">getModules()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/GyroSimulation.html#getNav2X()" class="member-name-link">getNav2X()</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a></dt>
 <dd>
 <div class="block">Creates the Simulation for a <a href="https://pdocs.kauailabs.com/navx-mxp/">navX2-MXP IMU</a>.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getOdometryEstimatedPose()" class="member-name-link">getOdometryEstimatedPose()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getOdometryEstimatedPose()" class="member-name-link">getOdometryEstimatedPose()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtains the robot pose measured by the odometry.</div>
 </dd>
@@ -642,16 +570,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Obtains the 2d position of the game piece</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getRawGyroAngle()" class="member-name-link">getRawGyroAngle()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getRawGyroAngle()" class="member-name-link">getRawGyroAngle()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
 <div class="deprecation-comment">This rotation is <strong>NOT</strong> the actual facing of the robot; it is uncalibrated and is only
      used for features like rotation lock.</div>
 </div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html#getRequestedControl()" class="member-name-link">getRequestedControl()</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html" title="class in org.ironmaple.simulation.motorsims">MapleMotorSim</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#getSetPointsOptimized()" class="member-name-link">getSetPointsOptimized()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#getSetPointsOptimized()" class="member-name-link">getSetPointsOptimized()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtain the optimized SETPOINTS of the swerve.</div>
 </dd>
@@ -701,27 +627,27 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Obtains the <strong>supply</strong> current.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveX(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveX(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveX(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveX(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x">WCP SwerveX Swerve Module</a>
  for simulation</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveX2(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveX2(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveX2(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveX2(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2">WCP SwerveX2 Swerve
  Module</a> for simulation</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveX2S(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveX2S(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveX2S(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveX2S(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2-s">WCP SwerveX2S Swerve
  Module</a> for simulation</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveXFlipped(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveXFlipped(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveXFlipped(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveXFlipped(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x-flipped">WCP SwerveX Flipped
  Swerve Module</a> for simulation</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveXS(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveXS(DCMotor, DCMotor, Current, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#getSwerveXS(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveXS(DCMotor, DCMotor, double, int)</a> - Static method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-xs">WCP SwerveXS Swerve
  Module</a> for simulation</div>
@@ -753,30 +679,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks if the Game Piece Has Flown Out of the Field's Boundaries.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimMotorState.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorState.html" title="class in org.ironmaple.simulation.motorsims">SimMotorState</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
@@ -792,6 +694,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#instance" class="member-name-link">instance</a> - Variable in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/IntakeSimulation.html" class="type-name-link" title="class in org.ironmaple.simulation">IntakeSimulation</a> - Class in <a href="org/ironmaple/simulation/package-summary.html">org.ironmaple.simulation</a></dt>
 <dd>
 <div class="block">Simulates an Intake Mechanism on the Robot.</div>
@@ -857,13 +761,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Obtains the theatrical linear acceleration that the robot can achieve.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#maxAngularAcceleration()" class="member-name-link">maxAngularAcceleration()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#maxAngularAcceleration()" class="member-name-link">maxAngularAcceleration()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#maxAngularAcceleration()" class="member-name-link">maxAngularAcceleration()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtains the maximum achievable angular acceleration of the chassis.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#maxAngularVelocity()" class="member-name-link">maxAngularVelocity()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#maxAngularVelocity()" class="member-name-link">maxAngularVelocity()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#maxAngularVelocity()" class="member-name-link">maxAngularVelocity()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
 <dd>
@@ -873,13 +777,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Obtains the theoretical speed that the module can achieve.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#maxLinearAcceleration()" class="member-name-link">maxLinearAcceleration()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#maxLinearAcceleration()" class="member-name-link">maxLinearAcceleration()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#maxLinearAcceleration()" class="member-name-link">maxLinearAcceleration()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Obtains the maximum achievable linear acceleration of the chassis.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#maxLinearVelocity()" class="member-name-link">maxLinearVelocity()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#maxLinearVelocity()" class="member-name-link">maxLinearVelocity()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html#maxLinearVelocity()" class="member-name-link">maxLinearVelocity()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveDriveSimulation</a></dt>
 <dd>
@@ -915,6 +819,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Removes 1 game piece from the intake.</div>
 </dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#optimizeAndRunModuleState(edu.wpi.first.math.kinematics.SwerveModuleState)" class="member-name-link">optimizeAndRunModuleState(SwerveModuleState)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>
+<div class="block">Runs the control loops for swerve states on a simulated module.</div>
+</dd>
 <dt><a href="org/ironmaple/simulation/package-summary.html">org.ironmaple.simulation</a> - package org.ironmaple.simulation</dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/package-summary.html">org.ironmaple.simulation.drivesims</a> - package org.ironmaple.simulation.drivesims</dt>
@@ -942,7 +850,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:P">P</h2>
 <dl class="index">
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#periodic()" class="member-name-link">periodic()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#periodic()" class="member-name-link">periodic()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Periodic Method for Simplified Swerve Sim.</div>
 </dd>
@@ -955,24 +863,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.html#placeGamePiecesOnField()" class="member-name-link">placeGamePiecesOnField()</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
 <dd>
 <div class="block">Places Game Pieces on the Field for Autonomous Mode.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#%3Cinit%3E(edu.wpi.first.units.measure.Angle)" class="member-name-link">PositionCurrent(Angle)</a> - Constructor for record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a></dt>
-<dd>
-<div class="block">Creates an instance of a <code>PositionCurrent</code> record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#positionCurrentController" class="member-name-link">positionCurrentController</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">All the controllers receives <strong>final</strong> position of the motor, using
- <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularPosition()"><code>SimMotorState.finalAngularPosition()</code></a> and <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularVelocity()"><code>SimMotorState.finalAngularVelocity()</code></a>.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#%3Cinit%3E(edu.wpi.first.units.measure.Angle)" class="member-name-link">PositionVoltage(Angle)</a> - Constructor for record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a></dt>
-<dd>
-<div class="block">Creates an instance of a <code>PositionVoltage</code> record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#positionVoltageController" class="member-name-link">positionVoltageController</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">All the controllers receives <strong>final</strong> position of the motor, using
- <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularPosition()"><code>SimMotorState.finalAngularPosition()</code></a> and <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularVelocity()"><code>SimMotorState.finalAngularVelocity()</code></a>.</div>
 </dd>
 <dt><a href="org/ironmaple/simulation/IntakeSimulation.GamePieceContactListener.html#postSolve(org.dyn4j.world.ContactCollisionData,org.dyn4j.dynamics.contact.SolvedContact)" class="member-name-link">postSolve(ContactCollisionData, SolvedContact)</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/IntakeSimulation.GamePieceContactListener.html" title="class in org.ironmaple.simulation">IntakeSimulation.GamePieceContactListener</a></dt>
 <dd>&nbsp;</dd>
@@ -993,61 +883,51 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Removes a <a href="org/ironmaple/simulation/gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceOnFieldSimulation</code></a> from the Simulation.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#requestDriveControl(org.ironmaple.simulation.motorsims.ControlRequest)" class="member-name-link">requestDriveControl(ControlRequest)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
-<dd>
-<div class="block">Requests the Driving Motor to Run at a Specified Output.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html#requestOutput(org.ironmaple.simulation.motorsims.ControlRequest)" class="member-name-link">requestOutput(ControlRequest)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html" title="class in org.ironmaple.simulation.motorsims">MapleMotorSim</a></dt>
-<dd>
-<div class="block">Requests an Output for the motor</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#requestSteerControl(org.ironmaple.simulation.motorsims.ControlRequest)" class="member-name-link">requestSteerControl(ControlRequest)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
-<dd>
-<div class="block">Requests the Steering Motor to Run at a Specified Output.</div>
-</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html#requestVoltage(edu.wpi.first.units.measure.Voltage)" class="member-name-link">requestVoltage(Voltage)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.html#resetFieldForAuto()" class="member-name-link">resetFieldForAuto()</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
 <dd>
 <div class="block">Resets the Field for Autonomous Mode.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#resetOdometry(edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">resetOdometry(Pose2d)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#resetOdometry(edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">resetOdometry(Pose2d)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Resets the odometry to a specified position.</div>
 </dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#reverseHardwareLimit" class="member-name-link">reverseHardwareLimit</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#reverseSoftwareLimit" class="member-name-link">reverseSoftwareLimit</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/IntakeSimulation.IntakeSide.html#RIGHT" class="member-name-link">RIGHT</a> - Enum constant in enum class org.ironmaple.simulation.<a href="org/ironmaple/simulation/IntakeSimulation.IntakeSide.html" title="enum class in org.ironmaple.simulation">IntakeSimulation.IntakeSide</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#robotMass" class="member-name-link">robotMass</a> - Variable in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#runChassisSpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds,edu.wpi.first.math.geometry.Translation2d,boolean,boolean)" class="member-name-link">runChassisSpeeds(ChassisSpeeds, Translation2d, boolean, boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#runChassisSpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds,edu.wpi.first.math.geometry.Translation2d,boolean,boolean)" class="member-name-link">runChassisSpeeds(ChassisSpeeds, Translation2d, boolean, boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Runs chassis speeds on the simulated swerve drive.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#runSwerveStates(edu.wpi.first.math.kinematics.SwerveModuleState%5B%5D)" class="member-name-link">runSwerveStates(SwerveModuleState[])</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#runModuleState(edu.wpi.first.math.kinematics.SwerveModuleState)" class="member-name-link">runModuleState(SwerveModuleState)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#runSwerveStates(edu.wpi.first.math.kinematics.SwerveModuleState%5B%5D)" class="member-name-link">runSwerveStates(SwerveModuleState[])</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Runs a raw module states on the chassis.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#setPoint()" class="member-name-link">setPoint()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#%3Cinit%3E(org.ironmaple.simulation.drivesims.SwerveModuleSimulation)" class="member-name-link">SelfControlledModuleSimulation(SwerveModuleSimulation)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" class="type-name-link" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a> - Class in <a href="org/ironmaple/simulation/drivesims/package-summary.html">org.ironmaple.simulation.drivesims</a></dt>
 <dd>
-<div class="block">Returns the value of the <a href="./org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#param-setPoint"><code>setPoint</code></a> record component.</div>
+<div class="block">An easier way to simulate swerve drive.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#setPoint()" class="member-name-link">setPoint()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#%3Cinit%3E(org.ironmaple.simulation.drivesims.SwerveDriveSimulation)" class="member-name-link">SelfControlledSwerveDriveSimulation(SwerveDriveSimulation)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
-<div class="block">Returns the value of the <a href="./org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#param-setPoint"><code>setPoint</code></a> record component.</div>
+<div class="block">Default Constructor.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#setPoint()" class="member-name-link">setPoint()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#%3Cinit%3E(org.ironmaple.simulation.drivesims.SwerveDriveSimulation,edu.wpi.first.math.Matrix,edu.wpi.first.math.Matrix)" class="member-name-link">SelfControlledSwerveDriveSimulation(SwerveDriveSimulation, Matrix&lt;N3, N1&gt;, Matrix&lt;N3, N1&gt;)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
-<div class="block">Returns the value of the <a href="./org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#param-setPoint"><code>setPoint</code></a> record component.</div>
+<div class="block">Constructs an instance with given odometry standard deviations.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#setPoint()" class="member-name-link">setPoint()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a></dt>
-<dd>
-<div class="block">Returns the value of the <a href="./org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#param-setPoint"><code>setPoint</code></a> record component.</div>
-</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" class="type-name-link" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a> - Class in <a href="org/ironmaple/simulation/drivesims/package-summary.html">org.ironmaple.simulation.drivesims</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/AbstractDriveTrainSimulation.html#setRobotSpeeds(edu.wpi.first.math.kinematics.ChassisSpeeds)" class="member-name-link">setRobotSpeeds(ChassisSpeeds)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a></dt>
 <dd>
 <div class="block">Sets the Robot's Speeds to the Given Chassis Speeds.</div>
@@ -1060,7 +940,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the Robot's Current Pose in the Simulation World.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#setSimulationWorldPose(edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">setSimulationWorldPose(Pose2d)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#setSimulationWorldPose(edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">setSimulationWorldPose(Pose2d)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>
 <div class="block">Teleport the robot to a specified location on the simulated field.</div>
 </dd>
@@ -1084,18 +964,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>SimMotorState</code> record class.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" class="type-name-link" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a> - Class in <a href="org/ironmaple/simulation/drivesims/package-summary.html">org.ironmaple.simulation.drivesims</a></dt>
-<dd>
-<div class="block">An easier way to simulate swerve drive.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#%3Cinit%3E(org.ironmaple.simulation.drivesims.SwerveDriveSimulation)" class="member-name-link">SimplifiedSwerveDriveSimulation(SwerveDriveSimulation)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
-<dd>
-<div class="block">Default Constructor.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#%3Cinit%3E(org.ironmaple.simulation.drivesims.SwerveDriveSimulation,edu.wpi.first.math.Matrix,edu.wpi.first.math.Matrix)" class="member-name-link">SimplifiedSwerveDriveSimulation(SwerveDriveSimulation, Matrix&lt;N3, N1&gt;, Matrix&lt;N3, N1&gt;)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
-<dd>
-<div class="block">Constructs an instance with given odometry standard deviations.</div>
-</dd>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.html" class="type-name-link" title="class in org.ironmaple.simulation">SimulatedArena</a> - Class in <a href="org/ironmaple/simulation/package-summary.html">org.ironmaple.simulation</a></dt>
 <dd>
 <div class="block">Abstract Simulation World</div>
@@ -1108,9 +976,17 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Represents an Abstract Field Map</div>
 </dd>
+<dt><a href="org/ironmaple/simulation/SimulatedArena.Simulatable.html" class="type-name-link" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a> - Interface in <a href="org/ironmaple/simulation/package-summary.html">org.ironmaple.simulation</a></dt>
+<dd>
+<div class="block">Represents a custom simulation to be updated during each simulation sub-tick.</div>
+</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimulatedBattery.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">SimulatedBattery</a> - Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimulatedBattery.html#%3Cinit%3E()" class="member-name-link">SimulatedBattery()</a> - Constructor for class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedBattery.html" title="class in org.ironmaple.simulation.motorsims">SimulatedBattery</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.html" class="type-name-link" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a> - Interface in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" class="type-name-link" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a> - Class in <a href="org/ironmaple/simulation/motorsims/package-summary.html">org.ironmaple.simulation.motorsims</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/SimulatedArena.html#simulationPeriodic()" class="member-name-link">simulationPeriodic()</a> - Method in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
 <dd>
@@ -1124,8 +1000,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Updates the Swerve Drive Simulation.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/SimulatedArena.html#simulationSubTickActions" class="member-name-link">simulationSubTickActions</a> - Variable in class org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.html" title="class in org.ironmaple.simulation">SimulatedArena</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/SimulatedArena.Simulatable.html#simulationSubTick(int)" class="member-name-link">simulationSubTick(int)</a> - Method in interface org.ironmaple.simulation.<a href="org/ironmaple/simulation/SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a></dt>
+<dd>
+<div class="block">Called in <a href="org/ironmaple/simulation/SimulatedArena.Simulatable.html#simulationSubTick(int)"><code>SimulatedArena.Simulatable.simulationSubTick(int)</code></a>.</div>
+</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.WHEEL_GRIP.html#SLS_PRINTED_WHEELS" class="member-name-link">SLS_PRINTED_WHEELS</a> - Enum constant in enum class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.WHEEL_GRIP.html" title="enum class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation.WHEEL_GRIP</a></dt>
 <dd>
 <div class="block"><a href='https://www.thebluealliance.com/team/88'>Team 88</a>'s <a href='https://www.chiefdelphi.com/t/tpu90a-grippy-tire-cad-published-finally/438075'>TPU90A Grippy Tire</a></div>
@@ -1164,7 +1042,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Simulation for a Single Swerve Module.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#%3Cinit%3E(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)" class="member-name-link">SwerveModuleSimulation(DCMotor, DCMotor, double, double, Current, Current, Voltage, Voltage, Distance, MomentOfInertia, double)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#%3Cinit%3E(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)" class="member-name-link">SwerveModuleSimulation(DCMotor, DCMotor, double, double, Voltage, Voltage, Distance, MomentOfInertia, double)</a> - Constructor for class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">Constructs a Swerve Module Simulation.</div>
 </dd>
@@ -1197,30 +1075,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/utils/mathutils/GeometryConvertor.html#toDyn4jVector2(edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">toDyn4jVector2(Translation2d)</a> - Static method in class org.ironmaple.utils.mathutils.<a href="org/ironmaple/utils/mathutils/GeometryConvertor.html" title="class in org.ironmaple.utils.mathutils">GeometryConvertor</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
 <dt><a href="org/ironmaple/simulation/motorsims/SimMotorState.html#toString()" class="member-name-link">toString()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorState.html" title="class in org.ironmaple.simulation.motorsims">SimMotorState</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
@@ -1237,13 +1091,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Calculates the track length in the X direction.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#trackLengthX()" class="member-name-link">trackLengthX()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#trackLengthX()" class="member-name-link">trackLengthX()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#trackWidthY()" class="member-name-link">trackWidthY()</a> - Method in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>
 <div class="block">Calculates the track width in the Y direction.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#trackWidthY()" class="member-name-link">trackWidthY()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#trackWidthY()" class="member-name-link">trackWidthY()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/gamepieces/GamePieceOnFieldSimulation.html#type" class="member-name-link">type</a> - Variable in class org.ironmaple.simulation.gamepieces.<a href="org/ironmaple/simulation/gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a></dt>
 <dd>
@@ -1256,34 +1110,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Updates the simulation.</div>
 </dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html#updateControlSignal(edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateControlSignal(Angle, AngularVelocity, Angle, AngularVelocity)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.html#updateControlSignal(edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateControlSignal(Angle, AngularVelocity, Angle, AngularVelocity)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/gamepieces/GamePieceProjectile.html#updateGamePieceProjectiles(org.ironmaple.simulation.SimulatedArena,java.util.Set)" class="member-name-link">updateGamePieceProjectiles(SimulatedArena, Set&lt;GamePieceProjectile&gt;)</a> - Static method in class org.ironmaple.simulation.gamepieces.<a href="org/ironmaple/simulation/gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a></dt>
 <dd>
 <div class="block">Check every <a href="org/ironmaple/simulation/gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces"><code>GamePieceProjectile</code></a> instance for available actions.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CurrentOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.CurrentOut</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionCurrent</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.PositionVoltage</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a></dt>
-<dd>
-<div class="block">Updates the control signal based on the motor's state.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">updateSignal(SimMotorConfigs, Angle, AngularVelocity)</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.html#updateSignal(org.ironmaple.simulation.motorsims.SimMotorConfigs,org.ironmaple.simulation.motorsims.SimMotorState)" class="member-name-link">updateSignal(SimMotorConfigs, SimMotorState)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a></dt>
-<dd>
-<div class="block">Updates the control signal based on the motor's state.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html#updateSimulation(edu.wpi.first.units.measure.Time)" class="member-name-link">updateSimulation(Time)</a> - Method in interface org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.CustomMotorController.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest.CustomMotorController</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/GyroSimulation.html#updateSimulationSubTick(double)" class="member-name-link">updateSimulationSubTick(double)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/GyroSimulation.html" title="class in org.ironmaple.simulation.drivesims">GyroSimulation</a></dt>
 <dd>
 <div class="block">Updates the Gyro Simulation for Each Sub-Tick.</div>
@@ -1291,6 +1125,22 @@ loadScripts(document, 'script');</script>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#updateSimulationSubTickGetModuleForce(org.dyn4j.geometry.Vector2,edu.wpi.first.math.geometry.Rotation2d,double)" class="member-name-link">updateSimulationSubTickGetModuleForce(Vector2, Rotation2d, double)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
 <dd>
 <div class="block">Updates the Simulation for This Module.</div>
+</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#useDriveMotorController(T)" class="member-name-link">useDriveMotorController(T)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dd>
+<div class="block">Sets the motor controller for the drive motor.</div>
+</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#useGenericControllerForSteer()" class="member-name-link">useGenericControllerForSteer()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#useGenericMotorControllerForDrive()" class="member-name-link">useGenericMotorControllerForDrive()</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html#useMotorController(T)" class="member-name-link">useMotorController(T)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html" title="class in org.ironmaple.simulation.motorsims">MapleMotorSim</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html#useSimpleDCMotorController()" class="member-name-link">useSimpleDCMotorController()</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/MapleMotorSim.html" title="class in org.ironmaple.simulation.motorsims">MapleMotorSim</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html#useSteerMotorController(T)" class="member-name-link">useSteerMotorController(T)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a></dt>
+<dd>
+<div class="block">Requests the Steering Motor to Run at a Specified Output.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>
@@ -1313,35 +1163,9 @@ the order they are declared.</div>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html#%3Cinit%3E(edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">VelocityCurrent(AngularVelocity)</a> - Constructor for record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityCurrent</a></dt>
-<dd>
-<div class="block">Creates an instance of a <code>VelocityCurrent</code> record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#velocityCurrentController" class="member-name-link">velocityCurrentController</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">All the controllers receives <strong>final</strong> position of the motor, using
- <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularPosition()"><code>SimMotorState.finalAngularPosition()</code></a> and <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularVelocity()"><code>SimMotorState.finalAngularVelocity()</code></a>.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html#%3Cinit%3E(edu.wpi.first.units.measure.AngularVelocity)" class="member-name-link">VelocityVoltage(AngularVelocity)</a> - Constructor for record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VelocityVoltage</a></dt>
-<dd>
-<div class="block">Creates an instance of a <code>VelocityVoltage</code> record class.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#velocityVoltageController" class="member-name-link">velocityVoltageController</a> - Variable in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">All the controllers receives <strong>final</strong> position of the motor, using
- <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularPosition()"><code>SimMotorState.finalAngularPosition()</code></a> and <a href="org/ironmaple/simulation/motorsims/SimMotorState.html#finalAngularVelocity()"><code>SimMotorState.finalAngularVelocity()</code></a>.</div>
-</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.WHEEL_GRIP.html#VEX_GRIP_V2" class="member-name-link">VEX_GRIP_V2</a> - Enum constant in enum class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SwerveModuleSimulation.WHEEL_GRIP.html" title="enum class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation.WHEEL_GRIP</a></dt>
 <dd>
 <div class="block"><a href='https://www.vexrobotics.com/217-9064.html'>Vex Grip V2 Wheel.</a></div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#voltage()" class="member-name-link">voltage()</a> - Method in record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a></dt>
-<dd>
-<div class="block">Returns the value of the <a href="./org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#param-voltage"><code>voltage</code></a> record component.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html#%3Cinit%3E(edu.wpi.first.units.measure.Voltage)" class="member-name-link">VoltageOut(Voltage)</a> - Constructor for record class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/ControlRequest.VoltageOut.html" title="class in org.ironmaple.simulation.motorsims">ControlRequest.VoltageOut</a></dt>
-<dd>
-<div class="block">Creates an instance of a <code>VoltageOut</code> record class.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:W">W</h2>
@@ -1358,33 +1182,15 @@ the order they are declared.</div>
 <dd>
 <div class="block">Sets the bumper size.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withControllerContinousInput()" class="member-name-link">withControllerContinousInput()</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the positional controllers to use continuous wrap.</div>
-</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html#withCurrentLimit(edu.wpi.first.units.measure.Current)" class="member-name-link">withCurrentLimit(Current)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#withCurrentLimits(edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Current)" class="member-name-link">withCurrentLimits(Current, Current)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#withCurrentLimits(edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Current)" class="member-name-link">withCurrentLimits(Current, Current)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#withCustomModuleTranslations(edu.wpi.first.math.geometry.Translation2d%5B%5D)" class="member-name-link">withCustomModuleTranslations(Translation2d[])</a> - Method in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>
 <div class="block">Sets custom module translations.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#withDefaultDriveFeedForward(edu.wpi.first.units.measure.Voltage)" class="member-name-link">withDefaultDriveFeedForward(Voltage)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
-<dd>
-<div class="block">Configures the feedforward controller for the drive velocity control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withDefaultFeedForward(edu.wpi.first.units.measure.Voltage)" class="member-name-link">withDefaultFeedForward(Voltage)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures a default set of feed-forward gains.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#withDriveFeedForward(edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Per,edu.wpi.first.units.measure.Per,boolean)" class="member-name-link">withDriveFeedForward(Voltage, Per&lt;VoltageUnit, AngularVelocityUnit&gt;, Per&lt;VoltageUnit, AngularAccelerationUnit&gt;, boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
-<dd>
-<div class="block">Configures the feedforward controller for the drive velocity control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#withDriveVelocityVoltageKP(edu.wpi.first.units.measure.Per,boolean)" class="member-name-link">withDriveVelocityVoltageKP(Per&lt;VoltageUnit, AngularVelocityUnit&gt;, boolean)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
-<dd>
-<div class="block">Configures the PID controllers for drive velocity control.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withFeedForward(edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Per,edu.wpi.first.units.measure.Per,boolean,edu.wpi.first.units.measure.Time)" class="member-name-link">withFeedForward(Voltage, Per&lt;VoltageUnit, AngularVelocityUnit&gt;, Per&lt;VoltageUnit, AngularAccelerationUnit&gt;, boolean, Time)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the feed-forward calculator for the motor.</div>
 </dd>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#withGyro(java.util.function.Supplier)" class="member-name-link">withGyro(Supplier&lt;GyroSimulation&gt;)</a> - Method in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>
@@ -1398,14 +1204,6 @@ the order they are declared.</div>
 <dd>
 <div class="block">Configures a callback to be executed when the game piece hits the target.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withPositionCurrentController(edu.wpi.first.units.measure.Per,edu.wpi.first.units.measure.Per,boolean)" class="member-name-link">withPositionCurrentController(Per&lt;CurrentUnit, AngleUnit&gt;, Per&lt;CurrentUnit, AngularVelocityUnit&gt;, boolean)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the PD controller for <a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionCurrent.html" title="class in org.ironmaple.simulation.motorsims"><code>ControlRequest.PositionCurrent</code></a> requests.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withPositionVoltageController(edu.wpi.first.units.measure.Per,edu.wpi.first.units.measure.Per,boolean)" class="member-name-link">withPositionVoltageController(Per&lt;VoltageUnit, AngleUnit&gt;, Per&lt;VoltageUnit, AngularVelocityUnit&gt;, boolean)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the PD controller for <a href="org/ironmaple/simulation/motorsims/ControlRequest.PositionVoltage.html" title="class in org.ironmaple.simulation.motorsims"><code>ControlRequest.PositionVoltage</code></a> requests.</div>
-</dd>
 <dt><a href="org/ironmaple/simulation/gamepieces/GamePieceProjectile.html#withProjectileTrajectoryDisplayCallBack(java.util.function.Consumer)" class="member-name-link">withProjectileTrajectoryDisplayCallBack(Consumer&lt;List&lt;Pose3d&gt;&gt;)</a> - Method in class org.ironmaple.simulation.gamepieces.<a href="org/ironmaple/simulation/gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a></dt>
 <dd>
 <div class="block">Configures a Callback to Display the Trajectory of the Projectile When Launched.</div>
@@ -1418,18 +1216,12 @@ the order they are declared.</div>
 <dd>
 <div class="block">Sets the robot mass.</div>
 </dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withSoftLimits(edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.Angle)" class="member-name-link">withSoftLimits(Angle, Angle)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the software limits for the motor.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withStatorCurrentLimit(edu.wpi.first.units.measure.Current)" class="member-name-link">withStatorCurrentLimit(Current)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the current limit for the motor.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html#withSteerPID(edu.wpi.first.units.measure.Per,edu.wpi.first.units.measure.Per)" class="member-name-link">withSteerPID(Per&lt;VoltageUnit, AngleUnit&gt;, Per&lt;VoltageUnit, AngularVelocityUnit&gt;)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SimplifiedSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SimplifiedSwerveDriveSimulation</a></dt>
-<dd>
-<div class="block">Configures the PID controller for steer heading control.</div>
-</dd>
+<dt><a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html#withSoftwareLimits(edu.wpi.first.units.measure.Angle,edu.wpi.first.units.measure.Angle)" class="member-name-link">withSoftwareLimits(Angle, Angle)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html#withSteerPID(edu.wpi.first.math.controller.PIDController)" class="member-name-link">withSteerPID(PIDController)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation.SelfControlledModuleSimulation</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html#withSteerPID(edu.wpi.first.math.controller.PIDController)" class="member-name-link">withSteerPID(PIDController)</a> - Method in class org.ironmaple.simulation.drivesims.<a href="org/ironmaple/simulation/drivesims/SelfControlledSwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims">SelfControlledSwerveDriveSimulation</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#withSwerveModule(java.util.function.Supplier)" class="member-name-link">withSwerveModule(Supplier&lt;SwerveModuleSimulation&gt;)</a> - Method in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>
 <div class="block">Sets the swerve module simulation factory.</div>
@@ -1449,14 +1241,6 @@ the order they are declared.</div>
 <dt><a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html#withTrackLengthTrackWidth(edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.Distance)" class="member-name-link">withTrackLengthTrackWidth(Distance, Distance)</a> - Method in class org.ironmaple.simulation.drivesims.configs.<a href="org/ironmaple/simulation/drivesims/configs/DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></dt>
 <dd>
 <div class="block">Sets the track length and width.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withVelocityCurrentController(edu.wpi.first.units.measure.Per,boolean)" class="member-name-link">withVelocityCurrentController(Per&lt;CurrentUnit, AngularVelocityUnit&gt;, boolean)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the PD controller for <a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityCurrent.html" title="class in org.ironmaple.simulation.motorsims"><code>ControlRequest.VelocityCurrent</code></a> requests using current commands.</div>
-</dd>
-<dt><a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html#withVelocityVoltageController(edu.wpi.first.units.measure.Per,boolean)" class="member-name-link">withVelocityVoltageController(Per&lt;VoltageUnit, AngularVelocityUnit&gt;, boolean)</a> - Method in class org.ironmaple.simulation.motorsims.<a href="org/ironmaple/simulation/motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></dt>
-<dd>
-<div class="block">Configures the PD controller for <a href="org/ironmaple/simulation/motorsims/ControlRequest.VelocityVoltage.html" title="class in org.ironmaple.simulation.motorsims"><code>ControlRequest.VelocityVoltage</code></a> requests.</div>
 </dd>
 </dl>
 <a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:K">K</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a><span class="vertical-separator">|</span><a href="constant-values.html">Constant&nbsp;Field&nbsp;Values</a></main>

@@ -112,8 +112,8 @@ loadScripts(document, 'script');</script>
 <h2>Method Summary</h2>
 <div id="method-summary-table">
 <div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
-<div id="method-summary-table.tabpanel" role="tabpanel">
-<div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
+<div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
+<div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
@@ -142,34 +142,32 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the angular velocity measured by the relative encoder of the motor.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getRequestedControl()" class="member-name-link">getRequestedControl</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getStatorCurrent()" class="member-name-link">getStatorCurrent</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getStatorCurrent()" class="member-name-link">getStatorCurrent</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the <strong>stator</strong> current.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupplyCurrent()" class="member-name-link">getSupplyCurrent</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSupplyCurrent()" class="member-name-link">getSupplyCurrent</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the <strong>supply</strong> current.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getVelocity()" class="member-name-link">getVelocity</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Obtains the <strong>final</strong> velocity of the mechanism.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requestOutput(org.ironmaple.simulation.motorsims.ControlRequest)" class="member-name-link">requestOutput</a><wbr>(<a href="ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a>&nbsp;request)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getVelocity()" class="member-name-link">getVelocity</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Requests an Output for the motor</div>
+<div class="block">Obtains the <strong>final</strong> velocity of the mechanism.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(edu.wpi.first.units.measure.Time)" class="member-name-link">update</a><wbr>(edu.wpi.first.units.measure.Time&nbsp;dt)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the simulation.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useMotorController(T)" class="member-name-link">useMotorController</a><wbr>(T&nbsp;motorController)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useSimpleDCMotorController()" class="member-name-link">useSimpleDCMotorController</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -216,14 +214,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="requestOutput(org.ironmaple.simulation.motorsims.ControlRequest)">
-<h3>requestOutput</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestOutput</span><wbr><span class="parameters">(<a href="ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a>&nbsp;request)</span></div>
-<div class="block"><h2>Requests an Output for the motor</h2></div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>request</code> - a <a href="ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims"><code>ControlRequest</code></a> instance yielding a requested output</dd>
-</dl>
+<section class="detail" id="useMotorController(T)">
+<h3 id="useMotorController(org.ironmaple.simulation.motorsims.SimulatedMotorController)">useMotorController</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">useMotorController</span><wbr><span class="parameters">(T&nbsp;motorController)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="useSimpleDCMotorController()">
+<h3>useSimpleDCMotorController</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></span>&nbsp;<span class="element-name">useSimpleDCMotorController</span>()</div>
 </section>
 </li>
 <li>
@@ -282,8 +281,8 @@ loadScripts(document, 'script');</script>
 
  <p>The applied voltage is calculated by the motor controller in the previous call to <a href="#update(edu.wpi.first.units.measure.Time)"><code>update(Time)</code></a>
 
- <p>The control request specified by <a href="#requestOutput(org.ironmaple.simulation.motorsims.ControlRequest)"><code>requestOutput(ControlRequest)</code></a> is used to calculate the applied
- voltage.
+ <p>The motor controller specified by <a href="#useMotorController(T)"><code>useMotorController(SimulatedMotorController)</code></a> is used to calculate
+ the applied voltage.
 
  <p>The applied voltage is also restricted for current limit and battery voltage.</div>
 <dl class="notes">
@@ -316,12 +315,6 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the supply current of the motor</dd>
 </dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getRequestedControl()">
-<h3>getRequestedControl</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a></span>&nbsp;<span class="element-name">getRequestedControl</span>()</div>
 </section>
 </li>
 <li>

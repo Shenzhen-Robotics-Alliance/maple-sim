@@ -80,6 +80,9 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block"><h2>Simulation for a Single Swerve Module.</h2>
 
+ <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/swerve-sim-hardware-abstraction/'>Online
+ Documentation</a>
+
  <p>This class provides a simulation for a single swerve module in the <a href="SwerveDriveSimulation.html" title="class in org.ironmaple.simulation.drivesims"><code>SwerveDriveSimulation</code></a>.
 
  <h3>1. Purpose</h3>
@@ -139,27 +142,24 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>final edu.wpi.first.units.measure.Current</code></div>
-<div class="col-second even-row-color"><code><a href="#DRIVE_CURRENT_LIMIT" class="member-name-link">DRIVE_CURRENT_LIMIT</a></code></div>
+<div class="col-first even-row-color"><code>final edu.wpi.first.units.measure.Voltage</code></div>
+<div class="col-second even-row-color"><code><a href="#DRIVE_FRICTION_VOLTAGE" class="member-name-link">DRIVE_FRICTION_VOLTAGE</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final edu.wpi.first.units.measure.Voltage</code></div>
-<div class="col-second odd-row-color"><code><a href="#DRIVE_FRICTION_VOLTAGE" class="member-name-link">DRIVE_FRICTION_VOLTAGE</a></code></div>
+<div class="col-first odd-row-color"><code>final double</code></div>
+<div class="col-second odd-row-color"><code><a href="#DRIVE_GEAR_RATIO" class="member-name-link">DRIVE_GEAR_RATIO</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final double</code></div>
-<div class="col-second even-row-color"><code><a href="#DRIVE_GEAR_RATIO" class="member-name-link">DRIVE_GEAR_RATIO</a></code></div>
+<div class="col-first even-row-color"><code>final <a href="../motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></code></div>
+<div class="col-second even-row-color"><code><a href="#driveMotorConfigs" class="member-name-link">driveMotorConfigs</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final <a href="../motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#driveMotorConfigs" class="member-name-link">driveMotorConfigs</a></code></div>
+<div class="col-first odd-row-color"><code>final double</code></div>
+<div class="col-second odd-row-color"><code><a href="#STEER_GEAR_RATIO" class="member-name-link">STEER_GEAR_RATIO</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final double</code></div>
-<div class="col-second even-row-color"><code><a href="#STEER_GEAR_RATIO" class="member-name-link">STEER_GEAR_RATIO</a></code></div>
+<div class="col-first even-row-color"><code>final edu.wpi.first.units.measure.Distance</code></div>
+<div class="col-second even-row-color"><code><a href="#WHEEL_RADIUS" class="member-name-link">WHEEL_RADIUS</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final edu.wpi.first.units.measure.Distance</code></div>
-<div class="col-second odd-row-color"><code><a href="#WHEEL_RADIUS" class="member-name-link">WHEEL_RADIUS</a></code></div>
+<div class="col-first odd-row-color"><code>final double</code></div>
+<div class="col-second odd-row-color"><code><a href="#WHEELS_COEFFICIENT_OF_FRICTION" class="member-name-link">WHEELS_COEFFICIENT_OF_FRICTION</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final double</code></div>
-<div class="col-second even-row-color"><code><a href="#WHEELS_COEFFICIENT_OF_FRICTION" class="member-name-link">WHEELS_COEFFICIENT_OF_FRICTION</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -171,12 +171,10 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)" class="member-name-link">SwerveModuleSimulation</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)" class="member-name-link">SwerveModuleSimulation</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotorModel,
+ <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotorModel,
  double&nbsp;driveGearRatio,
  double&nbsp;steerGearRatio,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
- edu.wpi.first.units.measure.Current&nbsp;steerCurrentLimit,
  edu.wpi.first.units.measure.Voltage&nbsp;driveFrictionVoltage,
  edu.wpi.first.units.measure.Voltage&nbsp;steerFrictionVoltage,
  edu.wpi.first.units.measure.Distance&nbsp;wheelRadius,
@@ -194,8 +192,8 @@ loadScripts(document, 'script');</script>
 <h2>Method Summary</h2>
 <div id="method-summary-table">
 <div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
-<div id="method-summary-table.tabpanel" role="tabpanel">
-<div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
+<div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
+<div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
@@ -269,9 +267,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGrippingForceNewtons(double)" class="member-name-link">getGrippingForceNewtons</a><wbr>(double&nbsp;gravityForceOnModuleNewtons)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMark4(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getMark4</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMark4(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getMark4</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -279,9 +276,8 @@ loadScripts(document, 'script');</script>
  Swerve Module</a> for simulation</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMark4i(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getMark4i</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMark4i(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getMark4i</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -289,9 +285,8 @@ loadScripts(document, 'script');</script>
  Mark4-i Swerve Module</a> for simulation</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMark4n(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getMark4n</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMark4n(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getMark4n</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -337,9 +332,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Obtains the Speed of the Steer Relative Encoder (Geared).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveX(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveX</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveX(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveX</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -347,9 +341,8 @@ loadScripts(document, 'script');</script>
  for simulation</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveX2(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveX2</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveX2(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveX2</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -357,9 +350,8 @@ loadScripts(document, 'script');</script>
  Module</a> for simulation</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveX2S(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveX2S</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveX2S(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveX2S</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -367,9 +359,8 @@ loadScripts(document, 'script');</script>
  Module</a> for simulation</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveXFlipped(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveXFlipped</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveXFlipped(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveXFlipped</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -377,9 +368,8 @@ loadScripts(document, 'script');</script>
  Swerve Module</a> for simulation</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveXS(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)" class="member-name-link">getSwerveXS</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getSwerveXS(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)" class="member-name-link">getSwerveXS</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -403,22 +393,28 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the theoretical speed that the module can achieve.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requestDriveControl(org.ironmaple.simulation.motorsims.ControlRequest)" class="member-name-link">requestDriveControl</a><wbr>(<a href="../motorsims/ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a>&nbsp;request)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Requests the Driving Motor to Run at a Specified Output.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requestSteerControl(org.ironmaple.simulation.motorsims.ControlRequest)" class="member-name-link">requestSteerControl</a><wbr>(<a href="../motorsims/ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a>&nbsp;request)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Requests the Steering Motor to Run at a Specified Output.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.dyn4j.geometry.Vector2</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateSimulationSubTickGetModuleForce(org.dyn4j.geometry.Vector2,edu.wpi.first.math.geometry.Rotation2d,double)" class="member-name-link">updateSimulationSubTickGetModuleForce</a><wbr>(org.dyn4j.geometry.Vector2&nbsp;moduleCurrentGroundVelocityWorldRelative,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a>&nbsp;robotFacing,
  double&nbsp;gravityForceOnModuleNewtons)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the Simulation for This Module.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useDriveMotorController(T)" class="member-name-link">useDriveMotorController</a><wbr>(T&nbsp;driveMotorController)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the motor controller for the drive motor.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useGenericControllerForSteer()" class="member-name-link">useGenericControllerForSteer</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useGenericMotorControllerForDrive()" class="member-name-link">useGenericMotorControllerForDrive</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useSteerMotorController(T)" class="member-name-link">useSteerMotorController</a><wbr>(T&nbsp;steerMotorController)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Requests the Steering Motor to Run at a Specified Output.</div>
 </div>
 </div>
 </div>
@@ -462,12 +458,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="DRIVE_CURRENT_LIMIT">
-<h3>DRIVE_CURRENT_LIMIT</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Current</span>&nbsp;<span class="element-name">DRIVE_CURRENT_LIMIT</span></div>
-</section>
-</li>
-<li>
 <section class="detail" id="DRIVE_FRICTION_VOLTAGE">
 <h3>DRIVE_FRICTION_VOLTAGE</h3>
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Voltage</span>&nbsp;<span class="element-name">DRIVE_FRICTION_VOLTAGE</span></div>
@@ -488,14 +478,12 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Current,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)">
+<section class="detail" id="&lt;init&gt;(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)">
 <h3>SwerveModuleSimulation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveModuleSimulation</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveModuleSimulation</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotorModel,
+ <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotorModel,
  double&nbsp;driveGearRatio,
  double&nbsp;steerGearRatio,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
- edu.wpi.first.units.measure.Current&nbsp;steerCurrentLimit,
  edu.wpi.first.units.measure.Voltage&nbsp;driveFrictionVoltage,
  edu.wpi.first.units.measure.Voltage&nbsp;steerFrictionVoltage,
  edu.wpi.first.units.measure.Distance&nbsp;wheelRadius,
@@ -507,12 +495,10 @@ loadScripts(document, 'script');</script>
  call the method before constructing any swerve module simulations using this constructor.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>driveMotor</code> - the model of the driving motor</dd>
-<dd><code>steerMotor</code> - the model of the steering motor</dd>
+<dd><code>driveMotorModel</code> - the model of the driving motor</dd>
+<dd><code>steerMotorModel</code> - ; the model of the steering motor</dd>
 <dd><code>driveGearRatio</code> - the gear ratio for the driving motor, >1 is reduction</dd>
 <dd><code>steerGearRatio</code> - the gear ratio for the steering motor, >1 is reduction</dd>
-<dd><code>driveCurrentLimit</code> - the stator current limit for the driving motor</dd>
-<dd><code>steerCurrentLimit</code> - the stator current limit for the steering motor</dd>
 <dd><code>driveFrictionVoltage</code> - the measured minimum amount of voltage that can turn the driving rotter</dd>
 <dd><code>steerFrictionVoltage</code> - the measured minimum amount of voltage that can turn the steering rotter</dd>
 <dd><code>wheelRadius</code> - the radius of the wheels.</dd>
@@ -543,35 +529,41 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="requestDriveControl(org.ironmaple.simulation.motorsims.ControlRequest)">
-<h3>requestDriveControl</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestDriveControl</span><wbr><span class="parameters">(<a href="../motorsims/ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a>&nbsp;request)</span></div>
-<div class="block"><h2>Requests the Driving Motor to Run at a Specified Output.</h2>
+<section class="detail" id="useDriveMotorController(T)">
+<h3 id="useDriveMotorController(org.ironmaple.simulation.motorsims.SimulatedMotorController)">useDriveMotorController</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">useDriveMotorController</span><wbr><span class="parameters">(T&nbsp;driveMotorController)</span></div>
+<div class="block"><h2>Sets the motor controller for the drive motor.</h2>
 
- <p>Think of it as the <code>requestOutput()</code> of your physical driving motor.</div>
+ <p>The configured controller runs control loop on the motor.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>request</code> - the control request to apply</dd>
+<dd><code>driveMotorController</code> - the motor controller to control the drive motor</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="requestSteerControl(org.ironmaple.simulation.motorsims.ControlRequest)">
-<h3>requestSteerControl</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestSteerControl</span><wbr><span class="parameters">(<a href="../motorsims/ControlRequest.html" title="interface in org.ironmaple.simulation.motorsims">ControlRequest</a>&nbsp;request)</span></div>
+<section class="detail" id="useGenericMotorControllerForDrive()">
+<h3>useGenericMotorControllerForDrive</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></span>&nbsp;<span class="element-name">useGenericMotorControllerForDrive</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="useSteerMotorController(T)">
+<h3 id="useSteerMotorController(org.ironmaple.simulation.motorsims.SimulatedMotorController)">useSteerMotorController</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">useSteerMotorController</span><wbr><span class="parameters">(T&nbsp;steerMotorController)</span></div>
 <div class="block"><h2>Requests the Steering Motor to Run at a Specified Output.</h2>
 
  <p>Think of it as the <code>requestOutput()</code> of your physical steering motor.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>request</code> - the control request to apply</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list-long">
-<li><a href="../motorsims/MapleMotorSim.html#requestOutput(org.ironmaple.simulation.motorsims.ControlRequest)"><code>MapleMotorSim.requestOutput(ControlRequest)</code></a></li>
-</ul>
-</dd>
+<dd><code>steerMotorController</code> - the motor controller to control the steer motor</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="useGenericControllerForSteer()">
+<h3>useGenericControllerForSteer</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></span>&nbsp;<span class="element-name">useGenericControllerForSteer</span>()</div>
 </section>
 </li>
 <li>
@@ -914,11 +906,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getMark4(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getMark4(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getMark4</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getMark4</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module">SDS Mark4
@@ -926,11 +917,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getMark4i(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getMark4i(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getMark4i</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getMark4i</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4i-swerve-module">SDS
@@ -938,11 +928,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getMark4n(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getMark4n(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getMark4n</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getMark4n</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://www.swervedrivespecialties.com/products/mk4n-swerve-module">SDS Mark4-n Swerve
@@ -950,11 +939,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getSwerveX(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getSwerveX(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getSwerveX</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getSwerveX</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x">WCP SwerveX Swerve Module</a>
@@ -966,11 +954,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getSwerveXFlipped(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getSwerveXFlipped(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getSwerveXFlipped</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getSwerveXFlipped</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x-flipped">WCP SwerveX Flipped
@@ -982,11 +969,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getSwerveXS(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getSwerveXS(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getSwerveXS</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getSwerveXS</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-xs">WCP SwerveXS Swerve
@@ -997,11 +983,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getSwerveX2(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getSwerveX2(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getSwerveX2</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getSwerveX2</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2">WCP SwerveX2 Swerve
@@ -1014,11 +999,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getSwerveX2S(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.units.measure.Current,double,int)">
+<section class="detail" id="getSwerveX2S(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,int)">
 <h3>getSwerveX2S</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;</span>&nbsp;<span class="element-name">getSwerveX2S</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotor,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotor,
- edu.wpi.first.units.measure.Current&nbsp;driveCurrentLimit,
  double&nbsp;wheelCOF,
  int&nbsp;gearRatioLevel)</span></div>
 <div class="block">creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2-s">WCP SwerveX2S Swerve

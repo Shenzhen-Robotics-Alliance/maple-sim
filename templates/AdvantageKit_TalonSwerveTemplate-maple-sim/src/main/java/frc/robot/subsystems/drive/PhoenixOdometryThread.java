@@ -59,7 +59,7 @@ public class PhoenixOdometryThread extends Thread {
 
     @Override
     public void start() {
-        if (timestampQueues.size() > 0) {
+        if (!timestampQueues.isEmpty()) {
             super.start();
         }
     }

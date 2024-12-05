@@ -50,12 +50,14 @@ import java.util.Queue;
  * <p>Device configuration and other behaviors not exposed by TunerConstants can be customized here.
  */
 public class ModuleIOTalonFX implements ModuleIO {
+    // TODO: use ModuleHardware to store the hardware
+
     private final SwerveModuleConstants constants;
 
     // Hardware objects
-    private final TalonFX driveTalon;
-    private final TalonFX turnTalon;
-    private final CANcoder cancoder;
+    protected final TalonFX driveTalon;
+    protected final TalonFX turnTalon;
+    protected final CANcoder cancoder;
 
     // Voltage control requests
     private final VoltageOut voltageRequest = new VoltageOut(0);
@@ -91,6 +93,10 @@ public class ModuleIOTalonFX implements ModuleIO {
     private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
     public ModuleIOTalonFX(SwerveModuleConstants constants) {
+        this(constants, true);
+    }
+
+    protected ModuleIOTalonFX(SwerveModuleConstants constants, boolean isReal) {
         this.constants = constants;
         driveTalon = new TalonFX(constants.DriveMotorId, TunerConstants.DrivetrainConstants.CANBusName);
         turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);

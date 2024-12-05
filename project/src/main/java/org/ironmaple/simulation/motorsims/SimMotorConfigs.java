@@ -3,12 +3,9 @@ package org.ironmaple.simulation.motorsims;
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.*;
 import edu.wpi.first.units.measure.*;
-import org.ironmaple.simulation.SimulatedArena;
 
 /**
  *

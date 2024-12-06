@@ -1,7 +1,9 @@
 package frc.robot.subsystems.drive;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+
 import edu.wpi.first.math.util.Units;
-import frc.robot.util.CTREMotorSimUtil;
+import frc.robot.util.PhoenixUtil;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
 
 public class GyroIOSim implements GyroIO {
@@ -16,9 +18,9 @@ public class GyroIOSim implements GyroIO {
         inputs.connected = true;
         inputs.yawPosition = gyroSimulation.getGyroReading();
         inputs.yawVelocityRadPerSec = Units.degreesToRadians(
-                gyroSimulation.getMeasuredAngularVelocity().in(edu.wpi.first.units.Units.RadiansPerSecond));
+                gyroSimulation.getMeasuredAngularVelocity().in(RadiansPerSecond));
 
-        inputs.odometryYawTimestamps = CTREMotorSimUtil.getSimulationOdometryTimeStamps();
+        inputs.odometryYawTimestamps = PhoenixUtil.getSimulationOdometryTimeStamps();
         inputs.odometryYawPositions = gyroSimulation.getCachedGyroReadings();
     }
 }

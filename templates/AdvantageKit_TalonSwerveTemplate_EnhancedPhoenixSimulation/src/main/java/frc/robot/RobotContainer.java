@@ -156,7 +156,16 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
+    public void resetSimulationField() {
+        if (Constants.currentMode != Constants.Mode.SIM) return;
+
+        driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().resetFieldForAuto();
+    }
+
     public void displaySimFieldToAdvantageScope() {
+        if (Constants.currentMode != Constants.Mode.SIM) return;
+
         Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
         Logger.recordOutput(
                 "FieldSimulation/Notes",

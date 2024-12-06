@@ -203,14 +203,4 @@ public class TunerConstants {
             kInvertRightSide,
             kBackRightSteerMotorInverted,
             kBackRightCANcoderInverted);
-
-    // /**
-    //  * Creates a CommandSwerveDrivetrain instance.
-    //  * This should only be called once in your robot program,.
-    //  */
-    // public static CommandSwerveDrivetrain createDrivetrain() {
-    //     return new CommandSwerveDrivetrain(
-    //         DrivetrainConstants, FrontLeft, FrontRight, BackLeft, BackRight
-    //     );
-    // }
 }

@@ -17,7 +17,6 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.util.CTREMotorSimUtil;
 import java.util.Arrays;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
@@ -35,9 +34,10 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
         this.simulation = simulation;
         simulation.useDriveMotorController(
                 new CTREMotorSimUtil.TalonFXMotorControllerSim(driveTalon, constants.DriveMotorInverted));
+
         simulation.useSteerMotorController(new CTREMotorSimUtil.TalonFXMotorControllerWithRemoteCancoderSim(
-                driveTalon,
-                constants.DriveMotorInverted,
+                turnTalon,
+                constants.SteerMotorInverted,
                 cancoder,
                 constants.CANcoderInverted,
                 Rotations.of(constants.CANcoderOffset)));
@@ -50,12 +50,10 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
         // Update odometry inputs
         inputs.odometryTimestamps = CTREMotorSimUtil.getSimulationOdometryTimeStamps();
 
-        inputs.odometryDrivePositionsRad = Arrays.stream(simulation.getCachedDriveEncoderUnGearedPositions())
+        inputs.odometryDrivePositionsRad = Arrays.stream(simulation.getCachedDriveWheelFinalPositions())
                 .mapToDouble(angle -> angle.in(Radians))
                 .toArray();
 
-        inputs.odometryTurnPositions = Arrays.stream(simulation.getCachedSteerRelativeEncoderPositions())
-                .map(Rotation2d::new)
-                .toArray(Rotation2d[]::new);
+        inputs.odometryTurnPositions = simulation.getCachedSteerAbsolutePositions();
     }
 }

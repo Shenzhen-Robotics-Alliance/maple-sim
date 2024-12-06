@@ -504,9 +504,7 @@ public class SwerveModuleSimulation {
                 getDriveEncoderUnGearedPosition(),
                 getDriveEncoderUnGearedSpeed());
 
-        driveMotorAppliedVoltage = Volts.of(MathUtil.clamp(
-                driveMotorAppliedVoltage.in(Volts),
-                -12, 12));
+        driveMotorAppliedVoltage = Volts.of(MathUtil.clamp(driveMotorAppliedVoltage.in(Volts), -12, 12));
 
         driveMotorAppliedVoltage = Volts.of(
                 MathUtil.applyDeadband(driveMotorAppliedVoltage.in(Volts), DRIVE_FRICTION_VOLTAGE.in(Volts), 12));

@@ -52,6 +52,10 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.ironmaple.simulation.drivesims.GyroSimulation;
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -82,6 +86,21 @@ public class Drive extends SubsystemBase {
                     TunerConstants.FrontLeft.SlipCurrent,
                     1),
             getModuleTranslations());
+
+    public static final DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
+            .withRobotMass(Kilograms.of(ROBOT_MASS_KG))
+            .withCustomModuleTranslations(getModuleTranslations())
+            .withGyro(GyroSimulation.getPigeon2())
+            .withSwerveModule(() -> new SwerveModuleSimulation(
+                    DCMotor.getKrakenX60(1),
+                    DCMotor.getFalcon500(1),
+                    TunerConstants.FrontLeft.DriveMotorGearRatio,
+                    TunerConstants.FrontLeft.SteerMotorGearRatio,
+                    Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
+                    Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
+                    Meters.of(TunerConstants.FrontLeft.WheelRadius),
+                    KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
+                    WHEEL_COF));
 
     static final Lock odometryLock = new ReentrantLock();
     private final GyroIO gyroIO;

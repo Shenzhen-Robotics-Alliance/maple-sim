@@ -18,6 +18,7 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.generated.TunerConstants;
 import frc.robot.util.PhoenixUtil;
 import java.util.Arrays;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
@@ -47,8 +48,12 @@ public class ModuleIOSim implements ModuleIO {
 
     public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
         this.moduleSimulation = moduleSimulation;
-        this.driveMotor = moduleSimulation.useGenericMotorControllerForDrive();
-        this.turnMotor = moduleSimulation.useGenericControllerForSteer();
+        this.driveMotor = moduleSimulation
+                .useGenericMotorControllerForDrive()
+                .withCurrentLimit(Amps.of(TunerConstants.FrontLeft.SlipCurrent));
+        this.turnMotor = moduleSimulation
+                .useGenericControllerForSteer()
+                .withCurrentLimit(Amps.of(20));
 
         this.driveController = new PIDController(0.05, 0.0, 0.0);
         this.turnController = new PIDController(8.0, 0.0, 0.0);
@@ -85,7 +90,7 @@ public class ModuleIOSim implements ModuleIO {
                 moduleSimulation.getDriveWheelFinalSpeed().in(RadiansPerSecond);
         inputs.driveAppliedVolts = driveAppliedVolts;
         inputs.driveCurrentAmps =
-                Math.abs(moduleSimulation.getDriveMotorSupplyCurrent().in(Amps));
+                Math.abs(moduleSimulation.getDriveMotorStatorCurrent().in(Amps));
 
         // Update turn inputs
         inputs.turnConnected = true;
@@ -96,7 +101,7 @@ public class ModuleIOSim implements ModuleIO {
                 moduleSimulation.getSteerAbsoluteEncoderSpeed().in(RadiansPerSecond);
         inputs.turnAppliedVolts = turnAppliedVolts;
         inputs.turnCurrentAmps =
-                Math.abs(moduleSimulation.getSteerMotorSupplyCurrent().in(Amps));
+                Math.abs(moduleSimulation.getSteerMotorStatorCurrent().in(Amps));
 
         // Update odometry inputs (50Hz because high-frequency odometry in sim doesn't matter)
         inputs.odometryTimestamps = PhoenixUtil.getSimulationOdometryTimeStamps();

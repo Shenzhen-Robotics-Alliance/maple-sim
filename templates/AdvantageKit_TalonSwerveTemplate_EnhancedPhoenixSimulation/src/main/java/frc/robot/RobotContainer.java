@@ -69,19 +69,8 @@ public class RobotContainer {
 
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
-                final DriveTrainSimulationConfig config = DriveTrainSimulationConfig.Default()
-                        .withGyro(GyroSimulation.getPigeon2())
-                        .withSwerveModule(() -> new SwerveModuleSimulation(
-                                DCMotor.getKrakenX60(1),
-                                DCMotor.getFalcon500(1),
-                                TunerConstants.FrontLeft.DriveMotorGearRatio,
-                                TunerConstants.FrontLeft.SteerMotorGearRatio,
-                                Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
-                                Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
-                                Inches.of(2),
-                                KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
-                                1.2));
-                driveSimulation = new SwerveDriveSimulation(config, new Pose2d(3, 3, new Rotation2d()));
+
+                driveSimulation = new SwerveDriveSimulation(Drive.mapleSimConfig, new Pose2d(3, 3, new Rotation2d()));
                 SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
                 drive = new Drive(
                         new GyroIOSim(driveSimulation.getGyroSimulation()),
@@ -138,7 +127,7 @@ public class RobotContainer {
         // Switch to X pattern when X button is pressed
         controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
-        // Reset gyro to 0° when B button is pressed
+        // Reset gyro / odometry
         final Runnable resetGyro = Constants.currentMode == Constants.Mode.SIM
                 ? () -> drive.setPose(
                         driveSimulation

@@ -17,7 +17,7 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import frc.robot.util.CTREMotorSimUtil;
+import frc.robot.util.PhoenixUtil;
 import java.util.Arrays;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 
@@ -33,9 +33,9 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
 
         this.simulation = simulation;
         simulation.useDriveMotorController(
-                new CTREMotorSimUtil.TalonFXMotorControllerSim(driveTalon, constants.DriveMotorInverted));
+                new PhoenixUtil.TalonFXMotorControllerSim(driveTalon, constants.DriveMotorInverted));
 
-        simulation.useSteerMotorController(new CTREMotorSimUtil.TalonFXMotorControllerWithRemoteCancoderSim(
+        simulation.useSteerMotorController(new PhoenixUtil.TalonFXMotorControllerWithRemoteCancoderSim(
                 turnTalon,
                 constants.SteerMotorInverted,
                 cancoder,
@@ -48,7 +48,7 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
         super.updateInputs(inputs);
 
         // Update odometry inputs
-        inputs.odometryTimestamps = CTREMotorSimUtil.getSimulationOdometryTimeStamps();
+        inputs.odometryTimestamps = PhoenixUtil.getSimulationOdometryTimeStamps();
 
         inputs.odometryDrivePositionsRad = Arrays.stream(simulation.getCachedDriveWheelFinalPositions())
                 .mapToDouble(angle -> angle.in(Radians))

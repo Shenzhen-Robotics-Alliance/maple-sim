@@ -49,13 +49,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.ironmaple.simulation.drivesims.GyroSimulation;
+import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Drive extends SubsystemBase {
+public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     // TunerConstants doesn't include these constants, so they are declared locally
     static final double ODOMETRY_FREQUENCY =
             new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -82,6 +87,21 @@ public class Drive extends SubsystemBase {
                     TunerConstants.FrontLeft.SlipCurrent,
                     1),
             getModuleTranslations());
+
+    public static final DriveTrainSimulationConfig mapleSimConfig = DriveTrainSimulationConfig.Default()
+            .withRobotMass(Kilograms.of(ROBOT_MASS_KG))
+            .withCustomModuleTranslations(getModuleTranslations())
+            .withGyro(GyroSimulation.getPigeon2())
+            .withSwerveModule(() -> new SwerveModuleSimulation(
+                    DCMotor.getKrakenX60(1),
+                    DCMotor.getFalcon500(1),
+                    TunerConstants.FrontLeft.DriveMotorGearRatio,
+                    TunerConstants.FrontLeft.SteerMotorGearRatio,
+                    Volts.of(TunerConstants.FrontLeft.DriveFrictionVoltage),
+                    Volts.of(TunerConstants.FrontLeft.SteerFrictionVoltage),
+                    Inches.of(2),
+                    KilogramSquareMeters.of(TunerConstants.FrontLeft.SteerInertia),
+                    WHEEL_COF));
 
     static final Lock odometryLock = new ReentrantLock();
     private final GyroIO gyroIO;
@@ -119,7 +139,7 @@ public class Drive extends SubsystemBase {
         // Configure AutoBuilder for PathPlanner
         AutoBuilder.configure(
                 this::getPose,
-                this::setPose,
+                this::resetOdometry,
                 this::getChassisSpeeds,
                 this::runVelocity,
                 new PPHolonomicDriveController(new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
@@ -311,13 +331,13 @@ public class Drive extends SubsystemBase {
     }
 
     /** Resets the current odometry pose. */
-    public void setPose(Pose2d pose) {
+    public void resetOdometry(Pose2d pose) {
         poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
     }
 
     /** Adds a new timestamped vision measurement. */
-    public void addVisionMeasurement(
-            Pose2d visionRobotPoseMeters, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs) {
+    @Override
+    public void accept(Pose2d visionRobotPoseMeters, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs) {
         poseEstimator.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }
 

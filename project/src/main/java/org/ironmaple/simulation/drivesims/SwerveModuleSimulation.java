@@ -884,4 +884,34 @@ public class SwerveModuleSimulation {
                 KilogramSquareMeters.of(0.03),
                 wheelCOF);
     }
+
+    /**
+     * Creates a <a href="https://www.revrobotics.com/rev-21-3005/">REV MAXSwerve swerve module</a> for simulation
+     *
+     * <p>Base Kit ratios are gearRatioLevel 1-3<br>
+     * Gear Ratio Upgrade Kit ratios are gearRatioLevel 4-8
+     */
+    public static Supplier<SwerveModuleSimulation> getMAXSwerve(
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+        return () -> new SwerveModuleSimulation(
+                driveMotor,
+                steerMotor,
+                switch (gearRatioLevel) {
+                    case 1 -> 5.5;
+                    case 2 -> 5.08;
+                    case 3 -> 4.71;
+                    case 4 -> 4.50;
+                    case 5 -> 4.29;
+                    case 6 -> 4;
+                    case 7 -> 3.75;
+                    case 8 -> 3.56;
+                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                },
+                9424 / 203,
+                Volts.of(0.1),
+                Volts.of(0.1),
+                Inches.of(1.5),
+                KilogramSquareMeters.of(0.2),
+                wheelCOF);
+    }
 }

@@ -911,7 +911,33 @@ public class SwerveModuleSimulation {
                 Volts.of(0.1),
                 Volts.of(0.1),
                 Inches.of(1.5),
-                KilogramSquareMeters.of(0.2),
+                KilogramSquareMeters.of(0.02),
+                wheelCOF);
+    }
+
+    /**
+     * Creates a <a href="https://www.thethriftybot.com/products/thrifty-swerve">TTB Thrifty Swerve swerve module</a>
+     * for simulation
+     */
+    public static Supplier<SwerveModuleSimulation> getThriftySwerve(
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+        return () -> new SwerveModuleSimulation(
+                driveMotor,
+                steerMotor,
+                switch (gearRatioLevel) {
+                    case 1 -> 6.75;
+                    case 2 -> 6.23;
+                    case 3 -> 5.79;
+                    case 4 -> 6;
+                    case 5 -> 5.54;
+                    case 6 -> 5.14;
+                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                },
+                25,
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
                 wheelCOF);
     }
 }

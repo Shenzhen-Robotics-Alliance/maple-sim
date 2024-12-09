@@ -11,11 +11,24 @@ import edu.wpi.first.units.measure.*;
  *
  * <p>This record holds the final angular position and velocity of the motor. It is used to track the motor's state
  * during each simulation step.
- *
- * @param finalAngularPosition the final angular position of the motor, in radians
- * @param finalAngularVelocity the final angular velocity of the motor, in radians per second
  */
-public record SimMotorState(Angle finalAngularPosition, AngularVelocity finalAngularVelocity) {
+public class SimMotorState {
+    public Angle mechanismAngularPosition;
+    public AngularVelocity mechanismAngularVelocity;
+
+    /**
+     *
+     *
+     * <h2>Constructs a new sim motor state with initial angle and velocity</h2>
+     *
+     * @param mechanismAngularPosition the final angular position of the motor, in radians
+     * @param mechanismAngularVelocity the final angular velocity of the motor, in radians per second
+     */
+    public SimMotorState(Angle mechanismAngularPosition, AngularVelocity mechanismAngularVelocity) {
+        this.mechanismAngularPosition = mechanismAngularPosition;
+        this.mechanismAngularVelocity = mechanismAngularVelocity;
+    }
+
     /**
      *
      *
@@ -38,13 +51,11 @@ public record SimMotorState(Angle finalAngularPosition, AngularVelocity finalAng
      * @param finalFrictionTorque the final frictional torque, in Newton-meters
      * @param loadMOI the moment of inertia of the load, in kilogram square meters
      * @param dt the time step for the simulation, in seconds
-     * @return a new {@link SimMotorState} instance with the updated angular position and velocity
      */
-    public SimMotorState step(
-            Torque finalElectricTorque, Torque finalFrictionTorque, MomentOfInertia loadMOI, Time dt) {
+    public void step(Torque finalElectricTorque, Torque finalFrictionTorque, MomentOfInertia loadMOI, Time dt) {
         // Step 0: Convert all units to SI units (radians, radians per second, Newton-meters, seconds, kg*m²)
-        double currentAngularPositionRadians = finalAngularPosition.in(Radians);
-        double currentAngularVelocityRadiansPerSecond = finalAngularVelocity.in(RadiansPerSecond);
+        double currentAngularPositionRadians = mechanismAngularPosition.in(Radians);
+        double currentAngularVelocityRadiansPerSecond = mechanismAngularVelocity.in(RadiansPerSecond);
         final double electricTorqueNewtonsMeters = finalElectricTorque.in(NewtonMeters);
         final double frictionTorqueNewtonsMeters = finalFrictionTorque.in(NewtonMeters);
         final double loadMOIKgMetersSquared = loadMOI.in(KilogramSquareMeters);
@@ -78,7 +89,7 @@ public record SimMotorState(Angle finalAngularPosition, AngularVelocity finalAng
         currentAngularPositionRadians += currentAngularVelocityRadiansPerSecond * dtSeconds;
 
         // Return a new instance with the updated angular position and velocity
-        return new SimMotorState(
-                Radians.of(currentAngularPositionRadians), RadiansPerSecond.of(currentAngularVelocityRadiansPerSecond));
+        this.mechanismAngularPosition = Radians.of(currentAngularPositionRadians);
+        this.mechanismAngularVelocity = RadiansPerSecond.of(currentAngularVelocityRadiansPerSecond);
     }
 }

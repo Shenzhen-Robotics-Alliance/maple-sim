@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj.Timer;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
-import org.littletonrobotics.junction.Logger;
 
 public final class PhoenixUtil {
     /** Attempts to run the command until no error is produced. */
@@ -93,13 +92,7 @@ public final class PhoenixUtil {
             remoteCancoderSimState.setRawPosition(mechanismAngle.minus(encoderOffset));
             remoteCancoderSimState.setVelocity(mechanismVelocity);
 
-            Logger.recordOutput("CTREMotor/" + id + "/mechanismAngleRad", mechanismAngle.in(Radians));
-            Logger.recordOutput("CTREMotor/" + id + "/mechanismVelDegPerRad", mechanismVelocity.in(RadiansPerSecond));
-            final Voltage output =
-                    super.updateControlSignal(mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity);
-            Logger.recordOutput("CTREMotor/" + id + "/outputVoltage", output.in(Volts));
-
-            return output;
+            return super.updateControlSignal(mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity);
         }
     }
 

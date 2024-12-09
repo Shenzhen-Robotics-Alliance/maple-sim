@@ -53,16 +53,16 @@ public class MapleMotorSim {
      */
     public void update(Time dt) {
         this.appliedVoltage = controller.updateControlSignal(
-                state.finalAngularPosition(),
-                state.finalAngularVelocity(),
-                state.finalAngularPosition().times(configs.gearing),
-                state.finalAngularVelocity().times(configs.gearing));
-        this.statorCurrent = configs.calculateCurrent(state.finalAngularVelocity(), appliedVoltage);
-        this.state = this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
+                state.mechanismAngularPosition,
+                state.mechanismAngularVelocity,
+                state.mechanismAngularPosition.times(configs.gearing),
+                state.mechanismAngularVelocity.times(configs.gearing));
+        this.statorCurrent = configs.calculateCurrent(state.mechanismAngularVelocity, appliedVoltage);
+        this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
 
-        if (state.finalAngularPosition().lte(configs.reverseHardwareLimit))
+        if (state.mechanismAngularPosition.lte(configs.reverseHardwareLimit))
             state = new SimMotorState(configs.reverseHardwareLimit, RadiansPerSecond.zero());
-        else if (state.finalAngularPosition().gte(configs.forwardHardwareLimit))
+        else if (state.mechanismAngularPosition.gte(configs.forwardHardwareLimit))
             state = new SimMotorState(configs.forwardHardwareLimit, RadiansPerSecond.zero());
     }
 
@@ -85,7 +85,7 @@ public class MapleMotorSim {
      * @return the angular position of the motor, continuous
      */
     public Angle getAngularPosition() {
-        return state.finalAngularPosition();
+        return state.mechanismAngularPosition;
     }
 
     /**
@@ -109,7 +109,7 @@ public class MapleMotorSim {
      * @return the final angular velocity of the rotter
      */
     public AngularVelocity getVelocity() {
-        return state.finalAngularVelocity();
+        return state.mechanismAngularVelocity;
     }
 
     /**

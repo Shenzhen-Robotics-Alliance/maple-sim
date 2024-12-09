@@ -508,11 +508,9 @@ public class SwerveModuleSimulation {
 
         driveMotorAppliedVoltage = Volts.of(
                 MathUtil.applyDeadband(driveMotorAppliedVoltage.in(Volts), DRIVE_FRICTION_VOLTAGE.in(Volts), 12));
-        final SimMotorState state = new SimMotorState(driveWheelFinalPosition, driveWheelFinalSpeed);
 
         /* calculate the stator current */
-        driveMotorStatorCurrent =
-                driveMotorConfigs.calculateCurrent(state.finalAngularVelocity(), driveMotorAppliedVoltage);
+        driveMotorStatorCurrent = driveMotorConfigs.calculateCurrent(driveWheelFinalSpeed, driveMotorAppliedVoltage);
 
         /* calculate the torque generated */
         return driveMotorConfigs.calculateTorque(driveMotorStatorCurrent).in(NewtonMeters);

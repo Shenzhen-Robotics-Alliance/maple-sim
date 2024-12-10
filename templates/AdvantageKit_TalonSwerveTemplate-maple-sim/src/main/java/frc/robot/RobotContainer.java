@@ -21,7 +21,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,10 +32,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.drive.*;
 import frc.robot.subsystems.vision.*;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -86,7 +82,7 @@ public class RobotContainer {
                         new ModuleIOSim(driveSimulation.getModules()[3]));
 
                 vision = new Vision(
-                        drive,
+                        (pose, time, std_dev) -> {},
                         new VisionIOPhotonVisionSim(
                                 camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                         new VisionIOPhotonVisionSim(
@@ -141,7 +137,7 @@ public class RobotContainer {
         final Runnable resetOdometry = Constants.currentMode == Constants.Mode.SIM
                 ? () -> drive.resetOdometry(driveSimulation.getSimulatedDriveTrainPose())
                 : () -> drive.resetOdometry(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
-        controller.b().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
+        controller.start().onTrue(Commands.runOnce(resetOdometry).ignoringDisable(true));
     }
 
     /**

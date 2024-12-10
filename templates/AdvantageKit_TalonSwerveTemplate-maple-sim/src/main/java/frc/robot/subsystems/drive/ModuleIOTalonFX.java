@@ -100,7 +100,6 @@ public class ModuleIOTalonFX implements ModuleIO {
         var driveConfig = constants.DriveMotorInitialConfigs;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.Slot0 = constants.DriveMotorGains;
-        driveConfig.Feedback.SensorToMechanismRatio = constants.DriveMotorGearRatio;
         driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = constants.SlipCurrent;
         driveConfig.TorqueCurrent.PeakReverseTorqueCurrent = -constants.SlipCurrent;
         driveConfig.CurrentLimits.StatorCurrentLimit = constants.SlipCurrent;
@@ -180,8 +179,10 @@ public class ModuleIOTalonFX implements ModuleIO {
 
         // Update drive inputs
         inputs.driveConnected = driveConnectedDebounce.calculate(driveStatus.isOK());
-        inputs.drivePositionRad = Units.rotationsToRadians(drivePosition.getValueAsDouble());
-        inputs.driveVelocityRadPerSec = Units.rotationsToRadians(driveVelocity.getValueAsDouble());
+        inputs.drivePositionRad =
+                Units.rotationsToRadians(drivePosition.getValueAsDouble()) / constants.DriveMotorGearRatio;
+        inputs.driveVelocityRadPerSec =
+                Units.rotationsToRadians(driveVelocity.getValueAsDouble()) / constants.DriveMotorGearRatio;
         inputs.driveAppliedVolts = driveAppliedVolts.getValueAsDouble();
         inputs.driveCurrentAmps = driveCurrent.getValueAsDouble();
 
@@ -226,12 +227,13 @@ public class ModuleIOTalonFX implements ModuleIO {
     }
 
     @Override
-    public void setDriveVelocity(double velocityRadPerSec) {
-        double velocityRotPerSec = Units.radiansToRotations(velocityRadPerSec);
+    public void setDriveVelocity(double wheelVelocityRadPerSec) {
+        double motorVelocityRotPerSec =
+                Units.radiansToRotations(wheelVelocityRadPerSec) * constants.DriveMotorGearRatio;
         driveTalon.setControl(
                 switch (constants.DriveMotorClosedLoopOutput) {
-                    case Voltage -> velocityVoltageRequest.withVelocity(velocityRotPerSec);
-                    case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(velocityRotPerSec);
+                    case Voltage -> velocityVoltageRequest.withVelocity(motorVelocityRotPerSec);
+                    case TorqueCurrentFOC -> velocityTorqueCurrentRequest.withVelocity(motorVelocityRotPerSec);
                 });
     }
 

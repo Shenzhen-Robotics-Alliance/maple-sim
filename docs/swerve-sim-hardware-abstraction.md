@@ -94,8 +94,8 @@ public class GyroIOSim implements GyroIO {
     }
     
     @Override // specified by GroIOSim interface
-    public double getGyroAngularVelocity() {
-        return this.gyroSimulation.getMeasuredAngularVelocityRadPerSec();
+    public AngularVelocity getGyroAngularVelocity() {
+        return this.gyroSimulation.getMeasuredAngularVelocity();
     }
 }
 ```
@@ -109,71 +109,39 @@ An example of implementing the Gyro interface in an AdvantageKit environment can
 
 Similar to the gyro, you also need to create hardware abstractions for the swerve modules.
 
-To implement `ModuleIO` using the simulator, use the following API references in `ModuleIOSim`:
+To implement `ModuleIO` using the simulator, we need to obtain the reference to the simulated motor controller of the motors, and use the following API references in `ModuleIOSim`:
 
 ```java
 // This is only an example simulation IO implement, please change the code according to your ModuleIO interface
 public class ModuleIOSim implements ModuleIO {
+    // reference to module simulation
     private final SwerveModuleSimulation moduleSimulation;
+    // reference to the simulated drive motor
+    private final SimulatedMotorController.GenericMotorController driveMotor;
+    // reference to the simulated turn motor
+    private final SimulatedMotorController.GenericMotorController turnMotor;
+
     public ModuleIOSim(SwerveModuleSimulation moduleSimulation) {
         this.moduleSimulation = moduleSimulation;
 
-        // configures the drive motor gains
-        this.moduleSimulation.getDriveMotorConfigs()
-            // configures a default feed-forward gains for the drive motor, with 0.1 volts of friction compensation
-            .withDefaultFeedForward(Volts.of(0.1))
-            // configures a velocity-voltage close loop controller
-            .withVelocityVoltageController(
-                // P gain is 12 volts / 3000 RPM (change it for your code)
-                // Meaning that: the correction voltage is 12 volts when error is 3000RPM
-                Volts.per(RPM).ofNative(12.0/3000.0), 
-                // true means the P gain is specified in un-geared motor speed
-                true
-            );
-        
-        // configures the steer motor gains
-        this.moduleSimulation.getSteerMotorConfigs()
-            // configures a position-current close loop controller
-            .withPositionCurrentController(
-                // P gain is 12 amps / 60 degrees
-                // Meaning that: the correction current is 20 amps when the steer position error is 60 degrees
-                Amps.per(Degrees).ofNative(10.0/60.0), 
-                // D gain is zero
-                Amps.per(DegreesPerSecond).ofNative(0),
-                // false means the P and D gain are specifed in final mechanism position/velocity
-                false
-            );
+        // configures a generic motor controller for drive motor
+        // set a current limit of 60 amps
+        this.driveMotor = moduleSimulation
+                .useGenericMotorControllerForDrive()
+                .withCurrentLimit(Amps.of(60));
+        this.turnMotor = moduleSimulation
+                .useGenericControllerForSteer()
+                .withCurrentLimit(Amps.of(20));
     }
     
     @Override // specified by ModuleIO interface
     public void setDriveOutputVoltage(Voltage voltage) {
-        this.moduleSimulation.requestDriveControl(new ControlRequest.VoltageOut(voltage));
+        this.driveMotor.requestVoltage(voltage);
     }
 
     @Override // specified by ModuleIO interface
     public void setSteerOutputVoltage(Voltage voltage) {
-        this.moduleSimulation.requestSteerControl(new ControlRequest.VoltageOut(voltage));
-    }
-
-    @Override // specified by ModuleIO interface
-    public void requestDriveVelocity(LinearVelocity driveVelocitySetpoint) {
-        // calculates the amount of wheel speed needed to achive the linear speed
-        final AngularVelocity wheelVelocitySetpoint = RadiansPerSecond.of(
-            driveVelocitySetpoint.in(MetersPerSecond) / moduleSimulation.WHEEL_RADIUS.in(Meters)
-        );
-
-        // request the drive motor controller to run a closed-loop on velocity
-        moduleSimulation.requestDriveControl(
-            new ControlRequest.VelocityVoltage(wheelVelocitySetpoint)
-        );
-    }
-
-    @Override // specified by ModuleIO interface
-    public void requestSteerPosition(Rotation2d steerFacingSetpoint) {
-        // request the steer motor controller to run a close
-        moduleSimulation.requestSteerControl(
-            new ControlRequest.PositionCurrent(steerFacingSetpoint.getMeasure())
-        );
+        this.turnMotor.requestVoltage(voltage);
     }
     
     @Override // specified by ModuleIO interface

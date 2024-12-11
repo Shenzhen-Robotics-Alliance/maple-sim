@@ -30,7 +30,29 @@ With this advanced level of simulation, the possibilities are endless. You can:
 
 For an in-depth description of the simulations, please refer to [Simulation Details](./simulation-details.md).
 
-## Quick Start
+## Getting Started With Templates
+
+??? "AdvantageKit Users"
+  AdvantageKit provides Advanced Swerve Drive templates for teams using Akit and swerve. These templates have been modified to implement maple-sim, you can use them directly: 
+  - [AKitSparkSwerveTemplate-maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_SparkSwerveTemplate-maple-sim):  
+  The AdvantageKit Swerve Template with REV SparkMax hardware, enhanced with maple-sim integration for improved chassis physics simulation.
+  - [AkitTalonSwerveTemplate-maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_TalonSwerveTemplate-maple-sim):  
+  The AdvantageKit Swerve Template with CTRE hardware, enhanced with maple-sim integration for improved chassis physics simulation.
+  - [AkitTalonSwerveTemplate_EnhancedPhoenixSimulation](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/dev/templates/AdvantageKit_TalonSwerveTemplate_EnhancedPhoenixSimulation):  
+  A further enhanced version of the TalonSwerveTemplate-maple-sim project, utilizing [Phoenix 6 simulation](https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/simulation/simulation-intro.html) to simulate CTRE motor controller closed-loops and the CAN bus. *(Note: This link points to the dev branch, and the work is still in progress.)*
+
+??? "YAGSL Users"
+  maple-sim is officially included in YAGSL for 2025!
+  - See [YAGSL-2025](https://github.com/BroncBotz3481/YAGSL-Example/releases/tag/2025.1.0): Official 2025-beta release of the amazing [Yet Another Generic Swerve Drive Library](https://www.chiefdelphi.com/t/yet-another-generic-swerve-library-yagsl-v1-release/450844), with maple-sim implemented for enhanced drivetrain simulation.
+
+??? "Base-Talon-Swerve Users"
+  - See [Base-Talon-Swerve with maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/BaseTalonSwerve-maple-sim): Base-Talon-Swerve, modified with advanced drivetrain simulation. This is an example implementation of the [Simplified Swerve Simulation](https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html).
+
+??? "Other Custom Code"
+  - [Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton): Our custom swerve drive project based on the Advanced Swerve Drive Project, featuring drivetrain simulation, vision simulation, and convenient control features.
+  - [5516-2024-OffSeason-RobotCode](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/tree/main/example/5516-2024-OffSeason): Our 2024 off-season robot code, which implements a range of advanced simulations. This code can be run on a real robot and even played like a video game. Watch the [Videos](https://www.youtube.com/watch?v=5jr1L8xWpog&list=PLFS6A0KifAK1ycwlzIlvvFJkWNsQHVjSN)
+
+## Online Documentation
 
 Please follow the guides below for quick setup:
 
@@ -41,20 +63,13 @@ Please follow the guides below for quick setup:
 5. [Simulating Projectiles](./simulating-projectiles.md)
 6. [Simulating Opponent Robots](./simulating-opponent-robots.md)
 
-# Java Docs
-> 🙏  Big thanks to [nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
-[Official Java Docs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
+> 🙏  Big thanks to [@GrahamSH-LLK](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the online documentation.
 
-## Examples and Templates
+## Java Docs
+[Official javadocs is here](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
+> 🙏  Big thanks to [@nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
 
-- [Advanced Swerve Drive Project with maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_AdvancedSwerveDriveProject): 6328's swerve drive project utilizing AdvantageKit, modified with advanced drivetrain simulations. View the changelog from the original project [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/commit/1667aa80170e6733d8eaee866da0297e762402fa).
-- [Maple-Swerve-Skeleton](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton): Our custom swerve drive project based on the Advanced Swerve Drive Project, featuring drivetrain simulation, vision simulation, and convenient control features.
-- [Base-Talon-Swerve with maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/BaseTalonSwerve-maple-sim): Base-Talon-Swerve, modified with advanced drivetrain simulation. This is an example implementation of the [Simplified Swerve Simulation](https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html).
-- [YAGSL-2025-beta](https://github.com/BroncBotz3481/YAGSL-Example/tree/beta): Official 2025-beta release of the amazing [Yet Another Generic Swerve Drive Library](https://www.chiefdelphi.com/t/yet-another-generic-swerve-library-yagsl-v1-release/450844), with maple-sim implemented for enhanced drivetrain simulation.
-- [5516-2024-OffSeason-RobotCode](https://github.com/Shenzhen-Robotics-Alliance/Maple-Swerve-Skeleton/tree/main/example/5516-2024-OffSeason): Our 2024 off-season robot code, which implements a range of advanced simulations. This code can be run on a real robot and even played like a video game. Watch the [Videos](https://www.youtube.com/watch?v=5jr1L8xWpog&list=PLFS6A0KifAK1ycwlzIlvvFJkWNsQHVjSN)
-
-
-## Bugs Developing and Contributing
+## Reporting Bugs, Developing and Contributing
 
 - If you've encountered a bug while using maple-sim in your robot code, please [submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) and select the "Bug Report" option.  We review issues regularly and will respond as quickly as possible.
 

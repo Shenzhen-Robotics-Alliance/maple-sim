@@ -5,10 +5,12 @@
 
 ### Elevating FRC Java Robot Simulations to the Next Level with Physics Engines
 
-## Why a physics engine
+## Why physics engine?
 A simulation engine is a powerful tool that provides realistic approximations of physical systems. With **maple-sim**, we integrate the open-source Java rigid-body dynamics engine, [dyn4j](https://github.com/dyn4j/dyn4j), capable of simulating 2D forces and collisions between rigid shapes. This integration transforms the scope of robot simulations by enabling realistic interactions between robots, field elements, and game pieces.
 
 ![physics engine illustration](./docs/media/physics%20engine.png)
+
+## What is maple-sim?
 
 Before **maple-sim**, most FRC robot simulations focused solely on the robot itself—its sensors, movements, and internal operations. 
 Now, through the power of physics simulation, **maple-sim** allows your robot to engage directly with its environment. 
@@ -26,18 +28,22 @@ With this advanced level of simulation, the possibilities are endless. You can:
 
 **And the best part? You can achieve all of this without needing a real robot on hand.**
 
-## Online Documentation
-[Online documentation is here](https://shenzhen-robotics-alliance.github.io/maple-sim/).
+## Getting Started
+
+Getting started with one of our [template projects](https://shenzhen-robotics-alliance.github.io/maple-sim/#getting-started-with-templates).
+
+Check the [online documentation](https://shenzhen-robotics-alliance.github.io/maple-sim/) and [Javadocs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
+
+Vendor URL:
+```
+https://shenzhen-robotics-alliance.github.io/maple-sim/vendordep/maple-sim.json
+```
+<br>
+
 > 🙏  Big thanks to [@GrahamSH-LLK](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the online documentation.
+> 🙏  Big thanks to [@nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs and VendorDep publishing.
 
-
-## Java Docs
-[Official javadocs is here](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/).
-> 🙏  Big thanks to [@nstrike](https://www.chiefdelphi.com/u/nstrike/summary) for all the help in setting up the Java Docs.
-
-
-
-## Bugs Developing and Contributing
+## Reporting Bugs, Developing and Contributing
 
 - If you've encountered a bug while using maple-sim in your robot code, please [submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) and select the "Bug Report" option.  We review issues regularly and will respond as quickly as possible.
 

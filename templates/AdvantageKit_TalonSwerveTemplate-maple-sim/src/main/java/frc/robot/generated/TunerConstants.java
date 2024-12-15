@@ -88,7 +88,7 @@ public class TunerConstants {
     private static final int kPigeonId = 1;
 
     // These are only used for simulation
-    private static final double kSteerInertia = 0.004;
+    private static final double kSteerInertia = 0.01;
     private static final double kDriveInertia = 0.025;
     // Simulated voltage necessary to overcome friction
     private static final Voltage kSteerFrictionVoltage = Volts.of(0.25);

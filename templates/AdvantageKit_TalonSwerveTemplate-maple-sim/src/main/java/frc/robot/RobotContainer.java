@@ -82,7 +82,7 @@ public class RobotContainer {
                         new ModuleIOSim(driveSimulation.getModules()[3]));
 
                 vision = new Vision(
-                        (pose, time, std_dev) -> {},
+                        drive,
                         new VisionIOPhotonVisionSim(
                                 camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
                         new VisionIOPhotonVisionSim(

@@ -36,7 +36,7 @@ public class SimulatedBattery {
         SmartDashboard.putNumber("BatterySim/TotalCurrentAmps", totalCurrentAmps);
         batteryVoltageVolts = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
         
-        if (Double.isNaN(batteryVoltageVolts)) {
+        if (Double.isNaN(batteryVoltageVolts) || batteryVoltageVolts < 0) {
             batteryVoltageVolts = 12.0;
             DriverStation.reportError(
                 "[MapleSim] Internal Library Error: Calculated battery voltage is invalid" +

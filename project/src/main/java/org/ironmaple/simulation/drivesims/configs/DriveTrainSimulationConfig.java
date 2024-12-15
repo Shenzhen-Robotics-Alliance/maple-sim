@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Mass;
 import java.util.Arrays;
 import java.util.OptionalDouble;
 import java.util.function.Supplier;
+import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 
@@ -59,6 +60,9 @@ public class DriveTrainSimulationConfig {
         this.swerveModuleSimulationFactory = swerveModuleSimulationFactory;
         this.gyroSimulationFactory = gyroSimulationFactory;
         this.withTrackLengthTrackWidth(trackLengthX, trackWidthY);
+
+        checkRobotMass();
+        checkBumperSize();
     }
 
     /**
@@ -91,12 +95,8 @@ public class DriveTrainSimulationConfig {
                 Meters.of(.76),
                 Meters.of(0.52),
                 Meters.of(0.52),
-                SwerveModuleSimulation.getMark4(
-                        DCMotor.getFalcon500(1),
-                        DCMotor.getFalcon500(1),
-                        SwerveModuleSimulation.WHEEL_GRIP.COLSONS.cof,
-                        2),
-                GyroSimulation.getPigeon2());
+                COTS.ofMark4(DCMotor.getFalcon500(1), DCMotor.getFalcon500(1), COTS.WHEELS.COLSONS.cof, 2),
+                COTS.ofPigeon2());
     }
 
     /**
@@ -111,6 +111,7 @@ public class DriveTrainSimulationConfig {
      */
     public DriveTrainSimulationConfig withRobotMass(Mass robotMass) {
         this.robotMass = robotMass;
+        checkRobotMass();
         return this;
     }
 
@@ -128,6 +129,8 @@ public class DriveTrainSimulationConfig {
     public DriveTrainSimulationConfig withBumperSize(Distance bumperLengthX, Distance bumperWidthY) {
         this.bumperLengthX = bumperLengthX;
         this.bumperWidthY = bumperWidthY;
+
+        checkBumperSize();
         return this;
     }
 
@@ -145,6 +148,9 @@ public class DriveTrainSimulationConfig {
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
     public DriveTrainSimulationConfig withTrackLengthTrackWidth(Distance trackLengthX, Distance trackWidthY) {
+        BoundingCheck.check(trackLengthX.in(Meters), 0.5, 1.5, "track length", "meters");
+        BoundingCheck.check(trackWidthY.in(Meters), 0.5, 1.5, "track width", "meters");
+
         this.moduleTranslations = new Translation2d[] {
             new Translation2d(trackLengthX.in(Meters) / 2, trackWidthY.in(Meters) / 2),
             new Translation2d(trackLengthX.in(Meters) / 2, -trackWidthY.in(Meters) / 2),
@@ -168,6 +174,7 @@ public class DriveTrainSimulationConfig {
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
     public DriveTrainSimulationConfig withCustomModuleTranslations(Translation2d[] moduleTranslations) {
+        checkModuleTranslations();
         this.moduleTranslations = moduleTranslations;
         return this;
     }
@@ -261,5 +268,24 @@ public class DriveTrainSimulationConfig {
 
     public Distance driveBaseRadius() {
         return Meters.of(Math.hypot(trackLengthX().in(Meters), trackWidthY().in(Meters)));
+    }
+
+    private void checkRobotMass() {
+        BoundingCheck.check(robotMass.in(Kilograms), 10, 80, "robot mass", "kg");
+    }
+
+    private void checkBumperSize() {
+        BoundingCheck.check(bumperLengthX.in(Meters), 0.5, 1.5, "bumper length", "meters");
+        BoundingCheck.check(bumperWidthY.in(Meters), 0.5, 1.5, "bumper width", "meters");
+    }
+
+    private void checkModuleTranslations() {
+        for (int i = 0; i < moduleTranslations.length; i++)
+            BoundingCheck.check(
+                    moduleTranslations[i].getNorm(),
+                    0.2,
+                    1.2,
+                    "module number " + i + " translation magnitude",
+                    "meters");
     }
 }

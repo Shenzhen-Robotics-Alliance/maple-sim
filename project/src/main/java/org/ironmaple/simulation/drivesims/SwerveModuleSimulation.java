@@ -116,7 +116,7 @@ public class SwerveModuleSimulation {
         this.driveMotorConfigs = new SimMotorConfigs(
                 driveMotorModel, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), driveFrictionVoltage);
 
-        SimulatedBattery.getInstance().addElectricalAppliances(this::getDriveMotorSupplyCurrent);
+        SimulatedBattery.addElectricalAppliances(this::getDriveMotorSupplyCurrent);
         this.steerMotorSim = new MapleMotorSim(
                 new SimMotorConfigs(steerMotorModel, steerGearRatio, steerRotationalInertia, steerFrictionVoltage));
 
@@ -207,7 +207,7 @@ public class SwerveModuleSimulation {
     public Current getDriveMotorSupplyCurrent() {
         return getDriveMotorStatorCurrent()
                 .times(driveMotorAppliedVoltage.div(
-                        SimulatedBattery.getInstance().getBatteryVoltage()));
+                        SimulatedBattery.getBatteryVoltage()));
     }
 
     /**
@@ -504,7 +504,7 @@ public class SwerveModuleSimulation {
                 getDriveEncoderUnGearedPosition(),
                 getDriveEncoderUnGearedSpeed());
 
-        driveMotorAppliedVoltage = Volts.of(MathUtil.clamp(driveMotorAppliedVoltage.in(Volts), -12, 12));
+        driveMotorAppliedVoltage = SimulatedBattery.clamp(driveMotorAppliedVoltage);
 
         driveMotorAppliedVoltage = Volts.of(
                 MathUtil.applyDeadband(driveMotorAppliedVoltage.in(Volts), DRIVE_FRICTION_VOLTAGE.in(Volts), 12));

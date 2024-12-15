@@ -43,8 +43,6 @@ public class SimulatedBattery {
                     "(reverting to max robotcontroller voltage)",
                 false
             );
-        } else {
-            batteryVoltageVolts = MathUtil.clamp(RobotController.getBatteryVoltage(), 0, 12);
         }
         
         RoboRioSim.setVInVoltage(batteryVoltageVolts);

@@ -44,10 +44,10 @@ public class SimulatedBattery {
         batteryVoltageVolts = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
         
         if (Double.isNaN(batteryVoltageVolts)) {
-            batteryVoltageVolts = RobotController.getBrownoutVoltage();
+            batteryVoltageVolts = 12.0;
             DriverStation.reportError(
                 "[MapleSim] Internal Library Error: Calculated battery voltage is invalid" +
-                    "(reverting to brownout voltage)",
+                    "(reverting to max robotcontroller voltage)",
                 false
             );
         } else {

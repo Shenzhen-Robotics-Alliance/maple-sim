@@ -52,6 +52,11 @@ public class SimulatedBattery {
         return Volts.of(batteryVoltageVolts);
     }
     
+    /**
+     * Clamps the voltage to be a voltage between - battery voltage and + battery voltage.
+     * @param voltage
+     * @return
+     */
     public static Voltage clamp(Voltage voltage) {
         return Volts.of(
             MathUtil.clamp(voltage.in(Volts), -batteryVoltageVolts, batteryVoltageVolts)

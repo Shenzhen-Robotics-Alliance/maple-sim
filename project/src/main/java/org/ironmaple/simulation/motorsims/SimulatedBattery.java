@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,13 +37,26 @@ public class SimulatedBattery {
     public void flush() {
         final double totalCurrentAmps = electricalAppliances.stream()
                 .mapToDouble(currentSupplier -> currentSupplier.get().in(Amps))
-                .sum();
-
+                .sum()
+                / 2.0;
+        
         SmartDashboard.putNumber("BatterySim/TotalCurrentAmps", totalCurrentAmps);
         batteryVoltageVolts = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
-
-        batteryVoltageVolts = MathUtil.clamp(batteryVoltageVolts, 0, 12);
-
+        
+        if (Double.isNaN(batteryVoltageVolts)) {
+            batteryVoltageVolts = RobotController.getBrownoutVoltage();
+            DriverStation.reportError(
+                "[MapleSim] Internal Library Error: Calculated battery voltage is invalid",
+                false
+            );
+        } else {
+            batteryVoltageVolts = MathUtil.clamp(
+                batteryVoltageVolts,
+                0,
+                RobotController.getBrownoutVoltage()
+            );
+        }
+        
         RoboRioSim.setVInVoltage(batteryVoltageVolts);
     }
 

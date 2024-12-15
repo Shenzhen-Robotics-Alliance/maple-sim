@@ -307,7 +307,6 @@ public abstract class SimulatedArena {
         synchronized (SimulatedArena.class) {
             final long t0 = System.nanoTime();
             competitionPeriodic();
-            SimulatedBattery.flush();
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
@@ -332,6 +331,7 @@ public abstract class SimulatedArena {
      * </ul>
      */
     private void simulationSubTick(int subTickNum) {
+        SimulatedBattery.flush();
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 

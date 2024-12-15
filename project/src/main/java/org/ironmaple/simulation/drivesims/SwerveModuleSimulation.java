@@ -205,9 +205,7 @@ public class SwerveModuleSimulation {
      * @return the current supplied to the drive motor
      */
     public Current getDriveMotorSupplyCurrent() {
-        return getDriveMotorStatorCurrent()
-                .times(driveMotorAppliedVoltage.div(
-                        SimulatedBattery.getBatteryVoltage()));
+        return getDriveMotorStatorCurrent().times(driveMotorAppliedVoltage.div(SimulatedBattery.getBatteryVoltage()));
     }
 
     /**
@@ -513,7 +511,10 @@ public class SwerveModuleSimulation {
         Torque driveWheelTorque = driveMotorConfigs.calculateTorque(driveMotorStatorCurrent);
 
         /* calculates the torque if you included losses from friction */
-        Torque driveWheelTorqueWithFriction = NewtonMeters.of(MathUtil.applyDeadband(driveWheelTorque.in(NewtonMeters), driveMotorConfigs.friction.in(NewtonMeters), Double.POSITIVE_INFINITY));
+        Torque driveWheelTorqueWithFriction = NewtonMeters.of(MathUtil.applyDeadband(
+                driveWheelTorque.in(NewtonMeters),
+                driveMotorConfigs.friction.in(NewtonMeters),
+                Double.POSITIVE_INFINITY));
         return driveWheelTorqueWithFriction.in(NewtonMeters);
     }
 

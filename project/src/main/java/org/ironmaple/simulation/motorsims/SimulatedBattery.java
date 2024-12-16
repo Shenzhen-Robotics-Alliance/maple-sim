@@ -33,8 +33,7 @@ public class SimulatedBattery {
     public static void flush() {
         double totalCurrentAmps = electricalAppliances.stream()
                         .mapToDouble(currentSupplier -> currentSupplier.get().in(Amps))
-                        .sum()
-                / 2.0;
+                        .sum();
 
         totalCurrentAmps = currentFilter.calculate(totalCurrentAmps);
 

@@ -125,7 +125,7 @@ public class SwerveModuleSimulation {
         this.driveMotorConfigs = new SimMotorConfigs(
                 driveMotorModel, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), driveFrictionVoltage);
 
-        SimulatedBattery.getInstance().addElectricalAppliances(this::getDriveMotorSupplyCurrent);
+        SimulatedBattery.addElectricalAppliances(this::getDriveMotorSupplyCurrent);
         this.steerMotorSim = new MapleMotorSim(
                 new SimMotorConfigs(steerMotorModel, steerGearRatio, steerRotationalInertia, steerFrictionVoltage));
 
@@ -214,9 +214,7 @@ public class SwerveModuleSimulation {
      * @return the current supplied to the drive motor
      */
     public Current getDriveMotorSupplyCurrent() {
-        return getDriveMotorStatorCurrent()
-                .times(driveMotorAppliedVoltage.div(
-                        SimulatedBattery.getInstance().getBatteryVoltage()));
+        return getDriveMotorStatorCurrent().times(driveMotorAppliedVoltage.div(SimulatedBattery.getBatteryVoltage()));
     }
 
     /**
@@ -513,16 +511,20 @@ public class SwerveModuleSimulation {
                 getDriveEncoderUnGearedPosition(),
                 getDriveEncoderUnGearedSpeed());
 
-        driveMotorAppliedVoltage = Volts.of(MathUtil.clamp(driveMotorAppliedVoltage.in(Volts), -12, 12));
-
-        driveMotorAppliedVoltage = Volts.of(
-                MathUtil.applyDeadband(driveMotorAppliedVoltage.in(Volts), DRIVE_FRICTION_VOLTAGE.in(Volts), 12));
+        driveMotorAppliedVoltage = SimulatedBattery.clamp(driveMotorAppliedVoltage);
 
         /* calculate the stator current */
         driveMotorStatorCurrent = driveMotorConfigs.calculateCurrent(driveWheelFinalSpeed, driveMotorAppliedVoltage);
 
         /* calculate the torque generated */
-        return driveMotorConfigs.calculateTorque(driveMotorStatorCurrent).in(NewtonMeters);
+        Torque driveWheelTorque = driveMotorConfigs.calculateTorque(driveMotorStatorCurrent);
+
+        /* calculates the torque if you included losses from friction */
+        Torque driveWheelTorqueWithFriction = NewtonMeters.of(MathUtil.applyDeadband(
+                driveWheelTorque.in(NewtonMeters),
+                driveMotorConfigs.friction.in(NewtonMeters),
+                Double.POSITIVE_INFINITY));
+        return driveWheelTorqueWithFriction.in(NewtonMeters);
     }
 
     /** @return the current module state of this simulation module */

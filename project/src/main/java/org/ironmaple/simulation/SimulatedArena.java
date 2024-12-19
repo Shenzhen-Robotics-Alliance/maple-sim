@@ -331,7 +331,7 @@ public abstract class SimulatedArena {
      * </ul>
      */
     private void simulationSubTick(int subTickNum) {
-        SimulatedBattery.flush();
+        SimulatedBattery.simulationSubTick();
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 

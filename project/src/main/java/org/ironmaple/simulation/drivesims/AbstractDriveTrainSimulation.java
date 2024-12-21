@@ -60,8 +60,8 @@ public abstract class AbstractDriveTrainSimulation extends Body {
                 BUMPER_COEFFICIENT_OF_RESTITUTION);
 
         super.setMass(MassType.NORMAL);
-        super.setLinearDamping(1.0);
-        super.setAngularDamping(1.0);
+        super.setLinearDamping(0.1);
+        super.setAngularDamping(0.1);
         setSimulationWorldPose(initialPoseOnField);
     }
 
@@ -145,7 +145,8 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      */
     public ChassisSpeeds getDriveTrainSimulatedChassisSpeedsRobotRelative() {
         ChassisSpeeds speeds = getDriveTrainSimulatedChassisSpeedsFieldRelative();
-        speeds.toRobotRelativeSpeeds(getSimulatedDriveTrainPose().getRotation());
+        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds, getSimulatedDriveTrainPose().getRotation());
         return speeds;
     }
 

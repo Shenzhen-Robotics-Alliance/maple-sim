@@ -17,10 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.GyroSimulation;
-import org.ironmaple.simulation.drivesims.SelfControlledSwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.ironmaple.simulation.drivesims.*;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 public class MapleSimSwerve implements SwerveDrive {
@@ -29,7 +26,7 @@ public class MapleSimSwerve implements SwerveDrive {
 
     public MapleSimSwerve() {
         final DriveTrainSimulationConfig config = DriveTrainSimulationConfig.Default()
-                .withGyro(GyroSimulation.getPigeon2())
+                .withGyro(COTS.ofPigeon2())
                 .withSwerveModule(() -> new SwerveModuleSimulation(
                         // adjust motor type as needed
                         DCMotor.getFalcon500(1),

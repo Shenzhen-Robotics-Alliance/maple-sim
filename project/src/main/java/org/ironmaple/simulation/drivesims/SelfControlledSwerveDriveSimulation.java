@@ -266,18 +266,23 @@ public class SelfControlledSwerveDriveSimulation {
      *     corner of the robot and provide a chassis speed that has only a dtheta component, the robot will rotate
      *     around that corner.
      * @param fieldCentricDrive Whether to execute field-centric drive with the provided speed.
-     * @param discretizeSpeeds Whether to apply {@link ChassisSpeeds#discretize(double)} to the provided speed.
+     * @param discretizeSpeeds Whether to apply {@link ChassisSpeeds#discretize(ChassisSpeeds, double)} to the provided
+     *     speed.
      */
     public void runChassisSpeeds(
             ChassisSpeeds chassisSpeeds,
             Translation2d centerOfRotationMeters,
             boolean fieldCentricDrive,
             boolean discretizeSpeeds) {
-        if (fieldCentricDrive)
-            chassisSpeeds.toRobotRelativeSpeeds(getOdometryEstimatedPose().getRotation());
-        if (discretizeSpeeds)
-            chassisSpeeds.discretize(
+        if (fieldCentricDrive) {
+            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    chassisSpeeds, getOdometryEstimatedPose().getRotation());
+        }
+        if (discretizeSpeeds) {
+            chassisSpeeds = ChassisSpeeds.discretize(
+                    chassisSpeeds,
                     SimulatedArena.getSimulationDt().in(Seconds) * SimulatedArena.getSimulationSubTicksIn1Period());
+        }
         final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
         runSwerveStates(setPoints);
     }
@@ -341,7 +346,8 @@ public class SelfControlledSwerveDriveSimulation {
      */
     public ChassisSpeeds getMeasuredSpeedsFieldRelative(boolean useGyroForAngularVelocity) {
         ChassisSpeeds speeds = getMeasuredSpeedsRobotRelative(useGyroForAngularVelocity);
-        speeds.toFieldRelativeSpeeds(getOdometryEstimatedPose().getRotation());
+        speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+                speeds, getOdometryEstimatedPose().getRotation());
         return speeds;
     }
 

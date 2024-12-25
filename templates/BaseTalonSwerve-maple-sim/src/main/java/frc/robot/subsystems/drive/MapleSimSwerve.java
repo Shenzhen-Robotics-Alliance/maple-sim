@@ -13,16 +13,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Telemetry;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.*;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 
 public class MapleSimSwerve implements SwerveDrive {
     private final SelfControlledSwerveDriveSimulation simulatedDrive;
-    private final Field2d field2d;
 
     public MapleSimSwerve() {
         final DriveTrainSimulationConfig config = DriveTrainSimulationConfig.Default()
@@ -46,9 +44,6 @@ public class MapleSimSwerve implements SwerveDrive {
 
         // register the drivetrain simulation to the simulation world
         SimulatedArena.getInstance().addDriveTrainSimulation(simulatedDrive.getDriveTrainSimulation());
-
-        field2d = new Field2d();
-        SmartDashboard.putData("simulation field", field2d);
     }
 
     @Override
@@ -112,7 +107,11 @@ public class MapleSimSwerve implements SwerveDrive {
     public void periodic() {
         simulatedDrive.periodic();
 
-        field2d.setRobotPose(simulatedDrive.getActualPoseInSimulationWorld());
-        field2d.getObject("odometry").setPose(getPose());
+        Telemetry.getInstance().feedSimulationRobotPose(simulatedDrive.getActualPoseInSimulationWorld());
+        Telemetry.getInstance().feedOdometryPose(getPose());
+    }
+
+    public AbstractDriveTrainSimulation getSimDrive() {
+        return simulatedDrive.getDriveTrainSimulation();
     }
 }

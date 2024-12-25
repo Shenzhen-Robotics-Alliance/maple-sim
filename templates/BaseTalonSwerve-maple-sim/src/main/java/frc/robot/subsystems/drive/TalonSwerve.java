@@ -13,17 +13,16 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import frc.robot.Telemetry;
 
 public class TalonSwerve extends SubsystemBase implements SwerveDrive {
     public SwerveDrivePoseEstimator swervePoseEstimator;
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
-    private final Field2d field2d;
 
     public TalonSwerve() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID);
@@ -39,9 +38,6 @@ public class TalonSwerve extends SubsystemBase implements SwerveDrive {
 
         swervePoseEstimator = new SwerveDrivePoseEstimator(
                 Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d());
-
-        field2d = new Field2d();
-        SmartDashboard.putData("field", field2d);
     }
 
     @Override
@@ -122,7 +118,7 @@ public class TalonSwerve extends SubsystemBase implements SwerveDrive {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
         }
 
-        field2d.setRobotPose(getPose());
+        Telemetry.getInstance().feedOdometryPose(getPose());
     }
 
     @Override

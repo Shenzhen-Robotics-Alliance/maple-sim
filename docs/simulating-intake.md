@@ -38,50 +38,64 @@ public class IntakeIOSim {
 }
 ```
 
-??? "In-The-Frame (ITF) Intakes"
-    ![](media/intakesim3.png){ width= "30%"}
-    ```Java
-    this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
-            // Specify the type of game pieces that the intake can collect
-            "Note",
-            // Specify the drivetrain to which this intake is attached
-            driveTrainSimulation,
-            // Specify width of the intake
-            Meters.of(0.7),
-            // The intake is mounted on the back side of the chassis
-            IntakeSimulation.IntakeSide.BACK,
-            // The intake can hold up to 1 note
-            1);
-    ```
-??? "Over-The-Bumper (OTB) Intakes"
-    ![](media/intakesim2.png){width="30%"}
-    ```Java
-    this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
-            // Specify the type of game pieces that the intake can collect
-            "Note",
-            // Specify the drivetrain to which this intake is attached
-            driveTrainSimulation,
-            // Width of the intake
-            Meters.of(0.7),
-            // The extension length of the intake beyond the robot's frame (when activated)
-            Meters.of(0.2),
-            // The intake is mounted on the back side of the chassis
-            IntakeSimulation.IntakeSide.BACK,
-            // The intake can hold up to 1 note
-            1);
-    ```
-??? "Custom Shape Intakes"
-    ```Java
-    this.intakeSimulation = new IntakeSimulation(
-            // Specify the type of game pieces that the intake can collect
-            "Note",
-            // Specify the drivetrain to which this intake is attached
-            driveTrainSimulation, 
-            // Our intake has a custom shape of a triangle (shape is specified in chassis frame-of-reference)
-            new Triangle(new Vector2(0, 0), new Vector2(0.2, 0), new Vector2(0, 0.2)),
-            // The intake can hold up to 1 note
-            1);
-    ```
+=== "In-The-Frame (ITF) Intakes"
+    <div style="display: flex; align-items:center">
+        <div style="align-items: center; width: 29%">
+            <img src="../media/intakesim3.png" style="max-height: 100%; margin: auto;">
+        </div>
+        <div style="width: 70%; font-size:13px;">
+            ```Java
+            this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
+                    // Specify the type of game pieces that the intake can collect
+                    "Note",
+                    // Specify the drivetrain to which this intake is attached
+                    driveTrainSimulation,
+                    // Specify width of the intake
+                    Meters.of(0.7),
+                    // The intake is mounted on the back side of the chassis
+                    IntakeSimulation.IntakeSide.BACK,
+                    // The intake can hold up to 1 note
+                    1);
+            ```
+        </div>
+    </div>
+=== "Over-The-Bumper (OTB) Intakes"
+    <div style="display: flex; align-items:center">
+        <div style="align-items: center; width: 29%"> 
+            <img src="../media/intakesim2.png" style="max-height: 100%; margin: auto;">
+        </div>
+        <div style="width: 70%; font-size:13px;">
+            ```Java
+            this.intakeSimulation = IntakeSimulation.OverTheBumperIntake(
+                    // Specify the type of game pieces that the intake can collect
+                    "Note",
+                    // Specify the drivetrain to which this intake is attached
+                    driveTrainSimulation,
+                    // Width of the intake
+                    Meters.of(0.7),
+                    // The extension length of the intake beyond the robot's frame (when activated)
+                    Meters.of(0.2),
+                    // The intake is mounted on the back side of the chassis
+                    IntakeSimulation.IntakeSide.BACK,
+                    // The intake can hold up to 1 note
+                    1);
+            ```
+        </div>
+    </div>
+=== "Custom Shape Intakes"
+    <div style="font-size:13px;">
+        ```Java
+        this.intakeSimulation = new IntakeSimulation(
+                // Specify the type of game pieces that the intake can collect
+                "Note",
+                // Specify the drivetrain to which this intake is attached
+                driveTrainSimulation, 
+                // Our intake has a custom shape of a triangle (shape is specified in chassis frame-of-reference)
+                new Triangle(new Vector2(0, 0), new Vector2(0.2, 0), new Vector2(0, 0.2)),
+                // The intake can hold up to 1 note
+                1);
+        ```
+    </div>
 
 ---
 ## 2. Using intake simulation

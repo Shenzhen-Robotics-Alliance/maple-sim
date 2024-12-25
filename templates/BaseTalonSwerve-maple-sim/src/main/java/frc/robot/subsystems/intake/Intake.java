@@ -16,17 +16,11 @@ public class Intake extends SubsystemBase {
     private final IntakeSimulation intakeSimulation;
 
     public Intake(AbstractDriveTrainSimulation driveTrainSimulation) {
-        this.intakeSimulation =
-                IntakeSimulation.InTheFrameIntake(
-                        "Note",
-                        driveTrainSimulation,
-                        Meters.of(0.7),
-                        IntakeSimulation.IntakeSide.BACK,
-                        1);
-        new IntakeSimulation(
+        this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
                 "Note",
                 driveTrainSimulation,
-                new Triangle(new Vector2(0, 0), new Vector2(0.2, 0), new Vector2(0, 0.2)),
+                Meters.of(0.7),
+                IntakeSimulation.IntakeSide.BACK,
                 1);
     }
 

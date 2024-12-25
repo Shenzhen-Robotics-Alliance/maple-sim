@@ -170,8 +170,6 @@ When running the simulator, you can instantiate the above simulation IO implemen
 // creation the swerve simulation (please refer to previous documents)
 this.swerveDriveSimulation = new SwerveDriveSimulation(...);
 
-// 
-
 this.drive = new Drive(
         new GyroIOSim(this.swerveDriveSimulation.getGyroSimulation()),
         new ModuleIOSim(this.swerveDriveSimulation.getModules()[0]),

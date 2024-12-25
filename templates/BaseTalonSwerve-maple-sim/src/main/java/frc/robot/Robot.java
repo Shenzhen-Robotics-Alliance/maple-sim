@@ -48,11 +48,14 @@ public class Robot extends TimedRobot {
     @Override
     public void simulationPeriodic() {
         SimulatedArena.getInstance().simulationPeriodic();
+        Telemetry.getInstance().publishSimulationNotePoses();
     }
 
     /** This function is called once each time the robot enters Disabled mode. */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        SimulatedArena.getInstance().resetFieldForAuto();
+    }
 
     @Override
     public void disabledPeriodic() {}

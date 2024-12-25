@@ -382,6 +382,17 @@ public abstract class SimulatedArena {
     /**
      *
      *
+     * <h2>Obtains the 3D Poses of a Specific Type of Game Piece as an array.</h2>
+     *
+     * @see #getGamePiecesByType(String)
+     */
+    public synchronized Pose3d[] getGamePiecesArrayByType(String type) {
+        return getGamePiecesByType(type).toArray(Pose3d[]::new);
+    }
+
+    /**
+     *
+     *
      * <h2>Resets the Field for Autonomous Mode.</h2>
      *
      * <p>This method clears all current game pieces from the field and places new game pieces in their starting

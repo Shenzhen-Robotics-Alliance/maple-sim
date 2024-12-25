@@ -71,19 +71,21 @@ public class IntakeSimulation extends BodyFixture {
      *
      * <h2>Creates an Intake Simulation that Tightly Attaches to One Side of the Chassis.</h2>
      *
+     * <p>This typically represents an In-The-Frame (ITF) Intake.
+     *
      * @param targetedGamePieceType the type of game pieces that this intake can collect
      * @param driveTrainSimulation the chassis to which this intake is attached
      * @param width the width of the intake
      * @param side the side of the chassis where the intake is attached
      * @param capacity the maximum number of game pieces that the intake can hold
      */
-    public IntakeSimulation(
+    public static IntakeSimulation InTheFrameIntake(
             String targetedGamePieceType,
             AbstractDriveTrainSimulation driveTrainSimulation,
             Distance width,
             IntakeSide side,
             int capacity) {
-        this(targetedGamePieceType, driveTrainSimulation, width, Meters.of(0.02), side, capacity);
+        return OverTheBumperIntake(targetedGamePieceType, driveTrainSimulation, width, Meters.of(0.02), side, capacity);
     }
 
     /**
@@ -91,21 +93,24 @@ public class IntakeSimulation extends BodyFixture {
      *
      * <h2>Creates an Intake Simulation that Extends Out of the Chassis Frame.</h2>
      *
+     * <p>This typically represents an Over-The-Bumper (OTB) Intake.
+     *
      * @param targetedGamePieceType the type of game pieces that this intake can collect
      * @param driveTrainSimulation the chassis to which this intake is attached
      * @param width the valid width of the intake
      * @param lengthExtended the length the intake extends out from the chassis when activated
      * @param side the side of the chassis where the intake is attached
      * @param capacity the maximum number of game pieces that the intake can hold
+     * @return a new instance of {@link IntakeSimulation} that extends over the bumper
      */
-    public IntakeSimulation(
+    public static IntakeSimulation OverTheBumperIntake(
             String targetedGamePieceType,
             AbstractDriveTrainSimulation driveTrainSimulation,
             Distance width,
             Distance lengthExtended,
             IntakeSide side,
             int capacity) {
-        this(
+        return new IntakeSimulation(
                 targetedGamePieceType,
                 driveTrainSimulation,
                 getIntakeRectangle(driveTrainSimulation, width.in(Meters), lengthExtended.in(Meters), side),
@@ -135,7 +140,6 @@ public class IntakeSimulation extends BodyFixture {
 
         return intakeRectangle;
     }
-    ;
 
     /**
      *
@@ -167,6 +171,8 @@ public class IntakeSimulation extends BodyFixture {
 
         this.intakeRunning = false;
         this.driveTrainSimulation = driveTrainSimulation;
+
+        register();
     }
 
     /**

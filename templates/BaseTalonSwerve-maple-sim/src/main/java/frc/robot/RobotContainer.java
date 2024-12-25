@@ -3,16 +3,17 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.drive.MapleSimSwerve;
 import frc.robot.subsystems.drive.SwerveDrive;
 import frc.robot.subsystems.drive.TalonSwerve;
+import frc.robot.subsystems.intake.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -21,7 +22,7 @@ import frc.robot.subsystems.drive.TalonSwerve;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick driver = new Joystick(0);
+    private final XboxController driver = new XboxController(0);
 
     /* Drive Controls */
     private final int translationAxis = XboxController.Axis.kLeftY.value;
@@ -35,11 +36,14 @@ public class RobotContainer {
 
     /* Subsystems */
     private final SwerveDrive s_Swerve;
+    private Intake intake = null;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         this.s_Swerve = Robot.isReal() ? new TalonSwerve() : new MapleSimSwerve();
         this.s_Swerve.initSwerveWidget("SwerveDrive");
+
+        if (s_Swerve instanceof MapleSimSwerve simSwerve) this.intake = new Intake(simSwerve.getSimDrive());
 
         // Configure the button bindings
         configureButtonBindings();
@@ -63,6 +67,11 @@ public class RobotContainer {
 
         final Command placeRobotPose = Commands.runOnce(() -> s_Swerve.setPose(new Pose2d(3, 3, new Rotation2d())));
         resetRobotPose.onTrue(placeRobotPose);
+
+        if (intake != null) {
+            new Trigger(() -> driver.getRightTriggerAxis() > 0.5).whileTrue(intake.runIntake());
+            new JoystickButton(driver, XboxController.Button.kRightBumper.value).onTrue(intake.clearGamePiece());
+        }
     }
 
     /**

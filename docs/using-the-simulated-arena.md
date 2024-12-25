@@ -77,11 +77,29 @@ SimulatedArena.getInstance().clearGamePieces();
 
 You can retrieve the positions of game pieces, including those on the ground and those launched into the air:
 
-```java
-// Get the positions of the notes (both on the field and in the air)
-List<Pose3d> notesPoses = SimulatedArena.getInstance().getGamePiecesByType("Note");
+=== "AdvantageKit" 
+      ```java 
+      void periodic() {
+            // Get the positions of the notes (both on the field and in the air)
+            Pose3d[] notesPoses = SimulatedArena.getInstance()
+                  .getGamePiecesArrayByType("Note");
+            // Publish to telemetry using AdvantageKit
+            Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses);
+      }
+      ``` 
+=== "WPILib Networktables" 
+      ```java
+      StructArrayPublisher<Pose3d> notePoses = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("MyPoseArray", Pose3d.struct)
+            .publish();
 
-// Publish to telemetry using AdvantageKit
-Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses);
-```
+      void periodic() {
+            // Get the positions of the notes (both on the field and in the air)
+            Pose3d[] notesPoses = SimulatedArena.getInstance()
+                  .getGamePiecesArrayByType("Note");
+            notePoses.accept(SimulatedArena.getInstance()
+                  .getGamePiecesByType("Note")
+                  .toArray(Pose3d::new));
+      }
+      ```
 

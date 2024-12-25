@@ -32,18 +32,56 @@ You need to create an instance of `IntakeSimulation` in your `IntakeIOSim`.
 public class IntakeIOSim {
     private final IntakeSimulation intakeSimulation;
     public IntakeIOSim(AbstractDriveTrainSimulation driveTrain) {
-        this.intakeSimulation = new IntakeSimulation(
-                "Note", // This intake can collect game pieces of type "Note"
-                driveTrain, // Specify the drivetrain to which this intake is attached
-                0.6, // Width of the intake
-                0.1, // The extension length of the intake beyond the robot's frame
-                // For under-bumper intakes, set this to 0.01
-                IntakeSimulation.IntakeSide.BACK, // The intake is mounted on the back side of the chassis
-                1 // The intake can hold up to 1 note
-        );
+        // Here, create the intake simulation with respect to the intake on your real robot
+        this.intakeSimulation = new IntakeSimulation(...);
     }
 }
 ```
+
+??? "In-The-Frame (ITF) Intakes"
+    ![](media/intakesim3.png){ width= "30%"}
+    ```Java
+    this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
+            // Specify the type of game pieces that the intake can collect
+            "Note",
+            // Specify the drivetrain to which this intake is attached
+            driveTrainSimulation,
+            // Specify width of the intake
+            Meters.of(0.7),
+            // The intake is mounted on the back side of the chassis
+            IntakeSimulation.IntakeSide.BACK,
+            // The intake can hold up to 1 note
+            1);
+    ```
+??? "Over-The-Bumper (OTB) Intakes"
+    ![](media/intakesim2.png){width="30%"}
+    ```Java
+    this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
+            // Specify the type of game pieces that the intake can collect
+            "Note",
+            // Specify the drivetrain to which this intake is attached
+            driveTrainSimulation,
+            // Width of the intake
+            Meters.of(0.7),
+            // The extension length of the intake beyond the robot's frame (when activated)
+            Meters.of(0.2),
+            // The intake is mounted on the back side of the chassis
+            IntakeSimulation.IntakeSide.BACK,
+            // The intake can hold up to 1 note
+            1);
+    ```
+??? "Custom Shape Intakes"
+    ```Java
+    this.intakeSimulation = new IntakeSimulation(
+            // Specify the type of game pieces that the intake can collect
+            "Note",
+            // Specify the drivetrain to which this intake is attached
+            driveTrainSimulation, 
+            // Our intake has a custom shape of a triangle (shape is specified in chassis frame-of-reference)
+            new Triangle(new Vector2(0, 0), new Vector2(0.2, 0), new Vector2(0, 0.2)),
+            // The intake can hold up to 1 note
+            1);
+    ```
 
 ---
 ## 2. Using intake simulation

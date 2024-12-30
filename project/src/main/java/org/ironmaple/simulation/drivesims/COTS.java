@@ -295,7 +295,7 @@ public class COTS {
                     case 8 -> 3.56;
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
-                9424 / 203,
+                9424.0 / 203.0,
                 Volts.of(0.1),
                 Volts.of(0.1),
                 Inches.of(1.5),

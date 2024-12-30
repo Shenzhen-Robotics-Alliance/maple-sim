@@ -108,10 +108,10 @@ public class SwerveModuleSimulation {
             MomentOfInertia steerRotationalInertia,
             double tireCoefficientOfFriction) {
         BoundingCheck.check(driveGearRatio, 4, 18, "drive gear ratio", "times reduction");
-        BoundingCheck.check(steerGearRatio, 4, 18, "steer gear ratio", "times reduction");
+        BoundingCheck.check(steerGearRatio, 10, 50, "steer gear ratio", "times reduction");
         BoundingCheck.check(driveFrictionVoltage.in(Volts), 0, 0.35, "drive friction voltage", "volts");
         BoundingCheck.check(steerFrictionVoltage.in(Volts), 0, 0.6, "steer friction voltage", "volts");
-        BoundingCheck.check(wheelRadius.in(Inches), 1.5, 2.4, "drive wheel radius", "inches");
+        BoundingCheck.check(wheelRadius.in(Inches), 1, 3.2, "drive wheel radius", "inches");
         BoundingCheck.check(
                 steerRotationalInertia.in(KilogramSquareMeters), 0.005, 0.05, "steer rotation inertia", "kg * m^2");
         BoundingCheck.check(tireCoefficientOfFriction, 0.6, 2, "tire coefficient of friction", "");

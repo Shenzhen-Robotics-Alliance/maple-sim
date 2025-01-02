@@ -154,7 +154,8 @@ public class SelfControlledSwerveDriveSimulation {
                     moduleSimulations[moduleIndex].instance.getCachedSteerAbsolutePositions();
             for (int timeStamp = 0; timeStamp < SimulatedArena.getSimulationSubTicksIn1Period(); timeStamp++)
                 cachedModulePositions[timeStamp][moduleIndex] = new SwerveModulePosition(
-                        wheelPosition[timeStamp].in(Radians) * moduleSimulations[0].instance.WHEEL_RADIUS.in(Meters),
+                        wheelPosition[timeStamp].in(Radians)
+                                * moduleSimulations[0].instance.config.WHEEL_RADIUS.in(Meters),
                         swerveModuleFacings[timeStamp]);
         }
 
@@ -457,6 +458,7 @@ public class SelfControlledSwerveDriveSimulation {
 
     public static class SelfControlledModuleSimulation {
         public final SwerveModuleSimulation instance;
+        private Current driveCurrentLimit;
 
         private PIDController steerController;
 
@@ -468,6 +470,7 @@ public class SelfControlledSwerveDriveSimulation {
             steerController = new PIDController(5.0, 0, 0);
 
             this.driveMotor = this.instance.useGenericMotorControllerForDrive();
+            this.driveMotor.withCurrentLimit(this.driveCurrentLimit = Amps.of(60));
             this.steerMotor = this.instance.useGenericControllerForSteer();
         }
 
@@ -478,7 +481,7 @@ public class SelfControlledSwerveDriveSimulation {
         }
 
         public SelfControlledModuleSimulation withCurrentLimits(Current driveCurrentLimit, Current steerCurrentLimit) {
-            this.driveMotor.withCurrentLimit(driveCurrentLimit);
+            this.driveMotor.withCurrentLimit(this.driveCurrentLimit = driveCurrentLimit);
             this.steerMotor.withCurrentLimit(steerCurrentLimit);
             steerController.enableContinuousInput(-Math.PI, Math.PI);
             return this;
@@ -505,9 +508,10 @@ public class SelfControlledSwerveDriveSimulation {
         public void runModuleState(SwerveModuleState setPoint) {
             final double
                     cosProjectedSpeedMPS = SwerveStateProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
-                    driveWheelVelocitySetPointRadPerSec = cosProjectedSpeedMPS / instance.WHEEL_RADIUS.in(Meters);
+                    driveWheelVelocitySetPointRadPerSec =
+                            cosProjectedSpeedMPS / instance.config.WHEEL_RADIUS.in(Meters);
 
-            driveMotor.requestVoltage(instance.driveMotorConfigs.calculateVoltage(
+            driveMotor.requestVoltage(instance.config.driveMotorConfigs.calculateVoltage(
                     Amps.of(0), RadiansPerSecond.of(driveWheelVelocitySetPointRadPerSec)));
 
             steerMotor.requestVoltage(Volts.of(steerController.calculate(
@@ -520,7 +524,7 @@ public class SelfControlledSwerveDriveSimulation {
 
         public SwerveModulePosition getModulePosition() {
             return new SwerveModulePosition(
-                    instance.getDriveWheelFinalPosition().in(Radians) * instance.WHEEL_RADIUS.in(Meters),
+                    instance.getDriveWheelFinalPosition().in(Radians) * instance.config.WHEEL_RADIUS.in(Meters),
                     instance.getSteerAbsoluteFacing());
         }
     }
@@ -530,9 +534,9 @@ public class SelfControlledSwerveDriveSimulation {
         return swerveDriveSimulation.maxLinearVelocity();
     }
 
-    /** @see SwerveDriveSimulation#maxLinearAcceleration() */
+    /** @see SwerveDriveSimulation#maxLinearAcceleration(Current) */
     public LinearAcceleration maxLinearAcceleration() {
-        return swerveDriveSimulation.maxLinearAcceleration();
+        return swerveDriveSimulation.maxLinearAcceleration(moduleSimulations[0].driveCurrentLimit);
     }
 
     /** @see DriveTrainSimulationConfig#trackWidthY() */
@@ -556,8 +560,8 @@ public class SelfControlledSwerveDriveSimulation {
                 maxLinearVelocity().in(MetersPerSecond) / driveBaseRadius().in(Meters));
     }
 
-    /** @see SwerveDriveSimulation#maxAngularAcceleration() */
+    /** @see SwerveDriveSimulation#maxAngularAcceleration(Current) */
     public AngularAcceleration maxAngularAcceleration() {
-        return swerveDriveSimulation.maxAngularAcceleration();
+        return swerveDriveSimulation.maxAngularAcceleration(moduleSimulations[0].driveCurrentLimit);
     }
 }

@@ -155,7 +155,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 .rotateBy(getSimulatedDriveTrainPose().getRotation());
         final double FRICTION_FORCE_GAIN = 3.0,
                 totalGrippingForce =
-                        moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
+                        moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
                                 * moduleSimulations.length;
         final Vector2 speedsDifferenceFrictionForce = Vector2.create(
                 Math.min(
@@ -212,7 +212,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 differenceBetweenFloorSpeedAndModuleSpeed =
                         getModuleSpeeds().omegaRadiansPerSecond - getAngularVelocity(),
                 grippingTorqueMagnitude =
-                        moduleSimulations[0].getGrippingForceNewtons(gravityForceOnEachModule)
+                        moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
                                 * moduleTranslations[0].getNorm()
                                 * moduleSimulations.length,
                 FRICTION_TORQUE_GAIN = 1;
@@ -296,10 +296,10 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <h2>Obtains the maximum achievable linear velocity of the chassis.</h2>
      *
      * @return the maximum linear velocity
-     * @see SwerveModuleSimulation#maximumGroundSpeed()
+     * @see org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig#maximumGroundSpeed()
      */
     public LinearVelocity maxLinearVelocity() {
-        return moduleSimulations[0].maximumGroundSpeed();
+        return moduleSimulations[0].config.maximumGroundSpeed();
     }
 
     /**
@@ -307,11 +307,12 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      *
      * <h2>Obtains the maximum achievable linear acceleration of the chassis.</h2>
      *
-     * @return the maximum linear acceleration'
-     * @see SwerveModuleSimulation#maxAcceleration(Mass, int)
+     * @return the maximum linear acceleration
+     * @see org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig#maxAcceleration(Mass, int, Current)
      */
-    public LinearAcceleration maxLinearAcceleration() {
-        return moduleSimulations[0].maxAcceleration(config.robotMass, moduleSimulations.length);
+    public LinearAcceleration maxLinearAcceleration(Current statorCurrentLimit) {
+        return moduleSimulations[0].config.maxAcceleration(
+                config.robotMass, moduleSimulations.length, statorCurrentLimit);
     }
 
     /**
@@ -344,9 +345,11 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      *
      * @return the maximum angular acceleration
      */
-    public AngularAcceleration maxAngularAcceleration() {
+    public AngularAcceleration maxAngularAcceleration(Current statorCurrentLimit) {
         return RadiansPerSecondPerSecond.of(moduleSimulations[0]
-                        .getTheoreticalPropellingForcePerModule(config.robotMass, moduleSimulations.length)
+                        .config
+                        .getTheoreticalPropellingForcePerModule(
+                                config.robotMass, moduleSimulations.length, statorCurrentLimit)
                         .in(Newtons)
                 * moduleTranslations[0].getNorm()
                 * moduleSimulations.length

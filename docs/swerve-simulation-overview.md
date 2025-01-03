@@ -19,7 +19,7 @@ The `DriveTrainSimulationConfig` object encapsulates the physical properties and
                 // Specify gyro type (for realistic gyro drifting and error simulation)
                 .withGyro(COTS.ofPigeon2())
                 // Specify swerve module (for realistic swerve dynamics)
-                .withSwerveModule(SwerveModuleSimulation.ofMark4(
+                .withSwerveModule(COTS.ofMark4(
                         DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
                         DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
                         COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels

@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.KilogramSquareMeters;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import java.util.function.Supplier;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 
 public class COTS {
     /**
@@ -47,9 +48,9 @@ public class COTS {
      * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4-swerve-module">SDS Mark4
      * Swerve Module</a> for simulation
      */
-    public static Supplier<SwerveModuleSimulation> ofMark4(
+    public static SwerveModuleSimulationConfig ofMark4(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -71,9 +72,9 @@ public class COTS {
      * creates a <a href="https://www.swervedrivespecialties.com/collections/kits/products/mk4i-swerve-module">SDS
      * Mark4-i Swerve Module</a> for simulation
      */
-    public static Supplier<SwerveModuleSimulation> ofMark4i(
+    public static SwerveModuleSimulationConfig ofMark4i(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -95,9 +96,9 @@ public class COTS {
      * creates a <a href="https://www.swervedrivespecialties.com/products/mk4n-swerve-module">SDS Mark4-n Swerve
      * Module</a> for simulation
      */
-    public static Supplier<SwerveModuleSimulation> ofMark4n(
+    public static SwerveModuleSimulationConfig ofMark4n(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -122,9 +123,9 @@ public class COTS {
      * X2 Ratios are gearRatioLevel 4-6 <br>
      * X3 Ratios are gearRatioLevel 7-9
      */
-    public static Supplier<SwerveModuleSimulation> ofSwerveX(
+    public static SwerveModuleSimulationConfig ofSwerveX(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -155,9 +156,9 @@ public class COTS {
      * X2 Ratios are gearRatioLevel 4-6 <br>
      * X3 Ratios are gearRatioLevel 7-9
      */
-    public static Supplier<SwerveModuleSimulation> ofSwerveXFlipped(
+    public static SwerveModuleSimulationConfig ofSwerveXFlipped(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -187,9 +188,9 @@ public class COTS {
      * <p>X1 Ratios are gearRatioLevel 1-3 <br>
      * X2 Ratios are gearRatioLevel 4-6
      */
-    public static Supplier<SwerveModuleSimulation> ofSwerveXS(
+    public static SwerveModuleSimulationConfig ofSwerveXS(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -218,9 +219,9 @@ public class COTS {
      * X3 Ratios are gearRatioLevel 7-9 <br>
      * X4 Ratios are gearRatioLevel 10-12
      */
-    public static Supplier<SwerveModuleSimulation> ofSwerveX2(
+    public static SwerveModuleSimulationConfig ofSwerveX2(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -248,9 +249,9 @@ public class COTS {
      * X2 Ratios are gearRatioLevel 4-6 <br>
      * X3 Ratios are gearRatioLevel 7-9
      */
-    public static Supplier<SwerveModuleSimulation> ofSwerveX2S(
+    public static SwerveModuleSimulationConfig ofSwerveX2S(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -279,9 +280,9 @@ public class COTS {
      * <p>Base Kit ratios are gearRatioLevel 1-3<br>
      * Gear Ratio Upgrade Kit ratios are gearRatioLevel 4-8
      */
-    public static Supplier<SwerveModuleSimulation> ofMAXSwerve(
+    public static SwerveModuleSimulationConfig ofMAXSwerve(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
@@ -307,9 +308,9 @@ public class COTS {
      * Creates a <a href="https://www.thethriftybot.com/products/thrifty-swerve">TTB Thrifty Swerve swerve module</a>
      * for simulation
      */
-    public static Supplier<SwerveModuleSimulation> ofThriftySwerve(
+    public static SwerveModuleSimulationConfig ofThriftySwerve(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
-        return () -> new SwerveModuleSimulation(
+        return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {

@@ -6,9 +6,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Triangle;
-import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 
@@ -17,11 +14,7 @@ public class Intake extends SubsystemBase {
 
     public Intake(AbstractDriveTrainSimulation driveTrainSimulation) {
         this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
-                "Note",
-                driveTrainSimulation,
-                Meters.of(0.7),
-                IntakeSimulation.IntakeSide.BACK,
-                1);
+                "Note", driveTrainSimulation, Meters.of(0.7), IntakeSimulation.IntakeSide.BACK, 1);
     }
 
     public Command runIntake() {

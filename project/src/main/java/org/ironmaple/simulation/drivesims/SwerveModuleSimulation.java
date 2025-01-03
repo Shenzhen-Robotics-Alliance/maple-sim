@@ -6,14 +6,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.configs.BoundingCheck;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.motorsims.*;
 
 /**
@@ -58,10 +56,7 @@ import org.ironmaple.simulation.motorsims.*;
  * from the <code>Advanced Swerve Drive with maple-sim</code> example.
  */
 public class SwerveModuleSimulation {
-    public final SimMotorConfigs driveMotorConfigs;
-    public final double DRIVE_GEAR_RATIO, STEER_GEAR_RATIO, WHEELS_COEFFICIENT_OF_FRICTION;
-    public final Voltage DRIVE_FRICTION_VOLTAGE;
-    public final Distance WHEEL_RADIUS;
+    public final SwerveModuleSimulationConfig config;
 
     private final MapleMotorSim steerMotorSim;
 
@@ -85,49 +80,13 @@ public class SwerveModuleSimulation {
      * <p>If you are using {@link SimulatedArena#overrideSimulationTimings(Time, int)} to use custom timings, you must
      * call the method before constructing any swerve module simulations using this constructor.
      *
-     * @param driveMotorModel the model of the driving motor
-     * @param steerMotorModel; the model of the steering motor
-     * @param driveGearRatio the gear ratio for the driving motor, >1 is reduction
-     * @param steerGearRatio the gear ratio for the steering motor, >1 is reduction
-     * @param driveFrictionVoltage the measured minimum amount of voltage that can turn the driving rotter
-     * @param steerFrictionVoltage the measured minimum amount of voltage that can turn the steering rotter
-     * @param wheelRadius the radius of the wheels.
-     * @param steerRotationalInertia the rotational inertia of the entire steering mechanism
-     * @param tireCoefficientOfFriction the <a
-     *     href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
-     *     of friction</a> of the tires, normally around 1.2 {@link Units#inchesToMeters(double)}.
+     * @param config the configuration
      */
-    public SwerveModuleSimulation(
-            DCMotor driveMotorModel,
-            DCMotor steerMotorModel,
-            double driveGearRatio,
-            double steerGearRatio,
-            Voltage driveFrictionVoltage,
-            Voltage steerFrictionVoltage,
-            Distance wheelRadius,
-            MomentOfInertia steerRotationalInertia,
-            double tireCoefficientOfFriction) {
-        BoundingCheck.check(driveGearRatio, 4, 18, "drive gear ratio", "times reduction");
-        BoundingCheck.check(steerGearRatio, 10, 50, "steer gear ratio", "times reduction");
-        BoundingCheck.check(driveFrictionVoltage.in(Volts), 0, 0.35, "drive friction voltage", "volts");
-        BoundingCheck.check(steerFrictionVoltage.in(Volts), 0, 0.6, "steer friction voltage", "volts");
-        BoundingCheck.check(wheelRadius.in(Inches), 1, 3.2, "drive wheel radius", "inches");
-        BoundingCheck.check(
-                steerRotationalInertia.in(KilogramSquareMeters), 0.005, 0.05, "steer rotation inertia", "kg * m^2");
-        BoundingCheck.check(tireCoefficientOfFriction, 0.6, 2, "tire coefficient of friction", "");
-
-        DRIVE_GEAR_RATIO = driveGearRatio;
-        STEER_GEAR_RATIO = steerGearRatio;
-        DRIVE_FRICTION_VOLTAGE = driveFrictionVoltage;
-        WHEELS_COEFFICIENT_OF_FRICTION = tireCoefficientOfFriction;
-        WHEEL_RADIUS = wheelRadius;
-
-        this.driveMotorConfigs = new SimMotorConfigs(
-                driveMotorModel, DRIVE_GEAR_RATIO, KilogramSquareMeters.zero(), driveFrictionVoltage);
+    public SwerveModuleSimulation(SwerveModuleSimulationConfig config) {
+        this.config = config;
 
         SimulatedBattery.addElectricalAppliances(this::getDriveMotorSupplyCurrent);
-        this.steerMotorSim = new MapleMotorSim(
-                new SimMotorConfigs(steerMotorModel, steerGearRatio, steerRotationalInertia, steerFrictionVoltage));
+        this.steerMotorSim = new MapleMotorSim(config.steerMotorConfigs);
 
         this.driveWheelFinalPositionCache = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
@@ -136,12 +95,12 @@ public class SwerveModuleSimulation {
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             steerAbsolutePositionCache.offer(steerAbsoluteFacing);
 
-        this.driveMotorController = new SimulatedMotorController.GenericMotorController(driveMotorModel);
+        this.driveMotorController = new SimulatedMotorController.GenericMotorController(config.driveMotorConfigs.motor);
         this.steerMotorSim.useSimpleDCMotorController();
     }
 
     public SimMotorConfigs getDriveMotorConfigs() {
-        return driveMotorConfigs;
+        return config.driveMotorConfigs;
     }
 
     public SimMotorConfigs getSteerMotorConfigs() {
@@ -163,7 +122,8 @@ public class SwerveModuleSimulation {
     }
 
     public SimulatedMotorController.GenericMotorController useGenericMotorControllerForDrive() {
-        return useDriveMotorController(new SimulatedMotorController.GenericMotorController(driveMotorConfigs.motor));
+        return useDriveMotorController(
+                new SimulatedMotorController.GenericMotorController(config.driveMotorConfigs.motor));
     }
 
     /**
@@ -181,6 +141,170 @@ public class SwerveModuleSimulation {
 
     public SimulatedMotorController.GenericMotorController useGenericControllerForSteer() {
         return this.steerMotorSim.useSimpleDCMotorController();
+    }
+
+    /**
+     *
+     *
+     * <h2>Updates the Simulation for This Module.</h2>
+     *
+     * <p><strong>Note:</strong> Friction forces are not simulated in this method.
+     *
+     * @param moduleCurrentGroundVelocityWorldRelative the current ground velocity of the module, relative to the world
+     * @param robotFacing the absolute facing of the robot, relative to the world
+     * @param gravityForceOnModuleNewtons the gravitational force acting on this module, in newtons
+     * @return the propelling force generated by the module, as a {@link Vector2} object
+     */
+    public Vector2 updateSimulationSubTickGetModuleForce(
+            Vector2 moduleCurrentGroundVelocityWorldRelative,
+            Rotation2d robotFacing,
+            double gravityForceOnModuleNewtons) {
+        /* Step1: Update the steer mechanism simulation */
+        updateSteerSimulation();
+
+        /* Step2: Simulate the amount of propelling force generated by the module. */
+        final double grippingForceNewtons = config.getGrippingForceNewtons(gravityForceOnModuleNewtons);
+        final Rotation2d moduleWorldFacing = this.steerAbsoluteFacing.plus(robotFacing);
+        final Vector2 propellingForce =
+                getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
+
+        /* Step3: Updates and caches the encoder readings for odometry simulation. */
+        updateEncoderCaches();
+
+        return propellingForce;
+    }
+
+    /**
+     *
+     *
+     * <h2>updates the simulation for the steer mechanism.</h2>
+     */
+    private void updateSteerSimulation() {
+        /* update the readings of the sensor */
+        steerMotorSim.update(SimulatedArena.getSimulationDt());
+        this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getAngularPosition());
+        this.steerVelocity = steerMotorSim.getVelocity();
+    }
+
+    /**
+     *
+     *
+     * <h2>Calculates the amount of propelling force that the module generates.</h2>
+     *
+     * <p>For most of the time, that propelling force is directly applied to the drivetrain. And the drive wheel runs as
+     * fast as the ground velocity
+     *
+     * <p>However, if the propelling force exceeds the gripping, only the max gripping force is applied. The rest of the
+     * propelling force will cause the wheel to start skidding and make the odometry inaccurate.
+     *
+     * @param grippingForceNewtons the amount of gripping force that wheel can generate, in newtons
+     * @param moduleWorldFacing the current world facing of the module
+     * @param moduleCurrentGroundVelocity the current ground velocity of the module, world-reference
+     * @return a vector representing the propelling force that the module generates, world-reference
+     */
+    private Vector2 getPropellingForce(
+            double grippingForceNewtons, Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity) {
+        final double driveWheelTorque = getDriveWheelTorque();
+        double propellingForceNewtons = driveWheelTorque / config.WHEEL_RADIUS.in(Meters);
+        final boolean skidding = Math.abs(propellingForceNewtons) > grippingForceNewtons;
+        if (skidding) propellingForceNewtons = Math.copySign(grippingForceNewtons, propellingForceNewtons);
+
+        final double floorVelocityProjectionOnWheelDirectionMPS = moduleCurrentGroundVelocity.getMagnitude()
+                * Math.cos(moduleCurrentGroundVelocity.getAngleBetween(new Vector2(moduleWorldFacing.getRadians())));
+
+        // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
+        this.driveWheelFinalSpeed =
+                RadiansPerSecond.of(floorVelocityProjectionOnWheelDirectionMPS / config.WHEEL_RADIUS.in(Meters));
+
+        // if the module is skidding
+        if (skidding) {
+            final AngularVelocity skiddingEquilibriumWheelSpeed = config.driveMotorConfigs.calculateMechanismVelocity(
+                    config.driveMotorConfigs.calculateCurrent(
+                            NewtonMeters.of(propellingForceNewtons * config.WHEEL_RADIUS.in(Meters))),
+                    driveMotorAppliedVoltage);
+            this.driveWheelFinalSpeed = driveWheelFinalSpeed.times(0.5).plus(skiddingEquilibriumWheelSpeed.times(0.5));
+        }
+
+        return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
+    }
+
+    /**
+     *
+     *
+     * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
+     *
+     * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
+     */
+    private double getDriveWheelTorque() {
+        driveMotorAppliedVoltage = driveMotorController.updateControlSignal(
+                driveWheelFinalPosition,
+                driveWheelFinalSpeed,
+                getDriveEncoderUnGearedPosition(),
+                getDriveEncoderUnGearedSpeed());
+
+        driveMotorAppliedVoltage = SimulatedBattery.clamp(driveMotorAppliedVoltage);
+
+        /* calculate the stator current */
+        driveMotorStatorCurrent =
+                config.driveMotorConfigs.calculateCurrent(driveWheelFinalSpeed, driveMotorAppliedVoltage);
+
+        /* calculate the torque generated */
+        Torque driveWheelTorque = config.driveMotorConfigs.calculateTorque(driveMotorStatorCurrent);
+
+        /* calculates the torque if you included losses from friction */
+        Torque driveWheelTorqueWithFriction = NewtonMeters.of(MathUtil.applyDeadband(
+                driveWheelTorque.in(NewtonMeters),
+                config.driveMotorConfigs.friction.in(NewtonMeters),
+                Double.POSITIVE_INFINITY));
+        return driveWheelTorqueWithFriction.in(NewtonMeters);
+    }
+
+    /** @return the current module state of this simulation module */
+    public SwerveModuleState getCurrentState() {
+        return new SwerveModuleState(
+                MetersPerSecond.of(getDriveWheelFinalSpeed().in(RadiansPerSecond) * config.WHEEL_RADIUS.in(Meters)),
+                steerAbsoluteFacing);
+    }
+
+    /**
+     *
+     *
+     * <h2>Obtains the "free spin" state of the module</h2>
+     *
+     * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a long time under
+     * the current input voltage
+     *
+     * @return the free spinning module state
+     */
+    protected SwerveModuleState getFreeSpinState() {
+        return new SwerveModuleState(
+                config.driveMotorConfigs
+                                .calculateMechanismVelocity(
+                                        config.driveMotorConfigs.calculateCurrent(config.driveMotorConfigs.friction),
+                                        driveMotorAppliedVoltage)
+                                .in(RadiansPerSecond)
+                        * config.WHEEL_RADIUS.in(Meters),
+                steerAbsoluteFacing);
+    }
+
+    /**
+     *
+     *
+     * <h2>Cache the encoder values for high-frequency odometry.</h2>
+     *
+     * <p>An internal method to cache the encoder values to their queues.
+     */
+    private void updateEncoderCaches() {
+        /* Increment of drive wheel position */
+        this.driveWheelFinalPosition =
+                this.driveWheelFinalPosition.plus(this.driveWheelFinalSpeed.times(SimulatedArena.getSimulationDt()));
+
+        /* cache sensor readings to queue for high-frequency odometry */
+        this.steerAbsolutePositionCache.poll();
+        this.steerAbsolutePositionCache.offer(steerAbsoluteFacing);
+
+        this.driveWheelFinalPositionCache.poll();
+        this.driveWheelFinalPositionCache.offer(driveWheelFinalPosition);
     }
 
     /**
@@ -263,7 +387,7 @@ public class SwerveModuleSimulation {
      * @return the position of the drive motor's encoder (un-geared)
      */
     public Angle getDriveEncoderUnGearedPosition() {
-        return getDriveWheelFinalPosition().times(DRIVE_GEAR_RATIO);
+        return getDriveWheelFinalPosition().times(config.DRIVE_GEAR_RATIO);
     }
 
     /**
@@ -287,7 +411,7 @@ public class SwerveModuleSimulation {
      * @return the un-geared speed of the drive encoder
      */
     public AngularVelocity getDriveEncoderUnGearedSpeed() {
-        return getDriveWheelFinalSpeed().times(DRIVE_GEAR_RATIO);
+        return getDriveWheelFinalSpeed().times(config.DRIVE_GEAR_RATIO);
     }
 
     /**
@@ -310,7 +434,10 @@ public class SwerveModuleSimulation {
      * @see MapleMotorSim#getEncoderPosition()
      */
     public Angle getSteerRelativeEncoderPosition() {
-        return getSteerAbsoluteFacing().getMeasure().times(STEER_GEAR_RATIO).plus(steerRelativeEncoderOffSet);
+        return getSteerAbsoluteFacing()
+                .getMeasure()
+                .times(config.STEER_GEAR_RATIO)
+                .plus(steerRelativeEncoderOffSet);
     }
 
     /**
@@ -322,7 +449,7 @@ public class SwerveModuleSimulation {
      * @see MapleMotorSim#getEncoderVelocity()
      */
     public AngularVelocity getSteerRelativeEncoderVelocity() {
-        return getSteerAbsoluteEncoderSpeed().times(STEER_GEAR_RATIO);
+        return getSteerAbsoluteEncoderSpeed().times(config.STEER_GEAR_RATIO);
     }
 
     /**
@@ -359,7 +486,7 @@ public class SwerveModuleSimulation {
      */
     public Angle[] getCachedDriveEncoderUnGearedPositions() {
         return driveWheelFinalPositionCache.stream()
-                .map(value -> value.times(DRIVE_GEAR_RATIO))
+                .map(value -> value.times(config.DRIVE_GEAR_RATIO))
                 .toArray(Angle[]::new);
     }
 
@@ -389,8 +516,10 @@ public class SwerveModuleSimulation {
      */
     public Angle[] getCachedSteerRelativeEncoderPositions() {
         return steerAbsolutePositionCache.stream()
-                .map(absoluteFacing ->
-                        absoluteFacing.getMeasure().times(STEER_GEAR_RATIO).plus(steerRelativeEncoderOffSet))
+                .map(absoluteFacing -> absoluteFacing
+                        .getMeasure()
+                        .times(config.STEER_GEAR_RATIO)
+                        .plus(steerRelativeEncoderOffSet))
                 .toArray(Angle[]::new);
     }
 
@@ -406,225 +535,5 @@ public class SwerveModuleSimulation {
      */
     public Rotation2d[] getCachedSteerAbsolutePositions() {
         return steerAbsolutePositionCache.toArray(Rotation2d[]::new);
-    }
-
-    protected double getGrippingForceNewtons(double gravityForceOnModuleNewtons) {
-        return gravityForceOnModuleNewtons * WHEELS_COEFFICIENT_OF_FRICTION;
-    }
-
-    /**
-     *
-     *
-     * <h2>Updates the Simulation for This Module.</h2>
-     *
-     * <p><strong>Note:</strong> Friction forces are not simulated in this method.
-     *
-     * @param moduleCurrentGroundVelocityWorldRelative the current ground velocity of the module, relative to the world
-     * @param robotFacing the absolute facing of the robot, relative to the world
-     * @param gravityForceOnModuleNewtons the gravitational force acting on this module, in newtons
-     * @return the propelling force generated by the module, as a {@link Vector2} object
-     */
-    public Vector2 updateSimulationSubTickGetModuleForce(
-            Vector2 moduleCurrentGroundVelocityWorldRelative,
-            Rotation2d robotFacing,
-            double gravityForceOnModuleNewtons) {
-        /* Step1: Update the steer mechanism simulation */
-        updateSteerSimulation();
-
-        /* Step2: Simulate the amount of propelling force generated by the module. */
-        final double grippingForceNewtons = getGrippingForceNewtons(gravityForceOnModuleNewtons);
-        final Rotation2d moduleWorldFacing = this.steerAbsoluteFacing.plus(robotFacing);
-        final Vector2 propellingForce =
-                getPropellingForce(grippingForceNewtons, moduleWorldFacing, moduleCurrentGroundVelocityWorldRelative);
-
-        /* Step3: Updates and caches the encoder readings for odometry simulation. */
-        updateEncoderCaches();
-
-        return propellingForce;
-    }
-
-    /**
-     *
-     *
-     * <h2>updates the simulation for the steer mechanism.</h2>
-     */
-    private void updateSteerSimulation() {
-        /* update the readings of the sensor */
-        steerMotorSim.update(SimulatedArena.getSimulationDt());
-        this.steerAbsoluteFacing = new Rotation2d(steerMotorSim.getAngularPosition());
-        this.steerVelocity = steerMotorSim.getVelocity();
-    }
-
-    /**
-     *
-     *
-     * <h2>Calculates the amount of propelling force that the module generates.</h2>
-     *
-     * <p>For most of the time, that propelling force is directly applied to the drivetrain. And the drive wheel runs as
-     * fast as the ground velocity
-     *
-     * <p>However, if the propelling force exceeds the gripping, only the max gripping force is applied. The rest of the
-     * propelling force will cause the wheel to start skidding and make the odometry inaccurate.
-     *
-     * @param grippingForceNewtons the amount of gripping force that wheel can generate, in newtons
-     * @param moduleWorldFacing the current world facing of the module
-     * @param moduleCurrentGroundVelocity the current ground velocity of the module, world-reference
-     * @return a vector representing the propelling force that the module generates, world-reference
-     */
-    private Vector2 getPropellingForce(
-            double grippingForceNewtons, Rotation2d moduleWorldFacing, Vector2 moduleCurrentGroundVelocity) {
-        final double driveWheelTorque = getDriveWheelTorque();
-        double propellingForceNewtons = driveWheelTorque / WHEEL_RADIUS.in(Meters);
-        final boolean skidding = Math.abs(propellingForceNewtons) > grippingForceNewtons;
-        if (skidding) propellingForceNewtons = Math.copySign(grippingForceNewtons, propellingForceNewtons);
-
-        final double floorVelocityProjectionOnWheelDirectionMPS = moduleCurrentGroundVelocity.getMagnitude()
-                * Math.cos(moduleCurrentGroundVelocity.getAngleBetween(new Vector2(moduleWorldFacing.getRadians())));
-
-        // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
-        this.driveWheelFinalSpeed =
-                RadiansPerSecond.of(floorVelocityProjectionOnWheelDirectionMPS / WHEEL_RADIUS.in(Meters));
-
-        // if the module is skidding
-        if (skidding) {
-            final AngularVelocity skiddingEquilibriumWheelSpeed = driveMotorConfigs.calculateMechanismVelocity(
-                    driveMotorConfigs.calculateCurrent(
-                            NewtonMeters.of(propellingForceNewtons * WHEEL_RADIUS.in(Meters))),
-                    driveMotorAppliedVoltage);
-            this.driveWheelFinalSpeed = driveWheelFinalSpeed.times(0.5).plus(skiddingEquilibriumWheelSpeed.times(0.5));
-        }
-
-        return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
-    }
-
-    /**
-     *
-     *
-     * <h2>Calculates the amount of torque that the drive motor can generate on the wheel.</h2>
-     *
-     * @return the amount of torque on the wheel by the drive motor, in Newton * Meters
-     */
-    private double getDriveWheelTorque() {
-        driveMotorAppliedVoltage = driveMotorController.updateControlSignal(
-                driveWheelFinalPosition,
-                driveWheelFinalSpeed,
-                getDriveEncoderUnGearedPosition(),
-                getDriveEncoderUnGearedSpeed());
-
-        driveMotorAppliedVoltage = SimulatedBattery.clamp(driveMotorAppliedVoltage);
-
-        /* calculate the stator current */
-        driveMotorStatorCurrent = driveMotorConfigs.calculateCurrent(driveWheelFinalSpeed, driveMotorAppliedVoltage);
-
-        /* calculate the torque generated */
-        Torque driveWheelTorque = driveMotorConfigs.calculateTorque(driveMotorStatorCurrent);
-
-        /* calculates the torque if you included losses from friction */
-        Torque driveWheelTorqueWithFriction = NewtonMeters.of(MathUtil.applyDeadband(
-                driveWheelTorque.in(NewtonMeters),
-                driveMotorConfigs.friction.in(NewtonMeters),
-                Double.POSITIVE_INFINITY));
-        return driveWheelTorqueWithFriction.in(NewtonMeters);
-    }
-
-    /** @return the current module state of this simulation module */
-    public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(
-                MetersPerSecond.of(getDriveWheelFinalSpeed().in(RadiansPerSecond) * WHEEL_RADIUS.in(Meters)),
-                steerAbsoluteFacing);
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the "free spin" state of the module</h2>
-     *
-     * <p>The "free spin" state of a simulated module refers to its state after spinning freely for a long time under
-     * the current input voltage
-     *
-     * @return the free spinning module state
-     */
-    protected SwerveModuleState getFreeSpinState() {
-        return new SwerveModuleState(
-                driveMotorConfigs
-                                .calculateMechanismVelocity(
-                                        driveMotorConfigs.calculateCurrent(driveMotorConfigs.friction),
-                                        driveMotorAppliedVoltage)
-                                .in(RadiansPerSecond)
-                        * WHEEL_RADIUS.in(Meters),
-                steerAbsoluteFacing);
-    }
-
-    /**
-     *
-     *
-     * <h2>Cache the encoder values for high-frequency odometry.</h2>
-     *
-     * <p>An internal method to cache the encoder values to their queues.
-     */
-    private void updateEncoderCaches() {
-        /* Increment of drive wheel position */
-        this.driveWheelFinalPosition =
-                this.driveWheelFinalPosition.plus(this.driveWheelFinalSpeed.times(SimulatedArena.getSimulationDt()));
-
-        /* cache sensor readings to queue for high-frequency odometry */
-        this.steerAbsolutePositionCache.poll();
-        this.steerAbsolutePositionCache.offer(steerAbsoluteFacing);
-
-        this.driveWheelFinalPositionCache.poll();
-        this.driveWheelFinalPositionCache.offer(driveWheelFinalPosition);
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the theoretical speed that the module can achieve.</h2>
-     *
-     * @return the theoretical maximum ground speed that the module can achieve, in m/s
-     */
-    public LinearVelocity maximumGroundSpeed() {
-        return MetersPerSecond.of(
-                driveMotorConfigs.freeSpinMechanismVelocity().in(RadiansPerSecond) * WHEEL_RADIUS.in(Meters));
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the theoretical maximum propelling force of ONE module.</h2>
-     *
-     * <p>Calculates the maximum propelling force with respect to the gripping force and the drive motor's torque under
-     * its current limit.
-     *
-     * @param robotMass the mass of the robot
-     * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
-     * @return the maximum propelling force of EACH module
-     */
-    public Force getTheoreticalPropellingForcePerModule(Mass robotMass, int modulesCount) {
-        final double
-                maxThrustNewtons =
-                        driveMotorConfigs
-                                        .calculateTorque(driveMotorStatorCurrent)
-                                        .in(NewtonMeters)
-                                / WHEEL_RADIUS.in(Meters),
-                maxGrippingNewtons = 9.8 * robotMass.in(Kilograms) / modulesCount * WHEELS_COEFFICIENT_OF_FRICTION;
-
-        return Newtons.of(Math.min(maxThrustNewtons, maxGrippingNewtons));
-    }
-
-    /**
-     *
-     *
-     * <h2>Obtains the theatrical linear acceleration that the robot can achieve.</h2>
-     *
-     * <p>Calculates the maximum linear acceleration of a robot, with respect to its mass and
-     * {@link #getTheoreticalPropellingForcePerModule(Mass, int)}.
-     *
-     * @param robotMass the mass of the robot
-     * @param modulesCount the amount of modules on the robot, assumed to be sharing the gravity force equally
-     */
-    public LinearAcceleration maxAcceleration(Mass robotMass, int modulesCount) {
-        return getTheoreticalPropellingForcePerModule(robotMass, modulesCount)
-                .times(modulesCount)
-                .div(robotMass);
     }
 }

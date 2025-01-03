@@ -11,27 +11,49 @@
 
 The `DriveTrainSimulationConfig` object encapsulates the physical properties and configuration of a swerve drivetrain within the simulation environment. It allows you to specify key components such as motor types, gyro configuration, swerve module dynamics, and robot geometry.
 
-```java
-// Create and configure a drivetrain simulation configuration
-final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulationConfig.Default()
-        // Specify gyro type (for realistic gyro drifting and error simulation)
-        .withGyro(GyroSimulation.getPigeon2())
-
-        // Specify swerve module (for realistic swerve dynamics)
-        .withSwerveModule(SwerveModuleSimulation.getMark4(
-                DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
-                DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
-                Amps.of(60), // The stator current limit for the drive motor is 60A
-                SwerveModuleSimulation.WHEEL_GRIP.COLSONS.cof, // Use the COF for Colson Wheels
-                3 // Gear ratio (l3 gear ratio)
-        ))
-
-        // Configures the track length and track width (spacing between swerve modules)
-        .withTrackLengthTrackWidth(Inches.of(24), Inches.of(24))
-
-        // Configures the bumper size (dimensions of the robot bumper)
-        .withBumperSize(Inches.of(30), Inches.of(30));
-```
+=== "COTS Swerve"
+    <div>
+        ```Java
+        // Create and configure a drivetrain simulation configuration
+        final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulationConfig.Default()
+                // Specify gyro type (for realistic gyro drifting and error simulation)
+                .withGyro(COTS.ofPigeon2())
+                // Specify swerve module (for realistic swerve dynamics)
+                .withSwerveModule(SwerveModuleSimulation.ofMark4(
+                        DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+                        DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
+                        COTS.WHEELS.COLSONS.cof, // Use the COF for Colson Wheels
+                        3)) // L3 Gear ratio
+                // Configures the track length and track width (spacing between swerve modules)
+                .withTrackLengthTrackWidth(Inches.of(24), Inches.of(24))
+                // Configures the bumper size (dimensions of the robot bumper)
+                .withBumperSize(Inches.of(30), Inches.of(30));
+        ```
+    </div>
+=== "Custom Swerve"
+    <div>
+        ```Java
+        // Create and configure a drivetrain simulation configuration
+        final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulationConfig.Default()
+                // Specify gyro type (for realistic gyro drifting and error simulation)
+                .withGyro(COTS.ofPigeon2())
+                // Specify swerve module (for realistic swerve dynamics)
+                .withSwerveModule(new SwerveModuleSimulationConfig(
+                        DCMotor.getKrakenX60(1), // Drive motor is a Kraken X60
+                        DCMotor.getFalcon500(1), // Steer motor is a Falcon 500
+                        6.12, // Drive motor gear ratio.
+                        12.8, // Steer motor gear ratio.
+                        Volts.of(0.1), // Drive friction voltage.
+                        Volts.of(0.1), // Steer friction voltage
+                        Inches.of(2), // Wheel radius
+                        KilogramSquareMeters.of(0.03), // Steer MOI
+                        1.2)) // Wheel COF
+                // Configures the track length and track width (spacing between swerve modules)
+                .withTrackLengthTrackWidth(Inches.of(24), Inches.of(24))
+                // Configures the bumper size (dimensions of the robot bumper)
+                .withBumperSize(Inches.of(30), Inches.of(30));
+        ```
+    </div>
 
 ---
 ## 1. Instantiate and Register a Swerve Drive Simulation

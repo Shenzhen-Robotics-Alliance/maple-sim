@@ -54,8 +54,8 @@ import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ironmaple.simulation.drivesims.COTS;
-import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -91,7 +91,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
             .withRobotMass(Kilograms.of(ROBOT_MASS_KG))
             .withCustomModuleTranslations(getModuleTranslations())
             .withGyro(COTS.ofPigeon2())
-            .withSwerveModule(() -> new SwerveModuleSimulation(
+            .withSwerveModule(new SwerveModuleSimulationConfig(
                     DCMotor.getKrakenX60(1),
                     DCMotor.getFalcon500(1),
                     TunerConstants.FrontLeft.DriveMotorGearRatio,

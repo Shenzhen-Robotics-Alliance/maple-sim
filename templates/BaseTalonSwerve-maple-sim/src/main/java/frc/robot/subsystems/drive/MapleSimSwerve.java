@@ -18,6 +18,7 @@ import frc.robot.Telemetry;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.*;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 
 public class MapleSimSwerve implements SwerveDrive {
     private final SelfControlledSwerveDriveSimulation simulatedDrive;
@@ -25,7 +26,7 @@ public class MapleSimSwerve implements SwerveDrive {
     public MapleSimSwerve() {
         final DriveTrainSimulationConfig config = DriveTrainSimulationConfig.Default()
                 .withGyro(COTS.ofPigeon2())
-                .withSwerveModule(() -> new SwerveModuleSimulation(
+                .withSwerveModule(new SwerveModuleSimulationConfig(
                         // adjust motor type as needed
                         DCMotor.getFalcon500(1),
                         DCMotor.getFalcon500(1),

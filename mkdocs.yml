@@ -83,7 +83,7 @@ nav:
         - Simple Swerve Sim: swerve-sim-easy.md
         - Hardware Abstraction Sim : swerve-sim-hardware-abstraction.md
     - Simulating Intake: simulating-intake.md
-    - Simulating Oppoent Robots: simulating-opponent-robots.md
+    - Simulating Opponent Robots: simulating-opponent-robots.md
     - Simulating Projectiles: simulating-projectiles.md
     - Contributing: CONTRIBUTION.md
     - Release Notes: ./release-notes/version0.2.0-beta1.md

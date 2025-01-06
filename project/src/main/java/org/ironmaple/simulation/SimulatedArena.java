@@ -21,7 +21,7 @@ import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 /**
@@ -64,7 +64,7 @@ public abstract class SimulatedArena {
     public static SimulatedArena getInstance() {
         if (RobotBase.isReal()) throw new IllegalStateException("MapleSim should not be running on a real robot!");
 
-        if (instance == null) instance = new Arena2024Crescendo();
+        if (instance == null) instance = new Arena2025Reefscape();
 
         return instance;
     }

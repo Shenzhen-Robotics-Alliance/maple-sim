@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Convex;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.utils.FieldMirroringUtils;
+import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
 /**
  *
@@ -292,9 +292,9 @@ public class GamePieceProjectile {
         final Translation3d position = getPositionAtTime(time);
         final double EDGE_TOLERANCE = 0.5;
         return position.getX() < -EDGE_TOLERANCE
-                || position.getX() > FieldMirroringUtils.FIELD_WIDTH + EDGE_TOLERANCE
+                || position.getX() > LegacyFieldMirroringUtils2024.FIELD_WIDTH + EDGE_TOLERANCE
                 || position.getY() < -EDGE_TOLERANCE
-                || position.getY() > FieldMirroringUtils.FIELD_HEIGHT + EDGE_TOLERANCE;
+                || position.getY() > LegacyFieldMirroringUtils2024.FIELD_HEIGHT + EDGE_TOLERANCE;
     }
 
     /**

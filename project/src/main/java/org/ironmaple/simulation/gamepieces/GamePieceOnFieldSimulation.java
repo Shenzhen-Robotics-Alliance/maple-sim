@@ -60,10 +60,10 @@ public class GamePieceOnFieldSimulation extends Body {
      * <h2>Creates a Game Piece on the Field with Fixed Height.</h2>
      *
      * @param info info about the game piece type
-     * @param initialPosition the initial position of the game piece on the field
+     * @param initialPose the initial position of the game piece on the field
      */
-    public GamePieceOnFieldSimulation(GamePieceInfo info, Translation2d initialPosition) {
-        this(info, () -> info.gamePieceHeight.in(Meters) / 2, initialPosition, new Translation2d());
+    public GamePieceOnFieldSimulation(GamePieceInfo info, Pose2d initialPose) {
+        this(info, () -> info.gamePieceHeight.in(Meters) / 2, initialPose, new Translation2d());
     }
 
     /**
@@ -73,13 +73,13 @@ public class GamePieceOnFieldSimulation extends Body {
      *
      * @param info info about the game piece type
      * @param zPositionSupplier a supplier that provides the current Z-height of the game piece
-     * @param initialPosition the initial position of the game piece on the field
+     * @param initialPose the initial position of the game piece on the field
      * @param initialVelocityMPS the initial velocity of the game piece, in meters per second
      */
     public GamePieceOnFieldSimulation(
             GamePieceInfo info,
             DoubleSupplier zPositionSupplier,
-            Translation2d initialPosition,
+            Pose2d initialPose,
             Translation2d initialVelocityMPS) {
         super();
         this.type = info.type;
@@ -94,12 +94,12 @@ public class GamePieceOnFieldSimulation extends Body {
         bodyFixture.setDensity(info.gamePieceMass.in(Kilogram) / info.shape.getArea());
         super.setMass(MassType.NORMAL);
 
-        super.translate(GeometryConvertor.toDyn4jVector2(initialPosition));
-
         super.setLinearDamping(info.linearDamping);
         super.setAngularDamping(info.angularDamping);
         super.setBullet(true);
 
+        super.translate(GeometryConvertor.toDyn4jVector2(initialPose.getTranslation()));
+        super.rotate(initialPose.getRotation().getRadians());
         super.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocityMPS));
     }
 

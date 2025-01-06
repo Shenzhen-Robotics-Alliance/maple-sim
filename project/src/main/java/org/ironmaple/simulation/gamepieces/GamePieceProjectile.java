@@ -399,7 +399,7 @@ public class GamePieceProjectile {
                 () -> Math.max(
                         info.gamePieceHeight().in(Meters) / 2,
                         getPositionAtTime(launchedTimer.get()).getZ()),
-                getPositionAtTime(launchedTimer.get()).toTranslation2d(),
+                new Pose2d(getPositionAtTime(launchedTimer.get()).toTranslation2d(), new Rotation2d()),
                 initialLaunchingVelocityMPS));
     }
 

@@ -105,7 +105,7 @@ If you're using AdvantageKit, you'll want to update the `GyroInputs` by retrievi
 An example of implementing the Gyro interface in an AdvantageKit environment can be found [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/src/main/java/frc/robot/subsystems/drive/GyroIOSim.java).
 
 ---
-## 2. Interacting with the Simulated Modules through IO abtraction
+## 2. Interacting with the Simulated Modules through IO abstraction
 
 Similar to the gyro, you also need to create hardware abstractions for the swerve modules.
 

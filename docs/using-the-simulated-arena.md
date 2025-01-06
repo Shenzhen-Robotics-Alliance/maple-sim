@@ -20,7 +20,7 @@ SimulatedArena.overrideInstance(SimulatedArena newInstance);
 ```
 
 ---
-## 2.Updating the `SimulatedArena` instance
+## 2. Updating the `SimulatedArena` instance
 
 You need to call the update function to keep the simulation world updated.
 

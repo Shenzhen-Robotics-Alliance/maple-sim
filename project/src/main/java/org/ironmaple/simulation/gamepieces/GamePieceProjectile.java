@@ -1,5 +1,7 @@
 package org.ironmaple.simulation.gamepieces;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.Timer;
@@ -12,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Convex;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField;
 import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
 /**
@@ -49,6 +52,7 @@ public class GamePieceProjectile {
     private static final double GRAVITY = 11;
 
     // Properties of the game piece projectile:
+    private final GamePieceOnFieldSimulation.GamePieceInfo info;
     public final String gamePieceType;
     private final Translation2d initialPosition, initialLaunchingVelocityMPS;
     private final double initialHeight, initialVerticalSpeedMPS;
@@ -70,8 +74,6 @@ public class GamePieceProjectile {
     // Optional properties of the game piece, used if we want it to become a
     // GamePieceOnFieldSimulation upon touching ground:
     private boolean becomesGamePieceOnGroundAfterTouchGround = false;
-    private Convex shape = null;
-    private double gamePieceHeight = 0.0, massKg = 0.0;
 
     // Optional properties of the game piece, used if we want it to have a target:
     private Translation3d tolerance = new Translation3d(0.2, 0.2, 0.2);
@@ -101,8 +103,7 @@ public class GamePieceProjectile {
      *
      * <h2>Creates a Game Piece Projectile Ejected from a Shooter.</h2>
      *
-     * @param gamePieceType the type of game piece, which will affect the
-     *     {@link SimulatedArena#getGamePiecesByType(String)}
+     * @param info the info of the game piece
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
@@ -115,7 +116,7 @@ public class GamePieceProjectile {
      * @param shooterAngleRad the pitch angle of the shooter when launching, in radians
      */
     public GamePieceProjectile(
-            String gamePieceType,
+            GamePieceOnFieldSimulation.GamePieceInfo info,
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
             ChassisSpeeds chassisSpeeds,
@@ -124,7 +125,7 @@ public class GamePieceProjectile {
             double launchingSpeedMPS,
             double shooterAngleRad) {
         this(
-                gamePieceType,
+                info,
                 robotPosition.plus(shooterPositionOnRobot.rotateBy(shooterFacing)),
                 calculateInitialProjectileVelocityMPS(
                         shooterPositionOnRobot,
@@ -175,8 +176,7 @@ public class GamePieceProjectile {
      *
      * <h2>Creates a Game Piece Projectile Ejected from a Shooter.</h2>
      *
-     * @param gamePieceType the type of game piece, which will affect the
-     *     {@link SimulatedArena#getGamePiecesByType(String)}
+     * @param info the info of the game piece
      * @param initialPosition the position of the game piece at the moment it is launched into the air
      * @param initialLaunchingVelocityMPS the horizontal component of the initial velocity in the X-Y plane, in meters
      *     per second (m/s)
@@ -187,13 +187,14 @@ public class GamePieceProjectile {
      *     piece)
      */
     public GamePieceProjectile(
-            String gamePieceType,
+            GamePieceOnFieldSimulation.GamePieceInfo info,
             Translation2d initialPosition,
             Translation2d initialLaunchingVelocityMPS,
             double initialHeight,
             double initialVerticalSpeedMPS,
             Rotation3d gamePieceRotation) {
-        this.gamePieceType = gamePieceType;
+        this.info = info;
+        this.gamePieceType = info.type();
         this.initialPosition = initialPosition;
         this.initialLaunchingVelocityMPS = initialLaunchingVelocityMPS;
         this.initialHeight = initialHeight;
@@ -394,12 +395,10 @@ public class GamePieceProjectile {
     public void addGamePieceAfterTouchGround(SimulatedArena simulatedArena) {
         if (!becomesGamePieceOnGroundAfterTouchGround) return;
         simulatedArena.addGamePiece(new GamePieceOnFieldSimulation(
-                gamePieceType,
-                shape,
+                CrescendoNoteOnField.CRESCENDO_NOTE_INFO,
                 () -> Math.max(
-                        gamePieceHeight / 2,
+                        info.gamePieceHeight().in(Meters) / 2,
                         getPositionAtTime(launchedTimer.get()).getZ()),
-                massKg,
                 getPositionAtTime(launchedTimer.get()).toTranslation2d(),
                 initialLaunchingVelocityMPS));
     }
@@ -445,17 +444,10 @@ public class GamePieceProjectile {
      * <p>This method configures the game piece projectile to transform into a {@link GamePieceOnFieldSimulation} when
      * it touches the ground.
      *
-     * @param shape the shape of the game piece's collision space
-     * @param gamePieceHeightMeters the height (thickness) of the game piece, in meters
-     * @param massKg the mass of the game piece, in kilograms
      * @return the current instance of {@link GamePieceProjectile} to allow method chaining
      */
-    public GamePieceProjectile enableBecomesGamePieceOnFieldAfterTouchGround(
-            Convex shape, double gamePieceHeightMeters, double massKg) {
+    public GamePieceProjectile enableBecomesGamePieceOnFieldAfterTouchGround() {
         this.becomesGamePieceOnGroundAfterTouchGround = true;
-        this.shape = shape;
-        this.gamePieceHeight = gamePieceHeightMeters;
-        this.massKg = massKg;
         return this;
     }
 
@@ -464,7 +456,7 @@ public class GamePieceProjectile {
      *
      * <h2>Configures the Game Piece Projectile to Disappear Upon Touching Ground.</h2>
      *
-     * <p>Reverts the effect of {@link #enableBecomesGamePieceOnFieldAfterTouchGround(Convex, double, double)}.
+     * <p>Reverts the effect of {@link #enableBecomesGamePieceOnFieldAfterTouchGround()}.
      */
     public GamePieceProjectile disableBecomesGamePieceOnFieldAfterTouchGround() {
         this.becomesGamePieceOnGroundAfterTouchGround = false;

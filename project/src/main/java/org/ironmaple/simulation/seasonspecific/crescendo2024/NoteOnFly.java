@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import org.dyn4j.geometry.Geometry;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
@@ -20,7 +19,7 @@ public class NoteOnFly extends GamePieceProjectile {
             double launchingSpeedMPS,
             double shooterAngleRad) {
         super(
-                "Note",
+                CRESCENDO_NOTE_INFO,
                 robotPosition,
                 shooterPositionOnRobot,
                 chassisSpeeds,
@@ -46,8 +45,7 @@ public class NoteOnFly extends GamePieceProjectile {
     }
 
     public NoteOnFly enableBecomeNoteOnFieldAfterTouchGround() {
-        return (NoteOnFly) super.enableBecomesGamePieceOnFieldAfterTouchGround(
-                Geometry.createCircle(NOTE_DIAMETER / 2), NOTE_HEIGHT, NOTE_WEIGHT_KG);
+        return (NoteOnFly) super.enableBecomesGamePieceOnFieldAfterTouchGround();
     }
 
     public NoteOnFly disableBecomeNoteOnFieldAfterTouchGround() {

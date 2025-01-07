@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import org.dyn4j.geometry.Convex;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField;
 import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
@@ -583,8 +582,7 @@ public class GamePieceProjectile {
      * landed.
      *
      * <p>When the game piece is below this height, it will either be deleted or, if configured, transformed into a
-     * {@link GamePieceOnFieldSimulation} using {@link #enableBecomesGamePieceOnFieldAfterTouchGround(Convex, double,
-     * double)}.
+     * {@link GamePieceOnFieldSimulation} using {@link #enableBecomesGamePieceOnFieldAfterTouchGround()}.
      *
      * @param heightAsTouchGround the height (in meters) at which the projectile is considered to touch the ground
      * @return the current instance of {@link GamePieceProjectile} to allow method chaining

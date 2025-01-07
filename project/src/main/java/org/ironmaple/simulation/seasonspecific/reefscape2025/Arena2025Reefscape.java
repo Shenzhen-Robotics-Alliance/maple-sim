@@ -60,7 +60,9 @@ public class Arena2025Reefscape extends SimulatedArena {
     }
 
     @Override
-    public void placeGamePiecesOnField() {}
+    public void placeGamePiecesOnField() {
+        super.addGamePiece(new ReefscapeCoralAlgaeStack(new Translation2d(2.5, 2.5)));
+    }
 
     @Override
     public void competitionPeriodic() {}

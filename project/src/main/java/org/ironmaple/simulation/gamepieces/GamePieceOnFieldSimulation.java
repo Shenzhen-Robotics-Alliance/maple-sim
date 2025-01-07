@@ -98,8 +98,7 @@ public class GamePieceOnFieldSimulation extends Body {
         super.setAngularDamping(info.angularDamping);
         super.setBullet(true);
 
-        super.translate(GeometryConvertor.toDyn4jVector2(initialPose.getTranslation()));
-        super.rotate(initialPose.getRotation().getRadians());
+        super.setTransform(GeometryConvertor.toDyn4jTransform(initialPose));
         super.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocityMPS));
     }
 

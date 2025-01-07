@@ -13,7 +13,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField;
 import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
 /**
@@ -394,7 +393,7 @@ public class GamePieceProjectile {
     public void addGamePieceAfterTouchGround(SimulatedArena simulatedArena) {
         if (!becomesGamePieceOnGroundAfterTouchGround) return;
         simulatedArena.addGamePiece(new GamePieceOnFieldSimulation(
-                CrescendoNoteOnField.CRESCENDO_NOTE_INFO,
+                info,
                 () -> Math.max(
                         info.gamePieceHeight().in(Meters) / 2,
                         getPositionAtTime(launchedTimer.get()).getZ()),

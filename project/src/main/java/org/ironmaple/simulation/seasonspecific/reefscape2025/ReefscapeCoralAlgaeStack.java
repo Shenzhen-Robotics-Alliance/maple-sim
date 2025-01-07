@@ -3,6 +3,7 @@ package org.ironmaple.simulation.seasonspecific.reefscape2025;
 import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.dyn4j.geometry.Circle;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
@@ -45,15 +46,20 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
 
         // add the coral
         ReefscapeCoral coral = new ReefscapeCoral(new Pose2d(
-                stackPosition.plus(new Translation2d(0.3, 0).rotateBy(collapseDirection)), collapseDirection));
+                stackPosition.plus(new Translation2d(0.15, 0).rotateBy(collapseDirection)), collapseDirection));
         System.out.println("coral position: " + coral.getPoseOnField());
         coral.setLinearVelocity(getLinearVelocity());
         arena.addGamePiece(coral);
 
         // add the algae
-        ReefscapeAlgaeOnField algae = new ReefscapeAlgaeOnField(stackPosition);
-        algae.setLinearVelocity(getLinearVelocity().copy().multiply(0.6));
-        arena.addGamePiece(algae);
+        arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
+                stackPosition,
+                new Translation2d(),
+                new ChassisSpeeds(),
+                collapseDirection,
+                0.3 + edu.wpi.first.math.util.Units.inchesToMeters(8),
+                velocityMPS.getNorm() * 0.6,
+                0));
 
         collapsed = true;
     }

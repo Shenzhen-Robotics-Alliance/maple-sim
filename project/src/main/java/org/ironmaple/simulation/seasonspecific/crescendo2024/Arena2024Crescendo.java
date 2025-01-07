@@ -1,6 +1,6 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
-import static org.ironmaple.utils.FieldMirroringUtils.toCurrentAllianceTranslation;
+import static org.ironmaple.utils.LegacyFieldMirroringUtils2024.toCurrentAllianceTranslation;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

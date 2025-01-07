@@ -6,19 +6,27 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-public class FieldMirroringUtils {
-    public static final double FIELD_WIDTH = 17.548;
-    public static final double FIELD_HEIGHT = 8.052;
+public class LegacyFieldMirroringUtils2024 {
+    public static final double FIELD_WIDTH = 16.54;
+    public static final double FIELD_HEIGHT = 8.21;
+
+    public static final Translation3d SPEAKER_POSE_BLUE = new Translation3d(0.1, 5.55, 2.2);
+
+    public static final Supplier<Translation2d> SPEAKER_POSITION_SUPPLIER =
+            () -> toCurrentAllianceTranslation(SPEAKER_POSE_BLUE.toTranslation2d());
 
     public static Rotation2d toCurrentAllianceRotation(Rotation2d rotationAtBlueSide) {
-        return rotationAtBlueSide.times(-1);
+        final Rotation2d yAxis = Rotation2d.fromDegrees(90),
+                differenceFromYAxisAtBlueSide = rotationAtBlueSide.minus(yAxis),
+                differenceFromYAxisNew = differenceFromYAxisAtBlueSide.times(isSidePresentedAsRed() ? -1 : 1);
+        return yAxis.rotateBy(differenceFromYAxisNew);
     }
 
     public static Translation2d toCurrentAllianceTranslation(Translation2d translationAtBlueSide) {
         if (isSidePresentedAsRed())
-            return new Translation2d(
-                    FIELD_WIDTH - translationAtBlueSide.getX(), FIELD_HEIGHT - translationAtBlueSide.getY());
+            return new Translation2d(FIELD_WIDTH - translationAtBlueSide.getX(), translationAtBlueSide.getY());
         return translationAtBlueSide;
     }
 

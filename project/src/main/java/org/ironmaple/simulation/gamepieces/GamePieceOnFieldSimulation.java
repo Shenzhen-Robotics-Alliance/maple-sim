@@ -1,10 +1,15 @@
 package org.ironmaple.simulation.gamepieces;
 
+import static edu.wpi.first.units.Units.Kilogram;
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Mass;
 import java.util.function.DoubleSupplier;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -28,11 +33,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * {@link SimulatedArena#addGamePiece(GamePieceOnFieldSimulation)}.
  */
 public class GamePieceOnFieldSimulation extends Body {
-    public static final double LINEAR_DAMPING = 3.5,
-            ANGULAR_DAMPING = 5,
-            COEFFICIENT_OF_FRICTION = 0.8,
-            COEFFICIENT_OF_RESTITUTION = 0.3,
-            MINIMUM_BOUNCING_VELOCITY = 0.2;
+    public static final double COEFFICIENT_OF_FRICTION = 0.8, MINIMUM_BOUNCING_VELOCITY = 0.2;
 
     /**
      *
@@ -58,15 +59,11 @@ public class GamePieceOnFieldSimulation extends Body {
      *
      * <h2>Creates a Game Piece on the Field with Fixed Height.</h2>
      *
-     * @param type the type of the game piece, affecting categorization within the arena
-     * @param shape the shape of the collision space for the game piece
-     * @param gamePieceHeight the height (thickness) of the game piece, in meters
-     * @param mass the mass of the game piece, in kilograms
-     * @param initialPosition the initial position of the game piece on the field
+     * @param info info about the game piece type
+     * @param initialPose the initial position of the game piece on the field
      */
-    public GamePieceOnFieldSimulation(
-            String type, Convex shape, double gamePieceHeight, double mass, Translation2d initialPosition) {
-        this(type, shape, () -> gamePieceHeight / 2, mass, initialPosition, new Translation2d());
+    public GamePieceOnFieldSimulation(GamePieceInfo info, Pose2d initialPose) {
+        this(info, () -> info.gamePieceHeight.in(Meters) / 2, initialPose, new Translation2d());
     }
 
     /**
@@ -74,39 +71,34 @@ public class GamePieceOnFieldSimulation extends Body {
      *
      * <h2>Creates a Game Piece on the Field with Custom Height Supplier and Initial Velocity.</h2>
      *
-     * @param type the type of the game piece, affecting categorization within the arena
-     * @param shape the shape of the collision space for the game piece
+     * @param info info about the game piece type
      * @param zPositionSupplier a supplier that provides the current Z-height of the game piece
-     * @param mass the mass of the game piece, in kilograms
-     * @param initialPosition the initial position of the game piece on the field
+     * @param initialPose the initial position of the game piece on the field
      * @param initialVelocityMPS the initial velocity of the game piece, in meters per second
      */
     public GamePieceOnFieldSimulation(
-            String type,
-            Convex shape,
+            GamePieceInfo info,
             DoubleSupplier zPositionSupplier,
-            double mass,
-            Translation2d initialPosition,
+            Pose2d initialPose,
             Translation2d initialVelocityMPS) {
         super();
-        this.type = type;
+        this.type = info.type;
         this.zPositionSupplier = zPositionSupplier;
 
-        BodyFixture bodyFixture = super.addFixture(shape);
+        BodyFixture bodyFixture = super.addFixture(info.shape);
 
         bodyFixture.setFriction(COEFFICIENT_OF_FRICTION);
-        bodyFixture.setRestitution(COEFFICIENT_OF_RESTITUTION);
+        bodyFixture.setRestitution(info.coefficientOfRestitution);
         bodyFixture.setRestitutionVelocity(MINIMUM_BOUNCING_VELOCITY);
 
-        bodyFixture.setDensity(mass / shape.getArea());
+        bodyFixture.setDensity(info.gamePieceMass.in(Kilogram) / info.shape.getArea());
         super.setMass(MassType.NORMAL);
 
-        super.translate(GeometryConvertor.toDyn4jVector2(initialPosition));
-
-        super.setLinearDamping(LINEAR_DAMPING);
-        super.setAngularDamping(ANGULAR_DAMPING);
+        super.setLinearDamping(info.linearDamping);
+        super.setAngularDamping(info.angularDamping);
         super.setBullet(true);
 
+        super.setTransform(GeometryConvertor.toDyn4jTransform(initialPose));
         super.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocityMPS));
     }
 
@@ -150,4 +142,23 @@ public class GamePieceOnFieldSimulation extends Body {
                 zPositionSupplier.getAsDouble(),
                 new Rotation3d(0, 0, pose2d.getRotation().getRadians()));
     }
+
+    /**
+     *
+     *
+     * <h2>Stores the info of a type of game piece</h2>
+     *
+     * @param type the type of the game piece, affecting categorization within the arena
+     * @param shape the shape of the collision space for the game piece
+     * @param gamePieceHeight the height (thickness) of the game piece, in meters
+     * @param gamePieceMass the mass of the game piece, in kilograms
+     */
+    public record GamePieceInfo(
+            String type,
+            Convex shape,
+            Distance gamePieceHeight,
+            Mass gamePieceMass,
+            double linearDamping,
+            double angularDamping,
+            double coefficientOfRestitution) {}
 }

@@ -7,6 +7,15 @@ import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.FieldMirroringUtils;
 
+/**
+ *
+ *
+ * <h1>The playing field for the 2025 FRC Game: Reefscape</h1>
+ *
+ * <p>This class represents the playing field for the 2025 FRC game, Reefscape.
+ *
+ * <p>It extends {@link SimulatedArena} and includes specific details of the Reefscape game environment.
+ */
 public class Arena2025Reefscape extends SimulatedArena {
     public static final class ReefscapeFieldObstacleMap extends FieldMap {
         public ReefscapeFieldObstacleMap() {

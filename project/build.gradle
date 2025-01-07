@@ -4,7 +4,7 @@ plugins {
     id 'google-test'
     id("com.diffplug.spotless") version "7.0.0.BETA4"
     id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2020.2'
-    id 'edu.wpi.first.NativeUtils' version '2024.7.2'
+    id 'edu.wpi.first.NativeUtils' version '2025.9.0'
     id 'edu.wpi.first.GradleJni' version '1.1.0'
     id 'edu.wpi.first.GradleVsCode' version '2.1.0'
     id "edu.wpi.first.GradleRIO" version "2025.1.1"
@@ -21,6 +21,12 @@ if (project.hasProperty('releaseMode')) {
 } else {
     wpilibRepositories.addAllDevelopmentRepositories(project)
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+var javaVersion = "17"
 
 // Apply C++ configuration
 apply from: 'config.gradle'
@@ -62,7 +68,7 @@ javadoc {
 
     exclude 'org/json/simple/**'
     options {
-        links 'https://docs.oracle.com/en/java/javase/11/docs/api/', 'https://github.wpilib.org/allwpilib/docs/release/java/'
+        links "https://docs.oracle.com/en/java/javase/$javaVersion/docs/api/", 'https://github.wpilib.org/allwpilib/docs/release/java/'
     }
 }
 
@@ -105,5 +111,5 @@ compileJava.dependsOn 'spotlessApply'
 apply from: 'publish.gradle'
 
 wrapper {
-    gradleVersion '8.5'
+    gradleVersion '8.11'
 }

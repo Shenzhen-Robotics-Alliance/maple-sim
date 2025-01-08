@@ -26,7 +26,7 @@ import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
 
 public abstract class ModuleIOTalonFX implements ModuleIO {
-    protected final SwerveModuleConstants constants;
+    protected final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants;
 
     protected final TalonFX driveTalon;
     protected final TalonFX turnTalon;
@@ -58,12 +58,13 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
     private final Debouncer turnConnectedDebounce = new Debouncer(0.5);
     private final Debouncer turnEncoderConnectedDebounce = new Debouncer(0.5);
 
-    protected ModuleIOTalonFX(SwerveModuleConstants constants) {
+    protected ModuleIOTalonFX(
+            SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> constants) {
         this.constants = constants;
 
         driveTalon = new TalonFX(constants.DriveMotorId, TunerConstants.DrivetrainConstants.CANBusName);
         turnTalon = new TalonFX(constants.SteerMotorId, TunerConstants.DrivetrainConstants.CANBusName);
-        cancoder = new CANcoder(constants.CANcoderId, TunerConstants.DrivetrainConstants.CANBusName);
+        cancoder = new CANcoder(constants.EncoderId, TunerConstants.DrivetrainConstants.CANBusName);
 
         // Configure drive motor
         var driveConfig = constants.DriveMotorInitialConfigs;
@@ -86,7 +87,7 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
         if (Constants.currentMode == Constants.Mode.SIM)
             turnConfig.Slot0.withKD(0.5).withKS(0); // during simulation, gains are slightly different
 
-        turnConfig.Feedback.FeedbackRemoteSensorID = constants.CANcoderId;
+        turnConfig.Feedback.FeedbackRemoteSensorID = constants.EncoderId;
         turnConfig.Feedback.FeedbackSensorSource = switch (constants.FeedbackSource) {
             case RemoteCANcoder -> FeedbackSensorSourceValue.RemoteCANcoder;
             case FusedCANcoder -> FeedbackSensorSourceValue.FusedCANcoder;
@@ -103,9 +104,9 @@ public abstract class ModuleIOTalonFX implements ModuleIO {
         tryUntilOk(5, () -> turnTalon.getConfigurator().apply(turnConfig, 0.25));
 
         // Configure CANCoder
-        CANcoderConfiguration cancoderConfig = constants.CANcoderInitialConfigs;
-        cancoderConfig.MagnetSensor.MagnetOffset = constants.CANcoderOffset;
-        cancoderConfig.MagnetSensor.SensorDirection = constants.CANcoderInverted
+        CANcoderConfiguration cancoderConfig = constants.EncoderInitialConfigs;
+        cancoderConfig.MagnetSensor.MagnetOffset = constants.EncoderOffset;
+        cancoderConfig.MagnetSensor.SensorDirection = constants.EncoderInverted
                 ? SensorDirectionValue.Clockwise_Positive
                 : SensorDirectionValue.CounterClockwise_Positive;
         cancoder.getConfigurator().apply(cancoderConfig);

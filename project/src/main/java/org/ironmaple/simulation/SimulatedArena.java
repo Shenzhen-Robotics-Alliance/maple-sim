@@ -339,9 +339,7 @@ public abstract class SimulatedArena {
 
         this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
-        for (IntakeSimulation intakeSimulation : intakeSimulations)
-            while (!intakeSimulation.getGamePiecesToRemove().isEmpty())
-                removeGamePiece(intakeSimulation.getGamePiecesToRemove().poll());
+        for (IntakeSimulation intakeSimulation : intakeSimulations) intakeSimulation.removeObtainedGamePieces(this);
 
         for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
     }

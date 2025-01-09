@@ -19,6 +19,7 @@ import org.dyn4j.world.ContactCollisionData;
 import org.dyn4j.world.listener.ContactListener;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralAlgaeStack;
 
 /**
  *
@@ -261,6 +262,15 @@ public class IntakeSimulation extends BodyFixture {
             else if (collisionBody2 instanceof GamePieceOnFieldSimulation gamePiece
                     && Objects.equals(gamePiece.type, targetedGamePieceType)
                     && fixture1 == IntakeSimulation.this) flagGamePieceForRemoval(gamePiece);
+
+            boolean coralOrAlgaeIntake = "Coral".equals(IntakeSimulation.this.targetedGamePieceType)
+                    || "Algae".equals(IntakeSimulation.this.targetedGamePieceType);
+            if (collisionBody1 instanceof ReefscapeCoralAlgaeStack stack
+                    && coralOrAlgaeIntake
+                    && fixture2 == IntakeSimulation.this) flagGamePieceForRemoval(stack);
+            else if (collisionBody2 instanceof ReefscapeCoralAlgaeStack stack
+                    && coralOrAlgaeIntake
+                    && fixture1 == IntakeSimulation.this) flagGamePieceForRemoval(stack);
         }
 
         private void flagGamePieceForRemoval(GamePieceOnFieldSimulation gamePiece) {
@@ -302,33 +312,21 @@ public class IntakeSimulation extends BodyFixture {
     /**
      *
      *
-     * <h2>Obtains the {@link GamePieceOnFieldSimulation} Instances to Be Removed from the Field.</h2>
+     * <h2>Clears the game pieces that have been obtained by the intake.</h2>
      *
-     * <p>This method is called from {@link SimulatedArena#simulationPeriodic()} to retrieve game pieces that have been
-     * marked for removal.
+     * <p>This method is called from {@link SimulatedArena#simulationPeriodic()} to remove the
+     * {@link GamePieceOnFieldSimulation} instances that have been obtained by the intake from the field.
      *
      * <p>Game pieces are marked for removal if they have come into contact with the intake during the last
      * {@link SimulatedArena#getSimulationSubTicksIn1Period()} sub-ticks. These game pieces should be removed from the
      * field to reflect their interaction with the intake.
-     *
-     * @return a {@link Queue} of game pieces to be removed from the field
      */
-    public Queue<GamePieceOnFieldSimulation> getGamePiecesToRemove() {
-        return gamePiecesToRemove;
-    }
-
-    /**
-     *
-     *
-     * <h2>Clears the Game Pieces Marked for Removal.</h2>
-     *
-     * <p>This method is called from {@link SimulatedArena#simulationPeriodic()} after the game pieces marked for
-     * removal have been processed and removed from the field.
-     *
-     * <p>It clears the queue of game pieces marked for removal
-     */
-    public void clearGamePiecesToRemoveQueue() {
-        gamePiecesToRemove.clear();
+    public void removeObtainedGamePieces(SimulatedArena arena) {
+        while (!gamePiecesToRemove.isEmpty()) {
+            GamePieceOnFieldSimulation gamePiece = gamePiecesToRemove.poll();
+            gamePiece.onIntake(this.targetedGamePieceType);
+            arena.removeGamePiece(gamePiece);
+        }
     }
 
     public void register() {

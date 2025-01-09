@@ -53,32 +53,46 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
                 && getLinearVelocity().getMagnitude() > 0.3) collapse();
     }
 
-    private void collapse() {
-        Translation2d velocityMPS = GeometryConvertor.toWpilibTranslation2d(getLinearVelocity());
-        Rotation2d collapseDirection = velocityMPS.getAngle();
-        Translation2d stackPosition = getPoseOnField().getTranslation();
+    private Translation2d velocityMPS() {
+        return GeometryConvertor.toWpilibTranslation2d(getLinearVelocity());
+    }
 
+    private Rotation2d velocityDirection() {
+        return velocityMPS().getAngle();
+    }
+
+    private Translation2d stackPosition() {
+        return getPoseOnField().getTranslation();
+    }
+
+    private void collapse() {
         // remove the stack
         arena.removeGamePiece(this);
 
-        // add the coral
+        throwCoralToGround();
+        throwAlgaeToGround();
+
+        // mark as collapsed
+        collapsed = true;
+    }
+
+    private void throwCoralToGround() {
         ReefscapeCoral coral = new ReefscapeCoral(new Pose2d(
-                stackPosition.plus(new Translation2d(0.15, 0).rotateBy(collapseDirection)), collapseDirection));
+                stackPosition().plus(new Translation2d(0.15, 0).rotateBy(velocityDirection())), velocityDirection()));
         System.out.println("coral position: " + coral.getPoseOnField());
         coral.setLinearVelocity(getLinearVelocity());
         arena.addGamePiece(coral);
+    }
 
-        // add the algae
+    private void throwAlgaeToGround() {
         arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
-                stackPosition,
+                stackPosition(),
                 new Translation2d(),
                 new ChassisSpeeds(),
-                collapseDirection,
+                velocityDirection(),
                 0.3 + edu.wpi.first.math.util.Units.inchesToMeters(8),
-                velocityMPS.getNorm() * 0.6,
+                velocityMPS().getNorm() * 0.6,
                 0));
-
-        collapsed = true;
     }
 
     /**
@@ -121,5 +135,11 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
         return arena.getGamePiecesByType(REEFSCAPE_STACK_INFO.type()).stream()
                 .map(stackPose -> stackPose.plus(STACK_TO_ALGAE))
                 .toList();
+    }
+
+    @Override
+    public void onIntake(String intakeTargetGamePieceType) {
+        if ("Coral".equals(intakeTargetGamePieceType)) throwAlgaeToGround();
+        else if ("Algae".equals(intakeTargetGamePieceType)) throwCoralToGround();
     }
 }

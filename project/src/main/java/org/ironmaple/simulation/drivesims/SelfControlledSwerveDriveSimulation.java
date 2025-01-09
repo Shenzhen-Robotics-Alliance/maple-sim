@@ -518,6 +518,19 @@ public class SelfControlledSwerveDriveSimulation {
                     instance.getSteerAbsoluteFacing().getRadians(), setPoint.angle.getRadians())));
         }
 
+        public void runDriveMotorCharacterization(Rotation2d desiredModuleFacing, double volts) {
+            driveMotor.requestVoltage(Volts.of(volts));
+
+            steerMotor.requestVoltage(Volts.of(steerController.calculate(
+                    instance.getSteerAbsoluteFacing().getRadians(), desiredModuleFacing.getRadians())));
+        }
+
+        public void runSteerMotorCharacterization(double volts) {
+            driveMotor.requestVoltage(Volts.zero());
+
+            steerMotor.requestVoltage(Volts.of(volts));
+        }
+
         public SwerveModuleState getMeasuredState() {
             return instance.getCurrentState();
         }

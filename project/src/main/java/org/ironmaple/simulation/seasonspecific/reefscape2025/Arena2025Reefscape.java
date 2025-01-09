@@ -1,9 +1,11 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import java.util.Arrays;
+import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.FieldMirroringUtils;
 
@@ -84,4 +86,15 @@ public class Arena2025Reefscape extends SimulatedArena {
 
     @Override
     public void competitionPeriodic() {}
+
+    @Override
+    public synchronized List<Pose3d> getGamePiecesByType(String type) {
+        List<Pose3d> poses = super.getGamePiecesByType(type);
+
+        // add algae and coral stack
+        if (type.equals("Algae")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedAlgaePoses());
+        else if (type.equals("Coral")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
+
+        return poses;
+    }
 }

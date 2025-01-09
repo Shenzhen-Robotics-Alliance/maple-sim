@@ -1,4 +1,4 @@
-// Copyright 2021-2024 FRC 6328
+// Copyright 2021-2025 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -85,10 +85,9 @@ public class DriveCommands {
                             omega * drive.getMaxAngularSpeedRadPerSec());
                     boolean isFlipped = DriverStation.getAlliance().isPresent()
                             && DriverStation.getAlliance().get() == Alliance.Red;
-                    speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                    drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
                             speeds,
-                            isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation());
-                    drive.runVelocity(speeds);
+                            isFlipped ? drive.getRotation().plus(new Rotation2d(Math.PI)) : drive.getRotation()));
                 },
                 drive);
     }
@@ -124,12 +123,11 @@ public class DriveCommands {
                                     omega);
                             boolean isFlipped = DriverStation.getAlliance().isPresent()
                                     && DriverStation.getAlliance().get() == Alliance.Red;
-                            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                            drive.runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
                                     speeds,
                                     isFlipped
                                             ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                                            : drive.getRotation());
-                            drive.runVelocity(speeds);
+                                            : drive.getRotation()));
                         },
                         drive)
 

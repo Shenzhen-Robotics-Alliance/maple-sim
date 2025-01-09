@@ -39,8 +39,8 @@ public class ModuleIOTalonFXSim extends ModuleIOTalonFX {
                 turnTalon,
                 constants.SteerMotorInverted,
                 cancoder,
-                constants.CANcoderInverted,
-                Rotations.of(constants.CANcoderOffset)));
+                constants.EncoderInverted,
+                Rotations.of(constants.EncoderOffset)));
     }
 
     @Override

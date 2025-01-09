@@ -1,25 +1,25 @@
 {
   "fileName": "URCL.json",
   "name": "URCL",
-  "version": "2025.0.0-beta-1",
+  "version": "2025.0.0",
   "frcYear": "2025",
   "uuid": "84246d17-a797-4d1e-bd9f-c59cd8d2477c",
   "mavenUrls": [
-    "https://raw.githubusercontent.com/Mechanical-Advantage/URCL/2025.0.0-beta-1"
+    "https://frcmaven.wpi.edu/artifactory/littletonrobotics-mvn-release/"
   ],
-  "jsonUrl": "https://raw.githubusercontent.com/Mechanical-Advantage/URCL/maven/URCL.json",
+  "jsonUrl": "https://raw.githubusercontent.com/Mechanical-Advantage/URCL/main/URCL.json",
   "javaDependencies": [
     {
       "groupId": "org.littletonrobotics.urcl",
       "artifactId": "URCL-java",
-      "version": "2025.0.0-beta-1"
+      "version": "2025.0.0"
     }
   ],
   "jniDependencies": [
     {
       "groupId": "org.littletonrobotics.urcl",
       "artifactId": "URCL-driver",
-      "version": "2025.0.0-beta-1",
+      "version": "2025.0.0",
       "skipInvalidPlatforms": true,
       "isJar": false,
       "validPlatforms": [
@@ -34,7 +34,7 @@
     {
       "groupId": "org.littletonrobotics.urcl",
       "artifactId": "URCL-cpp",
-      "version": "2025.0.0-beta-1",
+      "version": "2025.0.0",
       "libName": "URCL",
       "headerClassifier": "headers",
       "sharedLibrary": false,
@@ -49,7 +49,7 @@
     {
       "groupId": "org.littletonrobotics.urcl",
       "artifactId": "URCL-driver",
-      "version": "2025.0.0-beta-1",
+      "version": "2025.0.0",
       "libName": "URCLDriver",
       "headerClassifier": "headers",
       "sharedLibrary": false,

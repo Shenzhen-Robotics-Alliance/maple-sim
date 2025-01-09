@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import java.util.List;
 import org.dyn4j.geometry.Circle;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
@@ -52,32 +53,46 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
                 && getLinearVelocity().getMagnitude() > 0.3) collapse();
     }
 
-    private void collapse() {
-        Translation2d velocityMPS = GeometryConvertor.toWpilibTranslation2d(getLinearVelocity());
-        Rotation2d collapseDirection = velocityMPS.getAngle();
-        Translation2d stackPosition = getPoseOnField().getTranslation();
+    private Translation2d velocityMPS() {
+        return GeometryConvertor.toWpilibTranslation2d(getLinearVelocity());
+    }
 
+    private Rotation2d velocityDirection() {
+        return velocityMPS().getAngle();
+    }
+
+    private Translation2d stackPosition() {
+        return getPoseOnField().getTranslation();
+    }
+
+    private void collapse() {
         // remove the stack
         arena.removeGamePiece(this);
 
-        // add the coral
+        throwCoralToGround();
+        throwAlgaeToGround();
+
+        // mark as collapsed
+        collapsed = true;
+    }
+
+    private void throwCoralToGround() {
         ReefscapeCoral coral = new ReefscapeCoral(new Pose2d(
-                stackPosition.plus(new Translation2d(0.15, 0).rotateBy(collapseDirection)), collapseDirection));
+                stackPosition().plus(new Translation2d(0.15, 0).rotateBy(velocityDirection())), velocityDirection()));
         System.out.println("coral position: " + coral.getPoseOnField());
         coral.setLinearVelocity(getLinearVelocity());
         arena.addGamePiece(coral);
+    }
 
-        // add the algae
+    private void throwAlgaeToGround() {
         arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
-                stackPosition,
+                stackPosition(),
                 new Translation2d(),
                 new ChassisSpeeds(),
-                collapseDirection,
+                velocityDirection(),
                 0.3 + edu.wpi.first.math.util.Units.inchesToMeters(8),
-                velocityMPS.getNorm() * 0.6,
+                velocityMPS().getNorm() * 0.6,
                 0));
-
-        collapsed = true;
     }
 
     /**
@@ -85,9 +100,9 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
      *
      * <h2>Retrieves the positions of the Coral pieces in all stacks.</h2>
      *
-     * @return an array of {@link Pose3d} representing the positions of the Coral pieces in all stacks in the arena
+     * @return list of {@link Pose3d} representing the positions of the Coral pieces in all stacks in the arena
      */
-    public static Pose3d[] getStackedCoralPoses() {
+    public static List<Pose3d> getStackedCoralPoses() {
         return getStackedCoralPoses(SimulatedArena.getInstance());
     }
 
@@ -95,10 +110,10 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
     private static final Transform3d STACK_TO_CORAL =
             new Transform3d(new Translation3d(0, 0, 0.15), new Rotation3d(0, Math.toRadians(90), 0));
 
-    public static Pose3d[] getStackedCoralPoses(SimulatedArena arena) {
+    public static List<Pose3d> getStackedCoralPoses(SimulatedArena arena) {
         return arena.getGamePiecesByType(REEFSCAPE_STACK_INFO.type()).stream()
                 .map(stackPose -> stackPose.plus(STACK_TO_CORAL))
-                .toArray(Pose3d[]::new);
+                .toList();
     }
 
     /**
@@ -106,9 +121,9 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
      *
      * <h2>Retrieves the positions of the Algae pieces in all stacks.</h2>
      *
-     * @return an array of {@link Pose3d} representing the positions of the Algae pieces in all stacks in the arena
+     * @return a list of {@link Pose3d} representing the positions of the Algae pieces in all stacks in the arena
      */
-    public static Pose3d[] getStackedAlgaePoses() {
+    public static List<Pose3d> getStackedAlgaePoses() {
         return getStackedAlgaePoses(SimulatedArena.getInstance());
     }
 
@@ -116,9 +131,15 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
             new Translation3d(0, 0, 0.3 + edu.wpi.first.math.util.Units.inchesToMeters(8)), new Rotation3d());
 
     /** @see #getStackedAlgaePoses() */
-    public static Pose3d[] getStackedAlgaePoses(SimulatedArena arena) {
+    public static List<Pose3d> getStackedAlgaePoses(SimulatedArena arena) {
         return arena.getGamePiecesByType(REEFSCAPE_STACK_INFO.type()).stream()
                 .map(stackPose -> stackPose.plus(STACK_TO_ALGAE))
-                .toArray(Pose3d[]::new);
+                .toList();
+    }
+
+    @Override
+    public void onIntake(String intakeTargetGamePieceType) {
+        if ("Coral".equals(intakeTargetGamePieceType)) throwAlgaeToGround();
+        else if ("Algae".equals(intakeTargetGamePieceType)) throwCoralToGround();
     }
 }

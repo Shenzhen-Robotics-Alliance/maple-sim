@@ -161,4 +161,6 @@ public class GamePieceOnFieldSimulation extends Body {
             double linearDamping,
             double angularDamping,
             double coefficientOfRestitution) {}
+
+    public void onIntake(String intakeTargetGamePieceType) {}
 }

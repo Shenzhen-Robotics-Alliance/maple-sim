@@ -1,0 +1,73 @@
+{
+  "name": "Reefscape Concept Bot",
+  "sourceUrl": "https://cad.onshape.com/documents/cebb59bcd128c1017748d3d7/w/43f67f1f1bd7cd07fadd1d9c/e/dcfe579817ff3ccbd1cd7c89",
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 90
+    },
+    {
+      "axis": "z",
+      "degrees": 180
+    }
+  ],
+  "position": [
+    0,
+    0,
+    0
+  ],
+  "cameras": [],
+  "components": [
+    {
+      "zeroedRotations": [
+        {
+          "axis": "y",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [
+        0.53,
+        0.1,
+        0.09
+      ]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 180
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        -0.03,
+        0
+      ]
+    },
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": 180
+        }
+      ],
+      "zeroedPosition": [
+        0.1,
+        0.05,
+        -0.18
+      ]
+    }
+  ]
+}

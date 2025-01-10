@@ -173,5 +173,16 @@ public class RobotContainer {
         Logger.recordOutput(
                 "FieldSimulation/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
 
+        double x = 0.5 + 0.5 * Math.sin(Timer.getTimestamp());
+        double pitch = Math.toRadians(90) * x;
+        double extend = 1.1 * x;
+        double angle = Math.toRadians(78);
+        Logger.recordOutput("Pose", new Pose2d());
+        Logger.recordOutput("MechanismZeroPoses", new Pose3d(), new Pose3d(), new Pose3d());
+        Logger.recordOutput(
+                "MechanismPoses",
+                new Pose3d(-0.26, 0, 0.278, new Rotation3d(0, pitch - Math.toRadians(12), 0)),
+                new Pose3d(extend * Math.cos(angle) / 2, 0, extend * Math.sin(angle) / 2, new Rotation3d()),
+                new Pose3d(extend * Math.cos(angle), 0, extend * Math.sin(angle), new Rotation3d()));
     }
 }

@@ -12,7 +12,7 @@ public class FieldMirroringUtils {
     public static final double FIELD_HEIGHT = 8.052;
 
     public static Rotation2d toCurrentAllianceRotation(Rotation2d rotationAtBlueSide) {
-        return rotationAtBlueSide.times(-1);
+        return isSidePresentedAsRed() ? rotationAtBlueSide.plus(Rotation2d.k180deg) : rotationAtBlueSide;
     }
 
     public static Translation2d toCurrentAllianceTranslation(Translation2d translationAtBlueSide) {
@@ -45,9 +45,6 @@ public class FieldMirroringUtils {
     }
 
     public static Rotation2d getCurrentAllianceDriverStationFacing() {
-        return switch (DriverStation.getAlliance().orElse(DriverStation.Alliance.Red)) {
-            case Red -> new Rotation2d(Math.PI);
-            case Blue -> new Rotation2d(0);
-        };
+        return toCurrentAllianceRotation(Rotation2d.kZero);
     }
 }

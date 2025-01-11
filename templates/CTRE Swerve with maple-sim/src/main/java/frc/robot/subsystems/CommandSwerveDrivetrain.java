@@ -307,6 +307,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 getModules(), getPigeon2());
         /* Run simulation at a faster rate so PID gains behave more reasonably */
         m_simNotifier = new Notifier(simDrivetrain::update);
+        // m_simNotifier = new Notifier(()->super.updateSimState(kSimLoopPeriod, 12));
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 }

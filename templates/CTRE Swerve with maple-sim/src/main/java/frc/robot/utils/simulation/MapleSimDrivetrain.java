@@ -11,11 +11,11 @@ import com.ctre.phoenix6.sim.Pigeon2SimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.DriverStation;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -105,17 +105,14 @@ public class MapleSimDrivetrain {
     }
 
     public static class TalonFXMotorControllerSim implements SimulatedMotorController {
-        private static int instances = 0;
         public final int id;
 
         private final TalonFXSimState talonFXSimState;
-
+        private final boolean motorInverted;
         public TalonFXMotorControllerSim(TalonFX talonFX, boolean motorInverted) {
-            this.id = instances++;
-
+            this.id = talonFX.getDeviceID();
+            this.motorInverted = motorInverted;
             this.talonFXSimState = talonFX.getSimState();
-            talonFXSimState.Orientation =
-                    motorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
         }
 
         @Override
@@ -124,17 +121,25 @@ public class MapleSimDrivetrain {
                 AngularVelocity mechanismVelocity,
                 Angle encoderAngle,
                 AngularVelocity encoderVelocity) {
+            talonFXSimState.Orientation =
+                    motorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
             talonFXSimState.setRawRotorPosition(encoderAngle);
             talonFXSimState.setRotorVelocity(encoderVelocity);
             talonFXSimState.setSupplyVoltage(SimulatedBattery.getBatteryVoltage());
+
+            DogLog.log("CTRE Sim/Motor" + id + "/Inverted", motorInverted);
+            DogLog.log("CTRE Sim/Motor" + id + "/EncoderAngle (Rot)", encoderAngle.in(Rotations));
+            DogLog.log("CTRE Sim/Motor" + id + "/EncoderVelocity (RPM)", encoderVelocity.in(RPM));
+            DogLog.log("CTRE Sim/Motor" + id + "/Output Voltage", talonFXSimState.getMotorVoltageMeasure().in(Volts));
             return talonFXSimState.getMotorVoltageMeasure();
         }
     }
 
     public static class TalonFXMotorControllerWithRemoteCanCoderSim extends TalonFXMotorControllerSim {
+        private final int encoderId;
+        private final boolean encoderInverted;
         private final CANcoderSimState remoteCancoderSimState;
         private final Angle encoderOffset;
-
         public TalonFXMotorControllerWithRemoteCanCoderSim(
                     TalonFX talonFX,
                     boolean motorInverted,
@@ -143,9 +148,10 @@ public class MapleSimDrivetrain {
                     Angle encoderOffset) {
                 super(talonFX, motorInverted);
                 this.remoteCancoderSimState = cancoder.getSimState();
-                this.remoteCancoderSimState.Orientation =
-                        encoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+                this.encoderInverted = encoderInverted;
                 this.encoderOffset = encoderOffset;
+
+                this.encoderId = cancoder.getDeviceID();
             }
 
             @Override
@@ -154,9 +160,17 @@ public class MapleSimDrivetrain {
                     AngularVelocity mechanismVelocity,
                     Angle encoderAngle,
                     AngularVelocity encoderVelocity) {
+                this.remoteCancoderSimState.Orientation =
+                        encoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+
                 remoteCancoderSimState.setSupplyVoltage(SimulatedBattery.getBatteryVoltage());
                 remoteCancoderSimState.setRawPosition(mechanismAngle.minus(encoderOffset));
                 remoteCancoderSimState.setVelocity(mechanismVelocity);
+
+                System.out.println("encoder id " + encoderId +" inverted: " + encoderInverted);
+                DogLog.log("CTRE Sim/CanCoder" + encoderId + "/Inverted", encoderInverted);
+                DogLog.log("CTRE Sim/CanCoder" + encoderId + "/EncoderAngle (Rot)", mechanismAngle.in(Rotations));
+                DogLog.log("CTRE Sim/CanCoder" + encoderId + "/EncoderVelocity (RPM)", mechanismVelocity.in(RPM));
 
                 return super.updateControlSignal(mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity);
             }

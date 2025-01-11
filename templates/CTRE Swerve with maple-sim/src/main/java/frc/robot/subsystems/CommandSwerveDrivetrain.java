@@ -278,13 +278,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 DCMotor.getFalcon500(1),
                 1.2,
                 getModuleLocations(),
-                getPigeon2().getSimState(),
+                getPigeon2(),
+                getModules(),
                 TunerConstants.FrontLeft,
                 TunerConstants.FrontRight,
                 TunerConstants.BackLeft,
                 TunerConstants.BackRight);
         /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(() -> mapleSimSwerveDrivetrain.update(getModules()));
+        m_simNotifier = new Notifier(mapleSimSwerveDrivetrain::update);
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 }

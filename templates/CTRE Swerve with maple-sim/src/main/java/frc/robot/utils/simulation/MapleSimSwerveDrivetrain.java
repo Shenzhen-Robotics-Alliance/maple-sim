@@ -103,32 +103,32 @@ public class MapleSimSwerveDrivetrain {
             throw new IllegalArgumentException("Modules length incorrect!!! (given " + modulesToApply.length +" modules)");
 
         for (int i = 0; i < simModules.length; ++i) {
-            TalonFXSimState driveMotor = modulesToApply[i].getDriveMotor().getSimState();
-            TalonFXSimState steerMotor = modulesToApply[i].getSteerMotor().getSimState();
-            CANcoderSimState encoder = modulesToApply[i].getEncoder().getSimState();
+            TalonFXSimState driveTalonSim = modulesToApply[i].getDriveMotor().getSimState();
+            TalonFXSimState steerTalonSim = modulesToApply[i].getSteerMotor().getSimState();
+            CANcoderSimState encoderSim = modulesToApply[i].getEncoder().getSimState();
 
-            driveMotor.Orientation = simModules[i].moduleConstant.DriveMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            steerMotor.Orientation = simModules[i].moduleConstant.SteerMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            encoder.Orientation = simModules[i].moduleConstant.EncoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+            driveTalonSim.Orientation = simModules[i].moduleConstant.DriveMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+            steerTalonSim.Orientation = simModules[i].moduleConstant.SteerMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+            encoderSim.Orientation = simModules[i].moduleConstant.EncoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
 
             Voltage batteryVoltage = SimulatedBattery.getBatteryVoltage();
-            driveMotor.setSupplyVoltage(batteryVoltage);
-            steerMotor.setSupplyVoltage(batteryVoltage);
-            encoder.setSupplyVoltage(batteryVoltage);
+            driveTalonSim.setSupplyVoltage(batteryVoltage);
+            steerTalonSim.setSupplyVoltage(batteryVoltage);
+            encoderSim.setSupplyVoltage(batteryVoltage);
 
-            simModules[i].driveMotor.requestVoltage(Volts.of(driveMotor.getMotorVoltage()));
-            simModules[i].steerMotor.requestVoltage(Volts.of(steerMotor.getMotorVoltage()));
+            simModules[i].driveMotor.requestVoltage(Volts.of(driveTalonSim.getMotorVoltage()));
+            simModules[i].steerMotor.requestVoltage(Volts.of(steerTalonSim.getMotorVoltage()));
 
-            driveMotor.setRawRotorPosition(simModules[i].moduleSimulation.getDriveEncoderUnGearedPosition());
-            driveMotor.setRotorVelocity(simModules[i].moduleSimulation.getDriveEncoderUnGearedSpeed());
+            driveTalonSim.setRawRotorPosition(simModules[i].moduleSimulation.getDriveEncoderUnGearedPosition());
+            driveTalonSim.setRotorVelocity(simModules[i].moduleSimulation.getDriveEncoderUnGearedSpeed());
 
-            steerMotor.setRawRotorPosition(simModules[i].moduleSimulation.getSteerRelativeEncoderPosition());
-            steerMotor.setRotorVelocity(simModules[i].moduleSimulation.getSteerRelativeEncoderVelocity());
+            steerTalonSim.setRawRotorPosition(simModules[i].moduleSimulation.getSteerRelativeEncoderPosition());
+            steerTalonSim.setRotorVelocity(simModules[i].moduleSimulation.getSteerRelativeEncoderVelocity());
 
-            encoder.setRawPosition(
+            encoderSim.setRawPosition(
                     simModules[i].moduleSimulation.getSteerRelativeEncoderPosition()
                             .div(simModules[i].moduleSimulation.config.STEER_GEAR_RATIO));
-            encoder.setVelocity(simModules[i].moduleSimulation.getSteerAbsoluteEncoderSpeed());
+            encoderSim.setVelocity(simModules[i].moduleSimulation.getSteerAbsoluteEncoderSpeed());
         }
         pigeonSim.setRawYaw(mapleSimDrive.getSimulatedDriveTrainPose().getRotation().getMeasure());
         pigeonSim.setAngularVelocityZ(RadiansPerSecond.of(

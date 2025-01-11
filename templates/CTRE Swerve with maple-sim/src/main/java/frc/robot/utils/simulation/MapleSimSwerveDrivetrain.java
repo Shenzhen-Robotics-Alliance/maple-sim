@@ -7,6 +7,8 @@ package frc.robot.utils.simulation;
  * an issue tracker at https://github.com/CrossTheRoadElec/Phoenix-Releases
  */
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -15,7 +17,6 @@ import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.Pigeon2SimState;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,7 +26,6 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -35,16 +35,16 @@ import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 
-import java.util.Arrays;
-
-import static edu.wpi.first.units.Units.*;
-
 public class MapleSimSwerveDrivetrain {
     protected static class SimSwerveModule {
-        public final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> moduleConstant;
+        public final SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
+                moduleConstant;
         public final SwerveModuleSimulation moduleSimulation;
         public final SimulatedMotorController.GenericMotorController driveMotor, steerMotor;
-        public SimSwerveModule(SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> moduleConstant, SwerveModuleSimulation moduleSimulation) {
+
+        public SimSwerveModule(
+                SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration> moduleConstant,
+                SwerveModuleSimulation moduleSimulation) {
             this.moduleConstant = moduleConstant;
             this.moduleSimulation = moduleSimulation;
             this.driveMotor = moduleSimulation.useGenericMotorControllerForDrive();
@@ -66,8 +66,8 @@ public class MapleSimSwerveDrivetrain {
             double wheelCOF,
             Translation2d[] moduleLocations,
             Pigeon2SimState pigeonSim,
-            SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>... moduleConstants
-    ) {
+            SwerveModuleConstants<TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>...
+                    moduleConstants) {
         this.pigeonSim = pigeonSim;
         simModules = new SimSwerveModule[4];
         DriveTrainSimulationConfig simulationConfig = DriveTrainSimulationConfig.Default()
@@ -97,23 +97,30 @@ public class MapleSimSwerveDrivetrain {
 
     /**
      * Update this simulation for the time duration.
-     * <p>
-     * This performs a simulation update on all the simulated devices
+     *
+     * <p>This performs a simulation update on all the simulated devices
      *
      * @param modulesToApply What modules to apply the update to
      */
     public final void update(SwerveModule<TalonFX, TalonFX, CANcoder>... modulesToApply) {
         if (modulesToApply.length != simModules.length)
-            throw new IllegalArgumentException("Modules length incorrect!!! (given " + modulesToApply.length +" modules)");
+            throw new IllegalArgumentException(
+                    "Modules length incorrect!!! (given " + modulesToApply.length + " modules)");
 
         for (int i = 0; i < simModules.length; ++i) {
             TalonFXSimState driveTalonSim = modulesToApply[i].getDriveMotor().getSimState();
             TalonFXSimState steerTalonSim = modulesToApply[i].getSteerMotor().getSimState();
             CANcoderSimState encoderSim = modulesToApply[i].getEncoder().getSimState();
 
-            driveTalonSim.Orientation = simModules[i].moduleConstant.DriveMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            steerTalonSim.Orientation = simModules[i].moduleConstant.SteerMotorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            encoderSim.Orientation = simModules[i].moduleConstant.EncoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
+            driveTalonSim.Orientation = simModules[i].moduleConstant.DriveMotorInverted
+                    ? ChassisReference.Clockwise_Positive
+                    : ChassisReference.CounterClockwise_Positive;
+            steerTalonSim.Orientation = simModules[i].moduleConstant.SteerMotorInverted
+                    ? ChassisReference.Clockwise_Positive
+                    : ChassisReference.CounterClockwise_Positive;
+            encoderSim.Orientation = simModules[i].moduleConstant.EncoderInverted
+                    ? ChassisReference.Clockwise_Positive
+                    : ChassisReference.CounterClockwise_Positive;
 
             Voltage batteryVoltage = SimulatedBattery.getBatteryVoltage();
             driveTalonSim.setSupplyVoltage(batteryVoltage);
@@ -132,21 +139,23 @@ public class MapleSimSwerveDrivetrain {
             encoderSim.setRawPosition(simModules[i].moduleSimulation.getSteerAbsoluteAngle());
             encoderSim.setVelocity(simModules[i].moduleSimulation.getSteerAbsoluteEncoderSpeed());
         }
-        pigeonSim.setRawYaw(mapleSimDrive.getSimulatedDriveTrainPose().getRotation().getMeasure());
+        pigeonSim.setRawYaw(
+                mapleSimDrive.getSimulatedDriveTrainPose().getRotation().getMeasure());
         pigeonSim.setAngularVelocityZ(RadiansPerSecond.of(
                 mapleSimDrive.getDriveTrainSimulatedChassisSpeedsRobotRelative().omegaRadiansPerSecond));
 
         SimulatedArena.getInstance().simulationPeriodic();
     }
 
-    public static SwerveModuleConstants<?, ?, ?>[] regulateModuleConstantsForSimulation(SwerveModuleConstants<?, ?, ?>[] moduleConstants) {
-        for (SwerveModuleConstants<?, ?, ?> moduleConstant:moduleConstants)
+    public static SwerveModuleConstants<?, ?, ?>[] regulateModuleConstantsForSimulation(
+            SwerveModuleConstants<?, ?, ?>[] moduleConstants) {
+        for (SwerveModuleConstants<?, ?, ?> moduleConstant : moduleConstants)
             regulateModuleConstantForSimulation(moduleConstant);
 
         return moduleConstants;
     }
 
-    private static void regulateModuleConstantForSimulation(SwerveModuleConstants<?, ?,?> moduleConstants) {
+    private static void regulateModuleConstantForSimulation(SwerveModuleConstants<?, ?, ?> moduleConstants) {
         if (RobotBase.isReal()) return;
 
         moduleConstants

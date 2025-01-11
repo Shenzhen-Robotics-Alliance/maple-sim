@@ -20,6 +20,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -281,10 +282,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        DogLog.log("BatteryVoltage", RobotController.getBatteryVoltage());
+        DogLog.log("Drive/OdometryPose", getState().Pose);
+        DogLog.log("Drive/TargetStates", getState().ModuleTargets);
+        DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
+        DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
+        if (simDrivetrain != null)
+            DogLog.log("Drive/SimulationPose", simDrivetrain.driveSimulation().getSimulatedDriveTrainPose());
     }
 
+    private MapleSimDrivetrain simDrivetrain = null;
     private void startSimThread() {
-        MapleSimDrivetrain simDrivetrain = new MapleSimDrivetrain(
+        simDrivetrain = new MapleSimDrivetrain(
                 kSimLoopPeriod,
                 Pounds.of(115),
                 Inches.of(30),

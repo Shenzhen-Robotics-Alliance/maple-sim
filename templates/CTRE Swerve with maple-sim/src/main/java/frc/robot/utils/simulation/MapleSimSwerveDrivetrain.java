@@ -125,9 +125,7 @@ public class MapleSimSwerveDrivetrain {
             steerTalonSim.setRawRotorPosition(simModules[i].moduleSimulation.getSteerRelativeEncoderPosition());
             steerTalonSim.setRotorVelocity(simModules[i].moduleSimulation.getSteerRelativeEncoderVelocity());
 
-            encoderSim.setRawPosition(
-                    simModules[i].moduleSimulation.getSteerRelativeEncoderPosition()
-                            .div(simModules[i].moduleSimulation.config.STEER_GEAR_RATIO));
+            encoderSim.setRawPosition(simModules[i].moduleSimulation.getSteerAbsoluteAngle());
             encoderSim.setVelocity(simModules[i].moduleSimulation.getSteerAbsoluteEncoderSpeed());
         }
         pigeonSim.setRawYaw(mapleSimDrive.getSimulatedDriveTrainPose().getRotation().getMeasure());

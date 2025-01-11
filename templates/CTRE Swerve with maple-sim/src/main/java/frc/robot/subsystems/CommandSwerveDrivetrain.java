@@ -36,7 +36,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import frc.robot.generated.TunerConstants;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
-import frc.robot.utils.simulation.MapleSimDrivetrain;
+import frc.robot.utils.simulation.MapleSimSwerveDrivetrain;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -288,13 +288,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         DogLog.log("Drive/TargetStates", getState().ModuleTargets);
         DogLog.log("Drive/MeasuredStates", getState().ModuleStates);
         DogLog.log("Drive/MeasuredSpeeds", getState().Speeds);
-        if (simDrivetrain != null)
-            DogLog.log("Drive/SimulationPose", simDrivetrain.driveSimulation().getSimulatedDriveTrainPose());
+        if (mapleSimSwerveDrivetrain != null)
+            DogLog.log("Drive/SimulationPose", mapleSimSwerveDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
     }
 
-    private MapleSimDrivetrain simDrivetrain = null;
+    private MapleSimSwerveDrivetrain mapleSimSwerveDrivetrain = null;
     private void startSimThread() {
-        simDrivetrain = new MapleSimDrivetrain(
+        mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
                 kSimLoopPeriod,
                 Pounds.of(115),
                 Inches.of(30),
@@ -303,11 +303,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 DCMotor.getFalcon500(1),
                 1.2,
                 getModuleLocations(),
-                new SwerveModuleConstants[]{TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight},
-                getModules(), getPigeon2());
+                getPigeon2().getSimState(),
+                TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
         /* Run simulation at a faster rate so PID gains behave more reasonably */
-        m_simNotifier = new Notifier(simDrivetrain::update);
-        // m_simNotifier = new Notifier(()->super.updateSimState(kSimLoopPeriod, 12));
+        m_simNotifier = new Notifier(() -> mapleSimSwerveDrivetrain.update(getModules()));
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 }

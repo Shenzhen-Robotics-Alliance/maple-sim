@@ -24,6 +24,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
@@ -32,6 +34,8 @@ import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
+
+import java.util.Arrays;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -133,5 +137,26 @@ public class MapleSimSwerveDrivetrain {
                 mapleSimDrive.getDriveTrainSimulatedChassisSpeedsRobotRelative().omegaRadiansPerSecond));
 
         SimulatedArena.getInstance().simulationPeriodic();
+    }
+
+    public static SwerveModuleConstants<?, ?, ?>[] regulateModuleConstantsForSimulation(SwerveModuleConstants<?, ?, ?>[] moduleConstants) {
+        for (SwerveModuleConstants<?, ?, ?> moduleConstant:moduleConstants)
+            regulateModuleConstantForSimulation(moduleConstant);
+
+        return moduleConstants;
+    }
+
+    private static void regulateModuleConstantForSimulation(SwerveModuleConstants<?, ?,?> moduleConstants) {
+        if (RobotBase.isReal()) return;
+
+        moduleConstants
+                .withEncoderOffset(0)
+                .withDriveMotorInverted(false)
+                .withSteerMotorInverted(false)
+                .withEncoderInverted(false)
+                .withSteerMotorGains(moduleConstants.SteerMotorGains.withKP(70).withKD(4.5))
+                .withDriveFrictionVoltage(Volts.of(0.1))
+                .withSteerFrictionVoltage(Volts.of(0.15))
+                .withSteerInertia(KilogramSquareMeters.of(0.05));
     }
 }

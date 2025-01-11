@@ -2,15 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -137,7 +132,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveDrivetrainConstants drivetrainConstants,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
-        super(drivetrainConstants, modules);
+        super(drivetrainConstants, MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -162,7 +157,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double odometryUpdateFrequency,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
-        super(drivetrainConstants, odometryUpdateFrequency, modules);
+        super(drivetrainConstants, odometryUpdateFrequency, MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -195,7 +190,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Matrix<N3, N1> visionStandardDeviation,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
-        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+        super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
         if (Utils.isSimulation()) {
             startSimThread();
         }

@@ -270,7 +270,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     private void startSimThread() {
         mapleSimSwerveDrivetrain = new MapleSimSwerveDrivetrain(
-                kSimLoopPeriod,
+                Seconds.of(kSimLoopPeriod),
                 Pounds.of(115),
                 Inches.of(30),
                 Inches.of(30),

@@ -27,9 +27,10 @@ And display the data in AdvantageScope:
 
 ![Reefscape Game Pieces](./media/reefscape%20game%20pieces.gif)
 
-??? "Detailed Documents on Game Pieces Simulation"
-    - **[Adding Game Pieces to the Field](https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/#3-adding-game-pieces-to-the-field)**
-    - **[Visualizing Game Pieces](https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/#4-visualizing-game-pieces)**
+!!! abstract "Detailed Documents on Game Pieces Simulation"
+    **[:octicons-arrow-right-24: Adding Game Pieces to the Field](https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/#3-adding-game-pieces-to-the-field)**
+    
+    **[:octicons-arrow-right-24: Visualizing Game Pieces](https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/#4-visualizing-game-pieces)**
 
 
 ## The ***CORAL-ALGAE*** Stack
@@ -74,8 +75,8 @@ this.intakeSimulation = IntakeSimulation.OverTheBumperIntake(
         1);
 ```
 
-??? "Detailed Documents on IntakeSimulation"
-    **[Simulating Intake](https://shenzhen-robotics-alliance.github.io/maple-sim/simulating-intake/)**
+!!! abstract "Detailed Documents on IntakeSimulation"
+    **[:octicons-arrow-right-24: Simulating Intake](https://shenzhen-robotics-alliance.github.io/maple-sim/simulating-intake/)**
 
 !!! tip
     - If your `IntakeSimulation` is targeted to ***CORAL***, it will also be able to grab the ***CORAL*** from the ***CORAL-ALGAE*** stack. And the ***ALGAE*** will fall to the ground as the ***CORAL*** disapear.

@@ -27,7 +27,10 @@ theme:
     code: Roboto Mono
   logo: media/team_logo.png
   favicon: media/team_logo.png
+  icon:
+    annotation: material/arrow-right-circle 
   features:
+    - content.tooltips
     - content.code.copy
     - content.code.select
     - content.code.annotate
@@ -45,6 +48,7 @@ theme:
 # Extensions
 markdown_extensions:
   - admonition
+  - abbr
   - attr_list
   - def_list
   - md_in_html
@@ -88,4 +92,3 @@ nav:
     - Reefscape Simulation: reefscape.md 
     - Contributing: CONTRIBUTION.md
     - Release Notes: ./release-notes/version0.3.0-beta2.md
-    

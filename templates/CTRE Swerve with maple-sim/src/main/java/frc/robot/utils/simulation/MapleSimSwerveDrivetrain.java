@@ -1,7 +1,8 @@
 package frc.robot.utils.simulation;
 
 // Copyright 2021-2025 Iron Maple 5516
-// Original Source: https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/CTRE%20Swerve%20with%20maple-sim/src/main/java/frc/robot/utils/simulation/MapleSimSwerveDrivetrain.java
+// Original Source:
+// https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/CTRE%20Swerve%20with%20maple-sim/src/main/java/frc/robot/utils/simulation/MapleSimSwerveDrivetrain.java
 //
 // This code is licensed under MIT license (see https://mit-license.org/)
 
@@ -33,11 +34,14 @@ import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 
 /**
+ *
+ *
  * <h2>Injects Maple-Sim simulation data into a CTRE swerve drivetrain.</h2>
  *
- * <p>This class retrieves simulation data from Maple-Sim and injects it into the CTRE {@link com.ctre.phoenix6.swerve.SwerveDrivetrain} instance.</p>
+ * <p>This class retrieves simulation data from Maple-Sim and injects it into the CTRE
+ * {@link com.ctre.phoenix6.swerve.SwerveDrivetrain} instance.
  *
- * <p>It replaces the {@link com.ctre.phoenix6.swerve.SimSwerveDrivetrain} class.</p>
+ * <p>It replaces the {@link com.ctre.phoenix6.swerve.SimSwerveDrivetrain} class.
  */
 public class MapleSimSwerveDrivetrain {
     private final Pigeon2SimState pigeonSim;
@@ -45,14 +49,18 @@ public class MapleSimSwerveDrivetrain {
     public final SwerveDriveSimulation mapleSimDrive;
 
     /**
+     *
+     *
      * <h2>Constructs a drivetrain simulation using the specified parameters.</h2>
      *
      * @param simPeriod the time period of the simulation
      * @param robotMassWithBumpers the total mass of the robot, including bumpers
      * @param bumperLengthX the length of the bumper along the X-axis (influences the collision space of the robot)
      * @param bumperWidthY the width of the bumper along the Y-axis (influences the collision space of the robot)
-     * @param driveMotorModel the {@link DCMotor} model for the drive motor, typically <code>DCMotor.getKrakenX60Foc()</code>
-     * @param steerMotorModel the {@link DCMotor} model for the steer motor, typically <code>DCMotor.getKrakenX60Foc()</code>
+     * @param driveMotorModel the {@link DCMotor} model for the drive motor, typically <code>DCMotor.getKrakenX60Foc()
+     *     </code>
+     * @param steerMotorModel the {@link DCMotor} model for the steer motor, typically <code>DCMotor.getKrakenX60Foc()
+     *     </code>
      * @param wheelCOF the coefficient of friction of the drive wheels
      * @param moduleLocations the locations of the swerve modules on the robot, in the order <code>FL, FR, BL, BR</code>
      * @param pigeon the {@link Pigeon2} IMU used in the drivetrain
@@ -100,10 +108,12 @@ public class MapleSimSwerveDrivetrain {
     }
 
     /**
+     *
+     *
      * <h2>Update the simulation.</h2>
      *
-     * <p>Updates the Maple-Sim simulation and injects the results into the simulated CTRE devices,
-     * including motors and the IMU.</p>
+     * <p>Updates the Maple-Sim simulation and injects the results into the simulated CTRE devices, including motors and
+     * the IMU.
      */
     public void update() {
         SimulatedArena.getInstance().simulationPeriodic();
@@ -114,6 +124,8 @@ public class MapleSimSwerveDrivetrain {
     }
 
     /**
+     *
+     *
      * <h1>Represents the simulation of a single {@link SwerveModule}.</h1>
      */
     protected static class SimSwerveModule {
@@ -184,10 +196,12 @@ public class MapleSimSwerveDrivetrain {
     }
 
     /**
+     *
+     *
      * <h2>Regulates all {@link SwerveModuleConstants} for a drivetrain simulation.</h2>
      *
-     * <p>This method processes an array of {@link SwerveModuleConstants} to apply necessary adjustments
-     * for simulation purposes, ensuring compatibility and avoiding known bugs.</p>
+     * <p>This method processes an array of {@link SwerveModuleConstants} to apply necessary adjustments for simulation
+     * purposes, ensuring compatibility and avoiding known bugs.
      *
      * @see #regulateModuleConstantForSimulation(SwerveModuleConstants)
      */
@@ -200,18 +214,22 @@ public class MapleSimSwerveDrivetrain {
     }
 
     /**
+     *
+     *
      * <h2>Regulates the {@link SwerveModuleConstants} for a single module.</h2>
      *
-     * <p>This method applies specific adjustments to the {@link SwerveModuleConstants} for simulation
-     * purposes. These changes have no effect on real robot operations and address known simulation bugs:</p>
+     * <p>This method applies specific adjustments to the {@link SwerveModuleConstants} for simulation purposes. These
+     * changes have no effect on real robot operations and address known simulation bugs:
      *
      * <ul>
-     *     <li><strong>Inverted Drive Motors:</strong> Prevents drive PID issues caused by inverted configurations.</li>
-     *     <li><strong>Non-zero CanCoder Offsets:</strong> Fixes potential module state optimization issues.</li>
-     *     <li><strong>Steer Motor PID:</strong> Adjusts PID values tuned for real robots to improve simulation performance.</li>
+     *   <li><strong>Inverted Drive Motors:</strong> Prevents drive PID issues caused by inverted configurations.
+     *   <li><strong>Non-zero CanCoder Offsets:</strong> Fixes potential module state optimization issues.
+     *   <li><strong>Steer Motor PID:</strong> Adjusts PID values tuned for real robots to improve simulation
+     *       performance.
      * </ul>
      *
-     * <h4>Note:This function is skipped when running on a real robot, ensuring no impact on constants used on real robot hardware.</h4>
+     * <h4>Note:This function is skipped when running on a real robot, ensuring no impact on constants used on real
+     * robot hardware.</h4>
      */
     private static void regulateModuleConstantForSimulation(SwerveModuleConstants<?, ?, ?> moduleConstants) {
         // Skip regulation if running on a real robot
@@ -227,8 +245,9 @@ public class MapleSimSwerveDrivetrain {
                 // Disable CanCoder inversion
                 .withEncoderInverted(false)
                 // Adjust steer motor PID gains for simulation
-                .withSteerMotorGains(moduleConstants.SteerMotorGains
-                        .withKP(70)  // Proportional gain
+                .withSteerMotorGains(moduleConstants
+                        .SteerMotorGains
+                        .withKP(70) // Proportional gain
                         .withKD(4.5)) // Derivative gain
                 // Adjust friction voltages
                 .withDriveFrictionVoltage(Volts.of(0.1))
@@ -236,5 +255,4 @@ public class MapleSimSwerveDrivetrain {
                 // Adjust steer inertia
                 .withSteerInertia(KilogramSquareMeters.of(0.05));
     }
-
 }

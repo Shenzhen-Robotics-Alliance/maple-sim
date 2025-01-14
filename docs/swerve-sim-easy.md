@@ -1,11 +1,10 @@
 # Swerve Simulation: Simplified Swerve Simulation
 
-*This approach emphasizes ease of use while maintaining a reasonably accurate model of robot behavior. Although the physics simulation is realistic enough to accurately mimic your drivetrain, the code used to manipulate the simulated drivetrain is embedded into maple-sim for convenience. As a result, it may differ slightly from the code running on your real robot.*
+??? info "About this approach"
+    *This approach emphasizes ease of use while maintaining a reasonably accurate model of robot behavior. Although the physics simulation is realistic enough to accurately mimic your drivetrain, the code used to manipulate the simulated drivetrain is embedded into maple-sim for convenience. As a result, it may differ slightly from the code running on your real robot.*
 
-**This document is based on the [BaseTalonSwerve-maple-sim Example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/dev/templates/BaseTalonSwerve-maple-sim).  Check the project for a more detailed understanding.**
-
-!!! warning
-      You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
+!!! example
+    **This document is based on the [BaseTalonSwerve-maple-sim Example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/dev/templates/BaseTalonSwerve-maple-sim).  Check the project for a more detailed understanding.**
 
 ---
 ## 0. Abstracting your drive subsystem

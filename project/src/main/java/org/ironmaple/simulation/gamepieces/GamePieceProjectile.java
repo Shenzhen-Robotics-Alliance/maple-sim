@@ -50,15 +50,16 @@ public class GamePieceProjectile {
      * This value may seem unusual compared to the standard 9.8 m/s² for gravity. However, through experimentation, it
      * appears more realistic in our simulation, possibly due to the ignoring of air drag.
      */
-    private static final double GRAVITY = 11;
+    public static final double GRAVITY = 11;
 
     // Properties of the game piece projectile:
-    private final GamePieceOnFieldSimulation.GamePieceInfo info;
+    protected final GamePieceOnFieldSimulation.GamePieceInfo info;
     public final String gamePieceType;
-    private final Translation2d initialPosition, initialLaunchingVelocityMPS;
-    private final double initialHeight, initialVerticalSpeedMPS;
-    private final Rotation3d gamePieceRotation;
-    private final Timer launchedTimer;
+    protected final Translation2d initialPosition;
+    protected final Translation2d initialLaunchingVelocityMPS;
+    protected final double initialHeight, initialVerticalSpeedMPS;
+    protected final Rotation3d gamePieceRotation;
+    protected final Timer launchedTimer;
 
     /**
      *
@@ -74,7 +75,7 @@ public class GamePieceProjectile {
 
     // Optional properties of the game piece, used if we want it to become a
     // GamePieceOnFieldSimulation upon touching ground:
-    private boolean becomesGamePieceOnGroundAfterTouchGround = false;
+    protected boolean becomesGamePieceOnGroundAfterTouchGround = false;
 
     // Optional properties of the game piece, used if we want it to have a target:
     private Translation3d tolerance = new Translation3d(0.2, 0.2, 0.2);
@@ -108,8 +109,8 @@ public class GamePieceProjectile {
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
-     * @param chassisSpeeds the velocity of the robot chassis when launching the game piece, influencing the initial
-     *     velocity of the game piece
+     * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the game piece,
+     *     influencing the initial velocity of the game piece
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
@@ -120,7 +121,7 @@ public class GamePieceProjectile {
             GamePieceOnFieldSimulation.GamePieceInfo info,
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
-            ChassisSpeeds chassisSpeeds,
+            ChassisSpeeds chassisSpeedsFieldRelative,
             Rotation2d shooterFacing,
             Distance initialHeight,
             LinearVelocity launchingSpeed,
@@ -130,7 +131,7 @@ public class GamePieceProjectile {
                 robotPosition.plus(shooterPositionOnRobot.rotateBy(shooterFacing)),
                 calculateInitialProjectileVelocityMPS(
                         shooterPositionOnRobot,
-                        chassisSpeeds,
+                        chassisSpeedsFieldRelative,
                         shooterFacing,
                         launchingSpeed.in(MetersPerSecond) * Math.cos(shooterAngle.in(Radians))),
                 initialHeight.in(Meters),
@@ -357,7 +358,7 @@ public class GamePieceProjectile {
      * @param t the time elapsed after the launch of the projectile, in seconds
      * @return the calculated position of the projectile at time <code>t</code> as a {@link Translation3d} object
      */
-    private Translation3d getPositionAtTime(double t) {
+    protected Translation3d getPositionAtTime(double t) {
         final double height = initialHeight + initialVerticalSpeedMPS * t - 1.0 / 2.0 * GRAVITY * t * t;
 
         final Translation2d current2dPosition = initialPosition.plus(initialLaunchingVelocityMPS.times(t));

@@ -66,8 +66,12 @@ public class Arena2025Reefscape extends SimulatedArena {
         }
     }
 
+    private final ReefscapeReefSimulation reefSimulation;
+
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());
+        reefSimulation = new ReefscapeReefSimulation(this);
+        super.addCustomSimulation(reefSimulation);
     }
 
     @Override
@@ -90,8 +94,17 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         // add algae and coral stack
         if (type.equals("Algae")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedAlgaePoses());
-        else if (type.equals("Coral")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
+        else if (type.equals("Coral")) {
+            poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
+            reefSimulation.addCoralsOnReefForDisplay(poses);
+        }
 
         return poses;
+    }
+
+    @Override
+    public synchronized void clearGamePieces() {
+        super.clearGamePieces();
+        reefSimulation.clearReef();
     }
 }

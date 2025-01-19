@@ -1,9 +1,12 @@
 package org.ironmaple.simulation.gamepieces;
 
-import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,8 +113,8 @@ public class GamePieceProjectile {
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeedMPS the speed at which the game piece is launched, in meters per second (m/s)
-     * @param shooterAngleRad the pitch angle of the shooter when launching, in radians
+     * @param launchingSpeed the speed at which the game piece is launche
+     * @param shooterAngle the pitch angle of the shooter when launching
      */
     public GamePieceProjectile(
             GamePieceOnFieldSimulation.GamePieceInfo info,
@@ -119,9 +122,9 @@ public class GamePieceProjectile {
             Translation2d shooterPositionOnRobot,
             ChassisSpeeds chassisSpeeds,
             Rotation2d shooterFacing,
-            double initialHeight,
-            double launchingSpeedMPS,
-            double shooterAngleRad) {
+            Distance initialHeight,
+            LinearVelocity launchingSpeed,
+            Angle shooterAngle) {
         this(
                 info,
                 robotPosition.plus(shooterPositionOnRobot.rotateBy(shooterFacing)),
@@ -129,10 +132,10 @@ public class GamePieceProjectile {
                         shooterPositionOnRobot,
                         chassisSpeeds,
                         shooterFacing,
-                        launchingSpeedMPS * Math.cos(shooterAngleRad)),
-                initialHeight,
-                launchingSpeedMPS * Math.sin(shooterAngleRad),
-                new Rotation3d(0, -shooterAngleRad, shooterFacing.getRadians()));
+                        launchingSpeed.in(MetersPerSecond) * Math.cos(shooterAngle.in(Radians))),
+                initialHeight.in(Meters),
+                launchingSpeed.in(MetersPerSecond) * Math.sin(shooterAngle.in(Radians)),
+                new Rotation3d(0, -shooterAngle.in(Radians), shooterFacing.getRadians()));
     }
 
     /**
@@ -364,6 +367,24 @@ public class GamePieceProjectile {
     /**
      *
      *
+     * <h2>Calculates the Projectile's Velocity at a Given Time.</h2>
+     *
+     * <p>This method calculates the 3d velocity of the projectile using the physics formula for projectile motion.
+     *
+     * @param t the time elapsed after the launch of the projectile, in seconds
+     * @return a {@link Translation3d} object representing the calculated 3d velocity of the projectile at time <code>t
+     *     </code>, in meters per second
+     */
+    private Translation3d getVelocityMPSAtTime(double t) {
+        final double verticalVelocityMPS = initialVerticalSpeedMPS - GRAVITY * t;
+
+        return new Translation3d(
+                initialLaunchingVelocityMPS.getX(), initialLaunchingVelocityMPS.getY(), verticalVelocityMPS);
+    }
+
+    /**
+     *
+     *
      * <h2>Calculates the Projectile's Current Position.</h2>
      *
      * <p>The position is calculated using {@link #getPositionAtTime(double)} while the rotation is pre-stored.
@@ -372,6 +393,19 @@ public class GamePieceProjectile {
      */
     public Pose3d getPose3d() {
         return new Pose3d(getPositionAtTime(launchedTimer.get()), gamePieceRotation);
+    }
+
+    /**
+     *
+     *
+     * <h2>Calculates the Projectile's Velocity at a Given Time.</h2>
+     *
+     * @see #getVelocityMPSAtTime(double)
+     * @return a {@link Translation3d} object representing the calculated 3d velocity of the projectile at time <code>t
+     *     </code>, in meters per second
+     */
+    public Translation3d getVelocity3dMPS() {
+        return getVelocityMPSAtTime(launchedTimer.get());
     }
 
     /**

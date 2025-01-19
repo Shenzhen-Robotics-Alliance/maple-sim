@@ -1,14 +1,9 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
-import static org.ironmaple.utils.LegacyFieldMirroringUtils2024.toCurrentAllianceTranslation;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 
 public class Arena2024Crescendo extends SimulatedArena {
     /** the obstacles on the 2024 competition field */
@@ -82,25 +77,7 @@ public class Arena2024Crescendo extends SimulatedArena {
     public void placeGamePiecesOnField() {
         for (Translation2d notePosition : NOTE_INITIAL_POSITIONS)
             super.addGamePiece(new CrescendoNoteOnField(notePosition));
-    }
 
-    private static final Translation2d BLUE_SOURCE_POSITION = new Translation2d(15.6, 0.8);
-    private double previousThrowTimeSeconds = 0;
-
-    @Override
-    public void competitionPeriodic() {
-        if (!DriverStation.isTeleopEnabled()) return;
-
-        if (Timer.getFPGATimestamp() - previousThrowTimeSeconds < 1) return;
-
-        final Translation2d sourcePosition = toCurrentAllianceTranslation(BLUE_SOURCE_POSITION);
-        /* if there is any game-piece 0.5 meters within the human player station, we don't throw a new note */
-        for (GamePieceOnFieldSimulation gamePiece : super.gamePieces)
-            if (gamePiece instanceof CrescendoNoteOnField
-                    && gamePiece.getPoseOnField().getTranslation().getDistance(sourcePosition) < 1) return;
-
-        /* otherwise, place a note */
-        addGamePiece(new CrescendoNoteOnField(sourcePosition));
-        previousThrowTimeSeconds = Timer.getFPGATimestamp();
+        super.addCustomSimulation(new CrescendoHumanPlayerSimulation(this));
     }
 }

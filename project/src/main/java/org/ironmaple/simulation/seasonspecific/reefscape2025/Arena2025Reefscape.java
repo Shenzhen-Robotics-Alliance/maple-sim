@@ -85,9 +85,6 @@ public class Arena2025Reefscape extends SimulatedArena {
     }
 
     @Override
-    public void competitionPeriodic() {}
-
-    @Override
     public synchronized List<Pose3d> getGamePiecesByType(String type) {
         List<Pose3d> poses = super.getGamePiecesByType(type);
 

@@ -20,11 +20,12 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.sim.CANcoderSimState;
-import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
@@ -46,12 +47,10 @@ public final class PhoenixUtil {
 
         private final TalonFXSimState talonFXSimState;
 
-        public TalonFXMotorControllerSim(TalonFX talonFX, boolean motorInverted) {
+        public TalonFXMotorControllerSim(TalonFX talonFX) {
             this.id = instances++;
 
             this.talonFXSimState = talonFX.getSimState();
-            talonFXSimState.Orientation =
-                    motorInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
         }
 
         @Override
@@ -69,19 +68,10 @@ public final class PhoenixUtil {
 
     public static class TalonFXMotorControllerWithRemoteCancoderSim extends TalonFXMotorControllerSim {
         private final CANcoderSimState remoteCancoderSimState;
-        private final Angle encoderOffset;
 
-        public TalonFXMotorControllerWithRemoteCancoderSim(
-                TalonFX talonFX,
-                boolean motorInverted,
-                CANcoder cancoder,
-                boolean encoderInverted,
-                Angle encoderOffset) {
-            super(talonFX, motorInverted);
+        public TalonFXMotorControllerWithRemoteCancoderSim(TalonFX talonFX, CANcoder cancoder) {
+            super(talonFX);
             this.remoteCancoderSimState = cancoder.getSimState();
-            this.remoteCancoderSimState.Orientation =
-                    encoderInverted ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;
-            this.encoderOffset = encoderOffset;
         }
 
         @Override
@@ -90,7 +80,7 @@ public final class PhoenixUtil {
                 AngularVelocity mechanismVelocity,
                 Angle encoderAngle,
                 AngularVelocity encoderVelocity) {
-            remoteCancoderSimState.setRawPosition(mechanismAngle.minus(encoderOffset));
+            remoteCancoderSimState.setRawPosition(mechanismAngle);
             remoteCancoderSimState.setVelocity(mechanismVelocity);
 
             return super.updateControlSignal(mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity);
@@ -106,5 +96,49 @@ public final class PhoenixUtil {
         }
 
         return odometryTimeStamps;
+    }
+
+    /**
+     *
+     *
+     * <h2>Regulates the {@link SwerveModuleConstants} for a single module.</h2>
+     *
+     * <p>This method applies specific adjustments to the {@link SwerveModuleConstants} for simulation purposes. These
+     * changes have no effect on real robot operations and address known simulation bugs:
+     *
+     * <ul>
+     *   <li><strong>Inverted Drive Motors:</strong> Prevents drive PID issues caused by inverted configurations.
+     *   <li><strong>Non-zero CanCoder Offsets:</strong> Fixes potential module state optimization issues.
+     *   <li><strong>Steer Motor PID:</strong> Adjusts PID values tuned for real robots to improve simulation
+     *       performance.
+     * </ul>
+     *
+     * <h4>Note:This function is skipped when running on a real robot, ensuring no impact on constants used on real
+     * robot hardware.</h4>
+     */
+    public static SwerveModuleConstants regulateModuleConstantForSimulation(
+            SwerveModuleConstants<?, ?, ?> moduleConstants) {
+        // Skip regulation if running on a real robot
+        if (RobotBase.isReal()) return moduleConstants;
+
+        // Apply simulation-specific adjustments to module constants
+        return moduleConstants
+                // Disable encoder offsets
+                .withEncoderOffset(0)
+                // Disable motor inversions for drive and steer motors
+                .withDriveMotorInverted(false)
+                .withSteerMotorInverted(false)
+                // Disable CanCoder inversion
+                .withEncoderInverted(false)
+                // Adjust steer motor PID gains for simulation
+                .withSteerMotorGains(moduleConstants
+                        .SteerMotorGains
+                        .withKP(70) // Proportional gain
+                        .withKD(4.5)) // Derivative gain
+                // Adjust friction voltages
+                .withDriveFrictionVoltage(Volts.of(0.1))
+                .withSteerFrictionVoltage(Volts.of(0.15))
+                // Adjust steer inertia
+                .withSteerInertia(KilogramSquareMeters.of(0.05));
     }
 }

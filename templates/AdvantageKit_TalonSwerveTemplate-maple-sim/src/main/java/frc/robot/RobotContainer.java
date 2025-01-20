@@ -20,6 +20,7 @@ import static frc.robot.subsystems.vision.VisionConstants.robotToCamera1;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -62,7 +63,8 @@ public class RobotContainer {
                         new ModuleIOTalonFX(TunerConstants.FrontLeft),
                         new ModuleIOTalonFX(TunerConstants.FrontRight),
                         new ModuleIOTalonFX(TunerConstants.BackLeft),
-                        new ModuleIOTalonFX(TunerConstants.BackRight));
+                        new ModuleIOTalonFX(TunerConstants.BackRight),
+                        (robotPose) -> {});
                 vision = new Vision(
                         drive,
                         new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
@@ -78,7 +80,8 @@ public class RobotContainer {
                         new ModuleIOSim(driveSimulation.getModules()[0]),
                         new ModuleIOSim(driveSimulation.getModules()[1]),
                         new ModuleIOSim(driveSimulation.getModules()[2]),
-                        new ModuleIOSim(driveSimulation.getModules()[3]));
+                        new ModuleIOSim(driveSimulation.getModules()[3]),
+                        driveSimulation::setSimulationWorldPose);
 
                 vision = new Vision(
                         drive,
@@ -91,7 +94,12 @@ public class RobotContainer {
             default:
                 // Replayed robot, disable IO implementations
                 drive = new Drive(
-                        new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
+                        new GyroIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        (robotPose) -> {});
                 vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
                 break;
         }
@@ -151,7 +159,7 @@ public class RobotContainer {
     public void resetSimulation() {
         if (Constants.currentMode != Constants.Mode.SIM) return;
 
-        driveSimulation.setSimulationWorldPose(new Pose2d(3, 3, new Rotation2d()));
+        drive.resetOdometry(new Pose2d(3, 3, new Rotation2d()));
         SimulatedArena.getInstance().resetFieldForAuto();
     }
 

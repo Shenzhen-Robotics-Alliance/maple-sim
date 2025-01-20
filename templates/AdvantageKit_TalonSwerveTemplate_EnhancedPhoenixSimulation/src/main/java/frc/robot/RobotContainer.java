@@ -62,7 +62,8 @@ public class RobotContainer {
                         new ModuleIOTalonFXReal(TunerConstants.FrontLeft),
                         new ModuleIOTalonFXReal(TunerConstants.FrontRight),
                         new ModuleIOTalonFXReal(TunerConstants.BackLeft),
-                        new ModuleIOTalonFXReal(TunerConstants.BackRight));
+                        new ModuleIOTalonFXReal(TunerConstants.BackRight),
+                        (pose) -> {});
                 this.vision = new Vision(
                         drive,
                         new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
@@ -83,7 +84,8 @@ public class RobotContainer {
                         new ModuleIOTalonFXSim(
                                 TunerConstants.BackLeft, driveSimulation.getModules()[2]),
                         new ModuleIOTalonFXSim(
-                                TunerConstants.BackRight, driveSimulation.getModules()[3]));
+                                TunerConstants.BackRight, driveSimulation.getModules()[3]),
+                        driveSimulation::setSimulationWorldPose);
                 vision = new Vision(
                         drive,
                         new VisionIOPhotonVisionSim(
@@ -96,7 +98,12 @@ public class RobotContainer {
             default:
                 // Replayed robot, disable IO implementations
                 drive = new Drive(
-                        new GyroIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {}, new ModuleIO() {});
+                        new GyroIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        new ModuleIO() {},
+                        (pose) -> {});
                 vision = new Vision(drive, new VisionIO() {}, new VisionIO() {});
 
                 break;

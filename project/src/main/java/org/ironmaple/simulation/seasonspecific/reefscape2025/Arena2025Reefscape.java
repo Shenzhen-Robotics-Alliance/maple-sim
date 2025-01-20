@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import java.util.Arrays;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.reef.ReefscapeReefSimulation;
 import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
@@ -66,8 +67,12 @@ public class Arena2025Reefscape extends SimulatedArena {
         }
     }
 
+    private final ReefscapeReefSimulation reefSimulation;
+
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());
+        reefSimulation = new ReefscapeReefSimulation(this);
+        super.addCustomSimulation(reefSimulation);
     }
 
     @Override
@@ -85,16 +90,22 @@ public class Arena2025Reefscape extends SimulatedArena {
     }
 
     @Override
-    public void competitionPeriodic() {}
-
-    @Override
     public synchronized List<Pose3d> getGamePiecesByType(String type) {
         List<Pose3d> poses = super.getGamePiecesByType(type);
 
         // add algae and coral stack
         if (type.equals("Algae")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedAlgaePoses());
-        else if (type.equals("Coral")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
+        else if (type.equals("Coral")) {
+            poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
+            reefSimulation.addCoralsOnReefForDisplay(poses);
+        }
 
         return poses;
+    }
+
+    @Override
+    public synchronized void clearGamePieces() {
+        super.clearGamePieces();
+        reefSimulation.clearReef();
     }
 }

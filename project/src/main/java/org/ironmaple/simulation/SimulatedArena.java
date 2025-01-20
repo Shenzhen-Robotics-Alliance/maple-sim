@@ -129,8 +129,8 @@ public abstract class SimulatedArena {
 
     protected final World<Body> physicsWorld;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
-    protected final Set<GamePieceOnFieldSimulation> gamePieces;
-    protected final Set<GamePieceProjectile> gamePieceProjectile;
+    protected final Set<GamePieceOnFieldSimulation> gamePiecesOnField;
+    protected final Set<GamePieceProjectile> gamePiecesLaunched;
     protected final List<Simulatable> customSimulations;
     private final List<IntakeSimulation> intakeSimulations;
 
@@ -151,8 +151,8 @@ public abstract class SimulatedArena {
         for (Body obstacle : obstaclesMap.obstacles) this.physicsWorld.addBody(obstacle);
         this.driveTrainSimulations = new HashSet<>();
         customSimulations = new ArrayList<>();
-        this.gamePieces = new HashSet<>();
-        this.gamePieceProjectile = new HashSet<>();
+        this.gamePiecesOnField = new HashSet<>();
+        this.gamePiecesLaunched = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
     }
 
@@ -244,7 +244,7 @@ public abstract class SimulatedArena {
      */
     public synchronized void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.addBody(gamePiece);
-        this.gamePieces.add(gamePiece);
+        this.gamePiecesOnField.add(gamePiece);
     }
 
     /**
@@ -257,7 +257,7 @@ public abstract class SimulatedArena {
      * @param gamePieceProjectile the projectile to be registered and launched in the simulation
      */
     public synchronized void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
-        this.gamePieceProjectile.add(gamePieceProjectile);
+        this.gamePiecesLaunched.add(gamePieceProjectile);
         gamePieceProjectile.launch();
     }
 
@@ -269,10 +269,25 @@ public abstract class SimulatedArena {
      * <p>Removes the game piece from the physics world and the simulation's game piece collection.
      *
      * @param gamePiece the game piece to be removed from the simulation
+     * @return <code>true</code> if this set contained the specified element
      */
-    public synchronized void removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
+    public synchronized boolean removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.removeBody(gamePiece);
-        this.gamePieces.remove(gamePiece);
+        return this.gamePiecesOnField.remove(gamePiece);
+    }
+
+    /**
+     *
+     *
+     * <h2>Removes a {@link GamePieceProjectile} from the Simulation.</h2>
+     *
+     * <p>Removes the game piece projectile from the simulation.
+     *
+     * @param gamePieceLaunched the game piece projectile to be removed from the simulation
+     * @return <code>true</code> if this set contained the specified element
+     */
+    public synchronized boolean removeProjectile(GamePieceProjectile gamePieceLaunched) {
+        return this.gamePiecesLaunched.remove(gamePieceLaunched);
     }
 
     /**
@@ -283,8 +298,9 @@ public abstract class SimulatedArena {
      * <p>This method clears all game pieces from the physics world and the simulation's game piece collection.
      */
     public synchronized void clearGamePieces() {
-        for (GamePieceOnFieldSimulation gamePiece : this.gamePieces) this.physicsWorld.removeBody(gamePiece);
-        this.gamePieces.clear();
+        for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
+        this.gamePiecesOnField.clear();
+        this.gamePiecesLaunched.clear();
     }
 
     /**
@@ -306,7 +322,6 @@ public abstract class SimulatedArena {
         /* obtain lock to the simulated arena class to block any calls to overrideTimings() */
         synchronized (SimulatedArena.class) {
             final long t0 = System.nanoTime();
-            competitionPeriodic();
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
@@ -335,13 +350,21 @@ public abstract class SimulatedArena {
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 
-        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceProjectile);
+        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePiecesLaunched);
 
         this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
         for (IntakeSimulation intakeSimulation : intakeSimulations) intakeSimulation.removeObtainedGamePieces(this);
 
         for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
+    }
+
+    public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
+        return gamePiecesOnField;
+    }
+
+    public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
+        return gamePiecesLaunched;
     }
 
     /**
@@ -368,10 +391,10 @@ public abstract class SimulatedArena {
      */
     public synchronized List<Pose3d> getGamePiecesByType(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceOnFieldSimulation gamePiece : gamePieces)
+        for (GamePieceOnFieldSimulation gamePiece : gamePiecesOnField)
             if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
-        for (GamePieceProjectile gamePiece : gamePieceProjectile)
+        for (GamePieceProjectile gamePiece : gamePiecesLaunched)
             if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
         return gamePiecesPoses;
@@ -412,26 +435,6 @@ public abstract class SimulatedArena {
      * the unique game piece placements for that season's game.
      */
     public abstract void placeGamePiecesOnField();
-
-    /**
-     *
-     *
-     * <h2>Season-Specific Actions to Execute in {@link SimulatedArena#simulationPeriodic()}.</h2>
-     *
-     * <p>This method defines season-specific tasks to be executed during the
-     * {@link SimulatedArena#simulationPeriodic()} method.
-     *
-     * <p>For example:
-     *
-     * <ul>
-     *   <li>Updating the score counts.
-     *   <li>Simulating human player activities.
-     * </ul>
-     *
-     * <p>This method should be implemented in the season-specific subclass of {@link SimulatedArena} to reflect the
-     * unique aspects of that season's game.
-     */
-    public abstract void competitionPeriodic();
 
     /**
      *

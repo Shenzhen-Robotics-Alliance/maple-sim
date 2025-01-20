@@ -90,9 +90,9 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
                 new Translation2d(),
                 new ChassisSpeeds(),
                 velocityDirection(),
-                0.3 + edu.wpi.first.math.util.Units.inchesToMeters(8),
-                velocityMPS().getNorm() * 0.6,
-                0));
+                Meters.of(0.3).plus(Inches.of(8)),
+                MetersPerSecond.of(velocityMPS().getNorm() * 0.6),
+                Degrees.zero()));
     }
 
     /**

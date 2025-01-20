@@ -19,7 +19,8 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  *
  * <p>Three such stacks are staged on each side of the field before the match begins.
  *
- * <p>The stacks will collapse if hit, separating into a {@link ReefscapeCoral} and a {@link ReefscapeAlgaeOnField}.
+ * <p>The stacks will collapse if hit, separating into a {@link ReefscapeCoralOnField} and a
+ * {@link ReefscapeAlgaeOnField}.
  *
  * <p>Intakes can also grab a Coral and/or an Algae from the stack.
  *
@@ -77,7 +78,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
     }
 
     private void throwCoralToGround() {
-        ReefscapeCoral coral = new ReefscapeCoral(new Pose2d(
+        ReefscapeCoralOnField coral = new ReefscapeCoralOnField(new Pose2d(
                 stackPosition().plus(new Translation2d(0.15, 0).rotateBy(velocityDirection())), velocityDirection()));
         System.out.println("coral position: " + coral.getPoseOnField());
         coral.setLinearVelocity(getLinearVelocity());

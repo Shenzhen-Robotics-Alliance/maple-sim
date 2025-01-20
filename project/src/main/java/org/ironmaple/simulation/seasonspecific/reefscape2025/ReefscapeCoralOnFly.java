@@ -23,7 +23,7 @@ public class ReefscapeCoralOnFly extends GamePieceProjectile {
             LinearVelocity launchingSpeed,
             Angle shooterAngle) {
         super(
-                ReefscapeCoral.REEFSCAPE_CORAL_INFO,
+                ReefscapeCoralOnField.REEFSCAPE_CORAL_INFO,
                 robotPosition,
                 shooterPositionOnRobot,
                 chassisSpeeds,
@@ -39,9 +39,12 @@ public class ReefscapeCoralOnFly extends GamePieceProjectile {
     public void addGamePieceAfterTouchGround(SimulatedArena simulatedArena) {
         if (!super.becomesGamePieceOnGroundAfterTouchGround) return;
         simulatedArena.addGamePiece(new GamePieceOnFieldSimulation(
-                ReefscapeCoral.REEFSCAPE_CORAL_INFO,
+                ReefscapeCoralOnField.REEFSCAPE_CORAL_INFO,
                 () -> Math.max(
-                        ReefscapeCoral.REEFSCAPE_CORAL_INFO.gamePieceHeight().in(Meters) / 2,
+                        ReefscapeCoralOnField.REEFSCAPE_CORAL_INFO
+                                        .gamePieceHeight()
+                                        .in(Meters)
+                                / 2,
                         getPositionAtTime(super.launchedTimer.get()).getZ()),
                 new Pose2d(
                         getPositionAtTime(launchedTimer.get()).toTranslation2d(),

@@ -109,68 +109,67 @@ SimulatedArena.getInstance()
 See [Simulating Projectiles](./simulating-projectiles.md).
 
 ![](./media/launching%20algae.gif)
-
 ## Scoring ***CORAL*** on ***REEF***
 
 !!! info ""
-    You can eject a ***CORAL*** from your scoring mechanism during simulation. If a ***CORAL*** ejected to the air is in touch with ***BRANCH*** in a good angle, it will be attached to that branch. maple-sim will detect the contacts and simulate the scoring automatically (requires v0.3.3 or above). 
-
+    You can eject a ***CORAL*** from your scoring mechanism during simulation. If a ***CORAL*** ejected into the air is in contact with a ***BRANCH*** at the correct angle, it will be attached to that branch. Maple-Sim will automatically detect the contact and simulate the scoring process (requires v0.3.3 or above).
 
 === "Scoring on L3 branch"
     ```java
     SimulatedArena.getInstance()
         .addGamePieceProjectile(new ReefscapeCoralOnFly(
-            // obtain robot position from drive simulation
+            // Obtain robot position from drive simulation
             driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
-            // the scoring mechanisnm is installed at (0.46, 0) (meters) on the robot
+            // The scoring mechanism is installed at (0.46, 0) (meters) on the robot
             new Translation2d(0.35, 0),
-            // obtain robot speed from drive simulation
+            // Obtain robot speed from drive simulation
             driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-            // obtain robot facing from drive simulation
+            // Obtain robot facing from drive simulation
             driveSimulation.getSimulatedDriveTrainPose().getRotation(),
-            // the height at which the coral is ejected
+            // The height at which the coral is ejected
             Meters.of(1.28),
-            // the initial speed of the coral
+            // The initial speed of the coral
             MetersPerSecond.of(2),
-            // the coral is ejected at a 35 degree slope
+            // The coral is ejected at a 35-degree slope
             Degrees.of(-35)));
     ```
+
 === "Scoring on L4 branch"
     ```java
     SimulatedArena.getInstance()
         .addGamePieceProjectile(new ReefscapeCoralOnFly(
-            // obtain robot position from drive simulation
+            // Obtain robot position from drive simulation
             driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
-            // the scoring mechanisnm is installed at (0.46, 0) (meters) on the robot
+            // The scoring mechanism is installed at (0.46, 0) (meters) on the robot
             new Translation2d(0.46, 0),
-            // obtain robot speed from drive simulation
+            // Obtain robot speed from drive simulation
             driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
-            // obtain robot facing from drive simulation
+            // Obtain robot facing from drive simulation
             driveSimulation.getSimulatedDriveTrainPose().getRotation(),
-            // the height at which the coral is ejected
+            // The height at which the coral is ejected
             Meters.of(2.1),
-            // the initial speed of the coral
+            // The initial speed of the coral
             MetersPerSecond.of(1),
-            // the coral is ejected vertically downwards
+            // The coral is ejected vertically downwards
             Degrees.of(-90)));
     ```
 
 !!! info
-    ***CORAL***s that misses the target will be dropped on the floor:
+    ***CORAL***s that miss the target will be dropped on the floor:
 
 ![](./media/scoring%20coral%20on%20field.gif)
 
 !!! info
-    ***CORAL***s that falls on the ***TROUGH*** will remain on the trough:
+    ***CORAL***s that fall on the ***TROUGH*** will remain on the trough:
 
 ![](./media/scoring%20coral%20on%20trough.gif)
-
 
 !!! info
-    To score a ***CORAL*** on ***BRANCH***, it must:
-    
-    - Must be in contact with the ***BRANCH***.
-    - Must be aligned with the stick in direction.
-    - Must be traveling at correct direction (i.e. if the coral is moving upwards, it cannot score)
+    To score a ***CORAL*** on a ***BRANCH***, it must:
 
-![](./media/scoring%20coral%20on%20trough.gif)
+    - Be in contact with the ***BRANCH***.
+    - Be aligned with the direction of the ***BRANCH***.
+    - Be moving in the correct direction (i.e., if the coral is moving upwards, it cannot score).
+
+![](./media/scoring%20coral%20on%20L3.gif)
+![](./media/scoring%20coral%20on%20L4.gif)

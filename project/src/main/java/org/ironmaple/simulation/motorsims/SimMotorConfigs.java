@@ -191,4 +191,14 @@ public final class SimMotorConfigs {
 
         return cfg;
     }
+
+    @Override
+    public String toString() {
+        return "SimMotorConfigs {"
+                + "\n  motor = " + motor // Relies on DCMotor.toString() for details
+                + "\n  gearing = " + gearing
+                + "\n  loadMOI (kg·m^2) = " + loadMOI.in(KilogramSquareMeters)
+                + "\n  friction (N·m) = " + friction.in(NewtonMeters)
+                + "\n}";
+    }
 }

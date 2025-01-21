@@ -83,7 +83,7 @@ public class MapleMotorSim {
      *
      * <p>This is equivalent to {@link edu.wpi.first.wpilibj.simulation.DCMotorSim#getAngularPosition()}.
      *
-     * @return the angular position of the motor, continuous
+     * @return the angular position of the mechanism, continuous
      */
     public Angle getAngularPosition() {
         return state.mechanismAngularPosition;
@@ -107,7 +107,7 @@ public class MapleMotorSim {
      *
      * <p>This is equivalent to {@link edu.wpi.first.wpilibj.simulation.DCMotorSim#getAngularVelocity()}.
      *
-     * @return the final angular velocity of the rotter
+     * @return the final angular velocity of the mechanism
      */
     public AngularVelocity getVelocity() {
         return state.mechanismAngularVelocity;

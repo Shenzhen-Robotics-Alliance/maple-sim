@@ -1,11 +1,10 @@
 # Swerve Simulation: Hardware Abstractions
 
-*This approach to simulating swerve drive accurately mimics the behavior of your drivetrain code by running the exact same code used on the real robot directly on the simulated robot. While this ensures high fidelity in the simulation, it does require a significant amount of effort to set up properly.*
+??? info "About this approach"
+    *This approach to simulating swerve drive accurately mimics the behavior of your drivetrain code by running the exact same code used on the real robot directly on the simulated robot. While this ensures high fidelity in the simulation, it does require a significant amount of effort to set up properly.*
 
-**For a more comprehensive understanding of how this works, please check out the [AdvancedSwerveDrive-maple-sim example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/).**
-
-!!! warning
-      You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
+!!! example
+    **For a more comprehensive understanding of how this works, please check out the [AdvancedSwerveDrive-maple-sim example](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/).**
 
 ---
 ## 0. IO Abstraction

@@ -71,13 +71,13 @@ loadScripts(document, 'script');</script>
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">org.ironmaple.simulation.drivesims</a></div>
 <h1 title="Class SwerveModuleSimulation" class="title">Class SwerveModuleSimulation</h1>
 </div>
-<div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance">org.ironmaple.simulation.drivesims.SwerveModuleSimulation</div>
 </div>
 <section class="class-description" id="class-description">
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">SwerveModuleSimulation</span>
-<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block"><h2>Simulation for a Single Swerve Module.</h2>
 
  <p>Check <a href='https://shenzhen-robotics-alliance.github.io/maple-sim/swerve-sim-hardware-abstraction/'>Online
@@ -125,24 +125,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>final edu.wpi.first.units.measure.Voltage</code></div>
-<div class="col-second even-row-color"><code><a href="#DRIVE_FRICTION_VOLTAGE" class="member-name-link">DRIVE_FRICTION_VOLTAGE</a></code></div>
+<div class="col-first even-row-color"><code>final <a href="configs/SwerveModuleSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">SwerveModuleSimulationConfig</a></code></div>
+<div class="col-second even-row-color"><code><a href="#config" class="member-name-link">config</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final double</code></div>
-<div class="col-second odd-row-color"><code><a href="#DRIVE_GEAR_RATIO" class="member-name-link">DRIVE_GEAR_RATIO</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final <a href="../motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></code></div>
-<div class="col-second even-row-color"><code><a href="#driveMotorConfigs" class="member-name-link">driveMotorConfigs</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final double</code></div>
-<div class="col-second odd-row-color"><code><a href="#STEER_GEAR_RATIO" class="member-name-link">STEER_GEAR_RATIO</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>final edu.wpi.first.units.measure.Distance</code></div>
-<div class="col-second even-row-color"><code><a href="#WHEEL_RADIUS" class="member-name-link">WHEEL_RADIUS</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final double</code></div>
-<div class="col-second odd-row-color"><code><a href="#WHEELS_COEFFICIENT_OF_FRICTION" class="member-name-link">WHEELS_COEFFICIENT_OF_FRICTION</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -154,15 +139,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)" class="member-name-link">SwerveModuleSimulation</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotorModel,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotorModel,
- double&nbsp;driveGearRatio,
- double&nbsp;steerGearRatio,
- edu.wpi.first.units.measure.Voltage&nbsp;driveFrictionVoltage,
- edu.wpi.first.units.measure.Voltage&nbsp;steerFrictionVoltage,
- edu.wpi.first.units.measure.Distance&nbsp;wheelRadius,
- edu.wpi.first.units.measure.MomentOfInertia&nbsp;steerRotationalInertia,
- double&nbsp;tireCoefficientOfFriction)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig)" class="member-name-link">SwerveModuleSimulation</a><wbr>(<a href="configs/SwerveModuleSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">SwerveModuleSimulationConfig</a>&nbsp;config)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Constructs a Swerve Module Simulation.</div>
 </div>
@@ -180,12 +157,12 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Angle[]</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a>[]</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCachedDriveEncoderUnGearedPositions()" class="member-name-link">getCachedDriveEncoderUnGearedPositions</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Cached Readings of the Drive Encoder's Un-Geared Position.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Angle[]</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a>[]</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCachedDriveWheelFinalPositions()" class="member-name-link">getCachedDriveWheelFinalPositions</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Cached Readings of the Drive Encoder's Final Position (Wheel Rotations).</div>
@@ -195,7 +172,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Cached Readings of the Steer Absolute Positions.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Angle[]</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a>[]</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCachedSteerRelativeEncoderPositions()" class="member-name-link">getCachedSteerRelativeEncoderPositions</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Cached Readings of the Steer Relative Encoder's Position.</div>
@@ -203,17 +180,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/kinematics/SwerveModuleState.html" title="class or interface in edu.wpi.first.math.kinematics" class="external-link">SwerveModuleState</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getCurrentState()" class="member-name-link">getCurrentState</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Angle</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveEncoderUnGearedPosition()" class="member-name-link">getDriveEncoderUnGearedPosition</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Position of the Drive Encoder.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveEncoderUnGearedSpeed()" class="member-name-link">getDriveEncoderUnGearedSpeed</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Speed of the Drive Encoder.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Voltage</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Voltage.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Voltage</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveMotorAppliedVoltage()" class="member-name-link">getDriveMotorAppliedVoltage</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Actual Output Voltage of the Drive Motor.</div>
@@ -221,22 +198,22 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveMotorConfigs()" class="member-name-link">getDriveMotorConfigs</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveMotorStatorCurrent()" class="member-name-link">getDriveMotorStatorCurrent</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Stator current the Drive Motor.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveMotorSupplyCurrent()" class="member-name-link">getDriveMotorSupplyCurrent</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Amount of Current Supplied to the Drive Motor.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Angle</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveWheelFinalPosition()" class="member-name-link">getDriveWheelFinalPosition</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Final Position of the Wheel.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDriveWheelFinalSpeed()" class="member-name-link">getDriveWheelFinalSpeed</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Final Speed of the Wheel.</div>
@@ -246,10 +223,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the "free spin" state of the module</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected double</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGrippingForceNewtons(double)" class="member-name-link">getGrippingForceNewtons</a><wbr>(double&nbsp;gravityForceOnModuleNewtons)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerAbsoluteAngle()" class="member-name-link">getSteerAbsoluteAngle</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Obtains the Absolute Angle of the Steer Mechanism.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerAbsoluteEncoderSpeed()" class="member-name-link">getSteerAbsoluteEncoderSpeed</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Absolute Rotational Velocity of the Steer Mechanism.</div>
@@ -259,7 +238,7 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Absolute Facing of the Steer Mechanism.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Voltage</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Voltage.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Voltage</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerMotorAppliedVoltage()" class="member-name-link">getSteerMotorAppliedVoltage</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Actual Output Voltage of the Steering Motor.</div>
@@ -267,72 +246,55 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerMotorConfigs()" class="member-name-link">getSteerMotorConfigs</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerMotorStatorCurrent()" class="member-name-link">getSteerMotorStatorCurrent</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Stator current the Steer Motor.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Current</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerMotorSupplyCurrent()" class="member-name-link">getSteerMotorSupplyCurrent</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Amount of Current Supplied to the Steer Motor.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Angle</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerRelativeEncoderPosition()" class="member-name-link">getSteerRelativeEncoderPosition</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Relative Position of the Steer Encoder.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.AngularVelocity</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSteerRelativeEncoderVelocity()" class="member-name-link">getSteerRelativeEncoderVelocity</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Obtains the Speed of the Steer Relative Encoder (Geared).</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.Force</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTheoreticalPropellingForcePerModule(edu.wpi.first.units.measure.Mass,int)" class="member-name-link">getTheoreticalPropellingForcePerModule</a><wbr>(edu.wpi.first.units.measure.Mass&nbsp;robotMass,
- int&nbsp;modulesCount)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Obtains the theoretical maximum propelling force of ONE module.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.LinearAcceleration</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#maxAcceleration(edu.wpi.first.units.measure.Mass,int)" class="member-name-link">maxAcceleration</a><wbr>(edu.wpi.first.units.measure.Mass&nbsp;robotMass,
- int&nbsp;modulesCount)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Obtains the theatrical linear acceleration that the robot can achieve.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>edu.wpi.first.units.measure.LinearVelocity</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#maximumGroundSpeed()" class="member-name-link">maximumGroundSpeed</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Obtains the theoretical speed that the module can achieve.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.dyn4j.geometry.Vector2</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateSimulationSubTickGetModuleForce(org.dyn4j.geometry.Vector2,edu.wpi.first.math.geometry.Rotation2d,double)" class="member-name-link">updateSimulationSubTickGetModuleForce</a><wbr>(org.dyn4j.geometry.Vector2&nbsp;moduleCurrentGroundVelocityWorldRelative,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.dyn4j.geometry.Vector2</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateSimulationSubTickGetModuleForce(org.dyn4j.geometry.Vector2,edu.wpi.first.math.geometry.Rotation2d,double)" class="member-name-link">updateSimulationSubTickGetModuleForce</a><wbr>(org.dyn4j.geometry.Vector2&nbsp;moduleCurrentGroundVelocityWorldRelative,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a>&nbsp;robotFacing,
  double&nbsp;gravityForceOnModuleNewtons)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the Simulation for This Module.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useDriveMotorController(T)" class="member-name-link">useDriveMotorController</a><wbr>(T&nbsp;driveMotorController)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useDriveMotorController(T)" class="member-name-link">useDriveMotorController</a><wbr>(T&nbsp;driveMotorController)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the motor controller for the drive motor.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useGenericControllerForSteer()" class="member-name-link">useGenericControllerForSteer</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useGenericMotorControllerForDrive()" class="member-name-link">useGenericMotorControllerForDrive</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useGenericControllerForSteer()" class="member-name-link">useGenericControllerForSteer</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useSteerMotorController(T)" class="member-name-link">useSteerMotorController</a><wbr>(T&nbsp;steerMotorController)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../motorsims/SimulatedMotorController.GenericMotorController.html" title="class in org.ironmaple.simulation.motorsims">SimulatedMotorController.GenericMotorController</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useGenericMotorControllerForDrive()" class="member-name-link">useGenericMotorControllerForDrive</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T extends <a href="../motorsims/SimulatedMotorController.html" title="interface in org.ironmaple.simulation.motorsims">SimulatedMotorController</a>&gt;<br>T</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useSteerMotorController(T)" class="member-name-link">useSteerMotorController</a><wbr>(T&nbsp;steerMotorController)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Requests the Steering Motor to Run at a Specified Output.</div>
 </div>
 </div>
 </div>
 </div>
 <div class="inherited-list">
-<h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#toString()" title="class or interface in java.lang" class="external-link">toString</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 </section>
 </li>
 </ul>
@@ -345,39 +307,9 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="driveMotorConfigs">
-<h3>driveMotorConfigs</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="../motorsims/SimMotorConfigs.html" title="class in org.ironmaple.simulation.motorsims">SimMotorConfigs</a></span>&nbsp;<span class="element-name">driveMotorConfigs</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="DRIVE_GEAR_RATIO">
-<h3>DRIVE_GEAR_RATIO</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">DRIVE_GEAR_RATIO</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="STEER_GEAR_RATIO">
-<h3>STEER_GEAR_RATIO</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">STEER_GEAR_RATIO</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="WHEELS_COEFFICIENT_OF_FRICTION">
-<h3>WHEELS_COEFFICIENT_OF_FRICTION</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">WHEELS_COEFFICIENT_OF_FRICTION</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="DRIVE_FRICTION_VOLTAGE">
-<h3>DRIVE_FRICTION_VOLTAGE</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Voltage</span>&nbsp;<span class="element-name">DRIVE_FRICTION_VOLTAGE</span></div>
-</section>
-</li>
-<li>
-<section class="detail" id="WHEEL_RADIUS">
-<h3>WHEEL_RADIUS</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Distance</span>&nbsp;<span class="element-name">WHEEL_RADIUS</span></div>
+<section class="detail" id="config">
+<h3>config</h3>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="configs/SwerveModuleSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">SwerveModuleSimulationConfig</a></span>&nbsp;<span class="element-name">config</span></div>
 </section>
 </li>
 </ul>
@@ -389,33 +321,16 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(edu.wpi.first.math.system.plant.DCMotor,edu.wpi.first.math.system.plant.DCMotor,double,double,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Voltage,edu.wpi.first.units.measure.Distance,edu.wpi.first.units.measure.MomentOfInertia,double)">
+<section class="detail" id="&lt;init&gt;(org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig)">
 <h3>SwerveModuleSimulation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveModuleSimulation</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;driveMotorModel,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/system/plant/DCMotor.html" title="class or interface in edu.wpi.first.math.system.plant" class="external-link">DCMotor</a>&nbsp;steerMotorModel,
- double&nbsp;driveGearRatio,
- double&nbsp;steerGearRatio,
- edu.wpi.first.units.measure.Voltage&nbsp;driveFrictionVoltage,
- edu.wpi.first.units.measure.Voltage&nbsp;steerFrictionVoltage,
- edu.wpi.first.units.measure.Distance&nbsp;wheelRadius,
- edu.wpi.first.units.measure.MomentOfInertia&nbsp;steerRotationalInertia,
- double&nbsp;tireCoefficientOfFriction)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SwerveModuleSimulation</span><wbr><span class="parameters">(<a href="configs/SwerveModuleSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">SwerveModuleSimulationConfig</a>&nbsp;config)</span></div>
 <div class="block"><h2>Constructs a Swerve Module Simulation.</h2>
 
  <p>If you are using <a href="../SimulatedArena.html#overrideSimulationTimings(edu.wpi.first.units.measure.Time,int)"><code>SimulatedArena.overrideSimulationTimings(Time, int)</code></a> to use custom timings, you must
  call the method before constructing any swerve module simulations using this constructor.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>driveMotorModel</code> - the model of the driving motor</dd>
-<dd><code>steerMotorModel</code> - ; the model of the steering motor</dd>
-<dd><code>driveGearRatio</code> - the gear ratio for the driving motor, >1 is reduction</dd>
-<dd><code>steerGearRatio</code> - the gear ratio for the steering motor, >1 is reduction</dd>
-<dd><code>driveFrictionVoltage</code> - the measured minimum amount of voltage that can turn the driving rotter</dd>
-<dd><code>steerFrictionVoltage</code> - the measured minimum amount of voltage that can turn the steering rotter</dd>
-<dd><code>wheelRadius</code> - the radius of the wheels.</dd>
-<dd><code>steerRotationalInertia</code> - the rotational inertia of the entire steering mechanism</dd>
-<dd><code>tireCoefficientOfFriction</code> - the <a href='https://simple.wikipedia.org/wiki/Coefficient_of_friction#:~:text=A%20coefficient%20of%20friction%20is%20a%20value%20that%20shows%20the'>coefficient
-     of friction</a> of the tires, normally around 1.2 <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/util/Units.html#inchesToMeters(double)" title="class or interface in edu.wpi.first.math.util" class="external-link"><code>Units.inchesToMeters(double)</code></a>.</dd>
+<dd><code>config</code> - the configuration</dd>
 </dl>
 </section>
 </li>
@@ -478,257 +393,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getDriveMotorAppliedVoltage()">
-<h3>getDriveMotorAppliedVoltage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Voltage</span>&nbsp;<span class="element-name">getDriveMotorAppliedVoltage</span>()</div>
-<div class="block"><h2>Obtains the Actual Output Voltage of the Drive Motor.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the actual output voltage of the drive motor</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerMotorAppliedVoltage()">
-<h3>getSteerMotorAppliedVoltage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Voltage</span>&nbsp;<span class="element-name">getSteerMotorAppliedVoltage</span>()</div>
-<div class="block"><h2>Obtains the Actual Output Voltage of the Steering Motor.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the actual output voltage of the steering motor</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list-long">
-<li><a href="../motorsims/MapleMotorSim.html#getAppliedVoltage()"><code>MapleMotorSim.getAppliedVoltage()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getDriveMotorSupplyCurrent()">
-<h3>getDriveMotorSupplyCurrent</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Current</span>&nbsp;<span class="element-name">getDriveMotorSupplyCurrent</span>()</div>
-<div class="block"><h2>Obtains the Amount of Current Supplied to the Drive Motor.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the current supplied to the drive motor</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getDriveMotorStatorCurrent()">
-<h3>getDriveMotorStatorCurrent</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Current</span>&nbsp;<span class="element-name">getDriveMotorStatorCurrent</span>()</div>
-<div class="block"><h2>Obtains the Stator current the Drive Motor.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the stator current of the drive motor</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerMotorSupplyCurrent()">
-<h3>getSteerMotorSupplyCurrent</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Current</span>&nbsp;<span class="element-name">getSteerMotorSupplyCurrent</span>()</div>
-<div class="block"><h2>Obtains the Amount of Current Supplied to the Steer Motor.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the current supplied to the steer motor</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list-long">
-<li><a href="../motorsims/MapleMotorSim.html#getSupplyCurrent()"><code>MapleMotorSim.getSupplyCurrent()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerMotorStatorCurrent()">
-<h3>getSteerMotorStatorCurrent</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Current</span>&nbsp;<span class="element-name">getSteerMotorStatorCurrent</span>()</div>
-<div class="block"><h2>Obtains the Stator current the Steer Motor.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the stator current of the drive motor</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list-long">
-<li><a href="../motorsims/MapleMotorSim.html#getSupplyCurrent()"><code>MapleMotorSim.getSupplyCurrent()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getDriveEncoderUnGearedPosition()">
-<h3>getDriveEncoderUnGearedPosition</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Angle</span>&nbsp;<span class="element-name">getDriveEncoderUnGearedPosition</span>()</div>
-<div class="block"><h2>Obtains the Position of the Drive Encoder.</h2>
-
- <p>This value represents the un-geared position of the encoder, i.e., the amount of radians the drive motor's
- encoder has rotated.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the position of the drive motor's encoder (un-geared)</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getDriveWheelFinalPosition()">
-<h3>getDriveWheelFinalPosition</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Angle</span>&nbsp;<span class="element-name">getDriveWheelFinalPosition</span>()</div>
-<div class="block"><h2>Obtains the Final Position of the Wheel.</h2>
-
- <p>This method provides the final position of the drive encoder in terms of wheel angle.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the final position of the drive encoder (wheel rotations)</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getDriveEncoderUnGearedSpeed()">
-<h3>getDriveEncoderUnGearedSpeed</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.AngularVelocity</span>&nbsp;<span class="element-name">getDriveEncoderUnGearedSpeed</span>()</div>
-<div class="block"><h2>Obtains the Speed of the Drive Encoder.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the un-geared speed of the drive encoder</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getDriveWheelFinalSpeed()">
-<h3>getDriveWheelFinalSpeed</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.AngularVelocity</span>&nbsp;<span class="element-name">getDriveWheelFinalSpeed</span>()</div>
-<div class="block"><h2>Obtains the Final Speed of the Wheel.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the final speed of the drive wheel</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerRelativeEncoderPosition()">
-<h3>getSteerRelativeEncoderPosition</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Angle</span>&nbsp;<span class="element-name">getSteerRelativeEncoderPosition</span>()</div>
-<div class="block"><h2>Obtains the Relative Position of the Steer Encoder.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the relative encoder position of the steer motor</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list-long">
-<li><a href="../motorsims/MapleMotorSim.html#getEncoderPosition()"><code>MapleMotorSim.getEncoderPosition()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerRelativeEncoderVelocity()">
-<h3>getSteerRelativeEncoderVelocity</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.AngularVelocity</span>&nbsp;<span class="element-name">getSteerRelativeEncoderVelocity</span>()</div>
-<div class="block"><h2>Obtains the Speed of the Steer Relative Encoder (Geared).</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the speed of the steer relative encoder</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list-long">
-<li><a href="../motorsims/MapleMotorSim.html#getEncoderVelocity()"><code>MapleMotorSim.getEncoderVelocity()</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerAbsoluteFacing()">
-<h3>getSteerAbsoluteFacing</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a></span>&nbsp;<span class="element-name">getSteerAbsoluteFacing</span>()</div>
-<div class="block"><h2>Obtains the Absolute Facing of the Steer Mechanism.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the absolute facing of the steer mechanism, as a <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Rotation2d</code></a></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getSteerAbsoluteEncoderSpeed()">
-<h3>getSteerAbsoluteEncoderSpeed</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.AngularVelocity</span>&nbsp;<span class="element-name">getSteerAbsoluteEncoderSpeed</span>()</div>
-<div class="block"><h2>Obtains the Absolute Rotational Velocity of the Steer Mechanism.</h2></div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the absolute angular velocity of the steer mechanism</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getCachedDriveEncoderUnGearedPositions()">
-<h3>getCachedDriveEncoderUnGearedPositions</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Angle[]</span>&nbsp;<span class="element-name">getCachedDriveEncoderUnGearedPositions</span>()</div>
-<div class="block"><h2>Obtains the Cached Readings of the Drive Encoder's Un-Geared Position.</h2>
-
- <p>The values of <a href="#getDriveEncoderUnGearedPosition()"><code>getDriveEncoderUnGearedPosition()</code></a> are cached at each sub-tick and can be retrieved
- using this method.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>an array of cached drive encoder un-geared positions</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getCachedDriveWheelFinalPositions()">
-<h3>getCachedDriveWheelFinalPositions</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Angle[]</span>&nbsp;<span class="element-name">getCachedDriveWheelFinalPositions</span>()</div>
-<div class="block"><h2>Obtains the Cached Readings of the Drive Encoder's Final Position (Wheel Rotations).</h2>
-
- <p>The values of <a href="#getDriveWheelFinalPosition()"><code>getDriveWheelFinalPosition()</code></a> are cached at each sub-tick and are divided by the gear
- ratio to obtain the final wheel rotations.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>an array of cached drive encoder final positions (wheel rotations)</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getCachedSteerRelativeEncoderPositions()">
-<h3>getCachedSteerRelativeEncoderPositions</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Angle[]</span>&nbsp;<span class="element-name">getCachedSteerRelativeEncoderPositions</span>()</div>
-<div class="block"><h2>Obtains the Cached Readings of the Steer Relative Encoder's Position.</h2>
-
- <p>The values of <a href="#getSteerRelativeEncoderPosition()"><code>getSteerRelativeEncoderPosition()</code></a> are cached at each sub-tick and can be retrieved
- using this method.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>an array of cached steer relative encoder positions</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getCachedSteerAbsolutePositions()">
-<h3>getCachedSteerAbsolutePositions</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a>[]</span>&nbsp;<span class="element-name">getCachedSteerAbsolutePositions</span>()</div>
-<div class="block"><h2>Obtains the Cached Readings of the Steer Absolute Positions.</h2>
-
- <p>The values of <a href="#getSteerAbsoluteFacing()"><code>getSteerAbsoluteFacing()</code></a> are cached at each sub-tick and can be retrieved using this
- method.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>an array of cached absolute steer positions, as <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Rotation2d</code></a> objects</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="getGrippingForceNewtons(double)">
-<h3>getGrippingForceNewtons</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">getGrippingForceNewtons</span><wbr><span class="parameters">(double&nbsp;gravityForceOnModuleNewtons)</span></div>
-</section>
-</li>
-<li>
 <section class="detail" id="updateSimulationSubTickGetModuleForce(org.dyn4j.geometry.Vector2,edu.wpi.first.math.geometry.Rotation2d,double)">
 <h3>updateSimulationSubTickGetModuleForce</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.dyn4j.geometry.Vector2</span>&nbsp;<span class="element-name">updateSimulationSubTickGetModuleForce</span><wbr><span class="parameters">(org.dyn4j.geometry.Vector2&nbsp;moduleCurrentGroundVelocityWorldRelative,
@@ -772,47 +436,264 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="maximumGroundSpeed()">
-<h3>maximumGroundSpeed</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.LinearVelocity</span>&nbsp;<span class="element-name">maximumGroundSpeed</span>()</div>
-<div class="block"><h2>Obtains the theoretical speed that the module can achieve.</h2></div>
+<section class="detail" id="getDriveMotorAppliedVoltage()">
+<h3>getDriveMotorAppliedVoltage</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Voltage.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Voltage</a></span>&nbsp;<span class="element-name">getDriveMotorAppliedVoltage</span>()</div>
+<div class="block"><h2>Obtains the Actual Output Voltage of the Drive Motor.</h2></div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the theoretical maximum ground speed that the module can achieve, in m/s</dd>
+<dd>the actual output voltage of the drive motor</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getTheoreticalPropellingForcePerModule(edu.wpi.first.units.measure.Mass,int)">
-<h3>getTheoreticalPropellingForcePerModule</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.Force</span>&nbsp;<span class="element-name">getTheoreticalPropellingForcePerModule</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Mass&nbsp;robotMass,
- int&nbsp;modulesCount)</span></div>
-<div class="block"><h2>Obtains the theoretical maximum propelling force of ONE module.</h2>
-
- <p>Calculates the maximum propelling force with respect to the gripping force and the drive motor's torque under
- its current limit.</div>
+<section class="detail" id="getSteerMotorAppliedVoltage()">
+<h3>getSteerMotorAppliedVoltage</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Voltage.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Voltage</a></span>&nbsp;<span class="element-name">getSteerMotorAppliedVoltage</span>()</div>
+<div class="block"><h2>Obtains the Actual Output Voltage of the Steering Motor.</h2></div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>robotMass</code> - the mass of the robot</dd>
-<dd><code>modulesCount</code> - the amount of modules on the robot, assumed to be sharing the gravity force equally</dd>
 <dt>Returns:</dt>
-<dd>the maximum propelling force of EACH module</dd>
+<dd>the actual output voltage of the steering motor</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../motorsims/MapleMotorSim.html#getAppliedVoltage()"><code>MapleMotorSim.getAppliedVoltage()</code></a></li>
+</ul>
+</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="maxAcceleration(edu.wpi.first.units.measure.Mass,int)">
-<h3>maxAcceleration</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">edu.wpi.first.units.measure.LinearAcceleration</span>&nbsp;<span class="element-name">maxAcceleration</span><wbr><span class="parameters">(edu.wpi.first.units.measure.Mass&nbsp;robotMass,
- int&nbsp;modulesCount)</span></div>
-<div class="block"><h2>Obtains the theatrical linear acceleration that the robot can achieve.</h2>
-
- <p>Calculates the maximum linear acceleration of a robot, with respect to its mass and
- <a href="#getTheoreticalPropellingForcePerModule(edu.wpi.first.units.measure.Mass,int)"><code>getTheoreticalPropellingForcePerModule(Mass, int)</code></a>.</div>
+<section class="detail" id="getDriveMotorSupplyCurrent()">
+<h3>getDriveMotorSupplyCurrent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></span>&nbsp;<span class="element-name">getDriveMotorSupplyCurrent</span>()</div>
+<div class="block"><h2>Obtains the Amount of Current Supplied to the Drive Motor.</h2></div>
 <dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>robotMass</code> - the mass of the robot</dd>
-<dd><code>modulesCount</code> - the amount of modules on the robot, assumed to be sharing the gravity force equally</dd>
+<dt>Returns:</dt>
+<dd>the current supplied to the drive motor</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDriveMotorStatorCurrent()">
+<h3>getDriveMotorStatorCurrent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></span>&nbsp;<span class="element-name">getDriveMotorStatorCurrent</span>()</div>
+<div class="block"><h2>Obtains the Stator current the Drive Motor.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the stator current of the drive motor</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerMotorSupplyCurrent()">
+<h3>getSteerMotorSupplyCurrent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></span>&nbsp;<span class="element-name">getSteerMotorSupplyCurrent</span>()</div>
+<div class="block"><h2>Obtains the Amount of Current Supplied to the Steer Motor.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the current supplied to the steer motor</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../motorsims/MapleMotorSim.html#getSupplyCurrent()"><code>MapleMotorSim.getSupplyCurrent()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerMotorStatorCurrent()">
+<h3>getSteerMotorStatorCurrent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Current.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Current</a></span>&nbsp;<span class="element-name">getSteerMotorStatorCurrent</span>()</div>
+<div class="block"><h2>Obtains the Stator current the Steer Motor.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the stator current of the drive motor</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../motorsims/MapleMotorSim.html#getSupplyCurrent()"><code>MapleMotorSim.getSupplyCurrent()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDriveEncoderUnGearedPosition()">
+<h3>getDriveEncoderUnGearedPosition</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></span>&nbsp;<span class="element-name">getDriveEncoderUnGearedPosition</span>()</div>
+<div class="block"><h2>Obtains the Position of the Drive Encoder.</h2>
+
+ <p>This value represents the un-geared position of the encoder, i.e., the amount of radians the drive motor's
+ encoder has rotated.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the position of the drive motor's encoder (un-geared)</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDriveWheelFinalPosition()">
+<h3>getDriveWheelFinalPosition</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></span>&nbsp;<span class="element-name">getDriveWheelFinalPosition</span>()</div>
+<div class="block"><h2>Obtains the Final Position of the Wheel.</h2>
+
+ <p>This method provides the final position of the drive encoder in terms of wheel angle.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the final position of the drive encoder (wheel rotations)</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDriveEncoderUnGearedSpeed()">
+<h3>getDriveEncoderUnGearedSpeed</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></span>&nbsp;<span class="element-name">getDriveEncoderUnGearedSpeed</span>()</div>
+<div class="block"><h2>Obtains the Speed of the Drive Encoder.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the un-geared speed of the drive encoder</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getDriveWheelFinalSpeed()">
+<h3>getDriveWheelFinalSpeed</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></span>&nbsp;<span class="element-name">getDriveWheelFinalSpeed</span>()</div>
+<div class="block"><h2>Obtains the Final Speed of the Wheel.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the final speed of the drive wheel</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerRelativeEncoderPosition()">
+<h3>getSteerRelativeEncoderPosition</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></span>&nbsp;<span class="element-name">getSteerRelativeEncoderPosition</span>()</div>
+<div class="block"><h2>Obtains the Relative Position of the Steer Encoder.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the relative encoder position of the steer motor</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../motorsims/MapleMotorSim.html#getEncoderPosition()"><code>MapleMotorSim.getEncoderPosition()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerRelativeEncoderVelocity()">
+<h3>getSteerRelativeEncoderVelocity</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></span>&nbsp;<span class="element-name">getSteerRelativeEncoderVelocity</span>()</div>
+<div class="block"><h2>Obtains the Speed of the Steer Relative Encoder (Geared).</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the speed of the steer relative encoder</dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../motorsims/MapleMotorSim.html#getEncoderVelocity()"><code>MapleMotorSim.getEncoderVelocity()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerAbsoluteFacing()">
+<h3>getSteerAbsoluteFacing</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a></span>&nbsp;<span class="element-name">getSteerAbsoluteFacing</span>()</div>
+<div class="block"><h2>Obtains the Absolute Facing of the Steer Mechanism.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the absolute facing of the steer mechanism, as a <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Rotation2d</code></a></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerAbsoluteAngle()">
+<h3>getSteerAbsoluteAngle</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a></span>&nbsp;<span class="element-name">getSteerAbsoluteAngle</span>()</div>
+<div class="block"><h2>Obtains the Absolute Angle of the Steer Mechanism.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the (continuous) final angle of the steer mechanism, as a <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link"><code>Angle</code></a></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="see-list-long">
+<li><a href="../motorsims/MapleMotorSim.html#getAngularPosition()"><code>MapleMotorSim.getAngularPosition()</code></a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getSteerAbsoluteEncoderSpeed()">
+<h3>getSteerAbsoluteEncoderSpeed</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/AngularVelocity.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">AngularVelocity</a></span>&nbsp;<span class="element-name">getSteerAbsoluteEncoderSpeed</span>()</div>
+<div class="block"><h2>Obtains the Absolute Rotational Velocity of the Steer Mechanism.</h2></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the absolute angular velocity of the steer mechanism</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCachedDriveEncoderUnGearedPositions()">
+<h3>getCachedDriveEncoderUnGearedPositions</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a>[]</span>&nbsp;<span class="element-name">getCachedDriveEncoderUnGearedPositions</span>()</div>
+<div class="block"><h2>Obtains the Cached Readings of the Drive Encoder's Un-Geared Position.</h2>
+
+ <p>The values of <a href="#getDriveEncoderUnGearedPosition()"><code>getDriveEncoderUnGearedPosition()</code></a> are cached at each sub-tick and can be retrieved
+ using this method.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an array of cached drive encoder un-geared positions</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCachedDriveWheelFinalPositions()">
+<h3>getCachedDriveWheelFinalPositions</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a>[]</span>&nbsp;<span class="element-name">getCachedDriveWheelFinalPositions</span>()</div>
+<div class="block"><h2>Obtains the Cached Readings of the Drive Encoder's Final Position (Wheel Rotations).</h2>
+
+ <p>The values of <a href="#getDriveWheelFinalPosition()"><code>getDriveWheelFinalPosition()</code></a> are cached at each sub-tick and are divided by the gear
+ ratio to obtain the final wheel rotations.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an array of cached drive encoder final positions (wheel rotations)</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCachedSteerRelativeEncoderPositions()">
+<h3>getCachedSteerRelativeEncoderPositions</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/units/measure/Angle.html" title="class or interface in edu.wpi.first.units.measure" class="external-link">Angle</a>[]</span>&nbsp;<span class="element-name">getCachedSteerRelativeEncoderPositions</span>()</div>
+<div class="block"><h2>Obtains the Cached Readings of the Steer Relative Encoder's Position.</h2>
+
+ <p>The values of <a href="#getSteerRelativeEncoderPosition()"><code>getSteerRelativeEncoderPosition()</code></a> are cached at each sub-tick and can be retrieved
+ using this method.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an array of cached steer relative encoder positions</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getCachedSteerAbsolutePositions()">
+<h3>getCachedSteerAbsolutePositions</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Rotation2d</a>[]</span>&nbsp;<span class="element-name">getCachedSteerAbsolutePositions</span>()</div>
+<div class="block"><h2>Obtains the Cached Readings of the Steer Absolute Positions.</h2>
+
+ <p>The values of <a href="#getSteerAbsoluteFacing()"><code>getSteerAbsoluteFacing()</code></a> are cached at each sub-tick and can be retrieved using this
+ method.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>an array of cached absolute steer positions, as <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Rotation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link"><code>Rotation2d</code></a> objects</dd>
 </dl>
 </section>
 </li>

@@ -17,11 +17,11 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  *
  * <p>The Coral has a 4-inch (~102 mm) inside diameter and a 4½-inch (~11 cm) outside diameter.
  */
-public class ReefscapeCoral extends GamePieceOnFieldSimulation {
+public class ReefscapeCoralOnField extends GamePieceOnFieldSimulation {
     public static final GamePieceInfo REEFSCAPE_CORAL_INFO =
             new GamePieceInfo("Coral", new Rectangle(0.3, 0.11), Meters.of(0.11), Kilograms.of(0.3), 2.8, 4, 0.3);
 
-    public ReefscapeCoral(Pose2d initialPose) {
+    public ReefscapeCoralOnField(Pose2d initialPose) {
         super(REEFSCAPE_CORAL_INFO, initialPose);
     }
 }

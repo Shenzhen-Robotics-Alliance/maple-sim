@@ -1,6 +1,6 @@
 # Using the Simulated Arena Object
 
-!!! warning
+!!! info
       You are reading the documentation for a Beta version of maple-sim. API references are subject to change in future versions.
 
 ---
@@ -32,10 +32,8 @@ public void simulationPeriod() {
 }
 ```
 
-> ❌ **Important**
-> 
-> DO NOT call `SimulatedArena.getInstance().simulationPeriodic()` when running on a **REAL** robot.
-> This will consume the resources of your roboRIO.
+!!! warning
+      DO NOT call `SimulatedArena.getInstance().simulationPeriodic()` when running on a **REAL** robot, as it will drain the resources of your roboRIO.
 
 For each period of your robot (or each call to `SimulatedArena.getInstance().simulationPeriodic()`), the simulator processes a few sub-ticks, advancing the time incrementally and recalculating the physics model. This method ensures higher accuracy and enables simulation of high-frequency odometry.
 
@@ -49,9 +47,8 @@ You can adjust the simulator's timing if necessary:
 SimulatedArena.overrideSimulationTimings(0.01, 3);
 ```
 
-> ❌ **Caution**
-> 
-> DO NOT override the timing if you are using AdvantageKit, as it only supports 50Hz robots.
+!!! warning
+      DO NOT override the timing if you are using AdvantageKit, as it only supports 50Hz robots.
 
 ---
 ## 3. Adding Game Pieces to the Field

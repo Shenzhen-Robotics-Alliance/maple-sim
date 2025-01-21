@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
@@ -15,9 +18,9 @@ public class NoteOnFly extends GamePieceProjectile {
             Translation2d shooterPositionOnRobot,
             ChassisSpeeds chassisSpeeds,
             Rotation2d shooterFacing,
-            double initialHeight,
-            double launchingSpeedMPS,
-            double shooterAngleRad) {
+            Distance initialHeight,
+            LinearVelocity launchingSpeed,
+            Angle shooterAngle) {
         super(
                 CRESCENDO_NOTE_INFO,
                 robotPosition,
@@ -25,8 +28,8 @@ public class NoteOnFly extends GamePieceProjectile {
                 chassisSpeeds,
                 shooterFacing,
                 initialHeight,
-                launchingSpeedMPS,
-                shooterAngleRad);
+                launchingSpeed,
+                shooterAngle);
         super.withTouchGroundHeight(0.6);
     }
 

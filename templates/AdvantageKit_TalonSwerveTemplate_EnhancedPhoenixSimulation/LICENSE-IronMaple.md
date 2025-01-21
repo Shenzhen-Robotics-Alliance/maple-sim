@@ -6,7 +6,7 @@
 #### This project uses [maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim) for simulation.
 If you encounter any bugs related to drivetrain physics simulation, please [submit an issue to maple-sim](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose).
 
-## MIT License, Copyright (c) 2024 Team5516 "Iron Maple"
+## MIT License, Copyright (c) 2024-2025 Team5516 "Iron Maple"
 
 **Permission is hereby granted, free of charge, to any person obtaining a copyof this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:**
 

@@ -1,4 +1,4 @@
-// Copyright 2021-2024 FRC 6328
+// Copyright 2021-2025 FRC 6328
 // http://github.com/Mechanical-Advantage
 //
 // This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
     @AutoLog
-    public static class VisionIOInputs {
+    class VisionIOInputs {
         public boolean connected = false;
         public TargetObservation latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());
         public PoseObservation[] poseObservations = new PoseObservation[0];
@@ -27,10 +27,10 @@ public interface VisionIO {
     }
 
     /** Represents the angle to a simple target, not used for pose estimation. */
-    public static record TargetObservation(Rotation2d tx, Rotation2d ty) {}
+    record TargetObservation(Rotation2d tx, Rotation2d ty) {}
 
     /** Represents a robot pose sample used for pose estimation. */
-    public static record PoseObservation(
+    record PoseObservation(
             double timestamp,
             Pose3d pose,
             double ambiguity,
@@ -38,11 +38,11 @@ public interface VisionIO {
             double averageTagDistance,
             PoseObservationType type) {}
 
-    public static enum PoseObservationType {
+    enum PoseObservationType {
         MEGATAG_1,
         MEGATAG_2,
         PHOTONVISION
     }
 
-    public default void updateInputs(VisionIOInputs inputs) {}
+    default void updateInputs(VisionIOInputs inputs) {}
 }

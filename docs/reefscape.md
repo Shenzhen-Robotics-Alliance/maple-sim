@@ -2,7 +2,8 @@
 ![alt text](media/fd_frc_socialgraphics_fb_post.png)
 
 ## ***CORAL*** and ***ALGAE*** on the Field
-***CORAL*** and ***ALGAE*** can be added to the field as game pieces:
+!!! info ""
+    ***CORAL*** and ***ALGAE*** can be added to the field as game pieces:
 
 ```java
 SimulatedArena.getInstance().addGamePiece(new ReefscapeCoral(
@@ -34,7 +35,8 @@ And display the data in AdvantageScope:
 
 
 ## The ***CORAL-ALGAE*** Stack
-***CORAL*** are staged on the field with ***ALGAE*** on top. You can place these stacks on the field:
+!!! info ""
+    ***CORAL*** are staged on the field with ***ALGAE*** on top. You can place these stacks on the field:
 
 ```java
 SimulatedArena.getInstance().addGamePiece(new ReefscapeCoralAlgaeStack(new Translation2d(2,2)));
@@ -57,7 +59,8 @@ SimulatedArena.getInstance().resetFieldForAuto();
 ![](./media/reefscape%20stack.gif)
 
 ## Interacting with ***CORAL*** and ***ALGAE***
-Users can use `IntakeSimulation` to simulate the interaction between robot intakes and the game pieces. 
+!!! info ""
+    Users can use `IntakeSimulation` to simulate the interaction between robot intakes and the game pieces. 
 
 ```java
 this.intakeSimulation = IntakeSimulation.OverTheBumperIntake(
@@ -84,7 +87,8 @@ this.intakeSimulation = IntakeSimulation.OverTheBumperIntake(
 
 
 ## Launching ***ALGAE*** into the air
-***ALGAE*** can be launched into the air, and the simulation will detect if it reaches its target—the ***NET***.
+!!! info ""
+    ***ALGAE*** can be launched into the air, and the simulation will detect if it reaches its target—the ***NET***.
 
 ```java
 ReefscapeAlgaeOnFly.setHitNetCallBack(() -> System.out.println("ALGAE hits NET!"));
@@ -105,3 +109,67 @@ SimulatedArena.getInstance()
 See [Simulating Projectiles](./simulating-projectiles.md).
 
 ![](./media/launching%20algae.gif)
+## Scoring ***CORAL*** on ***REEF***
+
+!!! info ""
+    You can eject a ***CORAL*** from your scoring mechanism during simulation. If a ***CORAL*** ejected into the air is in contact with a ***BRANCH*** at the correct angle, it will be attached to that branch. Maple-Sim will automatically detect the contact and simulate the scoring process (requires v0.3.3 or above).
+
+=== "Scoring on L3 branch"
+    ```java
+    SimulatedArena.getInstance()
+        .addGamePieceProjectile(new ReefscapeCoralOnFly(
+            // Obtain robot position from drive simulation
+            driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+            // The scoring mechanism is installed at (0.46, 0) (meters) on the robot
+            new Translation2d(0.35, 0),
+            // Obtain robot speed from drive simulation
+            driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+            // Obtain robot facing from drive simulation
+            driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+            // The height at which the coral is ejected
+            Meters.of(1.28),
+            // The initial speed of the coral
+            MetersPerSecond.of(2),
+            // The coral is ejected at a 35-degree slope
+            Degrees.of(-35)));
+    ```
+
+=== "Scoring on L4 branch"
+    ```java
+    SimulatedArena.getInstance()
+        .addGamePieceProjectile(new ReefscapeCoralOnFly(
+            // Obtain robot position from drive simulation
+            driveSimulation.getSimulatedDriveTrainPose().getTranslation(),
+            // The scoring mechanism is installed at (0.46, 0) (meters) on the robot
+            new Translation2d(0.46, 0),
+            // Obtain robot speed from drive simulation
+            driveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+            // Obtain robot facing from drive simulation
+            driveSimulation.getSimulatedDriveTrainPose().getRotation(),
+            // The height at which the coral is ejected
+            Meters.of(2.1),
+            // The initial speed of the coral
+            MetersPerSecond.of(1),
+            // The coral is ejected vertically downwards
+            Degrees.of(-90)));
+    ```
+
+!!! info
+    ***CORAL***s that miss the target will be dropped on the floor:
+
+![](./media/scoring%20coral%20on%20field.gif)
+
+!!! info
+    ***CORAL***s that fall on the ***TROUGH*** will remain on the trough:
+
+![](./media/scoring%20coral%20on%20trough.gif)
+
+!!! info
+    To score a ***CORAL*** on a ***BRANCH***, it must:
+
+    - Be in contact with the ***BRANCH***.
+    - Be aligned with the direction of the ***BRANCH***.
+    - Be moving in the correct direction (i.e., if the coral is moving upwards, it cannot score).
+
+![](./media/scoring%20coral%20on%20L3.gif)
+![](./media/scoring%20coral%20on%20L4.gif)

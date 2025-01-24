@@ -54,6 +54,31 @@ The `DriveTrainSimulationConfig` object encapsulates the physical properties and
                 .withBumperSize(Inches.of(30), Inches.of(30));
         ```
     </div>
+=== "Custom Swerve with Mixed Module Configurations"
+    <div>
+        ```Java
+        final SwerveModuleSimulationConfig 
+                FRONT_LEFT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...),
+                FRONT_RIGHT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...),
+                BACK_LEFT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...),
+                BACK_RIGHT_MODULE_CONFIG = new SwerveModuleSimulationConfig(...);
+
+        // Create and configure a drivetrain simulation configuration
+        final DriveTrainSimulationConfig driveTrainSimulationConfig = DriveTrainSimulationConfig.Default()
+                // Specify gyro type (for realistic gyro drifting and error simulation)
+                .withGyro(COTS.ofPigeon2())
+                // Specify swerve module (for realistic swerve dynamics)
+                .withSwerveModules(
+                        FRONT_LEFT_MODULE_CONFIG, 
+                        FRONT_RIGHT_MODULE_CONFIG, 
+                        BACK_LEFT_MODULE_CONFIG, 
+                        BACK_RIGHT_MODULE_CONFIG)
+                // Configures the track length and track width (spacing between swerve modules)
+                .withTrackLengthTrackWidth(Inches.of(24), Inches.of(24))
+                // Configures the bumper size (dimensions of the robot bumper)
+                .withBumperSize(Inches.of(30), Inches.of(30));
+        ```
+    </div>
 
 ---
 ## 1. Instantiate and Register a Swerve Drive Simulation

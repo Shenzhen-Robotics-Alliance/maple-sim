@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.*;
 import java.util.Arrays;
+import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -85,8 +86,8 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     public SwerveDriveSimulation(DriveTrainSimulationConfig config, Pose2d initialPoseOnField) {
         super(config, initialPoseOnField);
         this.moduleTranslations = config.moduleTranslations;
-        this.moduleSimulations = Arrays.stream(config.moduleTranslations)
-                .map(translation2d -> config.swerveModuleSimulationFactory.get())
+        this.moduleSimulations = Arrays.stream(config.swerveModuleSimulationFactory)
+                .map(Supplier::get)
                 .toArray(SwerveModuleSimulation[]::new);
         this.gyroSimulation = config.gyroSimulationFactory.get();
 

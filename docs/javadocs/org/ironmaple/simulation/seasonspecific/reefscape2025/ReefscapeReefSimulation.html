@@ -108,7 +108,7 @@ implements <a href="../../SimulatedArena.Simulatable.html" title="interface in o
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -123,6 +123,16 @@ implements <a href="../../SimulatedArena.Simulatable.html" title="interface in o
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearReef()" class="member-name-link">clearReef</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Clears all the CORALs scored on the REEF.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int[][]</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getBranches(edu.wpi.first.wpilibj.DriverStation.Alliance)" class="member-name-link">getBranches</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DriverStation.Alliance.html" title="class or interface in edu.wpi.first.wpilibj" class="external-link">DriverStation.Alliance</a>&nbsp;side)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Obtains the amount of <strong>CORAL</strong> held on the <strong>BRANCHES</strong>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="ReefscapeReefSimulation.html" title="class in org.ironmaple.simulation.seasonspecific.reefscape2025">ReefscapeReefSimulation</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getInstance()" class="member-name-link">getInstance</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns an optional instance.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#simulationSubTick(int)" class="member-name-link">simulationSubTick</a><wbr>(int&nbsp;subTickNum)</code></div>
@@ -191,6 +201,44 @@ implements <a href="../../SimulatedArena.Simulatable.html" title="interface in o
 <h3>clearReef</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearReef</span>()</div>
 <div class="block">Clears all the CORALs scored on the REEF.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getBranches(edu.wpi.first.wpilibj.DriverStation.Alliance)">
+<h3>getBranches</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int[][]</span>&nbsp;<span class="element-name">getBranches</span><wbr><span class="parameters">(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/DriverStation.Alliance.html" title="class or interface in edu.wpi.first.wpilibj" class="external-link">DriverStation.Alliance</a>&nbsp;side)</span></div>
+<div class="block">Obtains the amount of <strong>CORAL</strong> held on the <strong>BRANCHES</strong>.
+
+ <p>This method returns a 2D array of size 12 x 4, where each entry represents the number of
+ <strong>CORAL</strong>s held on a particular branch.
+
+ <p>The <strong>BRANCHES</strong> are tracked in FMS as A, B, C, D, E, F, G, H, I, J, K, L (as per the game
+ manual), and are mapped to indices 0, 1, 2, ... in the array.
+
+ <p>The [i][j] entry in the array represents the number of <strong>CORAL</strong>(s) held on the L<code>j-1</code>
+ branch in the <code>i</code>th section.
+
+ <p>For example, <code>getBranches()[2][3]</code> returns the number of CORALs held on L4 of Branch C.
+
+ <p>Note that L2, L3, and L4 can only hold one <strong>CORAL</strong>, while L1 can hold up to two
+ <strong>CORAL</strong>s.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>side</code> - the alliance side (Red or Blue) to check for CORAL counts</dd>
+<dt>Returns:</dt>
+<dd>a 2D array where each entry represents the number of <strong>CORAL</strong> held on each branch</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getInstance()">
+<h3>getInstance</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="ReefscapeReefSimulation.html" title="class in org.ironmaple.simulation.seasonspecific.reefscape2025">ReefscapeReefSimulation</a>&gt;</span>&nbsp;<span class="element-name">getInstance</span>()</div>
+<div class="block">Returns an optional instance.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>(optionally) an instance of this class, empty if</dd>
+</dl>
 </section>
 </li>
 </ul>

@@ -66,7 +66,7 @@ public class Arena2025Reefscape extends SimulatedArena {
         }
     }
 
-    private final ReefscapeReefSimulation reefSimulation;
+    public final ReefscapeReefSimulation reefSimulation;
 
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());

@@ -1,6 +1,7 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.*;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
@@ -16,13 +17,13 @@ import org.ironmaple.utils.FieldMirroringUtils;
  */
 public class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
     private final Arena2025Reefscape arena;
-    private final List<ReefscapeReefBranchesTower> branches;
+    private final List<ReefscapeReefBranchesTower> branchTowers;
     private final List<CoralHolder> coralHolders;
 
     public ReefscapeReefSimulation(Arena2025Reefscape arena) {
         this.arena = arena;
         this.coralHolders = new ArrayList<>(96);
-        this.branches = new ArrayList<>(24);
+        this.branchTowers = new ArrayList<>(24);
 
         Translation2d origin =
                 new Translation2d(FieldMirroringUtils.FIELD_WIDTH / 2, FieldMirroringUtils.FIELD_HEIGHT / 2);
@@ -59,12 +60,12 @@ public class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
         for (int i = 0; i < 12; i++) {
             // blue
             branch = new ReefscapeReefBranchesTower(branchesCenterPositionBlue[i], branchesFacingOutwardsBlue[i]);
-            branches.add(branch);
+            branchTowers.add(branch);
             coralHolders.addAll(branch.coralHolders());
 
             // red
             branch = new ReefscapeReefBranchesTower(branchesCenterPositionRed[i], branchesFacingOutwardsRed[i]);
-            branches.add(branch);
+            branchTowers.add(branch);
             coralHolders.addAll(branch.coralHolders());
         }
     }
@@ -99,7 +100,51 @@ public class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
 
     /** Clears all the CORALs scored on the REEF. */
     public void clearReef() {
-        for (ReefscapeReefBranchesTower branch : branches) branch.clearBranches();
+        for (ReefscapeReefBranchesTower tower : branchTowers) tower.clearBranches();
+    }
+
+    /**
+     * Obtains the amount of <strong>CORAL</strong> held on the <strong>BRANCHES</strong>.
+     *
+     * <p>This method returns a 2D array of size 12 x 4, where each entry represents the number of
+     * <strong>CORAL</strong>s held on a particular branch.
+     *
+     * <p>The <strong>BRANCHES</strong> are tracked in FMS as A, B, C, D, E, F, G, H, I, J, K, L (as per the game
+     * manual), and are mapped to indices 0, 1, 2, ... in the array.
+     *
+     * <p>The [i][j] entry in the array represents the number of <strong>CORAL</strong>(s) held on the L<code>j-1</code>
+     * branch in the <code>i</code>th section.
+     *
+     * <p>For example, <code>getBranches()[2][3]</code> returns the number of CORALs held on L4 of Branch C.
+     *
+     * <p>Note that L2, L3, and L4 can only hold one <strong>CORAL</strong>, while L1 can hold up to two
+     * <strong>CORAL</strong>s.
+     *
+     * @param side the alliance side (Red or Blue) to check for CORAL counts
+     * @return a 2D array where each entry represents the number of <strong>CORAL</strong> held on each branch
+     */
+    public int[][] getBranches(DriverStation.Alliance side) {
+        int[][] coralsCountOnBranches = new int[12][4];
+        for (int i = 0; i < 12; i++) {
+            ReefscapeReefBranchesTower tower = branchTowers.get(side == DriverStation.Alliance.Red ? i * 2 + 1 : i * 2);
+            coralsCountOnBranches[i][0] = tower.L1.coralCount;
+            coralsCountOnBranches[i][1] = tower.L2.hasCoral ? 1 : 0;
+            coralsCountOnBranches[i][2] = tower.L3.hasCoral ? 1 : 0;
+            coralsCountOnBranches[i][3] = tower.L4.hasCoral ? 1 : 0;
+        }
+
+        return coralsCountOnBranches;
+    }
+
+    /**
+     * Returns an optional instance.
+     *
+     * @return (optionally) an instance of this class, empty if
+     * */
+    public static Optional<ReefscapeReefSimulation> getInstance() {
+        if (SimulatedArena.getInstance() instanceof Arena2025Reefscape arena2025Reefscape)
+            return Optional.of(arena2025Reefscape.reefSimulation);
+        return Optional.empty();
     }
 }
 
@@ -254,8 +299,7 @@ final class ReefscapeReefBranch implements CoralHolder {
         return true;
     }
 
-    private boolean isWithinTolerance(
-            Transform3d difference) {
+    private boolean isWithinTolerance(Transform3d difference) {
         boolean poseWithinTolerance = difference.getTranslation().getNorm() < TRANSLATIONAL_TOLERANCE_METERS
                 && Math.abs(difference.getRotation().getX()) < ROTATIONAL_TOLERANCE_RADIANS
                 && Math.abs(difference.getRotation().getY()) < ROTATIONAL_TOLERANCE_RADIANS

@@ -212,9 +212,8 @@ final class ReefscapeReefBranch implements CoralHolder {
         this.hasCoral = false;
     }
 
-    private static final double TRANSLATIONAL_TOLERANCE_METERS = 0.055;
-    private static final double ROTATIONAL_TOLERANCE_RADIANS = Math.toRadians(15);
-    private static final double VELOCITY_DIRECTION_PITCH_TOLERANCE_RADIANS = Math.toRadians(30);
+    private static final double TRANSLATIONAL_TOLERANCE_METERS = 0.07;
+    private static final double ROTATIONAL_TOLERANCE_RADIANS = Math.toRadians(30);
 
     /**
      *
@@ -246,13 +245,9 @@ final class ReefscapeReefBranch implements CoralHolder {
     public boolean checkCoralPlacement(ReefscapeCoralOnFly coralOnFly) {
         Transform3d difference = idealCoralPlacementPose.minus(coralOnFly.getPose3d());
         Translation3d velocityMPS = coralOnFly.getVelocity3dMPS();
-        double velocityDirectionPitchRad =
-                Math.atan2(velocityMPS.getZ(), velocityMPS.toTranslation2d().getNorm());
 
-        boolean velocityIgnorable = velocityMPS.getNorm() < 0.5;
-        boolean velocityDirectionCorrect = Math.abs(velocityDirectionPitchRad - idealVelocityDirectionPitchToScoreRad)
-                < VELOCITY_DIRECTION_PITCH_TOLERANCE_RADIANS;
-        boolean targetHit = isWithinTolerance(difference, velocityIgnorable, velocityDirectionCorrect);
+        boolean goingDown = velocityMPS.getZ() <= 0;
+        boolean targetHit = isWithinTolerance(difference) && goingDown;
         if (!targetHit) return false;
 
         this.hasCoral = true;
@@ -260,12 +255,12 @@ final class ReefscapeReefBranch implements CoralHolder {
     }
 
     private boolean isWithinTolerance(
-            Transform3d difference, boolean velocityIgnorable, boolean velocityDirectionCorrect) {
+            Transform3d difference) {
         boolean poseWithinTolerance = difference.getTranslation().getNorm() < TRANSLATIONAL_TOLERANCE_METERS
                 && Math.abs(difference.getRotation().getX()) < ROTATIONAL_TOLERANCE_RADIANS
                 && Math.abs(difference.getRotation().getY()) < ROTATIONAL_TOLERANCE_RADIANS
                 && Math.abs(difference.getRotation().getZ()) < ROTATIONAL_TOLERANCE_RADIANS;
-        return (velocityIgnorable || velocityDirectionCorrect) && poseWithinTolerance && (!this.hasCoral);
+        return poseWithinTolerance && (!this.hasCoral);
     }
 
     @Override

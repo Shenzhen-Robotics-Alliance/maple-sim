@@ -173,3 +173,16 @@ See [Simulating Projectiles](./simulating-projectiles.md).
 
 ![](./media/scoring%20coral%20on%20L3.gif)
 ![](./media/scoring%20coral%20on%20L4.gif)
+
+To obtain the amount of corals scored on each branch, use:
+
+```java
+Optional<ReefscapeReefSimulation> reefSimulation = ReefscapeReefSimulation.getInstance();
+int amountOfCoralsOnBranch_G_L4 = 0;
+if (reefSimulation.isPresent()) {
+    amountOfCoralsOnBranch_G_L4 = reefSimulation.get().getBranches()
+        [6] // branch G
+        [3]; // L4
+}
+```
+See the [javadocs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefSimulation.html) for more info.

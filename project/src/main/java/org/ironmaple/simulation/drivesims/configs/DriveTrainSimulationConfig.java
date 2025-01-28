@@ -25,7 +25,7 @@ import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 public class DriveTrainSimulationConfig {
     public Mass robotMass;
     public Distance bumperLengthX, bumperWidthY;
-    public Supplier<SwerveModuleSimulation>[] swerveModuleSimulationFactory;
+    public Supplier<SwerveModuleSimulation>[] swerveModuleSimulationFactory = new Supplier[4];
     public Supplier<GyroSimulation> gyroSimulationFactory;
     public Translation2d[] moduleTranslations;
 

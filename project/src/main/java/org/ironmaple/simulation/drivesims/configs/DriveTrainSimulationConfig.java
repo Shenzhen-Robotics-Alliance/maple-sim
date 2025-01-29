@@ -25,7 +25,7 @@ import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 public class DriveTrainSimulationConfig {
     public Mass robotMass;
     public Distance bumperLengthX, bumperWidthY;
-    public Supplier<SwerveModuleSimulation>[] swerveModuleSimulationFactory = new Supplier[4];
+    public Supplier<SwerveModuleSimulation>[] swerveModuleSimulationFactories;
     public Supplier<GyroSimulation> gyroSimulationFactory;
     public Translation2d[] moduleTranslations;
 
@@ -57,15 +57,15 @@ public class DriveTrainSimulationConfig {
         this.robotMass = robotMass;
         this.bumperLengthX = bumperLengthX;
         this.bumperWidthY = bumperWidthY;
+        this.withTrackLengthTrackWidth(trackLengthX, trackWidthY);
 
         if (swerveModuleSimulationFactory.length == 1) this.withSwerveModule(swerveModuleSimulationFactory[0]);
         else if (swerveModuleSimulationFactory.length == 4) this.withSwerveModules(swerveModuleSimulationFactory);
         else
             throw new IllegalArgumentException("Module simulation factories length must be 1 or 4, provided "
                     + swerveModuleSimulationFactory.length);
-        this.swerveModuleSimulationFactory = swerveModuleSimulationFactory;
+        this.swerveModuleSimulationFactories = swerveModuleSimulationFactory;
         this.gyroSimulationFactory = gyroSimulationFactory;
-        this.withTrackLengthTrackWidth(trackLengthX, trackWidthY);
 
         checkRobotMass();
         checkBumperSize();
@@ -205,7 +205,7 @@ public class DriveTrainSimulationConfig {
             throw new IllegalArgumentException("Module simulation factories length must be 1 or 4, provided "
                     + swerveModuleSimulationFactory.length);
 
-        this.swerveModuleSimulationFactory = swerveModuleSimulationFactory;
+        this.swerveModuleSimulationFactories = swerveModuleSimulationFactory;
         return this;
     }
 
@@ -216,11 +216,14 @@ public class DriveTrainSimulationConfig {
      *
      * <p>Updates the factory used to create swerve module simulations.
      *
+     * <p>Uses the same configuration over all the modules
+     *
      * @param swerveModuleSimulationFactory the new factory for swerve module simulations.
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
     public DriveTrainSimulationConfig withSwerveModule(Supplier<SwerveModuleSimulation> swerveModuleSimulationFactory) {
-        Arrays.fill(this.swerveModuleSimulationFactory, swerveModuleSimulationFactory);
+        this.swerveModuleSimulationFactories = new Supplier[moduleTranslations.length];
+        Arrays.fill(this.swerveModuleSimulationFactories, swerveModuleSimulationFactory);
         return this;
     }
 

@@ -140,7 +140,7 @@ public class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
      * Returns an optional instance.
      *
      * @return (optionally) an instance of this class, empty if
-     * */
+     */
     public static Optional<ReefscapeReefSimulation> getInstance() {
         if (SimulatedArena.getInstance() instanceof Arena2025Reefscape arena2025Reefscape)
             return Optional.of(arena2025Reefscape.reefSimulation);

@@ -108,7 +108,7 @@ Update your `subsystems/CommandSwerveDrivetrain.java` file as follows:
     ```java
     @Override
     public void resetPose(Pose2d pose) {
-        if (this.mapleSimSwerveDrivetrain != null) 
+        if (this.mapleSimSwerveDrivetrain != null)
             mapleSimSwerveDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
         Timer.delay(0.05); // Wait for simulation to update
         super.resetPose(pose);

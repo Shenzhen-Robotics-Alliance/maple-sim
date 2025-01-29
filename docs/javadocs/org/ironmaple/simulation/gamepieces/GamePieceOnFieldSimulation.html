@@ -44,7 +44,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -71,7 +71,7 @@ loadScripts(document, 'script');</script>
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">org.ironmaple.simulation.gamepieces</a></div>
 <h1 title="Class GamePieceOnFieldSimulation" class="title">Class GamePieceOnFieldSimulation</h1>
 </div>
-<div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
+<div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance">org.dyn4j.collision.AbstractCollisionBody&lt;org.dyn4j.dynamics.BodyFixture&gt;
 <div class="inheritance">org.dyn4j.dynamics.AbstractPhysicsBody
 <div class="inheritance">org.dyn4j.dynamics.Body
@@ -87,7 +87,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="../seasonspecific/crescendo2024/CrescendoNoteOnField.html" title="class in org.ironmaple.simulation.seasonspecific.crescendo2024">CrescendoNoteOnField</a></code></dd>
+<dd><code><a href="../seasonspecific/crescendo2024/CrescendoNoteOnField.html" title="class in org.ironmaple.simulation.seasonspecific.crescendo2024">CrescendoNoteOnField</a></code>, <code><a href="../seasonspecific/reefscape2025/ReefscapeAlgaeOnField.html" title="class in org.ironmaple.simulation.seasonspecific.reefscape2025">ReefscapeAlgaeOnField</a></code>, <code><a href="../seasonspecific/reefscape2025/ReefscapeCoralAlgaeStack.html" title="class in org.ironmaple.simulation.seasonspecific.reefscape2025">ReefscapeCoralAlgaeStack</a></code>, <code><a href="../seasonspecific/reefscape2025/ReefscapeCoralOnField.html" title="class in org.ironmaple.simulation.seasonspecific.reefscape2025">ReefscapeCoralOnField</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GamePieceOnFieldSimulation</span>
@@ -104,6 +104,23 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="GamePieceOnFieldSimulation.GamePieceInfo.html" class="type-name-link" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation.GamePieceInfo</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Stores the info of a type of game piece</div>
+</div>
+</div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -114,23 +131,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final double</code></div>
-<div class="col-second even-row-color"><code><a href="#ANGULAR_DAMPING" class="member-name-link">ANGULAR_DAMPING</a></code></div>
+<div class="col-second even-row-color"><code><a href="#COEFFICIENT_OF_FRICTION" class="member-name-link">COEFFICIENT_OF_FRICTION</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final double</code></div>
-<div class="col-second odd-row-color"><code><a href="#COEFFICIENT_OF_FRICTION" class="member-name-link">COEFFICIENT_OF_FRICTION</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#MINIMUM_BOUNCING_VELOCITY" class="member-name-link">MINIMUM_BOUNCING_VELOCITY</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final double</code></div>
-<div class="col-second even-row-color"><code><a href="#COEFFICIENT_OF_RESTITUTION" class="member-name-link">COEFFICIENT_OF_RESTITUTION</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final double</code></div>
-<div class="col-second odd-row-color"><code><a href="#LINEAR_DAMPING" class="member-name-link">LINEAR_DAMPING</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final double</code></div>
-<div class="col-second even-row-color"><code><a href="#MINIMUM_BOUNCING_VELOCITY" class="member-name-link">MINIMUM_BOUNCING_VELOCITY</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>final <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color"><code><a href="#type" class="member-name-link">type</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#type" class="member-name-link">type</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">The Type of the Game Piece.</div>
 </div>
 </div>
@@ -156,19 +164,14 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String,org.dyn4j.geometry.Convex,double,double,edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">GamePieceOnFieldSimulation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
- org.dyn4j.geometry.Convex&nbsp;shape,
- double&nbsp;gamePieceHeight,
- double&nbsp;mass,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;initialPosition)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.GamePieceInfo,edu.wpi.first.math.geometry.Pose2d)" class="member-name-link">GamePieceOnFieldSimulation</a><wbr>(<a href="GamePieceOnFieldSimulation.GamePieceInfo.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation.GamePieceInfo</a>&nbsp;info,
+ <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPose)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates a Game Piece on the Field with Fixed Height.</div>
 </div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.lang.String,org.dyn4j.geometry.Convex,java.util.function.DoubleSupplier,double,edu.wpi.first.math.geometry.Translation2d,edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">GamePieceOnFieldSimulation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
- org.dyn4j.geometry.Convex&nbsp;shape,
- <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/DoubleSupplier.html" title="class or interface in java.util.function" class="external-link">DoubleSupplier</a>&nbsp;zPositionSupplier,
- double&nbsp;mass,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;initialPosition,
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.GamePieceInfo,java.util.function.DoubleSupplier,edu.wpi.first.math.geometry.Pose2d,edu.wpi.first.math.geometry.Translation2d)" class="member-name-link">GamePieceOnFieldSimulation</a><wbr>(<a href="GamePieceOnFieldSimulation.GamePieceInfo.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation.GamePieceInfo</a>&nbsp;info,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/DoubleSupplier.html" title="class or interface in java.util.function" class="external-link">DoubleSupplier</a>&nbsp;zPositionSupplier,
+ <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPose,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;initialVelocityMPS)</code></div>
 <div class="col-last odd-row-color">
 <div class="block">Creates a Game Piece on the Field with Custom Height Supplier and Initial Velocity.</div>
@@ -198,8 +201,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Obtains the 2d position of the game piece</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setVelocity(edu.wpi.first.math.kinematics.ChassisSpeeds)" class="member-name-link">setVelocity</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/kinematics/ChassisSpeeds.html" title="class or interface in edu.wpi.first.math.kinematics" class="external-link">ChassisSpeeds</a>&nbsp;chassisSpeedsWorldFrame)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onIntake(java.lang.String)" class="member-name-link">onIntake</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;intakeTargetGamePieceType)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setVelocity(edu.wpi.first.math.kinematics.ChassisSpeeds)" class="member-name-link">setVelocity</a><wbr>(<a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/kinematics/ChassisSpeeds.html" title="class or interface in edu.wpi.first.math.kinematics" class="external-link">ChassisSpeeds</a>&nbsp;chassisSpeedsWorldFrame)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the world velocity of this game piece.</div>
 </div>
 </div>
@@ -212,8 +218,8 @@ loadScripts(document, 'script');</script>
 <h3 id="methods-inherited-from-class-org.dyn4j.collision.AbstractCollisionBody">Methods inherited from class&nbsp;org.dyn4j.collision.AbstractCollisionBody</h3>
 <code>addFixture, computeAABB, computeAABB, contains, containsFixture, createAABB, createAABB, getFixture, getFixture, getFixtureCount, getFixtureIterator, getFixtureModificationHandler, getFixtures, getFixtures, getLocalPoint, getLocalVector, getOwner, getPreviousTransform, getRotationDiscRadius, getTransform, getUserData, getWorldPoint, getWorldVector, isEnabled, rotate, rotate, rotate, rotate, rotate, rotate, rotateAboutCenter, setFixtureModificationHandler, setOwner, setRotationDiscRadius, setTransform, setUserData, shift, translate, translate, translateToOrigin</code></div>
 <div class="inherited-list">
-<h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
-<code><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
+<h3 id="methods-inherited-from-class-java.lang.Object">Methods inherited from class&nbsp;java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></h3>
+<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()" title="class or interface in java.lang" class="external-link">clone</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)" title="class or interface in java.lang" class="external-link">equals</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#finalize()" title="class or interface in java.lang" class="external-link">finalize</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#getClass()" title="class or interface in java.lang" class="external-link">getClass</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#hashCode()" title="class or interface in java.lang" class="external-link">hashCode</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notify()" title="class or interface in java.lang" class="external-link">notify</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#notifyAll()" title="class or interface in java.lang" class="external-link">notifyAll</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait()" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long)" title="class or interface in java.lang" class="external-link">wait</a>, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#wait(long,int)" title="class or interface in java.lang" class="external-link">wait</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-org.dyn4j.collision.CollisionBody">Methods inherited from interface&nbsp;org.dyn4j.collision.CollisionBody</h3>
 <code>addFixture, addFixture, computeAABB, computeAABB, contains, containsFixture, createAABB, createAABB, getFixture, getFixture, getFixtureCount, getFixtureIterator, getFixtureModificationHandler, getFixtures, getFixtures, getLocalCenter, getLocalPoint, getLocalVector, getPreviousTransform, getRotationDiscRadius, getTransform, getWorldCenter, getWorldPoint, getWorldVector, isEnabled, removeAllFixtures, removeFixture, removeFixture, removeFixture, removeFixtures, rotateAboutCenter, setEnabled, setFixtureModificationHandler, setTransform, translateToOrigin</code></div>
@@ -247,34 +253,6 @@ loadScripts(document, 'script');</script>
 <h2>Field Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="LINEAR_DAMPING">
-<h3>LINEAR_DAMPING</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">LINEAR_DAMPING</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../constant-values.html#org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.LINEAR_DAMPING">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="ANGULAR_DAMPING">
-<h3>ANGULAR_DAMPING</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">ANGULAR_DAMPING</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../constant-values.html#org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.ANGULAR_DAMPING">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="COEFFICIENT_OF_FRICTION">
 <h3>COEFFICIENT_OF_FRICTION</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">COEFFICIENT_OF_FRICTION</span></div>
@@ -283,20 +261,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <ul class="see-list">
 <li><a href="../../../../constant-values.html#org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.COEFFICIENT_OF_FRICTION">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="COEFFICIENT_OF_RESTITUTION">
-<h3>COEFFICIENT_OF_RESTITUTION</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">double</span>&nbsp;<span class="element-name">COEFFICIENT_OF_RESTITUTION</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="see-list">
-<li><a href="../../../../constant-values.html#org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.COEFFICIENT_OF_RESTITUTION">Constant Field Values</a></li>
 </ul>
 </dd>
 </dl>
@@ -319,7 +283,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="type">
 <h3>type</h3>
-<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">type</span></div>
+<div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">type</span></div>
 <div class="block"><h2>The Type of the Game Piece.</h2>
 
  <p>Affects the result of <a href="../SimulatedArena.html#getGamePiecesByType(java.lang.String)"><code>SimulatedArena.getGamePiecesByType(String)</code></a>.</div>
@@ -334,41 +298,31 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,org.dyn4j.geometry.Convex,double,double,edu.wpi.first.math.geometry.Translation2d)">
+<section class="detail" id="&lt;init&gt;(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.GamePieceInfo,edu.wpi.first.math.geometry.Pose2d)">
 <h3>GamePieceOnFieldSimulation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GamePieceOnFieldSimulation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
- org.dyn4j.geometry.Convex&nbsp;shape,
- double&nbsp;gamePieceHeight,
- double&nbsp;mass,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;initialPosition)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GamePieceOnFieldSimulation</span><wbr><span class="parameters">(<a href="GamePieceOnFieldSimulation.GamePieceInfo.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation.GamePieceInfo</a>&nbsp;info,
+ <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPose)</span></div>
 <div class="block"><h2>Creates a Game Piece on the Field with Fixed Height.</h2></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>type</code> - the type of the game piece, affecting categorization within the arena</dd>
-<dd><code>shape</code> - the shape of the collision space for the game piece</dd>
-<dd><code>gamePieceHeight</code> - the height (thickness) of the game piece, in meters</dd>
-<dd><code>mass</code> - the mass of the game piece, in kilograms</dd>
-<dd><code>initialPosition</code> - the initial position of the game piece on the field</dd>
+<dd><code>info</code> - info about the game piece type</dd>
+<dd><code>initialPose</code> - the initial position of the game piece on the field</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="&lt;init&gt;(java.lang.String,org.dyn4j.geometry.Convex,java.util.function.DoubleSupplier,double,edu.wpi.first.math.geometry.Translation2d,edu.wpi.first.math.geometry.Translation2d)">
+<section class="detail" id="&lt;init&gt;(org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation.GamePieceInfo,java.util.function.DoubleSupplier,edu.wpi.first.math.geometry.Pose2d,edu.wpi.first.math.geometry.Translation2d)">
 <h3>GamePieceOnFieldSimulation</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GamePieceOnFieldSimulation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
- org.dyn4j.geometry.Convex&nbsp;shape,
- <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/function/DoubleSupplier.html" title="class or interface in java.util.function" class="external-link">DoubleSupplier</a>&nbsp;zPositionSupplier,
- double&nbsp;mass,
- <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;initialPosition,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">GamePieceOnFieldSimulation</span><wbr><span class="parameters">(<a href="GamePieceOnFieldSimulation.GamePieceInfo.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation.GamePieceInfo</a>&nbsp;info,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/DoubleSupplier.html" title="class or interface in java.util.function" class="external-link">DoubleSupplier</a>&nbsp;zPositionSupplier,
+ <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Pose2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Pose2d</a>&nbsp;initialPose,
  <a href="https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/math/geometry/Translation2d.html" title="class or interface in edu.wpi.first.math.geometry" class="external-link">Translation2d</a>&nbsp;initialVelocityMPS)</span></div>
 <div class="block"><h2>Creates a Game Piece on the Field with Custom Height Supplier and Initial Velocity.</h2></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>type</code> - the type of the game piece, affecting categorization within the arena</dd>
-<dd><code>shape</code> - the shape of the collision space for the game piece</dd>
+<dd><code>info</code> - info about the game piece type</dd>
 <dd><code>zPositionSupplier</code> - a supplier that provides the current Z-height of the game piece</dd>
-<dd><code>mass</code> - the mass of the game piece, in kilograms</dd>
-<dd><code>initialPosition</code> - the initial position of the game piece on the field</dd>
+<dd><code>initialPose</code> - the initial position of the game piece on the field</dd>
 <dd><code>initialVelocityMPS</code> - the initial velocity of the game piece, in meters per second</dd>
 </dl>
 </section>
@@ -414,6 +368,12 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the 3d position of the game piece</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onIntake(java.lang.String)">
+<h3>onIntake</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onIntake</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;intakeTargetGamePieceType)</span></div>
 </section>
 </li>
 </ul>

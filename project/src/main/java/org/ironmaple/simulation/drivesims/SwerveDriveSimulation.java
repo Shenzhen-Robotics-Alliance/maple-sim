@@ -86,7 +86,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     public SwerveDriveSimulation(DriveTrainSimulationConfig config, Pose2d initialPoseOnField) {
         super(config, initialPoseOnField);
         this.moduleTranslations = config.moduleTranslations;
-        this.moduleSimulations = Arrays.stream(config.swerveModuleSimulationFactory)
+        this.moduleSimulations = Arrays.stream(config.swerveModuleSimulationFactories)
                 .map(Supplier::get)
                 .toArray(SwerveModuleSimulation[]::new);
         this.gyroSimulation = config.gyroSimulationFactory.get();

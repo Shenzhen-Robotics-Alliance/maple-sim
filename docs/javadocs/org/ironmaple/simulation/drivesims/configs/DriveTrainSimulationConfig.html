@@ -110,7 +110,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color"><code><a href="#robotMass" class="member-name-link">robotMass</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;[]</code></div>
-<div class="col-second odd-row-color"><code><a href="#swerveModuleSimulationFactory" class="member-name-link">swerveModuleSimulationFactory</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#swerveModuleSimulationFactories" class="member-name-link">swerveModuleSimulationFactories</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
@@ -243,9 +243,9 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="swerveModuleSimulationFactory">
-<h3>swerveModuleSimulationFactory</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;[]</span>&nbsp;<span class="element-name">swerveModuleSimulationFactory</span></div>
+<section class="detail" id="swerveModuleSimulationFactories">
+<h3>swerveModuleSimulationFactories</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;[]</span>&nbsp;<span class="element-name">swerveModuleSimulationFactories</span></div>
 </section>
 </li>
 <li>
@@ -422,7 +422,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="DriveTrainSimulationConfig.html" title="class in org.ironmaple.simulation.drivesims.configs">DriveTrainSimulationConfig</a></span>&nbsp;<span class="element-name">withSwerveModule</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="../SwerveModuleSimulation.html" title="class in org.ironmaple.simulation.drivesims">SwerveModuleSimulation</a>&gt;&nbsp;swerveModuleSimulationFactory)</span></div>
 <div class="block"><h2>Sets the swerve module simulation factory.</h2>
 
- <p>Updates the factory used to create swerve module simulations.</div>
+ <p>Updates the factory used to create swerve module simulations.
+
+ <p>Uses the same configuration over all the modules</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>swerveModuleSimulationFactory</code> - the new factory for swerve module simulations.</dd>

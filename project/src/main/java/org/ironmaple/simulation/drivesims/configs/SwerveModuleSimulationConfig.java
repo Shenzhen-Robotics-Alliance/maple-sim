@@ -46,14 +46,14 @@ public class SwerveModuleSimulationConfig implements Supplier<SwerveModuleSimula
             Distance wheelRadius,
             MomentOfInertia steerRotationalInertia,
             double wheelsCoefficientOfFriction) {
-        BoundingCheck.check(driveGearRatio, 4, 18, "drive gear ratio", "times reduction");
-        BoundingCheck.check(steerGearRatio, 10, 50, "steer gear ratio", "times reduction");
-        BoundingCheck.check(driveFrictionVoltage.in(Volts), 0, 0.35, "drive friction voltage", "volts");
-        BoundingCheck.check(steerFrictionVoltage.in(Volts), 0, 0.6, "steer friction voltage", "volts");
+        BoundingCheck.check(driveGearRatio, 4, 24, "drive gear ratio", "times reduction");
+        BoundingCheck.check(steerGearRatio, 6, 50, "steer gear ratio", "times reduction");
+        BoundingCheck.check(driveFrictionVoltage.in(Volts), 0.01, 0.35, "drive friction voltage", "volts");
+        BoundingCheck.check(steerFrictionVoltage.in(Volts), 0.01, 0.6, "steer friction voltage", "volts");
         BoundingCheck.check(wheelRadius.in(Inches), 1, 3.2, "drive wheel radius", "inches");
         BoundingCheck.check(
-                steerRotationalInertia.in(KilogramSquareMeters), 0.005, 0.05, "steer rotation inertia", "kg * m^2");
-        BoundingCheck.check(wheelsCoefficientOfFriction, 0.6, 2, "tire coefficient of friction", "");
+                steerRotationalInertia.in(KilogramSquareMeters), 0.005, 0.06, "steer rotation inertia", "kg * m^2");
+        BoundingCheck.check(wheelsCoefficientOfFriction, 0.6, 1.9, "tire coefficient of friction", "");
 
         this.driveMotorConfigs =
                 new SimMotorConfigs(driveMotorModel, driveGearRatio, KilogramSquareMeters.zero(), driveFrictionVoltage);

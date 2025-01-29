@@ -4,5 +4,6 @@ org.ironmaple.simulation.drivesims.configs
 org.ironmaple.simulation.gamepieces
 org.ironmaple.simulation.motorsims
 org.ironmaple.simulation.seasonspecific.crescendo2024
+org.ironmaple.simulation.seasonspecific.reefscape2025
 org.ironmaple.utils
 org.ironmaple.utils.mathutils

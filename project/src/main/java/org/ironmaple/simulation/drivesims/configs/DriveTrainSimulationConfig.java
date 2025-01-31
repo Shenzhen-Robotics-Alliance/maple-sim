@@ -64,7 +64,6 @@ public class DriveTrainSimulationConfig {
         else
             throw new IllegalArgumentException("Module simulation factories length must be 1 or 4, provided "
                     + swerveModuleSimulationFactory.length);
-        this.swerveModuleSimulationFactories = swerveModuleSimulationFactory;
         this.gyroSimulationFactory = gyroSimulationFactory;
 
         checkRobotMass();

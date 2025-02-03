@@ -189,9 +189,10 @@ public class RobotContainer {
         SimulatedArena.getInstance().resetFieldForAuto();
     }
 
-    public void displaySimFieldToAdvantageScope() {
+    public void updateSimulation() {
         if (Constants.currentMode != Constants.Mode.SIM) return;
 
+        SimulatedArena.getInstance().simulationPeriodic();
         Logger.recordOutput("FieldSimulation/RobotPosition", driveSimulation.getSimulatedDriveTrainPose());
         Logger.recordOutput(
                 "FieldSimulation/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));

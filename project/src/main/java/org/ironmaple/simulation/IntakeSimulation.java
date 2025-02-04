@@ -225,11 +225,13 @@ public class IntakeSimulation extends BodyFixture {
     /**
      *
      *
-     * <h1>Removes 1 game piece from the intake.</h1>
+     * <h2>Removes 1 game piece from the intake.</h2>
      *
      * <p>Deducts the {@link #getGamePiecesAmount()}} by 1, if there is any remaining.
      *
      * <p>This is used to obtain a game piece from the intake and move it a feeder/shooter.
+     *
+     * @return if there is game piece(s) remaining, and therefore retrieved
      */
     public boolean obtainGamePieceFromIntake() {
         if (gamePiecesInIntakeCount < 1) return false;
@@ -237,6 +239,15 @@ public class IntakeSimulation extends BodyFixture {
         return true;
     }
 
+    /**
+     *
+     *
+     * <h2>Adds 1 game piece from the intake.</h2>
+     *
+     * <p>Increases the {@link #getGamePiecesAmount()}} by 1, if there is still space.
+     *
+     * @return if there is still space in the intake to perform this action
+     */
     public boolean addGamePieceToIntake() {
         boolean toReturn = gamePiecesInIntakeCount < capacity;
         if (toReturn)
@@ -244,6 +255,18 @@ public class IntakeSimulation extends BodyFixture {
 
         return toReturn;
     }
+
+    /**
+     *
+     *
+     * <h2>Sets the amount of game pieces in the intake.</h2>
+     *
+     * <p>Sets the {@link #getGamePiecesAmount()}} to a given amount.
+     *
+     * <p>Will make sure that the amount is non-negative and does not exceed the capacity</p>
+     *
+     * @return the actual (clamped) game piece count after performing this action
+     */
     public int setGamePiecesCount(int gamePiecesInIntakeCount) {
         return this.gamePiecesInIntakeCount = MathUtil.clamp(gamePiecesInIntakeCount, 0, capacity);
     }

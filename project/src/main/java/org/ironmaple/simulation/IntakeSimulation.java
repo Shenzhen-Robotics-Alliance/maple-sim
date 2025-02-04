@@ -2,6 +2,7 @@ package org.ironmaple.simulation;
 
 import static edu.wpi.first.units.Units.Meters;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Distance;
 import java.util.ArrayDeque;
 import java.util.Objects;
@@ -236,6 +237,17 @@ public class IntakeSimulation extends BodyFixture {
         return true;
     }
 
+    public boolean addGamePieceToIntake() {
+        boolean toReturn = gamePiecesInIntakeCount < capacity;
+        if (toReturn)
+            gamePiecesInIntakeCount++;
+
+        return toReturn;
+    }
+    public int setGamePiecesCount(int gamePiecesInIntakeCount) {
+        return this.gamePiecesInIntakeCount = MathUtil.clamp(gamePiecesInIntakeCount, 0, capacity);
+    }
+
     /**
      *
      *
@@ -335,13 +347,5 @@ public class IntakeSimulation extends BodyFixture {
 
     public void register(SimulatedArena arena) {
         arena.addIntakeSimulation(this);
-    }
-
-    public void addPiece() {
-        gamePiecesInIntakeCount++;
-    }
-
-    public void addPiece(int count) {
-        gamePiecesInIntakeCount = gamePiecesInIntakeCount + count;
     }
 }

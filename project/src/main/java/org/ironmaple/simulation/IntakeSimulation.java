@@ -336,4 +336,12 @@ public class IntakeSimulation extends BodyFixture {
     public void register(SimulatedArena arena) {
         arena.addIntakeSimulation(this);
     }
+
+    public void addPiece() {
+        gamePiecesInIntakeCount++;
+    }
+
+    public void addPiece(int count) {
+        gamePiecesInIntakeCount = gamePiecesInIntakeCount + count;
+    }
 }

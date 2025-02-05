@@ -50,6 +50,11 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * </ul>
  */
 public abstract class SimulatedArena {
+    /**
+     * Whether to allow the simulation to run a real robot
+     * This feature is HIGHLY RECOMMENDED to be turned OFF
+     * */
+    public static boolean ALLOW_CREATION_ON_REAL_ROBOT = false;
     private static SimulatedArena instance = null;
     /**
      *
@@ -62,7 +67,8 @@ public abstract class SimulatedArena {
      * @throws IllegalStateException if the method is call when running on a real robot
      */
     public static SimulatedArena getInstance() {
-        if (RobotBase.isReal()) throw new IllegalStateException("MapleSim should not be running on a real robot!");
+        if (RobotBase.isReal() && (!ALLOW_CREATION_ON_REAL_ROBOT))
+            throw new IllegalStateException("MapleSim is running on a real robot! (If you would actually want that, set SimulatedArena.ALLOW_CREATION_ON_REAL_ROBOT to true).");
 
         if (instance == null) instance = new Arena2025Reefscape();
 

@@ -1,7 +1,7 @@
 {
   "fileName": "maple-sim.json",
   "name": "maplesim",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "frcYear": "2025",
   "uuid": "c39481e8-4a63-4a4c-9df6-48d91e4da37b",
   "mavenUrls": [
@@ -13,7 +13,7 @@
     {
       "groupId": "org.ironmaple",
       "artifactId": "maplesim-java",
-      "version": "0.3.7"
+      "version": "0.3.8"
     },
     {
       "groupId": "org.dyn4j",

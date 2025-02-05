@@ -250,8 +250,7 @@ public class IntakeSimulation extends BodyFixture {
      */
     public boolean addGamePieceToIntake() {
         boolean toReturn = gamePiecesInIntakeCount < capacity;
-        if (toReturn)
-            gamePiecesInIntakeCount++;
+        if (toReturn) gamePiecesInIntakeCount++;
 
         return toReturn;
     }
@@ -263,7 +262,7 @@ public class IntakeSimulation extends BodyFixture {
      *
      * <p>Sets the {@link #getGamePiecesAmount()}} to a given amount.
      *
-     * <p>Will make sure that the amount is non-negative and does not exceed the capacity</p>
+     * <p>Will make sure that the amount is non-negative and does not exceed the capacity
      *
      * @return the actual (clamped) game piece count after performing this action
      */

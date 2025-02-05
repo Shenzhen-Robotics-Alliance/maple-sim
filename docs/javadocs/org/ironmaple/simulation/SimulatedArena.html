@@ -137,21 +137,26 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#customSimulations" class="member-name-link">customSimulations</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#driveTrainSimulations" class="member-name-link">driveTrainSimulations</a></code></div>
+<div class="col-first even-row-color"><code>static boolean</code></div>
+<div class="col-second even-row-color"><code><a href="#ALLOW_CREATION_ON_REAL_ROBOT" class="member-name-link">ALLOW_CREATION_ON_REAL_ROBOT</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Whether to allow the simulation to run a real robot This feature is HIGHLY RECOMMENDED to be turned OFF</div>
+</div>
+<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="SimulatedArena.Simulatable.html" title="interface in org.ironmaple.simulation">SimulatedArena.Simulatable</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#customSimulations" class="member-name-link">customSimulations</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#gamePiecesLaunched" class="member-name-link">gamePiecesLaunched</a></code></div>
+<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="drivesims/AbstractDriveTrainSimulation.html" title="class in org.ironmaple.simulation.drivesims">AbstractDriveTrainSimulation</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#driveTrainSimulations" class="member-name-link">driveTrainSimulations</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
-<div class="col-second odd-row-color"><code><a href="#gamePiecesOnField" class="member-name-link">gamePiecesOnField</a></code></div>
+<div class="col-first odd-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceProjectile.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceProjectile</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#gamePiecesLaunched" class="member-name-link">gamePiecesLaunched</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>protected final org.dyn4j.world.World&lt;org.dyn4j.dynamics.Body&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#physicsWorld" class="member-name-link">physicsWorld</a></code></div>
+<div class="col-first even-row-color"><code>protected final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="gamepieces/GamePieceOnFieldSimulation.html" title="class in org.ironmaple.simulation.gamepieces">GamePieceOnFieldSimulation</a>&gt;</code></div>
+<div class="col-second even-row-color"><code><a href="#gamePiecesOnField" class="member-name-link">gamePiecesOnField</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>protected final org.dyn4j.world.World&lt;org.dyn4j.dynamics.Body&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#physicsWorld" class="member-name-link">physicsWorld</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -293,6 +298,13 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="ALLOW_CREATION_ON_REAL_ROBOT">
+<h3>ALLOW_CREATION_ON_REAL_ROBOT</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">ALLOW_CREATION_ON_REAL_ROBOT</span></div>
+<div class="block">Whether to allow the simulation to run a real robot This feature is HIGHLY RECOMMENDED to be turned OFF</div>
+</section>
+</li>
 <li>
 <section class="detail" id="physicsWorld">
 <h3>physicsWorld</h3>

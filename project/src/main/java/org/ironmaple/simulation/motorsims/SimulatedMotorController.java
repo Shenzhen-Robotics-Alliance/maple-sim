@@ -21,7 +21,8 @@ public interface SimulatedMotorController {
         private Angle forwardSoftwareLimit = Radians.of(Double.POSITIVE_INFINITY),
                 reverseSoftwareLimit = Radians.of(-Double.POSITIVE_INFINITY);
 
-        private Voltage requestedVoltage = Volts.of(0);
+        private Voltage requestedVoltage = Volts.zero();
+        private Voltage appliedVoltage = Volts.zero();
 
         public GenericMotorController(DCMotor model) {
             this.model = model;
@@ -96,7 +97,12 @@ public interface SimulatedMotorController {
                 AngularVelocity mechanismVelocity,
                 Angle encoderAngle,
                 AngularVelocity encoderVelocity) {
-            return constrainOutputVoltage(encoderAngle, encoderVelocity, requestedVoltage);
+            appliedVoltage = constrainOutputVoltage(encoderAngle, encoderVelocity, requestedVoltage);
+            return appliedVoltage;
+        }
+
+        public Voltage getAppliedVoltage() {
+            return appliedVoltage;
         }
     }
 }

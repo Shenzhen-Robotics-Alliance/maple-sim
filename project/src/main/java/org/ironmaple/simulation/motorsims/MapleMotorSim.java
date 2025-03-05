@@ -2,7 +2,6 @@ package org.ironmaple.simulation.motorsims;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
@@ -17,12 +16,13 @@ import edu.wpi.first.wpilibj.simulation.DCMotorSim;
  * <ul>
  *   <li>Motor Controller Closed Loops.
  *   <li>Smart current limiting.
+ *   <li>Friction force on the rotor.
  * </ul>
  */
 public class MapleMotorSim {
     private final SimMotorConfigs configs;
-    private final DCMotorSim motorSim;
 
+    private SimMotorState state;
     private SimulatedMotorController controller;
     private Voltage appliedVoltage;
     private Current statorCurrent;
@@ -36,10 +36,7 @@ public class MapleMotorSim {
      */
     public MapleMotorSim(SimMotorConfigs configs) {
         this.configs = configs;
-        this.motorSim = new DCMotorSim(
-                LinearSystemId.createDCMotorSystem(
-                        configs.motor, configs.loadMOI.in(KilogramSquareMeters), configs.gearing),
-                configs.motor);
+        this.state = new SimMotorState(Radians.zero(), RadiansPerSecond.zero());
         this.controller = (mechanismAngle, mechanismVelocity, encoderAngle, encoderVelocity) -> Volts.of(0);
         this.appliedVoltage = Volts.zero();
         this.statorCurrent = Amps.zero();
@@ -56,18 +53,18 @@ public class MapleMotorSim {
      */
     public void update(Time dt) {
         this.appliedVoltage = controller.updateControlSignal(
-                motorSim.getAngularPosition(),
-                motorSim.getAngularVelocity(),
-                motorSim.getAngularPosition().times(configs.gearing),
-                motorSim.getAngularVelocity().times(configs.gearing));
+                state.mechanismAngularPosition,
+                state.mechanismAngularVelocity,
+                state.mechanismAngularPosition.times(configs.gearing),
+                state.mechanismAngularVelocity.times(configs.gearing));
         this.appliedVoltage = SimulatedBattery.clamp(appliedVoltage);
-        motorSim.setInputVoltage(appliedVoltage.in(Volts));
-        motorSim.update(dt.in(Seconds));
+        this.statorCurrent = configs.calculateCurrent(state.mechanismAngularVelocity, appliedVoltage);
+        this.state.step(configs.calculateTorque(statorCurrent), configs.friction, configs.loadMOI, dt);
 
-        if (motorSim.getAngularPosition().lte(configs.reverseHardwareLimit))
-            motorSim.setAngle(configs.reverseHardwareLimit.in(Radians));
-        else if (motorSim.getAngularPosition().gte(configs.forwardHardwareLimit))
-            motorSim.setAngle(configs.forwardHardwareLimit.in(Radians));
+        if (state.mechanismAngularPosition.lte(configs.reverseHardwareLimit))
+            state = new SimMotorState(configs.reverseHardwareLimit, RadiansPerSecond.zero());
+        else if (state.mechanismAngularPosition.gte(configs.forwardHardwareLimit))
+            state = new SimMotorState(configs.forwardHardwareLimit, RadiansPerSecond.zero());
     }
 
     public <T extends SimulatedMotorController> T useMotorController(T motorController) {
@@ -89,7 +86,7 @@ public class MapleMotorSim {
      * @return the angular position of the mechanism, continuous
      */
     public Angle getAngularPosition() {
-        return motorSim.getAngularPosition();
+        return state.mechanismAngularPosition;
     }
 
     /**
@@ -113,7 +110,7 @@ public class MapleMotorSim {
      * @return the final angular velocity of the mechanism
      */
     public AngularVelocity getVelocity() {
-        return motorSim.getAngularVelocity();
+        return state.mechanismAngularVelocity;
     }
 
     /**

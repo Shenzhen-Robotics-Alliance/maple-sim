@@ -255,7 +255,7 @@ final class ReefscapeReefBranch implements CoralHolder {
         this.hasCoral = false;
     }
 
-    private static final double TRANSLATIONAL_TOLERANCE_METERS = 0.1;
+    private static final double TRANSLATIONAL_TOLERANCE_METERS = 0.06;
     private static final double ROTATIONAL_TOLERANCE_RADIANS = Math.toRadians(50);
 
     /**

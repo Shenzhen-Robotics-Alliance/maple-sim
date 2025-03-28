@@ -237,7 +237,6 @@ sealed interface CoralHolder permits ReefscapeReefBranch, ReefscapeReefTrough {
  */
 final class ReefscapeReefBranch implements CoralHolder {
     private final Pose3d idealCoralPlacementPose;
-    private final double idealVelocityDirectionPitchToScoreRad;
     public boolean hasCoral;
 
     ReefscapeReefBranch(
@@ -253,12 +252,11 @@ final class ReefscapeReefBranch implements CoralHolder {
                         0,
                         -branchInwardsDirectionPitchRad,
                         facingOutwards.plus(Rotation2d.k180deg).getRadians()));
-        this.idealVelocityDirectionPitchToScoreRad = branchInwardsDirectionPitchRad;
         this.hasCoral = false;
     }
 
     private static final double TRANSLATIONAL_TOLERANCE_METERS = 0.1;
-    private static final double ROTATIONAL_TOLERANCE_RADIANS = Math.toRadians(45);
+    private static final double ROTATIONAL_TOLERANCE_RADIANS = Math.toRadians(50);
 
     /**
      *
@@ -288,12 +286,13 @@ final class ReefscapeReefBranch implements CoralHolder {
      */
     @Override
     public boolean checkCoralPlacement(ReefscapeCoralOnFly coralOnFly) {
-        Translation3d positionDifference =
-                idealCoralPlacementPose.minus(coralOnFly.getPose3d()).getTranslation();
+        Twist3d positionDifference = coralOnFly.getPose3d().log(idealCoralPlacementPose);
         Translation3d velocityMPS = coralOnFly.getVelocity3dMPS();
 
         boolean goingDown = velocityMPS.getZ() <= 0;
-        boolean positionCorrection = positionDifference.getNorm() < TRANSLATIONAL_TOLERANCE_METERS;
+        boolean positionCorrection =
+                Math.hypot(positionDifference.dy, positionDifference.dz) < TRANSLATIONAL_TOLERANCE_METERS
+                        && Math.abs(positionDifference.dx) < 0.15;
 
         Translation3d idealCoralFacingVector = new Translation3d(1, idealCoralPlacementPose.getRotation());
         Translation3d actualCoralFacingVector =
@@ -308,7 +307,7 @@ final class ReefscapeReefBranch implements CoralHolder {
                                         .minus(actualCoralFacingVector)
                                         .getNorm()
                                 < rotationToleranceVectorNorm;
-        boolean targetHit = positionCorrection && directionCorrect && goingDown && (!this.hasCoral);
+        boolean targetHit = positionCorrection && goingDown && (!this.hasCoral);
         if (!targetHit) return false;
 
         return this.hasCoral = true;

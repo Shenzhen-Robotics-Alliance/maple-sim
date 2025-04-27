@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -52,6 +53,9 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 public abstract class SimulatedArena {
     /** Whether to allow the simulation to run a real robot This feature is HIGHLY RECOMMENDED to be turned OFF */
     public static boolean ALLOW_CREATION_ON_REAL_ROBOT = false;
+
+    protected static int redScore = 0;
+    protected static int blueScore = 0;
 
     private static SimulatedArena instance = null;
     /**
@@ -102,6 +106,35 @@ public abstract class SimulatedArena {
 
     public static Time getSimulationDt() {
         return SIMULATION_DT;
+    }
+
+    /**returns the current score for the red aliance*/
+    public static int getRedScore(){
+        return redScore;
+    }
+
+    /**returns the current score for the blue alliance */
+    public static int getBlueScore(){
+        return blueScore;
+    }
+
+    public static int returnScore(Alliance allianceColor){
+        if (allianceColor==Alliance.Red){
+            return redScore;
+        }
+        else{
+            return blueScore;
+        }
+    }
+
+    /**adds the specified score to the red team score */
+    public static void addToRedScore(int toAdd){
+        redScore+=toAdd;
+    }
+    
+     /**adds the specified score to the blue team score */
+    public static void addToBlueScore(int toAdd){
+        blueScore+=toAdd;
     }
 
     /**
@@ -306,6 +339,7 @@ public abstract class SimulatedArena {
         for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
         this.gamePiecesOnField.clear();
         this.gamePiecesLaunched.clear();
+        
     }
 
     /**

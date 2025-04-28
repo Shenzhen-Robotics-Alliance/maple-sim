@@ -118,28 +118,18 @@ public class COTS {
     /**
      * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x">WCP SwerveX Swerve Module</a>
      * for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6 <br>
-     * X3 Ratios are gearRatioLevel 7-9
      */
     public static SwerveModuleSimulationConfig ofSwerveX(
-            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel, double firstStageRatio) {
+        double secondStageRatio = switch (gearRatioLevel) {
+            case 1 -> 26.0 / 20.0;
+            case 2, 3 -> 28.0 / 18.0;
+            default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+        };
         return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
-                switch (gearRatioLevel) {
-                    case 1 -> 7.85;
-                    case 2 -> 7.13;
-                    case 3 -> 6.54;
-                    case 4 -> 6.56;
-                    case 5 -> 5.96;
-                    case 6 -> 5.46;
-                    case 7 -> 5.14;
-                    case 8 -> 4.75;
-                    case 9 -> 4.41;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-                },
+                firstStageRatio * secondStageRatio,
                 11.3142,
                 Volts.of(0.1),
                 Volts.of(0.2),
@@ -157,23 +147,34 @@ public class COTS {
      * X3 Ratios are gearRatioLevel 7-9
      */
     public static SwerveModuleSimulationConfig ofSwerveXFlipped(
-            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel, int pinionSize) {
+        var unknownPinionErr = new IllegalStateException("Unknown pinion size: " + pinionSize);
+        var unknownLevelErr = new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
         return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
-                    case 1 -> 8.1;
-                    case 2 -> 7.36;
-                    case 3 -> 6.75;
-                    case 4 -> 6.72;
-                    case 5 -> 6.11;
-                    case 6 -> 5.6;
-                    case 7 -> 5.51;
-                    case 8 -> 5.01;
-                    case 9 -> 4.59;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                    case 1 -> switch (pinionSize) {
+                        case 10 -> 8.1;
+                        case 11 -> 7.36;
+                        case 12 -> 6.75;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 2 -> switch (pinionSize) {
+                        case 10 -> 6.72;
+                        case 11 -> 6.11;
+                        case 12 -> 5.6;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 3 -> switch (pinionSize) {
+                        case 10 -> 5.51;
+                        case 11 -> 5.01;
+                        case 12 -> 4.59;
+                        default -> throw unknownPinionErr;
+                    };
+                    default -> throw unknownLevelErr;
                 },
-                11.3714,
+                13.3714,
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -184,23 +185,28 @@ public class COTS {
     /**
      * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-xs">WCP SwerveXS Swerve
      * Module</a> for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6
      */
     public static SwerveModuleSimulationConfig ofSwerveXS(
-            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel, int pinionSize) {
+        var unknownPinionErr = new IllegalStateException("Unknown pinion size: " + pinionSize);
+        var unknownLevelErr = new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
         return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
-                    case 1 -> 6.0;
-                    case 2 -> 5.54;
-                    case 3 -> 5.14;
-                    case 4 -> 4.71;
-                    case 5 -> 4.4;
-                    case 6 -> 4.13;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                    case 1 -> switch (pinionSize) {
+                        case 12 -> 6;
+                        case 13 -> 5.54;
+                        case 14 -> 5.14;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 2 -> switch (pinionSize) {
+                        case 12 -> 4.71;
+                        case 13 -> 4.4;
+                        case 14 -> 4.13;
+                        default -> throw unknownPinionErr;
+                    };
+                    default -> throw unknownLevelErr;
                 },
                 41.25,
                 Volts.of(0.1),
@@ -220,20 +226,40 @@ public class COTS {
      * X4 Ratios are gearRatioLevel 10-12
      */
     public static SwerveModuleSimulationConfig ofSwerveX2(
-            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel, int pinionSize) {
+        var unknownPinionErr = new IllegalStateException("Unknown pinion size: " + pinionSize);
+        var unknownLevelErr = new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
         return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
-                    case 1 -> 6.0;
-                    case 2 -> 5.54;
-                    case 3 -> 5.14;
-                    case 4 -> 4.71;
-                    case 5 -> 4.4;
-                    case 6 -> 4.13;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                    case 1 -> switch (pinionSize) {
+                        case 10 -> 7.67;
+                        case 11 -> 6.98;
+                        case 12 -> 6.39;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 2 -> switch (pinionSize) {
+                        case 10 -> 6.82;
+                        case 11 -> 6.2;
+                        case 12 -> 5.68;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 3 -> switch (pinionSize) {
+                        case 10 -> 6.48;
+                        case 11 -> 5.89;
+                        case 12 -> 5.4;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 4 -> switch (pinionSize) {
+                        case 10 -> 5.67;
+                        case 11 -> 5.15;
+                        case 12 -> 4.73;
+                        default -> throw unknownPinionErr;
+                    };
+                    default -> throw unknownLevelErr;
                 },
-                41.25,
+                12.1,
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),
@@ -244,27 +270,34 @@ public class COTS {
     /**
      * creates a <a href="https://wcproducts.com/collections/gearboxes/products/swerve-x2-s">WCP SwerveX2S Swerve
      * Module</a> for simulation
-     *
-     * <p>X1 Ratios are gearRatioLevel 1-3 <br>
-     * X2 Ratios are gearRatioLevel 4-6 <br>
-     * X3 Ratios are gearRatioLevel 7-9
      */
     public static SwerveModuleSimulationConfig ofSwerveX2S(
-            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel, int pinionSize) {
+        var unknownPinionErr = new IllegalStateException("Unknown pinion size: " + pinionSize);
+        var unknownLevelErr = new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
         return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,
                 switch (gearRatioLevel) {
-                    case 1 -> 6.0;
-                    case 2 -> 5.63;
-                    case 3 -> 5.29;
-                    case 4 -> 4.94;
-                    case 5 -> 4.67;
-                    case 6 -> 4.42;
-                    case 7 -> 4.11;
-                    case 8 -> 3.9;
-                    case 9 -> 3.71;
-                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                    case 1 -> switch (pinionSize) {
+                        case 15 -> 6.0;
+                        case 16 -> 5.63;
+                        case 17 -> 5.29;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 2 -> switch (pinionSize) {
+                        case 17 -> 4.94;
+                        case 18 -> 4.67;
+                        case 19 -> 4.42;
+                        default -> throw unknownPinionErr;
+                    };
+                    case 3 -> switch (pinionSize) {
+                        case 19 -> 4.11;
+                        case 20 -> 3.9;
+                        case 21 -> 3.71;
+                        default -> throw unknownPinionErr;
+                    };
+                    default -> throw unknownLevelErr;
                 },
                 25.9,
                 Volts.of(0.1),

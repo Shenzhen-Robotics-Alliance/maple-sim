@@ -108,33 +108,32 @@ public abstract class SimulatedArena {
         return SIMULATION_DT;
     }
 
-    /**returns the current score for the red aliance*/
-    public static int getRedScore(){
+    /** returns the current score for the red aliance */
+    public static int getRedScore() {
         return redScore;
     }
 
-    /**returns the current score for the blue alliance */
-    public static int getBlueScore(){
+    /** returns the current score for the blue alliance */
+    public static int getBlueScore() {
         return blueScore;
     }
 
-    public static int returnScore(Alliance allianceColor){
-        if (allianceColor==Alliance.Red){
+    public static int returnScore(Alliance allianceColor) {
+        if (allianceColor == Alliance.Red) {
             return redScore;
-        }
-        else{
+        } else {
             return blueScore;
         }
     }
 
-    /**adds the specified score to the red team score */
-    public static void addToRedScore(int toAdd){
-        redScore+=toAdd;
+    /** adds the specified score to the red team score */
+    public static void addToRedScore(int toAdd) {
+        redScore += toAdd;
     }
-    
-     /**adds the specified score to the blue team score */
-    public static void addToBlueScore(int toAdd){
-        blueScore+=toAdd;
+
+    /** adds the specified score to the blue team score */
+    public static void addToBlueScore(int toAdd) {
+        blueScore += toAdd;
     }
 
     /**
@@ -339,7 +338,6 @@ public abstract class SimulatedArena {
         for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
         this.gamePiecesOnField.clear();
         this.gamePiecesLaunched.clear();
-        
     }
 
     /**

@@ -86,7 +86,6 @@ public class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
         if (gamePieceLaunched instanceof ReefscapeCoralOnFly coralOnFly)
             if (!toRemove.contains(gamePieceLaunched) && coralHolder.checkCoralPlacement(coralOnFly))
                 toRemove.add(gamePieceLaunched);
-                
     }
 
     /**

@@ -121,11 +121,12 @@ public class COTS {
      */
     public static SwerveModuleSimulationConfig ofSwerveX(
             DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel, double firstStageRatio) {
-        double secondStageRatio = switch (gearRatioLevel) {
-            case 1 -> 26.0 / 20.0;
-            case 2, 3 -> 28.0 / 18.0;
-            default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
-        };
+        double secondStageRatio =
+                switch (gearRatioLevel) {
+                    case 1 -> 26.0 / 20.0;
+                    case 2, 3 -> 28.0 / 18.0;
+                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                };
         return new SwerveModuleSimulationConfig(
                 driveMotor,
                 steerMotor,

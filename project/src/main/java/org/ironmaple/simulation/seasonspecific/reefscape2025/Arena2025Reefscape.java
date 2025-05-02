@@ -67,11 +67,21 @@ public class Arena2025Reefscape extends SimulatedArena {
     }
 
     public final ReefscapeReefSimulation reefSimulation;
+    public final ReefscapeBargeSimulation redBarge;
+    public final ReefscapeBargeSimulation blueBarge;
 
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());
+
         reefSimulation = new ReefscapeReefSimulation(this);
         super.addCustomSimulation(reefSimulation);
+
+        blueBarge = new ReefscapeBargeSimulation(this, true);
+        super.addCustomSimulation(blueBarge);
+
+        redBarge = new ReefscapeBargeSimulation(this, false);
+        super.addCustomSimulation(redBarge);
+        
     }
 
     @Override

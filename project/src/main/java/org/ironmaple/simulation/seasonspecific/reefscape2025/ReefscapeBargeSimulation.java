@@ -31,6 +31,7 @@ public class ReefscapeBargeSimulation extends goal {
 
     public ReefscapeBargeSimulation(Arena2025Reefscape arena, boolean isBlue) {
         super(arena, Centimeters.of(112), Centimeters.of(8.89), Centimeters.of(100), ReefscapeAlgaeOnFly.class, isBlue? blueBargePose: redBargePose, isBlue);     
+        setNeededVelAngle(new Rotation3d(0, 90, 0), 90);
     }
 
     /**

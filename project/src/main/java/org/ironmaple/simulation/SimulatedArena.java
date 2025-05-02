@@ -54,8 +54,8 @@ public abstract class SimulatedArena {
     /** Whether to allow the simulation to run a real robot This feature is HIGHLY RECOMMENDED to be turned OFF */
     public static boolean ALLOW_CREATION_ON_REAL_ROBOT = false;
 
-    protected static int redScore = 0;
-    protected static int blueScore = 0;
+    protected int redScore = 0;
+    protected int blueScore = 0;
 
     private static SimulatedArena instance = null;
     /**
@@ -109,16 +109,16 @@ public abstract class SimulatedArena {
     }
 
     /** returns the current score for the red aliance */
-    public static int getRedScore() {
+    public int getRedScore() {
         return redScore;
     }
 
     /** returns the current score for the blue alliance */
-    public static int getBlueScore() {
+    public int getBlueScore() {
         return blueScore;
     }
 
-    public static int returnScore(Alliance allianceColor) {
+    public int returnScore(Alliance allianceColor) {
         if (allianceColor == Alliance.Red) {
             return redScore;
         } else {
@@ -127,12 +127,12 @@ public abstract class SimulatedArena {
     }
 
     /** adds the specified score to the red team score */
-    public static void addToRedScore(int toAdd) {
+    public void addToRedScore(int toAdd) {
         redScore += toAdd;
     }
 
     /** adds the specified score to the blue team score */
-    public static void addToBlueScore(int toAdd) {
+    public void addToBlueScore(int toAdd) {
         blueScore += toAdd;
     }
 
@@ -338,6 +338,8 @@ public abstract class SimulatedArena {
         for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
         this.gamePiecesOnField.clear();
         this.gamePiecesLaunched.clear();
+        this.blueScore=0;
+        this.redScore=0;
     }
 
     /**

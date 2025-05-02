@@ -114,6 +114,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     }
 
     protected static boolean rotationsEqualWithinTolerence(Rotation3d rotation1, Rotation3d rotation2, double toleranceDegrees){
+        if (rotation1==null || rotation2==null) return true;
         Translation3d vector1 = new Translation3d(1, rotation1);
 
         Translation3d vector2 = new Translation3d(1, rotation2);
@@ -128,6 +129,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     
 
     protected static boolean compRotationAndVectorWithTolerence(Rotation3d rotation, Translation3d vector, double toleranceDegrees){
+        if (rotation==null || vector==null) return true;
         Translation3d rotationVector = new Translation3d(1, rotation);
 
         double rotationToleranceVectorNorm = new Translation2d(1, Rotation2d.fromDegrees(toleranceDegrees)).minus(new Translation2d(1, 0)).getNorm();

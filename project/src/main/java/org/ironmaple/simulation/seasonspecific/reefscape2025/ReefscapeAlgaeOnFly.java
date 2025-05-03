@@ -2,13 +2,11 @@ package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
-import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
  *
@@ -54,10 +52,10 @@ public class ReefscapeAlgaeOnFly extends GamePieceProjectile {
                 launchingSpeed,
                 shooterAngle);
 
-        super.withTargetPosition(
-                        () -> FieldMirroringUtils.toCurrentAllianceTranslation(new Translation3d(8.785, 1.906, 2.1)))
-                .withTargetTolerance(new Translation3d(0.8, 3, 0.1))
-                .withHitTargetCallBack(hitNetCallBack);
+        // super.withTargetPosition(
+        //                 () -> FieldMirroringUtils.toCurrentAllianceTranslation(new Translation3d(8.785, 1.906, 2.1)))
+        //         .withTargetTolerance(new Translation3d(0.8, 3, 0.1))
+        //         .withHitTargetCallBack(hitNetCallBack);
 
         super.withTouchGroundHeight(0.8);
         super.enableBecomesGamePieceOnFieldAfterTouchGround();

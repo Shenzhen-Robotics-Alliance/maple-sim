@@ -338,8 +338,8 @@ public abstract class SimulatedArena {
         for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
         this.gamePiecesOnField.clear();
         this.gamePiecesLaunched.clear();
-        this.blueScore=0;
-        this.redScore=0;
+        this.blueScore = 0;
+        this.redScore = 0;
     }
 
     /**

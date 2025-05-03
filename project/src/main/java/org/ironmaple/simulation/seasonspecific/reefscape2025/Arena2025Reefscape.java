@@ -81,7 +81,6 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         redBarge = new ReefscapeBargeSimulation(this, false);
         super.addCustomSimulation(redBarge);
-        
     }
 
     @Override
@@ -103,8 +102,11 @@ public class Arena2025Reefscape extends SimulatedArena {
         List<Pose3d> poses = super.getGamePiecesByType(type);
 
         // add algae and coral stack
-        if (type.equals("Algae")) poses.addAll(ReefscapeCoralAlgaeStack.getStackedAlgaePoses());
-        else if (type.equals("Coral")) {
+        if (type.equals("Algae")) {
+            poses.addAll(ReefscapeCoralAlgaeStack.getStackedAlgaePoses());
+            redBarge.draw(poses);
+            blueBarge.draw(poses);
+        } else if (type.equals("Coral")) {
             poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
             reefSimulation.addCoralsOnReefForDisplay(poses);
         }

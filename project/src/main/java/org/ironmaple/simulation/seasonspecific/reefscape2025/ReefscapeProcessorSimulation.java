@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
+import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.goal;
 
 /**
@@ -48,5 +49,17 @@ public class ReefscapeProcessorSimulation extends goal {
     @Override
     public void draw(List<Pose3d> drawList) {
         return;
+    }
+
+    @Override
+    public boolean checkPeiceType(GamePieceProjectile gamePiece) {
+        System.out.println("Trigger");
+        System.out.println(ReefscapeAlgaeOnField.class);
+        System.out.println(ReefscapeAlgaeOnField.class.isAssignableFrom(gamePiece.getClass()));
+        System.out.println(ReefscapeAlgaeOnFly.class.isAssignableFrom(gamePiece.getClass()));
+        System.out.println("Trigger");
+
+        return ReefscapeAlgaeOnField.class.isAssignableFrom(gamePiece.getClass())
+                || ReefscapeAlgaeOnFly.class.isAssignableFrom(gamePiece.getClass());
     }
 }

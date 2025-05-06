@@ -169,6 +169,7 @@ public abstract class SimulatedArena {
     protected final Set<GamePieceOnFieldSimulation> gamePiecesOnField;
     protected final Set<GamePieceProjectile> gamePiecesLaunched;
     protected final List<Simulatable> customSimulations;
+
     private final List<IntakeSimulation> intakeSimulations;
 
     /**

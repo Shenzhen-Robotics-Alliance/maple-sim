@@ -71,6 +71,8 @@ public class Arena2025Reefscape extends SimulatedArena {
     public final ReefscapeReefSimulation reefSimulation;
     public final ReefscapeBargeSimulation redBarge;
     public final ReefscapeBargeSimulation blueBarge;
+    public final ReefscapeProcessorSimulation redProcessor;
+    public final ReefscapeProcessorSimulation blueProcessor;
 
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());
@@ -83,6 +85,12 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         redBarge = new ReefscapeBargeSimulation(this, false);
         super.addCustomSimulation(redBarge);
+
+        blueProcessor = new ReefscapeProcessorSimulation(this, true);
+        super.addCustomSimulation(blueProcessor);
+
+        redProcessor = new ReefscapeProcessorSimulation(this, false);
+        super.addCustomSimulation(redProcessor);
     }
 
     @Override

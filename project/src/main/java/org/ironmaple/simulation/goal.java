@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
+import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
 public abstract class goal implements SimulatedArena.Simulatable {
@@ -96,7 +97,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     }
 
     protected void checkPiece(GamePieceProjectile gamePiece, Set<GamePieceProjectile> toRemove) {
-        if (gamePieceType.isAssignableFrom(gamePiece.getClass()) && gamePieceCount != max) {
+        if (this.checkPeiceType(gamePiece) && gamePieceCount != max) {
 
             if (!toRemove.contains(gamePiece) && this.checkCollision(gamePiece)) {
                 gamePieceCount++;
@@ -108,6 +109,10 @@ public abstract class goal implements SimulatedArena.Simulatable {
         }
     }
 
+    protected boolean checkPeiceType(GamePieceProjectile gamePiece) {
+        return gamePieceType.isAssignableFrom(gamePiece.getClass());
+    }
+
     protected boolean checkCollision(GamePieceProjectile gamePiece) {
 
         return xyBox.contains(new Vector2(
@@ -116,8 +121,6 @@ public abstract class goal implements SimulatedArena.Simulatable {
                 && gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters);
         // && checkRotationAndVel(gamePiece);
     }
-
-    
 
     protected boolean checkRotationAndVel(GamePieceProjectile gamePiece) {
         return rotationsEqualWithinTolerence(peiceAngle, gamePiece.getPose3d().getRotation(), peiceAngleTolerence)

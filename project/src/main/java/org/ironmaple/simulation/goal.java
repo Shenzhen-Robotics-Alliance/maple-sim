@@ -109,13 +109,6 @@ public abstract class goal implements SimulatedArena.Simulatable {
     }
 
     protected boolean checkCollision(GamePieceProjectile gamePiece) {
-        System.out.println("ooooh ahhh update");
-        System.out.println(xyBox.contains(
-                new Vector2(gamePiece.getPose3d().getX(), gamePiece.getPose3d().getX())));
-        System.out.println(gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters));
-        System.out.println(gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters));
-        System.out.println(checkRotationAndVel(gamePiece));
-        System.out.println("ooooh ahhh update");
 
         return xyBox.contains(new Vector2(
                         gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))
@@ -123,6 +116,8 @@ public abstract class goal implements SimulatedArena.Simulatable {
                 && gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters);
         // && checkRotationAndVel(gamePiece);
     }
+
+    
 
     protected boolean checkRotationAndVel(GamePieceProjectile gamePiece) {
         return rotationsEqualWithinTolerence(peiceAngle, gamePiece.getPose3d().getRotation(), peiceAngleTolerence)

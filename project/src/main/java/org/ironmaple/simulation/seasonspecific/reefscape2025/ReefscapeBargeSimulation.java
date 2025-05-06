@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import java.util.*;
-import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.goal;
 
 /**
@@ -22,7 +21,7 @@ public class ReefscapeBargeSimulation extends goal {
 
     protected static final Translation3d blueBargePose = new Translation3d(8.805, 2.1, 1.57);
     protected static final Translation3d redBargePose = new Translation3d(8.805, 6.18, 1.57);
-    StructPublisher<Pose3d> heldAlgaePublisher;
+    StructPublisher<Pose3d> posePublisher;
 
     public ReefscapeBargeSimulation(Arena2025Reefscape arena, boolean isBlue) {
         super(
@@ -57,17 +56,6 @@ public class ReefscapeBargeSimulation extends goal {
                             new Rotation3d())
                     .plus(new Transform3d(0, i * 0.35, 0, new Rotation3d())));
         }
-    }
-
-    /**
-     * Returns an optional instance.
-     *
-     * @return (optionally) an instance of this class, empty if
-     */
-    public static Optional<ReefscapeReefSimulation> getInstance() {
-        if (SimulatedArena.getInstance() instanceof Arena2025Reefscape arena2025Reefscape)
-            return Optional.of(arena2025Reefscape.reefSimulation);
-        return Optional.empty();
     }
 
     @Override

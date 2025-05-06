@@ -6,10 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f57e4d3f-16ad-409c-82f6-da91213bb687" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/SimulatedArena.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/SimulatedArena.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/goal.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/goal.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/Arena2025Reefscape.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/Arena2025Reefscape.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeAlgaeOnFly.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeAlgaeOnFly.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeBargeSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeBargeSimulation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

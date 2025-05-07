@@ -19,6 +19,7 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.gamepieces.GamePieceInterface;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
@@ -447,8 +448,19 @@ public abstract class SimulatedArena {
      *
      * @see #getGamePiecesByType(String)
      */
-    public synchronized Pose3d[] getGamePiecesArrayByType(String type) {
+    public synchronized Pose3d[] getGamePiecePosesArrayByType(String type) {
         return getGamePiecesByType(type).toArray(Pose3d[]::new);
+    }
+
+    public synchronized List<GamePieceInterface> getPeicesByType(String type){
+        final List<GamePieceInterface> gamePiecesPoses = new ArrayList<>();
+        for (GamePieceOnFieldSimulation gamePiece : gamePiecesOnField)
+            if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece);
+
+        for (GamePieceProjectile gamePiece : gamePiecesLaunched)
+            if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece);
+
+        return gamePiecesPoses;
     }
 
     /**

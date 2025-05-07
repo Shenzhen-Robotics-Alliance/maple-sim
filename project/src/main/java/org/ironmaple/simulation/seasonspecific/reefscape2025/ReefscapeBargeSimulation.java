@@ -29,7 +29,7 @@ public class ReefscapeBargeSimulation extends goal {
                 Centimeters.of(112),
                 Centimeters.of(343),
                 Centimeters.of(100),
-                ReefscapeAlgaeOnFly.class,
+                "Algae",
                 isBlue ? blueBargePose : redBargePose,
                 isBlue);
         setNeededVelAngle(new Rotation3d(0, 90, 0), 90);

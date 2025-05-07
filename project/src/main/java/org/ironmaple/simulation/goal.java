@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
+import org.ironmaple.simulation.gamepieces.GamePieceInterface;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
@@ -21,7 +22,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     protected final Distance height;
     protected final Distance elevation;
 
-    protected final Class gamePieceType;
+    protected final String gamePieceType;
 
     protected final Translation3d position;
     protected final SimulatedArena arena;
@@ -38,7 +39,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
             Distance xDimension,
             Distance yDimension,
             Distance height,
-            Class gamePieceType,
+            String gamePieceType,
             Translation3d position,
             boolean isBlue,
             int max) {
@@ -60,7 +61,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
             Distance xDimension,
             Distance yDimension,
             Distance height,
-            Class gamePieceType,
+            String gamePieceType,
             Translation3d position,
             boolean isBlue) {
         this(arena, xDimension, yDimension, height, gamePieceType, position, isBlue, 99999);
@@ -68,14 +69,14 @@ public abstract class goal implements SimulatedArena.Simulatable {
 
     @Override
     public void simulationSubTick(int subTickNum) {
-        Set<GamePieceProjectile> gamePiecesLaunched = arena.gamePieceLaunched();
-        Set<GamePieceProjectile> toRemoves = new HashSet<>();
+        Set<GamePieceInterface> gamePiecesLaunched = new HashSet<GamePieceInterface>(arena.getPeicesByType(gamePieceType));
+        Set<GamePieceInterface> toRemoves = new HashSet<>();
 
-        for (GamePieceProjectile gamePieceLaunched : gamePiecesLaunched) {
+        for (GamePieceInterface gamePieceLaunched : gamePiecesLaunched) {
             checkPiece(gamePieceLaunched, toRemoves);
         }
 
-        for (GamePieceProjectile toRemove : toRemoves) gamePiecesLaunched.remove(toRemove);
+        for (GamePieceInterface toRemove : toRemoves) gamePiecesLaunched.remove(toRemove);
     }
 
     public void setNeededAngle(Rotation3d angle, double angleTolerence) {
@@ -96,8 +97,8 @@ public abstract class goal implements SimulatedArena.Simulatable {
         setNeededVelAngle(velAngl, peiceVelAngleTolerence);
     }
 
-    protected void checkPiece(GamePieceProjectile gamePiece, Set<GamePieceProjectile> toRemove) {
-        if (this.checkPeiceType(gamePiece) && gamePieceCount != max) {
+    protected void checkPiece(GamePieceInterface gamePiece, Set<GamePieceInterface> toRemove) {
+        if (gamePieceCount != max) {
 
             if (!toRemove.contains(gamePiece) && this.checkCollision(gamePiece)) {
                 gamePieceCount++;
@@ -109,11 +110,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
         }
     }
 
-    protected boolean checkPeiceType(GamePieceProjectile gamePiece) {
-        return gamePieceType.isAssignableFrom(gamePiece.getClass());
-    }
-
-    protected boolean checkCollision(GamePieceProjectile gamePiece) {
+    protected boolean checkCollision(GamePieceInterface gamePiece) {
 
         return xyBox.contains(new Vector2(
                         gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))

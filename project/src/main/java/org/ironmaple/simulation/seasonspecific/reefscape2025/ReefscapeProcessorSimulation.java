@@ -29,7 +29,7 @@ public class ReefscapeProcessorSimulation extends goal {
                 Centimeters.of(100),
                 Centimeters.of(100),
                 Centimeters.of(100),
-                ReefscapeAlgaeOnFly.class,
+                "Algae",
                 isBlue ? blueProcessorPose : redProcessorPose,
                 isBlue);
         setNeededVelAngle(new Rotation3d(0, 90, 0), 90);
@@ -51,15 +51,4 @@ public class ReefscapeProcessorSimulation extends goal {
         return;
     }
 
-    @Override
-    public boolean checkPeiceType(GamePieceProjectile gamePiece) {
-        System.out.println("Trigger");
-        System.out.println(ReefscapeAlgaeOnField.class);
-        System.out.println(ReefscapeAlgaeOnField.class.isAssignableFrom(gamePiece.getClass()));
-        System.out.println(ReefscapeAlgaeOnFly.class.isAssignableFrom(gamePiece.getClass()));
-        System.out.println("Trigger");
-
-        return ReefscapeAlgaeOnField.class.isAssignableFrom(gamePiece.getClass())
-                || ReefscapeAlgaeOnFly.class.isAssignableFrom(gamePiece.getClass());
-    }
 }

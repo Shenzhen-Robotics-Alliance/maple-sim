@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
@@ -32,7 +33,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * {@link org.ironmaple.simulation.SimulatedArena} through
  * {@link SimulatedArena#addGamePiece(GamePieceOnFieldSimulation)}.
  */
-public class GamePieceOnFieldSimulation extends Body {
+public class GamePieceOnFieldSimulation extends Body implements GamePieceInterface{
     public static final double COEFFICIENT_OF_FRICTION = 0.8, MINIMUM_BOUNCING_VELOCITY = 0.2;
 
     /**
@@ -163,4 +164,20 @@ public class GamePieceOnFieldSimulation extends Body {
             double coefficientOfRestitution) {}
 
     public void onIntake(String intakeTargetGamePieceType) {}
+
+
+    @Override
+    public String getType() {
+        return this.type;
+    }
+
+    @Override
+    public Translation3d getVelocity3dMPS() {
+        return new Translation3d(this.getLinearVelocity().getXComponent().x, this.getLinearVelocity().getYComponent().y, 0);
+    }
+
+    @Override
+    public boolean isGrounded() {
+        return true;
+    }
 }

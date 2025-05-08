@@ -33,7 +33,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
  * {@link org.ironmaple.simulation.SimulatedArena} through
  * {@link SimulatedArena#addGamePiece(GamePieceOnFieldSimulation)}.
  */
-public class GamePieceOnFieldSimulation extends Body implements GamePieceInterface{
+public class GamePieceOnFieldSimulation extends Body implements GamePieceInterface {
     public static final double COEFFICIENT_OF_FRICTION = 0.8, MINIMUM_BOUNCING_VELOCITY = 0.2;
 
     /**
@@ -165,7 +165,6 @@ public class GamePieceOnFieldSimulation extends Body implements GamePieceInterfa
 
     public void onIntake(String intakeTargetGamePieceType) {}
 
-
     @Override
     public String getType() {
         return this.type;
@@ -173,7 +172,10 @@ public class GamePieceOnFieldSimulation extends Body implements GamePieceInterfa
 
     @Override
     public Translation3d getVelocity3dMPS() {
-        return new Translation3d(this.getLinearVelocity().getXComponent().x, this.getLinearVelocity().getYComponent().y, 0);
+        return new Translation3d(
+                this.getLinearVelocity().getXComponent().x,
+                this.getLinearVelocity().getYComponent().y,
+                0);
     }
 
     @Override

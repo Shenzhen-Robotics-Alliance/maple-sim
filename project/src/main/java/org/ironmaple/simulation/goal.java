@@ -13,7 +13,6 @@ import java.util.Set;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.gamepieces.GamePieceInterface;
-import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
 public abstract class goal implements SimulatedArena.Simulatable {
@@ -69,7 +68,8 @@ public abstract class goal implements SimulatedArena.Simulatable {
 
     @Override
     public void simulationSubTick(int subTickNum) {
-        Set<GamePieceInterface> gamePiecesLaunched = new HashSet<GamePieceInterface>(arena.getPeicesByType(gamePieceType));
+        Set<GamePieceInterface> gamePiecesLaunched =
+                new HashSet<GamePieceInterface>(arena.getPeicesByType(gamePieceType));
         Set<GamePieceInterface> toRemoves = new HashSet<>();
 
         for (GamePieceInterface gamePieceLaunched : gamePiecesLaunched) {

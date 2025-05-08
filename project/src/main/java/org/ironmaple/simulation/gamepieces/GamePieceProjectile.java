@@ -45,7 +45,7 @@ import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
  *   <li><strong>DOES NOT</strong> have collision space when flying.
  * </ul>
  */
-public class GamePieceProjectile  implements GamePieceInterface{
+public class GamePieceProjectile implements GamePieceInterface {
     /**
      * This value may seem unusual compared to the standard 9.8 m/s² for gravity. However, through experimentation, it
      * appears more realistic in our simulation, possibly due to the ignoring of air drag.
@@ -625,7 +625,6 @@ public class GamePieceProjectile  implements GamePieceInterface{
         this.heightAsTouchGround = heightAsTouchGround;
         return this;
     }
-
 
     @Override
     public String getType() {

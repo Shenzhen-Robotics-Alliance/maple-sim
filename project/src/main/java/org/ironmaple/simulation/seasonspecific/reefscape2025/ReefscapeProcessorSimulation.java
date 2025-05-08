@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
-import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.goal;
 
 /**
@@ -50,5 +49,4 @@ public class ReefscapeProcessorSimulation extends goal {
     public void draw(List<Pose3d> drawList) {
         return;
     }
-
 }

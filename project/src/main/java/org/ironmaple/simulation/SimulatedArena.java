@@ -167,8 +167,9 @@ public abstract class SimulatedArena {
 
     protected final World<Body> physicsWorld;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
-    protected final Set<GamePieceOnFieldSimulation> gamePiecesOnField;
-    protected final Set<GamePieceProjectile> gamePiecesLaunched;
+    // protected final Set<GamePieceOnFieldSimulation> gamePieces;
+    // protected final Set<GamePieceProjectile> gamePieces;
+    protected final Set<GamePieceInterface> gamePieces;
     protected final List<Simulatable> customSimulations;
 
     private final List<IntakeSimulation> intakeSimulations;
@@ -190,8 +191,7 @@ public abstract class SimulatedArena {
         for (Body obstacle : obstaclesMap.obstacles) this.physicsWorld.addBody(obstacle);
         this.driveTrainSimulations = new HashSet<>();
         customSimulations = new ArrayList<>();
-        this.gamePiecesOnField = new HashSet<>();
-        this.gamePiecesLaunched = new HashSet<>();
+        this.gamePieces = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
     }
 
@@ -283,7 +283,7 @@ public abstract class SimulatedArena {
      */
     public synchronized void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.addBody(gamePiece);
-        this.gamePiecesOnField.add(gamePiece);
+        this.gamePieces.add(gamePiece);
     }
 
     /**
@@ -296,7 +296,8 @@ public abstract class SimulatedArena {
      * @param gamePieceProjectile the projectile to be registered and launched in the simulation
      */
     public synchronized void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
-        this.gamePiecesLaunched.add(gamePieceProjectile);
+        System.out.println("Piece added");
+        this.gamePieces.add(gamePieceProjectile);
         gamePieceProjectile.launch();
     }
 
@@ -312,7 +313,14 @@ public abstract class SimulatedArena {
      */
     public synchronized boolean removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.removeBody(gamePiece);
-        return this.gamePiecesOnField.remove(gamePiece);
+        return this.gamePieces.remove(gamePiece);
+    }
+
+    public synchronized boolean removePeice(GamePieceInterface toRemove) {
+        if (toRemove.isGrounded()) {
+            return removeGamePiece((GamePieceOnFieldSimulation) toRemove);
+        }
+        return removeProjectile((GamePieceProjectile) toRemove);
     }
 
     /**
@@ -326,7 +334,7 @@ public abstract class SimulatedArena {
      * @return <code>true</code> if this set contained the specified element
      */
     public synchronized boolean removeProjectile(GamePieceProjectile gamePieceLaunched) {
-        return this.gamePiecesLaunched.remove(gamePieceLaunched);
+        return this.gamePieces.remove(gamePieceLaunched);
     }
 
     /**
@@ -337,9 +345,9 @@ public abstract class SimulatedArena {
      * <p>This method clears all game pieces from the physics world and the simulation's game piece collection.
      */
     public synchronized void clearGamePieces() {
-        for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
-        this.gamePiecesOnField.clear();
-        this.gamePiecesLaunched.clear();
+        for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField()) this.physicsWorld.removeBody(gamePiece);
+
+        this.gamePieces.clear();
         this.blueScore = 0;
         this.redScore = 0;
     }
@@ -391,7 +399,7 @@ public abstract class SimulatedArena {
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 
-        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePiecesLaunched);
+        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceLaunched());
 
         this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
@@ -401,11 +409,25 @@ public abstract class SimulatedArena {
     }
 
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
-        return gamePiecesOnField;
+        Set<GamePieceOnFieldSimulation> returnList = new HashSet<GamePieceOnFieldSimulation>();
+        for (GamePieceInterface gamePiece : this.gamePieces) {
+            if (!gamePiece.isGrounded()) {
+                returnList.add((GamePieceOnFieldSimulation) gamePiece);
+            }
+        }
+        ;
+        return returnList;
     }
 
     public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
-        return gamePiecesLaunched;
+        Set<GamePieceProjectile> returnList = new HashSet<GamePieceProjectile>();
+        for (GamePieceInterface gamePiece : this.gamePieces) {
+            if (!gamePiece.isGrounded()) {
+                returnList.add((GamePieceProjectile) gamePiece);
+            }
+        }
+        ;
+        return returnList;
     }
 
     /**
@@ -432,11 +454,8 @@ public abstract class SimulatedArena {
      */
     public synchronized List<Pose3d> getGamePiecesByType(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceOnFieldSimulation gamePiece : gamePiecesOnField)
-            if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
-
-        for (GamePieceProjectile gamePiece : gamePiecesLaunched)
-            if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece.getPose3d());
+        for (GamePieceInterface gamePiece : gamePieces)
+            if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
         return gamePiecesPoses;
     }
@@ -454,11 +473,8 @@ public abstract class SimulatedArena {
 
     public synchronized List<GamePieceInterface> getPeicesByType(String type) {
         final List<GamePieceInterface> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceOnFieldSimulation gamePiece : gamePiecesOnField)
-            if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece);
-
-        for (GamePieceProjectile gamePiece : gamePiecesLaunched)
-            if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece);
+        for (GamePieceInterface gamePiece : gamePieces)
+            if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);
 
         return gamePiecesPoses;
     }

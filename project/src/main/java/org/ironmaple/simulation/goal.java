@@ -76,7 +76,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
             checkPiece(gamePieceLaunched, toRemoves);
         }
 
-        for (GamePieceInterface toRemove : toRemoves) gamePiecesLaunched.remove(toRemove);
+        for (GamePieceInterface toRemove : toRemoves) this.arena.removePeice(toRemove);
     }
 
     public void setNeededAngle(Rotation3d angle, double angleTolerence) {

@@ -463,8 +463,7 @@ public class GamePieceProjectile implements GamePieceInterface {
             if (gamePieceProjectile.hasHitGround()) gamePieceProjectile.addGamePieceAfterTouchGround(simulatedArena);
         }
 
-        while (!toRemoves.isEmpty())
-            gamePieceProjectiles.remove(toRemoves.poll().cleanUp());
+        while (!toRemoves.isEmpty()) simulatedArena.removePeice(toRemoves.poll().cleanUp());
     }
 
     // The rest are methods to configure a game piece projectile simulation

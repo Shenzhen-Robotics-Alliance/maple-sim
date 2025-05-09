@@ -1,8 +1,12 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
@@ -20,6 +24,9 @@ public class ReefscapeProcessorSimulation extends goal {
 
     protected static final Translation3d blueProcessorPose = new Translation3d(6.34, -0.5, 0);
     protected static final Translation3d redProcessorPose = new Translation3d(11.5, 8.5, 0);
+    protected static final Translation3d blueProcessorLaunchPose = new Translation3d(6.34, 0, 0);
+    protected static final Translation3d redProcessorLaunchPose = new Translation3d(11.5, 8, 0);
+
     StructPublisher<Pose3d> posePublisher;
 
     public ReefscapeProcessorSimulation(Arena2025Reefscape arena, boolean isBlue) {
@@ -41,8 +48,27 @@ public class ReefscapeProcessorSimulation extends goal {
 
     @Override
     protected void addPoints() {
-        if (isBlue) arena.addToBlueScore(6);
-        else arena.addToRedScore(6);
+        if (isBlue) {
+            arena.addToBlueScore(6);
+            this.arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
+                    blueProcessorLaunchPose.toTranslation2d(),
+                    new Translation2d(),
+                    new ChassisSpeeds(),
+                    Rotation2d.fromDegrees(45),
+                    Meters.of(1.7),
+                    MetersPerSecond.of(7),
+                    Degrees.of(45)));
+        } else {
+            arena.addToRedScore(6);
+            this.arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
+                    redProcessorLaunchPose.toTranslation2d(),
+                    new Translation2d(),
+                    new ChassisSpeeds(),
+                    Rotation2d.fromDegrees(-135),
+                    Meters.of(1.7),
+                    MetersPerSecond.of(7),
+                    Degrees.of(45)));
+        }
     }
 
     @Override

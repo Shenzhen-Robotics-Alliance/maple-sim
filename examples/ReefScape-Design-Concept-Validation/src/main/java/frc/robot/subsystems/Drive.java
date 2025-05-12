@@ -24,7 +24,8 @@ import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.FieldMirroringUtils;
 
 public class Drive extends SubsystemBase {
-    public static final DriveTrainSimulationConfig simConfig = DriveTrainSimulationConfig.Default();
+    public static final DriveTrainSimulationConfig simConfig =
+            DriveTrainSimulationConfig.Default().withBumperSize(Inches.of(33), Inches.of(33));
     public static final RobotConfig ppConfig = new RobotConfig(
             Kilograms.of(45),
             KilogramSquareMeters.of(5.0),

@@ -4,9 +4,12 @@
 
 package frc.robot;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.utils.MechanismVisualizer;
+import org.ironmaple.simulation.SimulatedArena;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
@@ -20,6 +23,19 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        MechanismVisualizer.getInstance().displayMechanismPoseToAdvantageScope();
+    }
+
+    @Override
+    public void simulationInit() {
+        SimulatedArena.getInstance().resetFieldForAuto();
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        SimulatedArena.getInstance().simulationPeriodic();
+        DogLog.log("Field/Coral", SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+        DogLog.log("Field/Algae", SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
     }
 
     @Override

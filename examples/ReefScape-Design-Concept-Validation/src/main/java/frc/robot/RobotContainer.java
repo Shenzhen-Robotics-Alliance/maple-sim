@@ -11,10 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 import frc.robot.utils.DefenseRobotInSimulation;
 
 public class RobotContainer {
     private final Drive drive;
+    private final Intake intake;
     private final CommandXboxController driverXbox;
     private final XboxController defenserXbox;
 
@@ -22,6 +24,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         drive = new Drive();
+        intake = new Intake(drive.driveSimulation.getDriveTrainSimulation());
         driverXbox = new CommandXboxController(0);
 
         defenserXbox = new XboxController(1);
@@ -32,6 +35,7 @@ public class RobotContainer {
     private void configureBindings() {
         drive.setDefaultCommand(drive.joystickDrive(
                 () -> -driverXbox.getLeftY(), () -> -driverXbox.getLeftX(), () -> -driverXbox.getRightX()));
+        driverXbox.leftTrigger(0.5).whileTrue(intake.intakeCoralUntilDetected());
 
         defenseRobot.setDefaultCommand(defenseRobot.joystickDrive(
                 () -> -defenserXbox.getLeftY(), () -> -defenserXbox.getLeftX(), () -> -defenserXbox.getRightX()));

@@ -9,7 +9,7 @@ import edu.wpi.first.units.measure.Distance;
 
 /** Visualizes the mechanism state to AdvantageScope */
 public class MechanismVisualizer {
-    private static final Angle ELEVATOR_PITCH_ANGLE = Degrees.of(78);
+    public static final Angle ELEVATOR_PITCH_ANGLE = Degrees.of(78);
     private static final Pose3d INTAKE_ZERO_POSE =
             new Pose3d(-0.26, 0, 0.278, new Rotation3d(0, -Math.toRadians(12), 0));
 
@@ -37,15 +37,8 @@ public class MechanismVisualizer {
         DogLog.log("MechanismPoses", new Pose3d[] {
             intakePose,
             new Pose3d(
-                    heightMeters * Math.cos(ELEVATOR_PITCH_ANGLE.in(Radians)) / 2,
-                    0,
-                    heightMeters * Math.sin(pitchRad) / 2,
-                    new Rotation3d()),
-            new Pose3d(
-                    heightMeters * Math.cos(ELEVATOR_PITCH_ANGLE.in(Radians)),
-                    0,
-                    heightMeters * Math.sin(pitchRad),
-                    new Rotation3d())
+                    heightMeters * Math.cos(pitchRad) / 2, 0, heightMeters * Math.sin(pitchRad) / 2, new Rotation3d()),
+            new Pose3d(heightMeters * Math.cos(pitchRad), 0, heightMeters * Math.sin(pitchRad), new Rotation3d())
         });
     }
 

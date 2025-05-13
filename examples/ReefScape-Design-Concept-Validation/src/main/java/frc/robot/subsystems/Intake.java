@@ -43,7 +43,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean hasCoral() {
-        return intakeSimulation.getGamePiecesAmount() >= 1 && coralPosition > 0.8;
+        return intakeSimulation.getGamePiecesAmount() >= 1 && coralPosition >= 1.0;
     }
 
     public Command intakeCoralUntilDetected() {
@@ -67,7 +67,11 @@ public class Intake extends SubsystemBase {
 
         MechanismVisualizer.getInstance().setIntakeAngle(Degrees.of(state.position));
 
-        DogLog.log("Intake/CoralInIntake", intakeSimulation.getGamePiecesAmount() > 0 ? getCoralInIntakePose() : null);
+        DogLog.log(
+                "Intake/Coral",
+                intakeSimulation.getGamePiecesAmount() > 0
+                        ? getCoralInIntakePose()
+                        : new Pose3d(0, 0, -1, new Rotation3d()));
     }
 
     /**
@@ -88,9 +92,9 @@ public class Intake extends SubsystemBase {
 
         // Step2: Calculate the pose of the coral after being COMPLETELY PROCESSED
         // (We use the same method as Step1).
-        Twist3d driveCenterToCoralEndingPose = new Twist3d(0.14, 0.0, 0.22, 0.0, 0.0, 0.0);
+        Twist3d driveCenterToCoralEndingPose = new Twist3d(-0.05, 0.0, 0.27, 0.0, 0.0, 0.0);
         Pose3d coralEndingPose = driveTrainCenterPose.exp(driveCenterToCoralEndingPose);
-        rotation = new Transform3d(new Translation3d(), new Rotation3d(0.0, Math.toRadians(17.5), 0.0));
+        rotation = new Transform3d(new Translation3d(), new Rotation3d(0.0, Math.toRadians(10), 0.0));
         coralEndingPose = coralEndingPose.plus(rotation);
 
         // Step3: Find the current position of the coral using linear interpretation
@@ -98,6 +102,7 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean obtainAvailableGamePiece() {
+        if (coralPosition < 1.0) return false;
         boolean result = intakeSimulation.obtainGamePieceFromIntake();
         if (result) coralPosition = 0.0;
         return result;

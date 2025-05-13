@@ -69,7 +69,6 @@ public class Drive extends SubsystemBase {
                             new Translation2d(),
                             true,
                             true);
-                    System.out.println("linear vel:" + linearVelocity);
                 })
                 .finallyDo(this::stop);
     }

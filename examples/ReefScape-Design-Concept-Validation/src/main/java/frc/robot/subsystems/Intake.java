@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
         intakeSimulation = IntakeSimulation.OverTheBumperIntake(
                 "Coral", driveSim, Meters.of(0.6), Meters.of(0.35), IntakeSimulation.IntakeSide.BACK, 1);
         this.driveSim = driveSim;
-        this.profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(360.0, 720.0));
+        this.profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(600.0, 1200.0));
         coralPosition = 0.0;
         turnedOn = false;
     }

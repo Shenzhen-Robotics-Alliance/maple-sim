@@ -28,7 +28,7 @@ public class ElevatorShooter extends SubsystemBase {
 
         this.intake = intake;
         this.driveSim = driveSim;
-        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.6, 6.0));
+        profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(2.4, 12.0));
         currentState = new TrapezoidProfile.State(0.0, 0.0);
         goalMeters = 0.0;
         hasCoral = false;

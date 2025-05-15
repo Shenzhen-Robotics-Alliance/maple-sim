@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.utils.MechanismVisualizer.ELEVATOR_PITCH_ANGLE;
 
 import dev.doglog.DogLog;
@@ -11,7 +10,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.MechanismVisualizer;
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 
 public class ElevatorShooter extends SubsystemBase {
     public static final double MAX_ELEVATOR_HEIGHT = 1.1;
@@ -80,7 +81,17 @@ public class ElevatorShooter extends SubsystemBase {
         return runOnce(this::launchCoral).finallyDo(() -> hasCoral = false).onlyIf(this::hasCoral);
     }
 
-    private void launchCoral() {}
+    private void launchCoral() {
+        SimulatedArena.getInstance()
+                .addGamePieceProjectile(new ReefscapeCoralOnFly(
+                        driveSim.getSimulatedDriveTrainPose().getTranslation(),
+                        new Translation2d(0.2, 0.0),
+                        driveSim.getDriveTrainSimulatedChassisSpeedsFieldRelative(),
+                        driveSim.getSimulatedDriveTrainPose().getRotation(),
+                        Meters.of(getHeightMeters() + 0.25),
+                        MetersPerSecond.of(3.5),
+                        Degrees.of(-10)));
+    }
 
     public boolean hasCoral() {
         return hasCoral;

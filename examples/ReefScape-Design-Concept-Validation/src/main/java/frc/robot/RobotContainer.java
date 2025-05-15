@@ -42,6 +42,7 @@ public class RobotContainer {
         driverXbox.x().onTrue(elevatorShooter.moveToHeight(0.0));
         driverXbox.a().onTrue(elevatorShooter.moveToHeight(0.65));
         driverXbox.b().onTrue(elevatorShooter.moveToHeight(1.05));
+        driverXbox.rightTrigger(0.5).onTrue(elevatorShooter.score());
 
         defenseRobot.setDefaultCommand(defenseRobot.joystickDrive(
                 () -> -defenserXbox.getLeftY(), () -> -defenserXbox.getLeftX(), () -> -defenserXbox.getRightX()));

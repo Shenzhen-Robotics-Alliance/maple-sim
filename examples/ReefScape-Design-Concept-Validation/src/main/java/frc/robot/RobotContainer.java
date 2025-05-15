@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.ReefAlignment;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ElevatorShooter;
 import frc.robot.subsystems.Intake;
@@ -38,11 +39,17 @@ public class RobotContainer {
     private void configureBindings() {
         drive.setDefaultCommand(drive.joystickDrive(
                 () -> -driverXbox.getLeftY(), () -> -driverXbox.getLeftX(), () -> -driverXbox.getRightX()));
-        driverXbox.leftTrigger(0.5).whileTrue(intake.intakeCoralUntilDetected());
-        driverXbox.x().onTrue(elevatorShooter.moveToHeight(0.0));
+        driverXbox
+                .leftTrigger(0.5)
+                .onTrue(elevatorShooter.moveToHeight(0.0))
+                .whileTrue(intake.intakeCoralUntilDetected());
         driverXbox.a().onTrue(elevatorShooter.moveToHeight(0.65));
         driverXbox.b().onTrue(elevatorShooter.moveToHeight(1.05));
         driverXbox.rightTrigger(0.5).onTrue(elevatorShooter.score());
+
+        ReefAlignment reefAlignment = new ReefAlignment(drive);
+        driverXbox.leftBumper().whileTrue(reefAlignment.alignToNearestReef(ReefAlignment.AlignmentSide.LEFT));
+        driverXbox.rightBumper().whileTrue(reefAlignment.alignToNearestReef(ReefAlignment.AlignmentSide.RIGHT));
 
         defenseRobot.setDefaultCommand(defenseRobot.joystickDrive(
                 () -> -defenserXbox.getLeftY(), () -> -defenserXbox.getLeftX(), () -> -defenserXbox.getRightX()));

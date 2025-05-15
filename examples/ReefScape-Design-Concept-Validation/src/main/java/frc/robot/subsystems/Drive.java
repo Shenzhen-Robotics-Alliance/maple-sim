@@ -3,10 +3,12 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,19 +26,21 @@ import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.FieldMirroringUtils;
 
 public class Drive extends SubsystemBase {
-    public static final DriveTrainSimulationConfig simConfig =
-            DriveTrainSimulationConfig.Default().withBumperSize(Inches.of(33), Inches.of(33));
-    public static final RobotConfig ppConfig = new RobotConfig(
-            Kilograms.of(45),
-            KilogramSquareMeters.of(5.0),
-            new ModuleConfig(Inches.of(2), FeetPerSecond.of(16.5), 1.2, DCMotor.getFalcon500(1), 6.75, Amps.of(40), 1),
-            Meters.of(0.52));
+    public final DriveTrainSimulationConfig simConfig;
+    public final RobotConfig ppConfig;
 
     public final SelfControlledSwerveDriveSimulation driveSimulation;
 
     public Drive() {
         super("Drive");
 
+        this.simConfig = DriveTrainSimulationConfig.Default().withBumperSize(Inches.of(33), Inches.of(33));
+        this.ppConfig = new RobotConfig(
+                Kilograms.of(45),
+                KilogramSquareMeters.of(5.0),
+                new ModuleConfig(
+                        Inches.of(2), FeetPerSecond.of(16.5), 1.2, DCMotor.getFalcon500(1), 6.75, Amps.of(40), 1),
+                simConfig.moduleTranslations);
         this.driveSimulation =
                 new SelfControlledSwerveDriveSimulation(new SwerveDriveSimulation(simConfig, new Pose2d()));
         SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation.getDriveTrainSimulation());
@@ -73,15 +77,34 @@ public class Drive extends SubsystemBase {
                 .finallyDo(this::stop);
     }
 
+    private final PPHolonomicDriveController driveController =
+            new PPHolonomicDriveController(new PIDConstants(5.0), new PIDConstants(5.0));
+
     public Command followPath(PathPlannerPath path) {
         return new FollowPathCommand(
                 path,
-                driveSimulation::getActualPoseInSimulationWorld,
+                this::getPose,
                 driveSimulation::getActualSpeedsRobotRelative,
                 (speeds, feedforwards) -> driveSimulation.runChassisSpeeds(speeds, new Translation2d(), false, false),
-                new PPHolonomicDriveController(new PIDConstants(5.0), new PIDConstants(5.0)),
+                driveController,
                 ppConfig,
                 FieldMirroringUtils::isSidePresentedAsRed,
                 this);
+    }
+
+    public Command pathFindTo(Pose2d pose, PathConstraints constraints) {
+        return new PathfindingCommand(
+                pose,
+                constraints,
+                this::getPose,
+                driveSimulation::getActualSpeedsRobotRelative,
+                (speeds, feedforwards) -> driveSimulation.runChassisSpeeds(speeds, new Translation2d(), false, false),
+                driveController,
+                ppConfig,
+                this);
+    }
+
+    public Pose2d getPose() {
+        return driveSimulation.getActualPoseInSimulationWorld();
     }
 }

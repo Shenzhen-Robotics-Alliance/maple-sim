@@ -1,11 +1,10 @@
 package org.ironmaple.simulation;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.Set;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.gamepieces.GamePieceInterface;
-import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
 public abstract class goal implements SimulatedArena.Simulatable {
 
@@ -30,8 +28,8 @@ public abstract class goal implements SimulatedArena.Simulatable {
     protected int gamePieceCount = 0;
     protected Rotation3d peiceAngle = null;
     protected Rotation3d peiceVelAngle = null;
-    protected double peiceAngleTolerence = 15;
-    protected double peiceVelAngleTolerence = 15;
+    protected Angle peiceAngleTolerence = Angle.ofBaseUnits(15, Units.Degrees);
+    protected Angle peiceVelAngleTolerence = Angle.ofBaseUnits(15, Units.Degrees);
 
     public goal(
             SimulatedArena arena,
@@ -79,7 +77,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
         for (GamePieceInterface toRemove : toRemoves) this.arena.removePeice(toRemove);
     }
 
-    public void setNeededAngle(Rotation3d angle, double angleTolerence) {
+    public void setNeededAngle(Rotation3d angle, Angle angleTolerence) {
         peiceAngle = angle;
         peiceAngleTolerence = angleTolerence;
     }
@@ -88,7 +86,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
         setNeededAngle(angle, peiceAngleTolerence);
     }
 
-    public void setNeededVelAngle(Rotation3d velAngle, double peiceVelAngleTolerence) {
+    public void setNeededVelAngle(Rotation3d velAngle, Angle peiceVelAngleTolerence) {
         peiceVelAngle = velAngle;
         this.peiceVelAngleTolerence = peiceVelAngleTolerence;
     }
@@ -115,46 +113,130 @@ public abstract class goal implements SimulatedArena.Simulatable {
         return xyBox.contains(new Vector2(
                         gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))
                 && gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters)
-                && gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters);
-        // && checkRotationAndVel(gamePiece);
+                && gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters)
+                && checkRotationAndVel(gamePiece);
     }
 
-    protected boolean checkRotationAndVel(GamePieceProjectile gamePiece) {
-        return rotationsEqualWithinTolerence(peiceAngle, gamePiece.getPose3d().getRotation(), peiceAngleTolerence)
-                && compRotationAndVectorWithTolerence(
-                        peiceVelAngle, gamePiece.getVelocity3dMPS(), peiceVelAngleTolerence);
+    protected boolean checkRotationAndVel(GamePieceInterface gamePiece) {
+        // System.out.println("Cycle");
+        // System.out.println(
+        //         rotationsEqualWithinTolerence(peiceAngle, gamePiece.getPose3d().getRotation(), peiceAngleTolerence));
+        // System.out.println(rotationsEqualWithinTolerence(
+        //         peiceVelAngle, transToRotation(gamePiece.getVelocity3dMPS()), peiceVelAngleTolerence));
+
+        // System.out.println(peiceVelAngle.getX());
+        // System.out.println(peiceVelAngle.getY());
+        // System.out.println(peiceVelAngle.getZ());
+        // System.out.println(gamePiece.getVelocity3dMPS());
+        // System.out.println(transToRotation(gamePiece.getVelocity3dMPS()).getX());
+        // System.out.println(transToRotation(gamePiece.getVelocity3dMPS()).getY());
+        // System.out.println(transToRotation(gamePiece.getVelocity3dMPS()).getZ());
+        // System.out.println(this.getClass());
+        // System.out.println(peiceVelAngle
+        //         .minus(transToRotation(gamePiece.getVelocity3dMPS()))
+        //         .getX());
+        // System.out.println(peiceVelAngle
+        //         .minus(transToRotation(gamePiece.getVelocity3dMPS()))
+        //         .getY());
+        // System.out.println(peiceVelAngle
+        //         .minus(transToRotation(gamePiece.getVelocity3dMPS()))
+        //         .getZ());
+        // System.out.println(peiceVelAngle
+        //         .minus(transToRotation(gamePiece.getVelocity3dMPS()))
+        //         .getAngle());
+        // System.out.println(peiceVelAngleTolerence.in(Units.Degrees));
+
+        return checkRotation(gamePiece) && checkVel(gamePiece);
+    }
+
+    public static Rotation3d transToRotation(Translation3d toConvert) {
+        return new Rotation3d(
+                Math.atan2(floor2Decimals(toConvert.getZ()), floor2Decimals(toConvert.getY())),
+                Math.atan2(floor2Decimals((toConvert.getX())), floor2Decimals((toConvert.getY()))),
+                Math.atan2(floor2Decimals(toConvert.getZ()), floor2Decimals(toConvert.getX())));
+    }
+
+    protected static double floor2Decimals(double toRound) {
+        return Math.floor(toRound * 100) / 100;
     }
 
     protected static boolean rotationsEqualWithinTolerence(
-            Rotation3d rotation1, Rotation3d rotation2, double toleranceDegrees) {
+            Rotation3d rotation1, Rotation3d rotation2, Angle tolerence) {
         if (rotation1 == null || rotation2 == null) return true;
-        Translation3d vector1 = new Translation3d(1, rotation1);
 
-        Translation3d vector2 = new Translation3d(1, rotation2);
-
-        double rotationToleranceVectorNorm = new Translation2d(1, Rotation2d.fromDegrees(toleranceDegrees))
-                .minus(new Translation2d(1, 0))
-                .getNorm();
-
-        return vector1.minus(vector2).getNorm() < rotationToleranceVectorNorm
-                || vector1.times(-1).minus(vector2).getNorm() < rotationToleranceVectorNorm;
+        return rotation1.minus(rotation2).getMeasureAngle().in(Units.Degrees) < tolerence.in(Units.Degrees);
+        // return (Math.abs(rotation.getX()) <= Math.toRadians(toleranceDegrees))
+        //         // || Math.abs(rotation.getX()) - Math.PI <= Math.toRadians(toleranceDegrees))
+        //         && (Math.abs(rotation.getY()) <= Math.toRadians(toleranceDegrees))
+        //         // || Math.abs(rotation.getY()) - Math.PI <= Math.toRadians(toleranceDegrees))
+        //         && (Math.abs(rotation.getZ()) <= Math.toRadians(toleranceDegrees));
+        // // || Math.abs(rotation.getZ()) - Math.PI <= Math.toRadians(toleranceDegrees));
     }
 
-    protected static boolean compRotationAndVectorWithTolerence(
-            Rotation3d rotation, Translation3d vector, double toleranceDegrees) {
-        if (rotation == null || vector == null) return true;
-        Translation3d rotationVector = new Translation3d(1, rotation);
+    protected boolean checkRotation(GamePieceInterface gamePiece) {
+        if (peiceAngle == null) return true;
 
-        double rotationToleranceVectorNorm = new Translation2d(1, Rotation2d.fromDegrees(toleranceDegrees))
-                .minus(new Translation2d(1, 0))
-                .getNorm();
+        return gamePiece
+                        .getPose3d()
+                        .getRotation()
+                        .minus(peiceAngle)
+                        .getMeasureAngle()
+                        .in(Units.Degrees)
+                < peiceAngleTolerence.in(Units.Degrees);
+    }
 
-        return rotationVector.minus(vector).getNorm() < rotationToleranceVectorNorm
-                || rotationVector.times(-1).minus(vector).getNorm() < rotationToleranceVectorNorm;
+    protected boolean checkVel(GamePieceInterface gamePiece) {
+        if (peiceVelAngle == null) {
+            // System.out.println(this.getClass());
+            return true;
+        }
+
+        Rotation3d peiceVelRotation = new Rotation3d(
+                0,
+                Math.atan2(
+                        gamePiece.getVelocity3dMPS().getX(),
+                        gamePiece.getVelocity3dMPS().getY()),
+                Math.atan2(
+                        gamePiece.getVelocity3dMPS().getZ(),
+                        Math.hypot(
+                                gamePiece.getVelocity3dMPS().getX(),
+                                gamePiece.getVelocity3dMPS().getY())));
+
+        System.out.println("new");
+
+        System.out.println(peiceVelRotation.getX());
+        System.out.println(peiceVelRotation.getY());
+        System.out.println(peiceVelRotation.getZ());
+
+        System.out.println("break");
+
+        System.out.println(peiceVelAngle.getX());
+        System.out.println(peiceVelAngle.getY());
+        System.out.println(peiceVelAngle.getZ());
+
+        System.out.println("break");
+        Rotation3d idealRotation = new Rotation3d(0, peiceVelAngle.getY(), peiceVelAngle.getZ());
+        Rotation3d difference = idealRotation.minus(peiceVelRotation);
+
+        System.out.println(difference.getX());
+        System.out.println(difference.getY());
+        System.out.println(difference.getZ());
+
+        System.out.println("break");
+
+        System.out.println(difference.getAngle());
+        System.out.println(peiceVelAngleTolerence.in(Units.Degrees));
+
+        System.out.println("end");
+        return difference.getMeasureAngle().in(Units.Degrees) < peiceVelAngleTolerence.in(Units.Degrees);
     }
 
     public void clear() {
         this.gamePieceCount = 0;
+    }
+
+    public boolean isFull() {
+        return this.gamePieceCount == this.max;
     }
 
     protected abstract void addPoints();

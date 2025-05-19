@@ -68,7 +68,8 @@ public class Arena2025Reefscape extends SimulatedArena {
         }
     }
 
-    public final ReefscapeReefSimulation reefSimulation;
+    public final ReefscapeReefSimulation redReefSimulation;
+    public final ReefscapeReefSimulation blueReefSimulation;
     public final ReefscapeBargeSimulation redBarge;
     public final ReefscapeBargeSimulation blueBarge;
     public final ReefscapeProcessorSimulation redProcessor;
@@ -77,8 +78,11 @@ public class Arena2025Reefscape extends SimulatedArena {
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());
 
-        reefSimulation = new ReefscapeReefSimulation(this);
-        super.addCustomSimulation(reefSimulation);
+        redReefSimulation = new ReefscapeReefSimulation(this, false);
+        super.addCustomSimulation(redReefSimulation);
+
+        blueReefSimulation = new ReefscapeReefSimulation(this, true);
+        super.addCustomSimulation(blueReefSimulation);
 
         blueBarge = new ReefscapeBargeSimulation(this, true);
         super.addCustomSimulation(blueBarge);
@@ -116,9 +120,11 @@ public class Arena2025Reefscape extends SimulatedArena {
             poses.addAll(ReefscapeCoralAlgaeStack.getStackedAlgaePoses());
             redBarge.draw(poses);
             blueBarge.draw(poses);
+
         } else if (type.equals("Coral")) {
             poses.addAll(ReefscapeCoralAlgaeStack.getStackedCoralPoses());
-            reefSimulation.addCoralsOnReefForDisplay(poses);
+            redReefSimulation.draw(poses);
+            blueReefSimulation.draw(poses);
         }
 
         return poses;
@@ -127,6 +133,7 @@ public class Arena2025Reefscape extends SimulatedArena {
     @Override
     public synchronized void clearGamePieces() {
         super.clearGamePieces();
-        reefSimulation.clearReef();
+        redReefSimulation.clearReef();
+        blueReefSimulation.clearReef();
     }
 }

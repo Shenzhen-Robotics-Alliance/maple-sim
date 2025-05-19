@@ -1,6 +1,7 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import static edu.wpi.first.units.Units.Centimeters;
+import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -32,7 +33,7 @@ public class ReefscapeBargeSimulation extends goal {
                 "Algae",
                 isBlue ? blueBargePose : redBargePose,
                 isBlue);
-        setNeededVelAngle(new Rotation3d(0, 90, 0), 90);
+        setNeededVelAngle(new Rotation3d(0, Math.PI / 2, 0), Degrees.of(90));
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueBarge" : "RedBarge", Pose3d.struct)

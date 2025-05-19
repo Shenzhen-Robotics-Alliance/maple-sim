@@ -38,7 +38,6 @@ public class ReefscapeProcessorSimulation extends goal {
                 "Algae",
                 isBlue ? blueProcessorPose : redProcessorPose,
                 isBlue);
-        setNeededVelAngle(new Rotation3d(0, 90, 0), 90);
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueProcessor" : "RedProcessor", Pose3d.struct)

@@ -86,7 +86,8 @@ public class ReefscapeReefBranch extends goal {
                 Centimeters.of(10),
                 "Coral",
                 getPose(isBlue, level, col),
-                isBlue);
+                isBlue,
+                1);
 
         if (level == 1 || level == 2) {
             if (isBlue) {

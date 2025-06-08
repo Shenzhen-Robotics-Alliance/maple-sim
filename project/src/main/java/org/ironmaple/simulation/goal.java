@@ -66,6 +66,9 @@ public abstract class goal implements SimulatedArena.Simulatable {
 
     @Override
     public void simulationSubTick(int subTickNum) {
+
+        System.out.println(gamePieceType);
+
         Set<GamePieceInterface> gamePiecesLaunched =
                 new HashSet<GamePieceInterface>(arena.getPeicesByType(gamePieceType));
         Set<GamePieceInterface> toRemoves = new HashSet<>();
@@ -110,11 +113,11 @@ public abstract class goal implements SimulatedArena.Simulatable {
 
     protected boolean checkCollision(GamePieceInterface gamePiece) {
 
-        return xyBox.contains(new Vector2(
+        return checkRotationAndVel(gamePiece)
+                && xyBox.contains(new Vector2(
                         gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))
                 && gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters)
-                && gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters)
-                && checkRotationAndVel(gamePiece);
+                && gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters);
     }
 
     protected boolean checkRotationAndVel(GamePieceInterface gamePiece) {
@@ -176,6 +179,14 @@ public abstract class goal implements SimulatedArena.Simulatable {
     protected boolean checkRotation(GamePieceInterface gamePiece) {
         if (peiceAngle == null) return true;
 
+        System.out.println(gamePiece
+                .getPose3d()
+                .getRotation()
+                .minus(peiceAngle)
+                .getMeasureAngle()
+                .in(Units.Degrees));
+        System.out.println(peiceAngleTolerence.in(Units.Degrees));
+
         return gamePiece
                         .getPose3d()
                         .getRotation()
@@ -187,7 +198,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
 
     protected boolean checkVel(GamePieceInterface gamePiece) {
         if (peiceVelAngle == null) {
-            // System.out.println(this.getClass());
+            System.out.println(this.getClass());
             return true;
         }
 

@@ -34,9 +34,9 @@ public class ReefscapeReefBranch extends goal {
     };
 
     public static final Translation3d[] heights = new Translation3d[] {
-        new Translation3d(0, 0, 0.15),
-        new Translation3d(0, 0, 0.77),
-        new Translation3d(0, 0, 1.17),
+        new Translation3d(0, 0, 0.45),
+        new Translation3d(0, 0, 0.79),
+        new Translation3d(0, 0, 1.19),
         new Translation3d(0, 0, 1.78)
     };
 
@@ -52,11 +52,15 @@ public class ReefscapeReefBranch extends goal {
         Rotation2d.fromDegrees(120), Rotation2d.fromDegrees(120), // K and L
     };
 
-    public static Translation3d getPose(boolean isBlue, int level, int col) {
+    public static Translation3d getPoseOfBranchAt(boolean isBlue, int level, int col) {
         if (isBlue) {
-            return new Translation3d(branchesCenterPositionBlue[col]).plus(heights[level]);
+            return new Translation3d(branchesCenterPositionBlue[col])
+                    .plus(heights[level])
+                    .plus(new Translation3d(0.255, 0, 0).rotateBy(new Rotation3d(branchesFacingOutwardsBlue[col])));
         } else {
-            return new Translation3d(branchesCenterPositionRed[col]).plus(heights[level]);
+            return new Translation3d(branchesCenterPositionRed[col])
+                    .plus(heights[level])
+                    .plus(new Translation3d(0.255, 0, 0).rotateBy(new Rotation3d(branchesFacingOutwardsRed[col])));
         }
     }
 
@@ -77,34 +81,39 @@ public class ReefscapeReefBranch extends goal {
     //     coralHolders.addAll(branch.coralHolders());
 
     public final int level;
+    public final int col;
 
     public ReefscapeReefBranch(Arena2025Reefscape arena, boolean isBlue, int level, int col) {
         super(
                 arena,
-                Centimeters.of(10),
-                Centimeters.of(10),
+                level == 0 ? Centimeters.of(10) : Centimeters.of(30),
+                level == 0 ? Centimeters.of(10) : Centimeters.of(33),
                 Centimeters.of(10),
                 "Coral",
-                getPose(isBlue, level, col),
+                getPoseOfBranchAt(isBlue, level, col),
                 isBlue,
                 1);
 
         if (level == 1 || level == 2) {
             if (isBlue) {
-                setNeededVelAngle(
+                setNeededAngle(
                         new Rotation3d(0, -35 * Math.PI / 180, branchesFacingOutwardsBlue[col].getRadians()),
                         Degrees.of(10));
             } else {
-                setNeededVelAngle(
+                setNeededAngle(
                         new Rotation3d(0, -35 * Math.PI / 180, branchesFacingOutwardsRed[col].getRadians()),
                         Degrees.of(10));
             }
         } else if (level == 3) {
-            setNeededVelAngle(
+            setNeededAngle(
                     new Rotation3d(0, -Math.PI / 2, branchesFacingOutwardsRed[col].getRadians()), Degrees.of(10));
         }
         this.level = level;
-        ;
+        this.col = col;
+    }
+
+    public Pose3d getPose() {
+        return new Pose3d(position, peiceAngle != null ? peiceAngle : new Rotation3d());
     }
 
     @Override

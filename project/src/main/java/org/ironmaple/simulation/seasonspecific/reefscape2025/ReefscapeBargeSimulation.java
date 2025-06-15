@@ -1,13 +1,13 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import java.util.*;
+import org.ironmaple.simulation.gamepieces.GamePieceInterface;
 import org.ironmaple.simulation.goal;
 
 /**
@@ -33,7 +33,7 @@ public class ReefscapeBargeSimulation extends goal {
                 "Algae",
                 isBlue ? blueBargePose : redBargePose,
                 isBlue);
-        setNeededVelAngle(new Rotation3d(0, Math.PI / 2, 0), Degrees.of(90));
+        // setNeededVelAngle(new Rotation3d(0, Math.PI / 2, 0), Degrees.of(90));
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueBarge" : "RedBarge", Pose3d.struct)
@@ -57,6 +57,11 @@ public class ReefscapeBargeSimulation extends goal {
                             new Rotation3d())
                     .plus(new Transform3d(0, i * 0.35, 0, new Rotation3d())));
         }
+    }
+
+    @Override
+    protected boolean checkVel(GamePieceInterface gamePiece) {
+        return gamePiece.getVelocity3dMPS().getZ() < 0;
     }
 
     @Override

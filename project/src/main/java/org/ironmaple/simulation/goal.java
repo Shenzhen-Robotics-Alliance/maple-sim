@@ -29,7 +29,12 @@ public abstract class goal implements SimulatedArena.Simulatable {
     protected Rotation3d peiceAngle = null;
     // protected Rotation3d peiceVelAngle = null;
     protected Angle peiceAngleTolerence = Angle.ofBaseUnits(15, Units.Degrees);
+    // public static final Rotation3d flip = new Rotation3d(0, Math.PI, 0);
     // protected Angle peiceVelAngleTolerence = Angle.ofBaseUnits(15, Units.Degrees);
+
+    public static Rotation3d flipRotation(Rotation3d toFlip) {
+        return new Rotation3d(0, -toFlip.getY(), toFlip.getZ() + Math.PI);
+    }
 
     public goal(
             SimulatedArena arena,
@@ -229,59 +234,50 @@ public abstract class goal implements SimulatedArena.Simulatable {
         // Angle difference = gamePiece.getPose3d().getRotation().minus(peiceAngle).getMeasureAngle();
         // System.out.println(difference.in(Units.Degrees));
 
-        System.out.println(gamePiece.getPose3d().getRotation().getY());
-        System.out.println(gamePiece.getPose3d().getRotation().getZ());
-        System.out.println(peiceAngle.getY());
-        System.out.println(peiceAngle.getZ());
-        System.out.println(gamePiece.getPose3d().getRotation().unaryMinus().getY());
-        System.out.println(gamePiece.getPose3d().getRotation().unaryMinus().getZ());
+        // System.out.println(gamePiece.getPose3d().getRotation().getY());
+        // System.out.println(gamePiece.getPose3d().getRotation().getZ());
+        // System.out.println(peiceAngle.getY());
+        // System.out.println(peiceAngle.getZ());
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation()).getY());
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation()).getZ());
 
-        System.out.println();
+        // System.out.println();
 
-        System.out.println(gamePiece.getPose3d().getRotation().minus(peiceAngle).getY());
-        System.out.println(gamePiece.getPose3d().getRotation().minus(peiceAngle).getZ());
+        // System.out.println(gamePiece.getPose3d().getRotation().minus(peiceAngle).getY());
+        // System.out.println(gamePiece.getPose3d().getRotation().minus(peiceAngle).getZ());
 
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .unaryMinus()
-                .minus(peiceAngle)
-                .getY());
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+        //         .minus(peiceAngle)
+        //         .getY());
 
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .unaryMinus()
-                .minus(peiceAngle)
-                .getZ());
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+        //         .minus(peiceAngle)
+        //         .getZ());
 
-        System.out.println();
+        // System.out.println();
 
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .minus(peiceAngle)
-                .getMeasureAngle()
-                .in(Units.Degrees));
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .unaryMinus()
-                .minus(peiceAngle)
-                .getMeasureAngle()
-                .in(Units.Degrees));
+        // System.out.println(gamePiece
+        //         .getPose3d()
+        //         .getRotation()
+        //         .minus(peiceAngle)
+        //         .getMeasureAngle()
+        //         .in(Units.Degrees));
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+        //         .minus(peiceAngle)
+        //         .getMeasureAngle()
+        //         .in(Units.Degrees));
 
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .rotateBy(gamePiece.getPose3d().getRotation().unaryMinus())
-                .getX());
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .rotateBy(gamePiece.getPose3d().getRotation().unaryMinus())
-                .getY());
-        System.out.println("\n\n\n");
+        // System.out.println(gamePiece
+        //         .getPose3d()
+        //         .getRotation()
+        //         .rotateBy(gamePiece.getPose3d().getRotation().unaryMinus())
+        //         .getX());
+        // System.out.println(gamePiece
+        //         .getPose3d()
+        //         .getRotation()
+        //         .rotateBy(gamePiece.getPose3d().getRotation().unaryMinus())
+        //         .getY());
+        // System.out.println("\n\n\n");
 
         return gamePiece
                                 .getPose3d()
@@ -290,10 +286,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
                                 .getMeasureAngle()
                                 .in(Units.Degrees)
                         < peiceAngleTolerence.in(Units.Degrees)
-                || gamePiece
-                                .getPose3d()
-                                .getRotation()
-                                .unaryMinus()
+                || flipRotation(gamePiece.getPose3d().getRotation())
                                 .minus(peiceAngle)
                                 .getMeasureAngle()
                                 .in(Units.Degrees)

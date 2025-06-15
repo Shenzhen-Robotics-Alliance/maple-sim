@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.goal;
 
 class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
     protected final List<ReefscapeReefBranch> branches;
@@ -16,12 +17,16 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
 
     ReefscapeReefSimulation(Arena2025Reefscape arena, boolean isBlue) {
         branches = new ArrayList<ReefscapeReefBranch>(48);
-        branchPoses = new Pose3d[48];
+        branchPoses = new Pose3d[96];
         for (int tower = 0; tower < 12; tower++) {
             for (int level = 0; level < 4; level++) {
                 branches.add(new ReefscapeReefBranch(arena, isBlue, level, tower));
-                branchPoses[tower * 4 + level] =
-                        branches.get(branches.size() - 1).getPose();
+                Pose3d tempPose = branches.get(branches.size() - 1).getPose();
+
+                branchPoses[2 * (tower * 4 + level)] = tempPose;
+
+                branchPoses[2 * (tower * 4 + level) + 1] =
+                        new Pose3d(tempPose.getTranslation(), goal.flipRotation(tempPose.getRotation()));
                 System.out.println(tower * 4 + level);
                 System.out.println(branchPoses[tower * 4 + level]);
             }

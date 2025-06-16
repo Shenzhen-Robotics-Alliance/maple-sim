@@ -9,9 +9,11 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Arrays;
 import java.util.List;
+import org.ironmaple.simulation.gamepieces.GamePieceInterface;
 import org.ironmaple.simulation.goal;
 import org.ironmaple.utils.FieldMirroringUtils;
 
@@ -43,9 +45,13 @@ public class ReefscapeReefBranch extends goal {
 
     public static final Rotation3d flip90 = new Rotation3d(0, 0, Math.PI / 2);
 
+    @Deprecated
+    public int count = 100;
+
     public static final Translation2d[] branchesCenterPositionRed = Arrays.stream(branchesCenterPositionBlue)
             .map(FieldMirroringUtils::flip)
             .toArray(Translation2d[]::new);
+
     public static final Rotation2d[] branchesFacingOutwardsBlue = new Rotation2d[] {
         Rotation2d.fromDegrees(180), Rotation2d.fromDegrees(180), // A and B
         Rotation2d.fromDegrees(-120), Rotation2d.fromDegrees(-120), // C and D
@@ -91,7 +97,7 @@ public class ReefscapeReefBranch extends goal {
                 arena,
                 level == 0 ? Centimeters.of(30) : Centimeters.of(10),
                 level == 0 ? Centimeters.of(100) : Centimeters.of(10),
-                Centimeters.of(10),
+                Centimeters.of(30),
                 "Coral",
                 getPoseOfBranchAt(isBlue, level, col),
                 isBlue,
@@ -124,6 +130,36 @@ public class ReefscapeReefBranch extends goal {
     }
 
     @Override
+    public boolean checkRotation(GamePieceInterface gamePiece) {
+        if (level == 3) {
+            Rotation3d rotation = gamePiece.getPose3d().getRotation();
+            System.out.println(Math.abs(rotation.getY() + Math.PI / 2));
+            System.out.println(Math.abs(rotation.getY() - Math.PI / 2));
+
+            return Math.abs(rotation.getY() + Math.PI / 2) < Degrees.of(10).in(Units.Radians)
+                    || Math.abs(rotation.getY() - Math.PI / 2) < Degrees.of(10).in(Units.Radians);
+        } else {
+            return super.checkRotation(gamePiece);
+        }
+    }
+
+    @Override
+    public boolean checkCollision(GamePieceInterface gamePiece) {
+        // if (level == 3 && col == 0) {
+        //     System.out.println();
+        //     System.out.println(checkRotationAndVel(gamePiece));
+        //     System.out.println(xyBox.contains(new Vector2(
+        //             gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY())));
+        //     System.out.println(gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters));
+        //     System.out.println(gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters));
+        //     count--;
+        //     if (count == 0) throw new Error("quit");
+        // }
+
+        return super.checkCollision(gamePiece);
+    }
+
+    @Override
     protected void addPoints() {
         System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
         if (isBlue) {
@@ -142,7 +178,8 @@ public class ReefscapeReefBranch extends goal {
                         arena.addToBlueScore(3);
                         break;
                     default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef");
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
+                                + level + " out of a suported range 0-3");
                 }
             } else {
                 switch (level) {
@@ -179,7 +216,8 @@ public class ReefscapeReefBranch extends goal {
                         arena.addToRedScore(3);
                         break;
                     default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef");
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
+                                + level + " out of a suported range 0-3");
                 }
             } else {
                 switch (level) {
@@ -196,7 +234,8 @@ public class ReefscapeReefBranch extends goal {
                         arena.addToRedScore(2);
                         break;
                     default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef");
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
+                                + level + " out of a suported range 0-3");
                 }
             }
         }

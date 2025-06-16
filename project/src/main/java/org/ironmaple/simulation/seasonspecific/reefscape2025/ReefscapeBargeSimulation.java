@@ -20,8 +20,8 @@ import org.ironmaple.simulation.goal;
  */
 public class ReefscapeBargeSimulation extends goal {
 
-    protected static final Translation3d blueBargePose = new Translation3d(8.805, 2.1, 1.57);
-    protected static final Translation3d redBargePose = new Translation3d(8.805, 6.18, 1.57);
+    protected static final Translation3d redBargePose = new Translation3d(8.805, 2.1, 1.57);
+    protected static final Translation3d blueBargePose = new Translation3d(8.805, 6.18, 1.57);
     StructPublisher<Pose3d> posePublisher;
 
     public ReefscapeBargeSimulation(Arena2025Reefscape arena, boolean isBlue) {

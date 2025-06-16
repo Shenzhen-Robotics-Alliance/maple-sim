@@ -27,14 +27,13 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
 
                 branchPoses[2 * (tower * 4 + level) + 1] =
                         new Pose3d(tempPose.getTranslation(), goal.flipRotation(tempPose.getRotation()));
-   
             }
         }
         reefPub = NetworkTableInstance.getDefault()
                 .getStructArrayTopic(isBlue ? "BlueReef" : "RedReef", Pose3d.struct)
                 .publish();
         SmartDashboard.putString("testFromReef", "yay");
-        
+
         reefPub.set(branchPoses);
     }
 

@@ -1,7 +1,5 @@
 package org.ironmaple.simulation;
 
-import static edu.wpi.first.units.Units.Meters;
-
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -48,7 +46,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
             boolean isBlue,
             int max) {
 
-        //System.out.println(xDimension.in(Meters));
+        // System.out.println(xDimension.in(Meters));
         xyBox = new Rectangle(xDimension.in(Units.Meters), yDimension.in(Units.Meters));
         this.height = height;
         this.gamePieceType = gamePieceType;
@@ -120,11 +118,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     }
 
     protected boolean checkCollision(GamePieceInterface gamePiece) {
-        // System.out.println(checkRotationAndVel(gamePiece));
-        // System.out.println(xyBox.contains(
-        //         new Vector2(gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY())));
-        // System.out.println(gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters));
-        // System.out.println(gamePiece.getPose3d().getZ() <= elevation.in(Units.Meters) + height.in(Units.Meters));
+
         return xyBox.contains(new Vector2(
                         gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))
                 && gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters)
@@ -237,8 +231,6 @@ public abstract class goal implements SimulatedArena.Simulatable {
         // System.out.println(peiceAngle.getY());
         // System.out.println(peiceAngle.getZ());
         // System.out.println(peiceAngleTolerence.in(Units.Degrees));
-        // Angle difference = gamePiece.getPose3d().getRotation().minus(peiceAngle).getMeasureAngle();
-        // System.out.println(difference.in(Units.Degrees));
 
         // System.out.println(gamePiece.getPose3d().getRotation().getY());
         // System.out.println(gamePiece.getPose3d().getRotation().getZ());
@@ -268,21 +260,14 @@ public abstract class goal implements SimulatedArena.Simulatable {
         //         .minus(peiceAngle)
         //         .getMeasureAngle()
         //         .in(Units.Degrees));
+
         // System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
         //         .minus(peiceAngle)
         //         .getMeasureAngle()
         //         .in(Units.Degrees));
 
-        // System.out.println(gamePiece
-        //         .getPose3d()
-        //         .getRotation()
-        //         .rotateBy(gamePiece.getPose3d().getRotation().unaryMinus())
-        //         .getX());
-        // System.out.println(gamePiece
-        //         .getPose3d()
-        //         .getRotation()
-        //         .rotateBy(gamePiece.getPose3d().getRotation().unaryMinus())
-        //         .getY());
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation()).getY());
+        // System.out.println(flipRotation(gamePiece.getPose3d().getRotation()).getZ());
         // System.out.println("\n\n\n");
 
         return gamePiece

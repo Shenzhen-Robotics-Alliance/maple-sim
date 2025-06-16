@@ -7,6 +7,7 @@
     <list default="true" id="f57e4d3f-16ad-409c-82f6-da91213bb687" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/goal.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/goal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefBranch.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefBranch.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefSimulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefSimulation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

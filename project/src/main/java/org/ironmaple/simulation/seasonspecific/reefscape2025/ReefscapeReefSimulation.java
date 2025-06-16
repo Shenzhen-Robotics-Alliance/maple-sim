@@ -27,15 +27,14 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
 
                 branchPoses[2 * (tower * 4 + level) + 1] =
                         new Pose3d(tempPose.getTranslation(), goal.flipRotation(tempPose.getRotation()));
-                System.out.println(tower * 4 + level);
-                System.out.println(branchPoses[tower * 4 + level]);
+   
             }
         }
         reefPub = NetworkTableInstance.getDefault()
                 .getStructArrayTopic(isBlue ? "BlueReef" : "RedReef", Pose3d.struct)
                 .publish();
         SmartDashboard.putString("testFromReef", "yay");
-        System.out.println(branchPoses);
+        
         reefPub.set(branchPoses);
     }
 
@@ -47,6 +46,7 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
 
     @Override
     public void simulationSubTick(int subTickNum) {
+        // System.out.println("test");
         for (ReefscapeReefBranch branch : branches) {
             // System.out.println("New branch");
             // System.out.println(branch.level);

@@ -1,5 +1,7 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -46,6 +48,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
             boolean isBlue,
             int max) {
 
+        //System.out.println(xDimension.in(Meters));
         xyBox = new Rectangle(xDimension.in(Units.Meters), yDimension.in(Units.Meters));
         this.height = height;
         this.gamePieceType = gamePieceType;
@@ -186,7 +189,10 @@ public abstract class goal implements SimulatedArena.Simulatable {
     // }
 
     protected boolean checkRotation(GamePieceInterface gamePiece) {
-        if (peiceAngle == null) return true;
+        if (peiceAngle == null) {
+            System.out.println("test");
+            return true;
+        }
 
         // System.out.println("new");
 

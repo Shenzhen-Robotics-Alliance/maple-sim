@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,6 +40,8 @@ public class ReefscapeReefBranch extends goal {
         new Translation3d(0, 0, 1.19),
         new Translation3d(0, 0, 1.78)
     };
+
+    public static final Rotation3d flip90 = new Rotation3d(0, 0, Math.PI / 2);
 
     public static final Translation2d[] branchesCenterPositionRed = Arrays.stream(branchesCenterPositionBlue)
             .map(FieldMirroringUtils::flip)
@@ -86,13 +89,13 @@ public class ReefscapeReefBranch extends goal {
     public ReefscapeReefBranch(Arena2025Reefscape arena, boolean isBlue, int level, int col) {
         super(
                 arena,
-                level == 0 ? Centimeters.of(10) : Centimeters.of(30),
-                level == 0 ? Centimeters.of(10) : Centimeters.of(33),
+                level == 0 ? Centimeters.of(30) : Centimeters.of(10),
+                level == 0 ? Centimeters.of(100) : Centimeters.of(10),
                 Centimeters.of(10),
                 "Coral",
                 getPoseOfBranchAt(isBlue, level, col),
                 isBlue,
-                1);
+                level == 0 ? 2 : 1);
 
         if (level == 1 || level == 2) {
             if (isBlue) {
@@ -113,57 +116,87 @@ public class ReefscapeReefBranch extends goal {
     }
 
     public Pose3d getPose() {
-        return new Pose3d(position, peiceAngle != null ? peiceAngle : new Rotation3d());
+        return new Pose3d(
+                position,
+                peiceAngle != null
+                        ? peiceAngle
+                        : new Rotation3d(0, 0, branchesFacingOutwardsBlue[col].getRadians()).plus(flip90));
     }
 
     @Override
     protected void addPoints() {
+        System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
         if (isBlue) {
             if (DriverStation.isAutonomous()) {
                 switch (level) {
-                    case 4:
-                        arena.addToBlueScore(7);
                     case 3:
-                        arena.addToBlueScore(6);
+                        arena.addToBlueScore(7);
+                        break;
                     case 2:
-                        arena.addToBlueScore(4);
+                        arena.addToBlueScore(6);
+                        break;
                     case 1:
+                        arena.addToBlueScore(4);
+                        break;
+                    case 0:
                         arena.addToBlueScore(3);
+                        break;
+                    default:
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef");
                 }
             } else {
                 switch (level) {
-                    case 4:
-                        arena.addToBlueScore(5);
                     case 3:
-                        arena.addToBlueScore(4);
+                        arena.addToBlueScore(5);
+                        break;
                     case 2:
-                        arena.addToBlueScore(3);
+                        arena.addToBlueScore(4);
+                        break;
                     case 1:
+                        arena.addToBlueScore(3);
+                        break;
+                    case 0:
                         arena.addToBlueScore(2);
+                        break;
+                    default:
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
+                                + level + " out of a suported range 0-3");
                 }
             }
         } else {
             if (DriverStation.isAutonomous()) {
                 switch (level) {
-                    case 4:
-                        arena.addToRedScore(7);
                     case 3:
-                        arena.addToRedScore(6);
+                        arena.addToRedScore(7);
+                        break;
                     case 2:
-                        arena.addToRedScore(4);
+                        arena.addToRedScore(6);
+                        break;
                     case 1:
+                        arena.addToRedScore(4);
+                        break;
+                    case 0:
                         arena.addToRedScore(3);
+                        break;
+                    default:
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef");
                 }
             } else {
                 switch (level) {
-                    case 4:
-                        arena.addToRedScore(5);
                     case 3:
-                        arena.addToRedScore(4);
+                        arena.addToRedScore(5);
+                        break;
                     case 2:
-                        arena.addToRedScore(3);
+                        arena.addToRedScore(4);
+                        break;
                     case 1:
+                        arena.addToRedScore(3);
+                        break;
+                    case 0:
                         arena.addToRedScore(2);
+                        break;
+                    default:
+                        throw new Error("Something has gone horribly wrong in the maplesim internal reef");
                 }
             }
         }
@@ -171,8 +204,11 @@ public class ReefscapeReefBranch extends goal {
 
     @Override
     public void draw(List<Pose3d> drawList) {
-        if (this.gamePieceCount == 1) {
-            drawList.add(new Pose3d(position, peiceAngle));
+        if (this.gamePieceCount > 0) {
+            drawList.add(getPose());
+        }
+        if (this.gamePieceCount > 1) {
+            drawList.add(getPose().transformBy(new Transform3d(0, 0.12, 0, new Rotation3d())));
         }
     }
 }

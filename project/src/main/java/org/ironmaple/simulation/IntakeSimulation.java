@@ -370,4 +370,8 @@ public class IntakeSimulation extends BodyFixture {
     public void register(SimulatedArena arena) {
         arena.addIntakeSimulation(this);
     }
+
+    public boolean isRunning() {
+        return intakeRunning;
+    }
 }

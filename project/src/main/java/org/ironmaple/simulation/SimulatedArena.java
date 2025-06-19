@@ -266,6 +266,7 @@ public abstract class SimulatedArena {
      */
     public synchronized void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {
         this.physicsWorld.addBody(driveTrainSimulation);
+
         this.driveTrainSimulations.add(driveTrainSimulation);
     }
 
@@ -352,6 +353,10 @@ public abstract class SimulatedArena {
         this.redScore = 0;
     }
 
+    public synchronized void shutDown() {
+        this.physicsWorld.removeAllBodies();
+    }
+
     /**
      *
      *
@@ -394,7 +399,7 @@ public abstract class SimulatedArena {
      *       {@link SimulatedArena#addCustomSimulation(Simulatable)} .
      * </ul>
      */
-    private void simulationSubTick(int subTickNum) {
+    protected void simulationSubTick(int subTickNum) {
         SimulatedBattery.simulationSubTick();
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
@@ -411,7 +416,7 @@ public abstract class SimulatedArena {
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
         Set<GamePieceOnFieldSimulation> returnList = new HashSet<GamePieceOnFieldSimulation>();
         for (GamePieceInterface gamePiece : this.gamePieces) {
-            if (!gamePiece.isGrounded()) {
+            if (gamePiece.isGrounded()) {
                 returnList.add((GamePieceOnFieldSimulation) gamePiece);
             }
         }

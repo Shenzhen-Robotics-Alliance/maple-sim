@@ -293,7 +293,7 @@ public class GamePieceProjectile implements GamePieceInterface {
 
     private boolean isOutOfField(double time) {
         final Translation3d position = getPositionAtTime(time);
-        final double EDGE_TOLERANCE = 0.5;
+        final double EDGE_TOLERANCE = 2;
         return position.getX() < -EDGE_TOLERANCE
                 || position.getX() > LegacyFieldMirroringUtils2024.FIELD_WIDTH + EDGE_TOLERANCE
                 || position.getY() < -EDGE_TOLERANCE

@@ -3,9 +3,20 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2024Crescendo extends SimulatedArena {
+
+    private double blueAmpClock = 0;
+    private int blueAmpCount = 0;
+
+    private double redAmpClock = 0;
+    private int redAmpCount = 0;
+
+    private final CresendoSpeaker redSpeaker;
+    private final CresendoSpeaker blueSpeaker;
+
     /** the obstacles on the 2024 competition field */
     public static final class CrescendoFieldObstaclesMap extends FieldMap {
         private static final double FIELD_WIDTH = 16.54;
@@ -71,6 +82,12 @@ public class Arena2024Crescendo extends SimulatedArena {
 
     public Arena2024Crescendo() {
         super(new CrescendoFieldObstaclesMap());
+
+        redSpeaker = new CresendoSpeaker(this, false);
+        super.addCustomSimulation(redSpeaker);
+
+        blueSpeaker = new CresendoSpeaker(this, true);
+        super.addCustomSimulation(blueSpeaker);
     }
 
     @Override
@@ -79,5 +96,45 @@ public class Arena2024Crescendo extends SimulatedArena {
             super.addGamePiece(new CrescendoNoteOnField(notePosition));
 
         super.addCustomSimulation(new CrescendoHumanPlayerSimulation(this));
+    }
+
+    @Override
+    public void simulationSubTick(int tickNum) {
+        redAmpClock -= 1 / getSimulationSubTicksIn1Period();
+        blueAmpClock -= 1 / getSimulationSubTicksIn1Period();
+        super.simulationSubTick(tickNum);
+    }
+
+    public boolean isAmped(boolean isBlue) {
+        if (isBlue) {
+            return blueAmpClock > 0 || DriverStation.isAutonomous();
+        } else {
+            return redAmpClock > 0 || DriverStation.isAutonomous();
+        }
+    }
+
+    public void addAmpCharge(boolean isBlue) {
+        if (isBlue) {
+            blueAmpCount = Math.min(blueAmpCount + 1, 2);
+        } else {
+            redAmpCount = Math.min(redAmpCount + 1, 2);
+        }
+    }
+
+    public boolean activateAmp(boolean isBlue) {
+        if (isBlue && blueAmpCount == 2) {
+            blueAmpCount = 0;
+            blueAmpClock = 5;
+            System.out.println("blue amped it up");
+            return true;
+        }
+        if (!isBlue && redAmpCount == 2) {
+            redAmpCount = 0;
+            redAmpClock = 5;
+            System.out.println("red amped it up");
+            return true;
+        }
+
+        return false;
     }
 }

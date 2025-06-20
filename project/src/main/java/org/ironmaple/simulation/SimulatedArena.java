@@ -342,6 +342,8 @@ public abstract class SimulatedArena {
         this.redScore = 0;
     }
 
+
+    /**<h2> Shuts down the current SimulatedArena and stops all simulation so that simulatable objects may be added to a new arena </h2>*/
     public synchronized void shutDown() {
         this.physicsWorld.removeAllBodies();
     }
@@ -402,6 +404,11 @@ public abstract class SimulatedArena {
         for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
     }
 
+
+    /**
+     * <h2>Returns a list of all grounded pieces on the feild</h2>
+     * @return all grounded (aka not projectile) pieces on the feild as a set of GamePieceOnFieldSimulation objects
+     */
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
         Set<GamePieceOnFieldSimulation> returnList = new HashSet<GamePieceOnFieldSimulation>();
         for (GamePieceInterface gamePiece : this.gamePieces) {
@@ -409,10 +416,15 @@ public abstract class SimulatedArena {
                 returnList.add((GamePieceOnFieldSimulation) gamePiece);
             }
         }
-        ;
+        
         return returnList;
     }
 
+
+    /**
+     * <h2>Returns a list of all projectile peices on the feild</h2>
+     * @return all projectile peices on the feild as a set of GampePieceProjectile objects
+     */
     public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
         Set<GamePieceProjectile> returnList = new HashSet<GamePieceProjectile>();
         for (GamePieceInterface gamePiece : this.gamePieces) {
@@ -420,7 +432,7 @@ public abstract class SimulatedArena {
                 returnList.add((GamePieceProjectile) gamePiece);
             }
         }
-        ;
+        
         return returnList;
     }
 

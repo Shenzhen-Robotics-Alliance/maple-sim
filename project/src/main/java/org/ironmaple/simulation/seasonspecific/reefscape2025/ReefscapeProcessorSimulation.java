@@ -48,7 +48,7 @@ public class ReefscapeProcessorSimulation extends goal {
     @Override
     protected void addPoints() {
         if (isBlue) {
-            arena.addToBlueScore(6);
+            arena.addToScore(isBlue, 6);
             this.arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
                     blueProcessorLaunchPose.toTranslation2d(),
                     new Translation2d(),
@@ -58,7 +58,7 @@ public class ReefscapeProcessorSimulation extends goal {
                     MetersPerSecond.of(7),
                     Degrees.of(45)));
         } else {
-            arena.addToRedScore(6);
+            arena.addToScore(isBlue, 6);
             this.arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
                     redProcessorLaunchPose.toTranslation2d(),
                     new Translation2d(),

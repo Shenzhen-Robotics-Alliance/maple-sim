@@ -3,19 +3,24 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2024Crescendo extends SimulatedArena {
 
-    private double blueAmpClock = 0;
-    private int blueAmpCount = 0;
+    protected double blueAmpClock = 0;
+    protected int blueAmpCount = 0;
 
-    private double redAmpClock = 0;
-    private int redAmpCount = 0;
+    protected double redAmpClock = 0;
+    protected int redAmpCount = 0;
 
-    private final CresendoSpeaker redSpeaker;
-    private final CresendoSpeaker blueSpeaker;
+    protected final CrescendoSpeaker redSpeaker;
+    protected final CrescendoSpeaker blueSpeaker;
+
+    protected final CrescendoAmp redAmp;
+    protected final CrescendoAmp blueAmp;
 
     /** the obstacles on the 2024 competition field */
     public static final class CrescendoFieldObstaclesMap extends FieldMap {
@@ -83,11 +88,17 @@ public class Arena2024Crescendo extends SimulatedArena {
     public Arena2024Crescendo() {
         super(new CrescendoFieldObstaclesMap());
 
-        redSpeaker = new CresendoSpeaker(this, false);
+        redSpeaker = new CrescendoSpeaker(this, false);
         super.addCustomSimulation(redSpeaker);
 
-        blueSpeaker = new CresendoSpeaker(this, true);
+        blueSpeaker = new CrescendoSpeaker(this, true);
         super.addCustomSimulation(blueSpeaker);
+
+        blueAmp = new CrescendoAmp(this, true);
+        super.addCustomSimulation(blueAmp);
+
+        redAmp = new CrescendoAmp(this, false);
+        super.addCustomSimulation(redAmp);
     }
 
     @Override
@@ -100,9 +111,16 @@ public class Arena2024Crescendo extends SimulatedArena {
 
     @Override
     public void simulationSubTick(int tickNum) {
-        redAmpClock -= 1 / getSimulationSubTicksIn1Period();
-        blueAmpClock -= 1 / getSimulationSubTicksIn1Period();
+        redAmpClock -= getSimulationDt().in(Units.Seconds);
+        blueAmpClock -= getSimulationDt().in(Units.Seconds);
         super.simulationSubTick(tickNum);
+
+        SmartDashboard.putBoolean("Red is amped", isAmped(false));
+        SmartDashboard.putBoolean("Blue is amped", isAmped(true));
+        SmartDashboard.putNumber("blue Amp Charge", blueAmpCount);
+        SmartDashboard.putNumber("red Amp Charge", redAmpCount);
+        SmartDashboard.putNumber("blue Amp Clock", blueAmpClock);
+        SmartDashboard.putNumber("red Amp Clock", redAmpClock);
     }
 
     public boolean isAmped(boolean isBlue) {
@@ -134,7 +152,10 @@ public class Arena2024Crescendo extends SimulatedArena {
             System.out.println("red amped it up");
             return true;
         }
-
+        System.out.println(
+                isBlue
+                        ? "Blue "
+                        : "Red " + "Only has " + (isBlue ? blueAmpCount : redAmpCount) + "of needed 2 to use amp");
         return false;
     }
 }

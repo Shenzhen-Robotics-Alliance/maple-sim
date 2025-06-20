@@ -17,14 +17,14 @@ import org.ironmaple.simulation.goal;
  * <p>This class simulates the two <strong>REEF</strong>s on the field where <strong>CORAL</strong>s can be scored. It
  * includes all 12 {@link ReefscapeReefBranchesTower} instances on the field (both blue and red).
  */
-public class CresendoSpeaker extends goal {
+public class CrescendoSpeaker extends goal {
 
     protected static final Translation3d redSpeakerPose = new Translation3d(16.52, 5.5825, 2.1);
     protected static final Translation3d blueSpeakerPose = new Translation3d(0, 5.5825, 2.1);
     StructPublisher<Pose3d> posePublisher;
     protected final Arena2024Crescendo crescendoArena;
 
-    public CresendoSpeaker(Arena2024Crescendo arena, boolean isBlue) {
+    public CrescendoSpeaker(Arena2024Crescendo arena, boolean isBlue) {
         super(
                 arena,
                 Centimeters.of(90),
@@ -48,8 +48,8 @@ public class CresendoSpeaker extends goal {
 
     @Override
     protected void addPoints() {
-        if (isBlue) arena.addToBlueScore(crescendoArena.isAmped(true) ? 5 : 2);
-        else arena.addToRedScore(crescendoArena.isAmped(false) ? 5 : 2);
+        arena.addToScore(isBlue, crescendoArena.isAmped(isBlue) ? 5 : 2);
+        
     }
 
     @Override

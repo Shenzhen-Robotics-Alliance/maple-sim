@@ -162,83 +162,46 @@ public class ReefscapeReefBranch extends goal {
     @Override
     protected void addPoints() {
         System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
-        if (isBlue) {
-            if (DriverStation.isAutonomous()) {
-                switch (level) {
-                    case 3:
-                        arena.addToBlueScore(7);
-                        break;
-                    case 2:
-                        arena.addToBlueScore(6);
-                        break;
-                    case 1:
-                        arena.addToBlueScore(4);
-                        break;
-                    case 0:
-                        arena.addToBlueScore(3);
-                        break;
-                    default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
-                                + level + " out of a suported range 0-3");
-                }
-            } else {
-                switch (level) {
-                    case 3:
-                        arena.addToBlueScore(5);
-                        break;
-                    case 2:
-                        arena.addToBlueScore(4);
-                        break;
-                    case 1:
-                        arena.addToBlueScore(3);
-                        break;
-                    case 0:
-                        arena.addToBlueScore(2);
-                        break;
-                    default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
-                                + level + " out of a suported range 0-3");
-                }
+    
+        if (DriverStation.isAutonomous()) {
+            switch (level) {
+                case 3:
+                    arena.addToScore(isBlue, 7);
+                    break;
+                case 2:
+                    arena.addToScore(isBlue, 6);
+                    break;
+                case 1:
+                    arena.addToScore(isBlue, 4);
+                    break;
+                case 0:
+                    arena.addToScore(isBlue, 3);
+                    break;
+                default:
+                    throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
+                            + level + " out of a suported range 0-3");
             }
         } else {
-            if (DriverStation.isAutonomous()) {
-                switch (level) {
-                    case 3:
-                        arena.addToRedScore(7);
-                        break;
-                    case 2:
-                        arena.addToRedScore(6);
-                        break;
-                    case 1:
-                        arena.addToRedScore(4);
-                        break;
-                    case 0:
-                        arena.addToRedScore(3);
-                        break;
-                    default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
-                                + level + " out of a suported range 0-3");
-                }
-            } else {
-                switch (level) {
-                    case 3:
-                        arena.addToRedScore(5);
-                        break;
-                    case 2:
-                        arena.addToRedScore(4);
-                        break;
-                    case 1:
-                        arena.addToRedScore(3);
-                        break;
-                    case 0:
-                        arena.addToRedScore(2);
-                        break;
-                    default:
-                        throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
-                                + level + " out of a suported range 0-3");
-                }
+            switch (level) {
+                case 3:
+                    arena.addToScore(isBlue, 5);
+                    break;
+                case 2:
+                    arena.addToScore(isBlue, 4);
+                    break;
+                case 1:
+                    arena.addToScore(isBlue, 3);
+                    break;
+                case 0:
+                    arena.addToScore(isBlue, 2);
+                    break;
+                default:
+                    throw new Error("Something has gone horribly wrong in the maplesim internal reef, level was: "
+                            + level + " out of a suported range 0-3");
             }
         }
+    
+    
     }
 
     @Override

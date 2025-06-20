@@ -109,32 +109,21 @@ public abstract class SimulatedArena {
         return SIMULATION_DT;
     }
 
-    /** returns the current score for the red aliance */
-    public int getRedScore() {
-        return redScore;
+
+
+    public int getScore(boolean isBlue){
+        return isBlue?blueScore:redScore;
     }
 
-    /** returns the current score for the blue alliance */
-    public int getBlueScore() {
-        return blueScore;
+    public int getScore(Alliance allianceColor) {
+        return getScore(allianceColor == Alliance.Blue);
     }
 
-    public int returnScore(Alliance allianceColor) {
-        if (allianceColor == Alliance.Red) {
-            return redScore;
-        } else {
-            return blueScore;
-        }
-    }
 
-    /** adds the specified score to the red team score */
-    public void addToRedScore(int toAdd) {
-        redScore += toAdd;
-    }
 
-    /** adds the specified score to the blue team score */
-    public void addToBlueScore(int toAdd) {
-        blueScore += toAdd;
+    public void addToScore(boolean isBlue, int toAdd){
+        if (isBlue) blueScore += toAdd;
+        else redScore+=toAdd;
     }
 
     /**

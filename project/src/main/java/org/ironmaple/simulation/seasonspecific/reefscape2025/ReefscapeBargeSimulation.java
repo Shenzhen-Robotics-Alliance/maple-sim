@@ -66,7 +66,6 @@ public class ReefscapeBargeSimulation extends goal {
 
     @Override
     protected void addPoints() {
-        if (isBlue) arena.addToBlueScore(4);
-        else arena.addToRedScore(4);
+        arena.addToScore(isBlue, 4);
     }
 }

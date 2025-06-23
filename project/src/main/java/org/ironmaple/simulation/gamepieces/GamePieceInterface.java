@@ -12,14 +12,14 @@ import edu.wpi.first.math.geometry.Translation3d;
 public interface GamePieceInterface {
 
     /**
-     * <h2> gives the pose3d of a game piece.</h2>
-     * @return the pose of this piece as a Pose3d.
+     * <h2> Gives the pose3d of a game piece.</h2>
+     * @return The pose of this piece as a Pose3d.
      */
     public Pose3d getPose3d();
 
     /**
-     * <h2> gives the string type of the current game piece.</h2> 
-     * @return the game piece string type (ex "Coral", "Algae", "Note").
+     * <h2> Gives the string type of the current game piece.</h2> 
+     * @return The game piece string type (ex "Coral", "Algae", "Note").
      */
     public String getType();
 
@@ -34,11 +34,11 @@ public interface GamePieceInterface {
 
 
     /**
-     * <h2>Gives wether or not the piece is "grounded"</h2> 
+     * <h2>Gives wether or not the piece is "grounded".</h2> 
      * 
      * 
-     * A grounded piece is likely a child of {@link GamePieceOnFieldSimulation} while a non grounded piece is likely a child of{@link GamePieceProjectile}
-     * @return wether or not the piece is grounded 
+     * A grounded piece is likely a child of {@link GamePieceOnFieldSimulation} while a non grounded piece is likely a child of{@link GamePieceProjectile}.
+     * @return wether or not the piece is grounded.
      */
     public boolean isGrounded();
 }

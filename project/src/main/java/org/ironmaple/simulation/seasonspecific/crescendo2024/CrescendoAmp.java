@@ -11,9 +11,9 @@ import org.ironmaple.simulation.goal;
 /**
  *
  *
- * <h2>Simulates a <strong>AMP</strong>s on the field.</h2>
+ * <h2>Simulates a <strong>AMPS</strong> on the field.</h2>
  *
- * <p>This class simulates the <strong>AMP</strong>s on the field where <strong>NOTES</strong>s can be scored.
+ * <p>This class simulates the <strong>AMP</strong> on the field where <strong>NOTES</strong>s can be scored.
  */
 public class CrescendoAmp extends goal {
 

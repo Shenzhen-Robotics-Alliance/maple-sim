@@ -123,6 +123,13 @@ public class Arena2024Crescendo extends SimulatedArena {
         SmartDashboard.putNumber("red Amp Clock", redAmpClock);
     }
 
+
+    /**
+     * <h2>Returns wether the specified team currently has an amped speaker</h2>
+     * This function returns true during autonomous since the autonomous mode behaves exactly like amplified game play. 
+     * @param isBlue Wether to check the blue or red alliance. 
+     * @return Wether the specified alliance is currently amplified. 
+     */
     public boolean isAmped(boolean isBlue) {
         if (isBlue) {
             return blueAmpClock > 0 || DriverStation.isAutonomous();
@@ -131,6 +138,10 @@ public class Arena2024Crescendo extends SimulatedArena {
         }
     }
 
+    /**
+     * <h2> Adds a charge to the amp of the specified team. One charge is equal to one note in the amp so two charges are needed to use the amp.</h2> 
+     * @param isBlue Wether the charge is added to the blue or red alliance. 
+     */
     public void addAmpCharge(boolean isBlue) {
         if (isBlue) {
             blueAmpCount = Math.min(blueAmpCount + 1, 2);
@@ -139,7 +150,18 @@ public class Arena2024Crescendo extends SimulatedArena {
         }
     }
 
+    /**
+     * <h2>Activates the amp for the specified team.</h2>
+     * @param isBlue Wether to amplify for the blue or red team.
+     * @return Returns true if the amplification was successful and false if it was not. 
+     */
     public boolean activateAmp(boolean isBlue) {
+
+        if (DriverStation.isAutonomous()){
+            System.out.println("Amplification is not allowed during auto.");
+            return false;
+        }
+
         if (isBlue && blueAmpCount == 2) {
             blueAmpCount = 0;
             blueAmpClock = 5;

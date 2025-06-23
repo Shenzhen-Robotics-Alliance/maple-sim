@@ -35,7 +35,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     /**
      * <h2>Reverses a rotation so that the returned rotation points directly "behind" the original rotation.</h2>
      * @param toFlip The rotation to be flipped. 
-     * @return the flipped rotation.
+     * @return The flipped rotation.
      */
     public static Rotation3d flipRotation(Rotation3d toFlip) {
         return new Rotation3d(0, -toFlip.getY(), toFlip.getZ() + Math.PI);
@@ -45,8 +45,8 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * <h2> Creates a goal object </h2>
      * @param arena The host arena of this goal
      * @param xDimension The x dimension of the default box collider.
-     * @param yDimension the y dimension of the default box collider.
-     * @param height the height or z dimension of the default box collider.
+     * @param yDimension The y dimension of the default box collider.
+     * @param height The height or z dimension of the default box collider.
      * @param gamePieceType the string game piece type to be handled by this goal.
      * @param position The position of this goal.
      * @param isBlue Wether this is a blue goal or a red one. 
@@ -75,11 +75,11 @@ public abstract class goal implements SimulatedArena.Simulatable {
     }
 
     /**
-     * <h2> Creates a goal object with no scoring max</h2>
-     * @param arena The host arena of this goal
+     * <h2> Creates a goal object with no scoring max.</h2>
+     * @param arena The host arena of this goal.
      * @param xDimension The x dimension of the default box collider.
-     * @param yDimension the y dimension of the default box collider.
-     * @param height the height or z dimension of the default box collider.
+     * @param yDimension The y dimension of the default box collider.
+     * @param height The height or z dimension of the default box collider.
      * @param gamePieceType the string game piece type to be handled by this goal.
      * @param position The position of this goal.
      * @param isBlue Wether this is a blue goal or a red one. 
@@ -97,14 +97,13 @@ public abstract class goal implements SimulatedArena.Simulatable {
 
 
     /**
-     * <h2>Handles the update triggers for the goal object </h2>
-     * 
+     * <h2>Handles the update triggers for the goal object.</h2>
      */
     @Override
     public void simulationSubTick(int subTickNum) {
 
 
-        Set<GamePieceInterface> gamePieces = new HashSet<GamePieceInterface>(arena.getPiecesByType(gamePieceType));
+        Set<GamePieceInterface> gamePieces = new HashSet<GamePieceInterface>(arena.getGamePiecesByType(gamePieceType));
         Set<GamePieceInterface> toRemove = new HashSet<>();
 
         for (GamePieceInterface gamePiece : gamePieces) {
@@ -122,18 +121,24 @@ public abstract class goal implements SimulatedArena.Simulatable {
         }
     }
 
+
+    /**
+     * <h2> Sets the angle to be used when checking game piece rotation.
+     * @param angle The angle that pieces should have when interacting with this goal
+     * @param angleTolerance The tolerance to be used in checking said angle. 
+     */
     public void setNeededAngle(Rotation3d angle, Angle angleTolerance) {
         pieceAngle = angle;
         pieceAngleTolerance = angleTolerance;
     }
 
+    /**
+     * <h2> Sets the angle to be used when checking game piece rotation.
+     * @param angle The angle that pieces should have when interacting with this goal
+     */
     public void setNeededAngle(Rotation3d angle) {
         setNeededAngle(angle, pieceAngleTolerance);
     }
-
- 
-
-    protected void checkPiece(GamePieceInterface gamePiece, Set<GamePieceInterface> toRemove) {}
 
 
 
@@ -145,8 +150,8 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * <p>{@link goal#checkRotation(GamePieceInterface)}</p>
      * <p>{@link goal#checkVel(GamePieceInterface)}</p>
      * <p> Be aware that due to the nature of the goal class the above functions may or may not have the same implementation for children of the goal class. 
-     * @param gamePiece The game piece to be checked
-     * @return wether or not the game piece is within this goal
+     * @param gamePiece The game piece to be checked.
+     * @return Wether or not the game piece is within this goal.
      */
     protected boolean checkValidity(GamePieceInterface gamePiece) {
         return checkCollision(gamePiece) && checkRotation(gamePiece) && checkVel(gamePiece);
@@ -156,7 +161,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     /**
      * <h2>Checks wether or not the submitted game piece has a rotation able to be scored in this goal </h2>
      * By default the rotation needed and tolerance may be set using the {@link goal#setNeededAngle(Rotation3d, Angle)} function. However rotation checks may be handled differently by some children making this not apply. 
-     * Additionally be aware that this function only supports pitch and yaw, not role. if support for role is needed a custom implementation will have to be created. 
+     * Additionally be aware that this function only supports pitch and yaw, not role. If support for roll is needed a custom implementation will have to be created. 
      * @param gamePiece The game piece to have its rotation checked. 
      * @return Wether or not the pieces rotation is consistent with rotation that are able to be scored in this goal.
      */
@@ -184,7 +189,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
     /**
      * <h2>Returns wether or not the submitted game piece is within the goal. </h2>
      * @param gamePiece The game piece to be checked.
-     * @return wether or not the game piece is within the goal.
+     * @return Wether or not the game piece is within the goal.
      */
     protected boolean checkCollision(GamePieceInterface gamePiece){
         return xyBox.contains(new Vector2(gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))
@@ -203,7 +208,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
         return true;
     }
 
-    /** <h2> Removes all game pieces from the goal </h2> */
+    /** <h2> Removes all game pieces from this goal </h2> */
     public void clear() {
         this.gamePieceCount = 0;
     }

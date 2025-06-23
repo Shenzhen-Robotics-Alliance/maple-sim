@@ -110,17 +110,30 @@ public abstract class SimulatedArena {
     }
 
 
-
+    /**
+     * <h2>Returns the score of the specified team.</h2>
+     * @param isBlue The team to return the score of as a bool.
+     * @return The score of the specified team.
+     */
     public int getScore(boolean isBlue){
         return isBlue?blueScore:redScore;
     }
 
+    /**
+     * <h2>Returns the score of the specified team.</h2>
+     * @param allianceColor The team to return the score of as a Alliance enum.
+     * @return The score of the specified team.
+     */
     public int getScore(Alliance allianceColor) {
         return getScore(allianceColor == Alliance.Blue);
     }
 
 
-
+    /**
+     * <h2>Adds to the score of the specified team</h2>
+     * @param isBlue Wether to add to the blue or red team score.
+     * @param toAdd How many points to add.
+     */
     public void addToScore(boolean isBlue, int toAdd){
         if (isBlue) blueScore += toAdd;
         else redScore+=toAdd;
@@ -156,8 +169,7 @@ public abstract class SimulatedArena {
 
     protected final World<Body> physicsWorld;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
-    // protected final Set<GamePieceOnFieldSimulation> gamePieces;
-    // protected final Set<GamePieceProjectile> gamePieces;
+
     protected final Set<GamePieceInterface> gamePieces;
     protected final List<Simulatable> customSimulations;
 
@@ -286,7 +298,6 @@ public abstract class SimulatedArena {
      * @param gamePieceProjectile the projectile to be registered and launched in the simulation
      */
     public synchronized void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
-        System.out.println("Piece added");
         this.gamePieces.add(gamePieceProjectile);
         gamePieceProjectile.launch();
     }
@@ -458,7 +469,7 @@ public abstract class SimulatedArena {
      * @param type the type of game piece, as determined by the constructor of {@link GamePieceOnFieldSimulation}
      * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the game pieces
      */
-    public synchronized List<Pose3d> getGamePiecesByType(String type) {
+    public synchronized List<Pose3d> getGamePiecesPosesByType(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
         for (GamePieceInterface gamePiece : gamePieces)
             if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece.getPose3d());
@@ -471,13 +482,18 @@ public abstract class SimulatedArena {
      *
      * <h2>Obtains the 3D Poses of a Specific Type of Game Piece as an array.</h2>
      *
-     * @see #getGamePiecesByType(String)
+     * @see #getGamePiecesPosesByType(String)
      */
     public synchronized Pose3d[] getGamePiecesArrayByType(String type) {
-        return getGamePiecesByType(type).toArray(Pose3d[]::new);
+        return getGamePiecesPosesByType(type).toArray(Pose3d[]::new);
     }
 
-    public synchronized List<GamePieceInterface> getPiecesByType(String type) {
+    /**
+     * <h2> Returns all game pieces on the field of the specified type as a list
+     * @param type The string type to be selected.
+     * @return The game pieces as a list of {@link GamePieceInterface}
+     */
+    public synchronized List<GamePieceInterface> getGamePiecesByType(String type) {
         final List<GamePieceInterface> gamePiecesPoses = new ArrayList<>();
         for (GamePieceInterface gamePiece : gamePieces)
             if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);

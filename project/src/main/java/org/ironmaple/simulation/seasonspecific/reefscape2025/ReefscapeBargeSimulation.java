@@ -13,7 +13,7 @@ import org.ironmaple.simulation.goal;
 /**
  *
  *
- * <h2>Simulates a<strong>BARGE</strong>s on the field.</h2>
+ * <h2>Simulates a <strong>BARGE</strong>s on the field.</h2>
  *
  * <p>This class simulates a <strong>BARGE</strong>s on the field where <strong>ALGAE</strong> can be scored.
  */

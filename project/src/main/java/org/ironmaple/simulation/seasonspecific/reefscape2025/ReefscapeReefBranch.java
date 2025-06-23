@@ -76,7 +76,7 @@ public class ReefscapeReefBranch extends goal {
      * @param isBlue Wether the position is on the blue reef or the red reef.
      * @param level The level of the reef (0 indexed). Range of 0-3.
      * @param col The pole or Colum of the reef (0 indexed). Range of 0-11. 
-     * @return
+     * @return The pose of a reef branch with the specified stats. 
      */
     public static Translation3d getPoseOfBranchAt(boolean isBlue, int level, int col) {
         if (isBlue) {

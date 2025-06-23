@@ -51,7 +51,7 @@ public class GamePieceOnFieldSimulation extends Body implements GamePieceInterfa
      *
      * <h2>The Type of the Game Piece.</h2>
      *
-     * <p>Affects the result of {@link SimulatedArena#getGamePiecesByType(String)}.
+     * <p>Affects the result of {@link SimulatedArena#getGamePiecesPosesByType(String)}.
      */
     public final String type;
 

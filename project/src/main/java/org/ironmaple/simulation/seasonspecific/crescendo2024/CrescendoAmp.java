@@ -11,10 +11,9 @@ import org.ironmaple.simulation.goal;
 /**
  *
  *
- * <h2>Simulates the two <strong>REEF</strong>s on the field.</h2>
+ * <h2>Simulates a <strong>AMP</strong>s on the field.</h2>
  *
- * <p>This class simulates the two <strong>REEF</strong>s on the field where <strong>CORAL</strong>s can be scored. It
- * includes all 12 {@link ReefscapeReefBranchesTower} instances on the field (both blue and red).
+ * <p>This class simulates the <strong>AMP</strong>s on the field where <strong>NOTES</strong>s can be scored.
  */
 public class CrescendoAmp extends goal {
 
@@ -25,6 +24,12 @@ public class CrescendoAmp extends goal {
 
     StructPublisher<Pose3d> posePublisher;
 
+
+    /**
+     * <h2>Creates an Amp of the specified color.</h2>
+     * @param arena The host arena of this amp.
+     * @param isBlue Wether this is the blue amp or the red one.
+     */
     public CrescendoAmp(Arena2024Crescendo arena, boolean isBlue) {
         super(
                 arena,
@@ -42,7 +47,7 @@ public class CrescendoAmp extends goal {
         StructPublisher<Pose3d> ampPublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueAmp" : "RedAmp", Pose3d.struct)
                 .publish();
-        ampPublisher.set(new Pose3d(position, this.peiceAngle));
+        ampPublisher.set(new Pose3d(position, this.pieceAngle));
     }
 
     @Override

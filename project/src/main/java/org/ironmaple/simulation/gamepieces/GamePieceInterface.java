@@ -5,9 +5,9 @@ import edu.wpi.first.math.geometry.Translation3d;
 /**
  *
  *
- * <h1>Interface for all Gamee pieces.</h1>
+ * <h1>Interface for all Game pieces.</h1>
  *
- * <p>This class contains baisc functions all game peices will have so that game peices of different types can be used interchangably in collision detection.
+ * <p>This class contains basic functions all game pieces will have so that game pieces of different types can be used interchangeably in collision detection.
  */
 public interface GamePieceInterface {
 
@@ -19,14 +19,14 @@ public interface GamePieceInterface {
 
     /**
      * <h2> gives the string type of the current game piece.</h2> 
-     * @return the game peice string type (ex "Coral", "Algae", "Note").
+     * @return the game piece string type (ex "Coral", "Algae", "Note").
      */
     public String getType();
 
     /**
      * <h2> Gives the velocity of the game piece.</h2>
      * 
-     * For grounded game pieces the z access velocity does not exist and so will be set to 0 automaticly.
+     * For grounded game pieces the z access velocity does not exist and so will be set to 0 automatically.
      * 
      * @return The velocity of the game piece as a Translation3d.
      */
@@ -34,11 +34,11 @@ public interface GamePieceInterface {
 
 
     /**
-     * <h2>Gives wether or not the peice is "grounded"</h2> 
+     * <h2>Gives wether or not the piece is "grounded"</h2> 
      * 
      * 
-     * A grounded piece is likly a child of {@link GamePieceOnFieldSimulation} while a non grounded piece is likly a child of{@link GamePieceProjectile}
-     * @return wether or not the peice is grounded 
+     * A grounded piece is likely a child of {@link GamePieceOnFieldSimulation} while a non grounded piece is likely a child of{@link GamePieceProjectile}
+     * @return wether or not the piece is grounded 
      */
     public boolean isGrounded();
 }

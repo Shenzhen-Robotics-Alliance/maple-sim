@@ -52,11 +52,6 @@ public class ReefscapeAlgaeOnFly extends GamePieceProjectile {
                 launchingSpeed,
                 shooterAngle);
 
-        // super.withTargetPosition(
-        //                 () -> FieldMirroringUtils.toCurrentAllianceTranslation(new Translation3d(8.785, 1.906, 2.1)))
-        //         .withTargetTolerance(new Translation3d(0.8, 3, 0.1))
-        //         .withHitTargetCallBack(hitNetCallBack);
-
         super.withTouchGroundHeight(0.8);
         super.enableBecomesGamePieceOnFieldAfterTouchGround();
     }

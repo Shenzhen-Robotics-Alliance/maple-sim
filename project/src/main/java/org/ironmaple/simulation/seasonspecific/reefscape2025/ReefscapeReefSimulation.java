@@ -9,12 +9,28 @@ import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.goal;
 
+
+/**
+ *
+ *
+ * <h2>Simulates a <strong>REEF</strong>s on the field.</h2>
+ *
+ * <p>This class simulates a <strong>REEF</strong>s on the field where <strong>CORAL</strong>s can be scored.
+ * This class does not directly handle scoring uses an array of {@link ReefscapeReefBranch} objects. 
+ * However for all other purposes this class behaves and can be used like a normal goal.
+ */
 class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
     protected final List<ReefscapeReefBranch> branches;
     public ReefscapeAlgaeOnField algae;
     private StructArrayPublisher<Pose3d> reefPub;
     Pose3d[] branchPoses;
 
+
+    /**
+     * <h2>Creates an reef of the specified color.</h2>
+     * @param arena The host arena of this reef.
+     * @param isBlue Wether this is the blue reef or the red one.
+     */
     ReefscapeReefSimulation(Arena2025Reefscape arena, boolean isBlue) {
         branches = new ArrayList<ReefscapeReefBranch>(48);
         branchPoses = new Pose3d[96];
@@ -32,7 +48,6 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
         reefPub = NetworkTableInstance.getDefault()
                 .getStructArrayTopic(isBlue ? "BlueReef" : "RedReef", Pose3d.struct)
                 .publish();
-        SmartDashboard.putString("testFromReef", "yay");
 
         reefPub.set(branchPoses);
     }
@@ -45,15 +60,12 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
 
     @Override
     public void simulationSubTick(int subTickNum) {
-        // System.out.println("test");
         for (ReefscapeReefBranch branch : branches) {
-            // System.out.println("New branch");
-            // System.out.println(branch.level);
-            // System.out.println(branch.col);
             branch.simulationSubTick(subTickNum);
         }
     }
 
+    /**<h2>Resets the reef to its original state.</h2>*/
     public void clearReef() {
         for (ReefscapeReefBranch branch : branches) {
             branch.clear();

@@ -306,7 +306,7 @@ public abstract class SimulatedArena {
         return this.gamePieces.remove(gamePiece);
     }
 
-    public synchronized boolean removePeice(GamePieceInterface toRemove) {
+    public synchronized boolean removePiece(GamePieceInterface toRemove) {
         if (toRemove.isGrounded()) {
             return removeGamePiece((GamePieceOnFieldSimulation) toRemove);
         }
@@ -406,8 +406,8 @@ public abstract class SimulatedArena {
 
 
     /**
-     * <h2>Returns a list of all grounded pieces on the feild</h2>
-     * @return all grounded (aka not projectile) pieces on the feild as a set of GamePieceOnFieldSimulation objects
+     * <h2>Returns a list of all grounded pieces on the field</h2>
+     * @return all grounded (aka not projectile) pieces on the field as a set of GamePieceOnFieldSimulation objects
      */
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
         Set<GamePieceOnFieldSimulation> returnList = new HashSet<GamePieceOnFieldSimulation>();
@@ -422,8 +422,8 @@ public abstract class SimulatedArena {
 
 
     /**
-     * <h2>Returns a list of all projectile peices on the feild</h2>
-     * @return all projectile peices on the feild as a set of GampePieceProjectile objects
+     * <h2>Returns a list of all projectile pieces on the field</h2>
+     * @return all projectile pieces on the field as a set of GamePieceProjectile objects
      */
     public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
         Set<GamePieceProjectile> returnList = new HashSet<GamePieceProjectile>();
@@ -477,7 +477,7 @@ public abstract class SimulatedArena {
         return getGamePiecesByType(type).toArray(Pose3d[]::new);
     }
 
-    public synchronized List<GamePieceInterface> getPeicesByType(String type) {
+    public synchronized List<GamePieceInterface> getPiecesByType(String type) {
         final List<GamePieceInterface> gamePiecesPoses = new ArrayList<>();
         for (GamePieceInterface gamePiece : gamePieces)
             if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);

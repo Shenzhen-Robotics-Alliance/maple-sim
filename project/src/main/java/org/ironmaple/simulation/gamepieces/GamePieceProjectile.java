@@ -114,7 +114,7 @@ public class GamePieceProjectile implements GamePieceInterface {
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeed the speed at which the game piece is launche
+     * @param launchingSpeed the speed at which the game piece is launch
      * @param shooterAngle the pitch angle of the shooter when launching
      */
     public GamePieceProjectile(
@@ -463,7 +463,7 @@ public class GamePieceProjectile implements GamePieceInterface {
             if (gamePieceProjectile.hasHitGround()) gamePieceProjectile.addGamePieceAfterTouchGround(simulatedArena);
         }
 
-        while (!toRemoves.isEmpty()) simulatedArena.removePeice(toRemoves.poll().cleanUp());
+        while (!toRemoves.isEmpty()) simulatedArena.removePiece(toRemoves.poll().cleanUp());
     }
 
     // The rest are methods to configure a game piece projectile simulation

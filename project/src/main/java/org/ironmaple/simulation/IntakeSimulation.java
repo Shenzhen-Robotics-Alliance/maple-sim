@@ -363,12 +363,10 @@ public class IntakeSimulation extends BodyFixture {
         }
     }
 
-    /** <h2> registers this intake with the current Arena </h2 */
     public void register() {
         register(SimulatedArena.getInstance());
     }
 
-    /** <h2> registers this intake with the given Arena </h2 */
     public void register(SimulatedArena arena) {
         arena.addIntakeSimulation(this);
     }

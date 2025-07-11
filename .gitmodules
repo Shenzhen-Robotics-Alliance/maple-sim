@@ -7,3 +7,6 @@
 [submodule "templates/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced"]
 	path = templates/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced
 	url = https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced
+[submodule "templates/CTRE-Swerve-MapleSim"]
+	path = templates/CTRE-Swerve-MapleSim
+	url = https://github.com/Shenzhen-Robotics-Alliance/CTRE-Swerve-MapleSim

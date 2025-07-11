@@ -1,0 +1,9 @@
+[submodule "templates/AdvantageKit-SparkSwerveTemplate-MapleSim"]
+	path = templates/AdvantageKit-SparkSwerveTemplate-MapleSim
+	url = https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-SparkSwerveTemplate-MapleSim
+[submodule "templates/AdvantageKit-TalonSwerveTemplate-MapleSim"]
+	path = templates/AdvantageKit-TalonSwerveTemplate-MapleSim
+	url = https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim
+[submodule "templates/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced"]
+	path = templates/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced
+	url = https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced

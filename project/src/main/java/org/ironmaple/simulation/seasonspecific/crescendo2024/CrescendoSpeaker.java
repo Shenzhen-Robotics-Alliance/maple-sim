@@ -14,8 +14,8 @@ import org.ironmaple.simulation.goal;
  *
  * <h2>Simulates a <strong>SPEAKER</strong>s on the field.</h2>
  *
- * <p>This class simulates the <strong>SPEAKER</strong>s on the field where <strong>NOTES</strong>s can be scored. 
- * It may be amplified by using the {@link Arena2024Crescendo#activateAmp(boolean)} function on the host arena.
+ * <p>This class simulates the <strong>SPEAKER</strong>s on the field where <strong>NOTES</strong>s can be scored. It
+ * may be amplified by using the {@link Arena2024Crescendo#activateAmp(boolean)} function on the host arena.
  */
 public class CrescendoSpeaker extends goal {
 
@@ -24,9 +24,11 @@ public class CrescendoSpeaker extends goal {
     StructPublisher<Pose3d> posePublisher;
     protected final Arena2024Crescendo crescendoArena;
 
-
     /**
+     *
+     *
      * <h2>Creates an Speaker of the specified color.</h2>
+     *
      * @param arena The host arena of this speaker.
      * @param isBlue Wether this is the blue speaker or the red one.
      */
@@ -40,7 +42,7 @@ public class CrescendoSpeaker extends goal {
                 isBlue ? blueSpeakerPose : redSpeakerPose,
                 isBlue);
 
-                crescendoArena = arena;
+        crescendoArena = arena;
         StructPublisher<Pose3d> speakerPosePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueSpeaker" : "RedSpeaker", Pose3d.struct)
                 .publish();
@@ -54,13 +56,13 @@ public class CrescendoSpeaker extends goal {
 
     @Override
     protected void addPoints() {
+        arena.addValueToMatchBreakdown(isBlue, "TotalNotesInSpeaker", 1);
+        arena.addValueToMatchBreakdown(isBlue, "AmplifiedScore", crescendoArena.isAmped(isBlue) ? 5 : 0);
         arena.addToScore(isBlue, crescendoArena.isAmped(isBlue) ? 5 : 2);
-        
     }
 
     @Override
     public void draw(List<Pose3d> drawList) {
         return;
     }
-
 }

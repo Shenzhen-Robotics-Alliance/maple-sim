@@ -24,9 +24,11 @@ public class CrescendoAmp extends goal {
 
     StructPublisher<Pose3d> posePublisher;
 
-
     /**
+     *
+     *
      * <h2>Creates an Amp of the specified color.</h2>
+     *
      * @param arena The host arena of this amp.
      * @param isBlue Wether this is the blue amp or the red one.
      */
@@ -52,6 +54,8 @@ public class CrescendoAmp extends goal {
 
     @Override
     protected void addPoints() {
+        crescendoArena.addValueToMatchBreakdown(isBlue, "TotalNotesInAmp", 1.0);
+        arena.addValueToMatchBreakdown(isBlue, "AmplifiedScore", crescendoArena.isAmped(isBlue) ? 2 : 0);
 
         crescendoArena.addAmpCharge(isBlue);
         arena.addToScore(isBlue, crescendoArena.isAmped(isBlue) ? 2 : 1);

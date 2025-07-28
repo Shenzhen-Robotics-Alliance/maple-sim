@@ -95,6 +95,12 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         redProcessor = new ReefscapeProcessorSimulation(this, false);
         super.addCustomSimulation(redProcessor);
+
+        setupValueForMatchBreakdown("AlgaeInProcessor");
+        setupValueForMatchBreakdown("AlgaeInNet");
+        setupValueForMatchBreakdown("CoralScoredInAuto");
+        setupValueForMatchBreakdown("CoralScoredOnLevel");
+        setupValueForMatchBreakdown("TotalCoralScored");
     }
 
     @Override
@@ -110,6 +116,9 @@ public class Arena2025Reefscape extends SimulatedArena {
                 .toArray(Translation2d[]::new);
         for (Translation2d position : redPositions) super.addGamePiece(new ReefscapeCoralAlgaeStack(position));
     }
+
+    @Override
+    public void simulationSubTick(int tickNum) {}
 
     @Override
     public synchronized List<Pose3d> getGamePiecesPosesByType(String type) {

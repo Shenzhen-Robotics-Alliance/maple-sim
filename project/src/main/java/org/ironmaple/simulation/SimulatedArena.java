@@ -563,7 +563,7 @@ public abstract class SimulatedArena {
         for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
 
         replaceValueInMatchBreakDown(true, "TotalScore", blueScore);
-        replaceValueInMatchBreakDown(true, "TotalScore", redScore);
+        replaceValueInMatchBreakDown(false, "TotalScore", redScore);
 
         if (shouldPublishMatchBreakdown) {
             publishBreakdown();

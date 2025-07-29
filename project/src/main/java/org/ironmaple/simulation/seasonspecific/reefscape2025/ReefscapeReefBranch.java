@@ -167,7 +167,7 @@ public class ReefscapeReefBranch extends goal {
     protected void addPoints() {
         System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
         arena.addValueToMatchBreakdown(isBlue, "CoralScoredInAuto", DriverStation.isAutonomous() ? 1 : 0);
-        arena.addValueToMatchBreakdown(isBlue, "CoralScoredOnLevel" + String.valueOf(level + 1), 1);
+        arena.addValueToMatchBreakdown(isBlue, "CoralScoredOnLevel " + String.valueOf(level + 1), 1);
         arena.addValueToMatchBreakdown(isBlue, "TotalCoralScored", 1);
 
         if (DriverStation.isAutonomous()) {

@@ -5,7 +5,11 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -58,6 +62,20 @@ public abstract class SimulatedArena {
     protected int redScore = 0;
     protected int blueScore = 0;
 
+    public Map<String, Double> redScoringBreakdown = new Hashtable<String, Double>();
+    public Map<String, Double> blueScoringBreakdown = new Hashtable<String, Double>();
+    protected Map<String, DoublePublisher> redPublishers = new Hashtable<String, DoublePublisher>();
+    protected Map<String, DoublePublisher> bluePublishers = new Hashtable<String, DoublePublisher>();
+
+    public NetworkTable redTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown/Red Alliance");
+    public NetworkTable blueTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown/blue Alliance");
+    public NetworkTable genericInfoTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown");
+
+    Boolean shouldPublishMatchBreakdown = true;
+
     private static SimulatedArena instance = null;
     /**
      *
@@ -109,18 +127,23 @@ public abstract class SimulatedArena {
         return SIMULATION_DT;
     }
 
-
     /**
+     *
+     *
      * <h2>Returns the score of the specified team.</h2>
+     *
      * @param isBlue The team to return the score of as a bool.
      * @return The score of the specified team.
      */
-    public int getScore(boolean isBlue){
-        return isBlue?blueScore:redScore;
+    public int getScore(boolean isBlue) {
+        return isBlue ? blueScore : redScore;
     }
 
     /**
+     *
+     *
      * <h2>Returns the score of the specified team.</h2>
+     *
      * @param allianceColor The team to return the score of as a Alliance enum.
      * @return The score of the specified team.
      */
@@ -128,15 +151,18 @@ public abstract class SimulatedArena {
         return getScore(allianceColor == Alliance.Blue);
     }
 
-
     /**
+     *
+     *
      * <h2>Adds to the score of the specified team</h2>
+     *
      * @param isBlue Wether to add to the blue or red team score.
      * @param toAdd How many points to add.
      */
-    public void addToScore(boolean isBlue, int toAdd){
+    public void addToScore(boolean isBlue, int toAdd) {
         if (isBlue) blueScore += toAdd;
-        else redScore+=toAdd;
+        else redScore += toAdd;
+        addValueToMatchBreakdown(isBlue, DriverStation.isAutonomous() ? "AutoScore" : "TeleopScore", toAdd);
     }
 
     /**
@@ -194,6 +220,9 @@ public abstract class SimulatedArena {
         customSimulations = new ArrayList<>();
         this.gamePieces = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
+        setupValueForMatchBreakdown("TotalScore");
+        setupValueForMatchBreakdown("TeleopScore");
+        setupValueForMatchBreakdown("AutoScore");
     }
 
     /**
@@ -291,6 +320,121 @@ public abstract class SimulatedArena {
     /**
      *
      *
+     * <h2>Tells the arena to start publishing the match breakdown data to network tables</h2>
+     */
+    public void enableBreakdownPublishing() {
+        shouldPublishMatchBreakdown = true;
+    }
+
+    /**
+     *
+     *
+     * <h2>Tells the arena to stop publishing the match breakdown data to network tables</h2>
+     */
+    public void disableBreakdownPublishing() {
+        shouldPublishMatchBreakdown = false;
+    }
+
+    /**
+     *
+     *
+     * <h2>Publishes the match breakdown data to network tables</h2>
+     */
+    protected void publishBreakdown() {
+
+        for (String key : redScoringBreakdown.keySet()) {
+            if (!redPublishers.containsKey(key))
+                redPublishers.put(key, redTable.getDoubleTopic(key).publish());
+
+            redPublishers.get(key).set(redScoringBreakdown.get(key));
+        }
+        for (String key : blueScoringBreakdown.keySet()) {
+            if (!bluePublishers.containsKey(key))
+                bluePublishers.put(key, blueTable.getDoubleTopic(key).publish());
+
+            bluePublishers.get(key).set(blueScoringBreakdown.get(key));
+        }
+
+        // genericInfoTable.getDoubleTopic("currentMatchTime").publish().set(blueScore);
+    }
+
+    /**
+     *
+     *
+     * <h2>replaces or adds a value to the match scoring breakdown published to network tables</h2>
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param valueKey The name of the value to be added
+     * @param value The value to be added
+     */
+    public void replaceValueInMatchBreakDown(boolean isBlueTeam, String valueKey, Double value) {
+        if (isBlueTeam) blueScoringBreakdown.put(valueKey, value);
+        else redScoringBreakdown.put(valueKey, value);
+    }
+
+    /**
+     *
+     *
+     * <h2>Defaults a value to 0 and creates it in the match breakdown. This is useful on startup to make sure all match
+     * breakdown values display before they are first updated</h2>
+     *
+     * @param valueKey The key to add to match breakdown
+     */
+    public void setupValueForMatchBreakdown(String valueKey) {
+        replaceValueInMatchBreakDown(true, valueKey, 0);
+        replaceValueInMatchBreakDown(false, valueKey, 0);
+    }
+
+    /**
+     *
+     *
+     * <h2>replaces or adds a value to the match scoring breakdown published to network tables</h2>
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param valueKey The name of the value to be added
+     * @param value The value to be added
+     */
+    public void replaceValueInMatchBreakDown(boolean isBlueTeam, String valueKey, Integer value) {
+        replaceValueInMatchBreakDown(isBlueTeam, valueKey, (double) value);
+    }
+
+    /**
+     *
+     *
+     * <h2>Adds too a value in the scoring breakdown. If value does not already exist in the scoring breakdown it will
+     * be defaulted to 0 and then added too
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param ValueKey The name of the value to be added too
+     * @param toAdd how much to be added to specified value
+     */
+    public void addValueToMatchBreakdown(boolean isBlueTeam, String ValueKey, Double toAdd) {
+        if (isBlueTeam) {
+            if (blueScoringBreakdown.get(ValueKey) == null) blueScoringBreakdown.put(ValueKey, toAdd);
+            else blueScoringBreakdown.put(ValueKey, blueScoringBreakdown.get(ValueKey) + toAdd);
+        } else {
+            if (redScoringBreakdown.get(ValueKey) == null) redScoringBreakdown.put(ValueKey, toAdd);
+            else redScoringBreakdown.put(ValueKey, redScoringBreakdown.get(ValueKey) + toAdd);
+        }
+    }
+
+    /**
+     *
+     *
+     * <h2>Adds too a value in the scoring breakdown. If value does not already exist in the scoring breakdown it will
+     * be defaulted to 0 and then added too
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param ValueKey The name of the value to be added too
+     * @param toAdd how much to be added to specified value
+     */
+    public void addValueToMatchBreakdown(boolean isBlueTeam, String valueKey, int toAdd) {
+        addValueToMatchBreakdown(isBlueTeam, valueKey, (double) toAdd);
+    }
+
+    /**
+     *
+     *
      * <h2>Registers a {@link GamePieceProjectile} to the Simulation and Launches It.</h2>
      *
      * <p>Calls to {@link GamePieceProjectile#launch()}, which will launch the game piece immediately.
@@ -353,8 +497,12 @@ public abstract class SimulatedArena {
         this.redScore = 0;
     }
 
-
-    /**<h2> Shuts down the current SimulatedArena and stops all simulation so that simulatable objects may be added to a new arena </h2>*/
+    /**
+     *
+     *
+     * <h2>Shuts down the current SimulatedArena and stops all simulation so that simulatable objects may be added to a
+     * new arena </h2>
+     */
     public synchronized void shutDown() {
         this.physicsWorld.removeAllBodies();
     }
@@ -413,11 +561,20 @@ public abstract class SimulatedArena {
         for (IntakeSimulation intakeSimulation : intakeSimulations) intakeSimulation.removeObtainedGamePieces(this);
 
         for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
+
+        replaceValueInMatchBreakDown(true, "TotalScore", blueScore);
+        replaceValueInMatchBreakDown(false, "TotalScore", redScore);
+
+        if (shouldPublishMatchBreakdown) {
+            publishBreakdown();
+        }
     }
 
-
     /**
+     *
+     *
      * <h2>Returns a list of all grounded pieces on the field</h2>
+     *
      * @return all grounded (aka not projectile) pieces on the field as a set of GamePieceOnFieldSimulation objects
      */
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
@@ -427,13 +584,15 @@ public abstract class SimulatedArena {
                 returnList.add((GamePieceOnFieldSimulation) gamePiece);
             }
         }
-        
+
         return returnList;
     }
 
-
     /**
+     *
+     *
      * <h2>Returns a list of all projectile pieces on the field</h2>
+     *
      * @return all projectile pieces on the field as a set of GamePieceProjectile objects
      */
     public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
@@ -443,7 +602,7 @@ public abstract class SimulatedArena {
                 returnList.add((GamePieceProjectile) gamePiece);
             }
         }
-        
+
         return returnList;
     }
 
@@ -489,7 +648,10 @@ public abstract class SimulatedArena {
     }
 
     /**
-     * <h2> Returns all game pieces on the field of the specified type as a list
+     *
+     *
+     * <h2>Returns all game pieces on the field of the specified type as a list
+     *
      * @param type The string type to be selected.
      * @return The game pieces as a list of {@link GamePieceInterface}
      */

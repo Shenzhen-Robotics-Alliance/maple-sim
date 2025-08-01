@@ -165,7 +165,6 @@ public class GamePieceOnFieldSimulation extends Body implements GamePieceInterfa
 
     public void onIntake(String intakeTargetGamePieceType) {}
 
-
     @Override
     public String getType() {
         return this.type;

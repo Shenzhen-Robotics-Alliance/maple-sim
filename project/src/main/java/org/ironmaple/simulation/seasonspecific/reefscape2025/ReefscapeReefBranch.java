@@ -19,18 +19,16 @@ import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
  *
-
+ *
  * <h2>Simulates a Reefscape branch on the field.</h2>
  *
- * <p>This class simulates a Reefscape branch where corals can be scored. 
- * This class should not be used directly and instead should be used via a {@link ReefscapeReefSimulation} which will handle an entire reef.
+ * <p>This class simulates a Reefscape branch where corals can be scored. This class should not be used directly and
+ * instead should be used via a {@link ReefscapeReefSimulation} which will handle an entire reef.
  */
 public class ReefscapeReefBranch extends goal {
 
-
     public final int level;
     public final int col;
-
 
     public static final Translation2d origin =
             new Translation2d(FieldMirroringUtils.FIELD_WIDTH / 2, FieldMirroringUtils.FIELD_HEIGHT / 2);
@@ -72,11 +70,14 @@ public class ReefscapeReefBranch extends goal {
     };
 
     /**
+     *
+     *
      * <h2>Returns the required pose of a reef branch at the designated position.</h2>
+     *
      * @param isBlue Wether the position is on the blue reef or the red reef.
      * @param level The level of the reef (0 indexed). Range of 0-3.
-     * @param col The pole or Colum of the reef (0 indexed). Range of 0-11. 
-     * @return The pose of a reef branch with the specified stats. 
+     * @param col The pole or Colum of the reef (0 indexed). Range of 0-11.
+     * @return The pose of a reef branch with the specified stats.
      */
     public static Translation3d getPoseOfBranchAt(boolean isBlue, int level, int col) {
         if (isBlue) {
@@ -94,14 +95,15 @@ public class ReefscapeReefBranch extends goal {
             .map(FieldMirroringUtils::flip)
             .toArray(Rotation2d[]::new);
 
-
-
     /**
+     *
+     *
      * <h2>Creates a singular reef branch at the specified location </h2>
+     *
      * @param arena The host arena of this reef.
      * @param isBlue Wether the position is on the blue reef or the red reef.
      * @param level The level of the reef (0 indexed). Range of 0-3.
-     * @param col The pole or Colum of the reef (0 indexed). Range of 0-11. 
+     * @param col The pole or Colum of the reef (0 indexed). Range of 0-11.
      */
     public ReefscapeReefBranch(Arena2025Reefscape arena, boolean isBlue, int level, int col) {
         super(
@@ -133,7 +135,10 @@ public class ReefscapeReefBranch extends goal {
     }
 
     /**
+     *
+     *
      * <h2>Gives the pose of the reef branch.</h2>
+     *
      * @return This position of this branch as a pose3d.
      */
     public Pose3d getPose() {
@@ -158,11 +163,13 @@ public class ReefscapeReefBranch extends goal {
         }
     }
 
-
     @Override
     protected void addPoints() {
         System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
-    
+        arena.addValueToMatchBreakdown(isBlue, "CoralScoredInAuto", DriverStation.isAutonomous() ? 1 : 0);
+        arena.addValueToMatchBreakdown(isBlue, "CoralScoredOnLevel " + String.valueOf(level + 1), 1);
+        arena.addValueToMatchBreakdown(isBlue, "TotalCoralScored", 1);
+
         if (DriverStation.isAutonomous()) {
             switch (level) {
                 case 3:
@@ -200,8 +207,6 @@ public class ReefscapeReefBranch extends goal {
                             + level + " out of a supported range 0-3");
             }
         }
-    
-    
     }
 
     @Override

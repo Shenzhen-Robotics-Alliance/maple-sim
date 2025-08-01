@@ -3,9 +3,9 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2024Crescendo extends SimulatedArena {
@@ -15,6 +15,9 @@ public class Arena2024Crescendo extends SimulatedArena {
 
     protected double redAmpClock = 0;
     protected int redAmpCount = 0;
+
+    BooleanPublisher redAmpPublisher = redTable.getBooleanTopic("redIsAmped").publish();
+    BooleanPublisher blueAmpPublisher = blueTable.getBooleanTopic("blueIsAmped").publish();
 
     protected final CrescendoSpeaker redSpeaker;
     protected final CrescendoSpeaker blueSpeaker;
@@ -99,6 +102,13 @@ public class Arena2024Crescendo extends SimulatedArena {
 
         redAmp = new CrescendoAmp(this, false);
         super.addCustomSimulation(redAmp);
+
+        setupValueForMatchBreakdown("TotalNotesInAmp");
+        setupValueForMatchBreakdown("TotalNotesInSpeaker");
+        setupValueForMatchBreakdown("TotalAmplifiedScore");
+        setupValueForMatchBreakdown("TotalTimeAmped");
+        setupValueForMatchBreakdown("AmpClock");
+        setupValueForMatchBreakdown("AmpCharge");
     }
 
     @Override
@@ -111,24 +121,35 @@ public class Arena2024Crescendo extends SimulatedArena {
 
     @Override
     public void simulationSubTick(int tickNum) {
+        addValueToMatchBreakdown(
+                false, "totalTimeAmped", redAmpClock > 0 ? getSimulationDt().in(Units.Seconds) : 0);
+        addValueToMatchBreakdown(
+                true, "totalTimeAmped", blueAmpClock > 0 ? getSimulationDt().in(Units.Seconds) : 0);
+
         redAmpClock -= getSimulationDt().in(Units.Seconds);
         blueAmpClock -= getSimulationDt().in(Units.Seconds);
+
         super.simulationSubTick(tickNum);
 
-        SmartDashboard.putBoolean("Red is amped", isAmped(false));
-        SmartDashboard.putBoolean("Blue is amped", isAmped(true));
-        SmartDashboard.putNumber("blue Amp Charge", blueAmpCount);
-        SmartDashboard.putNumber("red Amp Charge", redAmpCount);
-        SmartDashboard.putNumber("blue Amp Clock", blueAmpClock);
-        SmartDashboard.putNumber("red Amp Clock", redAmpClock);
+        replaceValueInMatchBreakDown(true, "AmpCharge", blueAmpCount);
+        replaceValueInMatchBreakDown(false, "AmpCharge", redAmpCount);
+        replaceValueInMatchBreakDown(true, "AmpClock", blueAmpClock > 0 ? blueAmpClock : 0);
+        replaceValueInMatchBreakDown(false, "AmpClock", redAmpClock > 0 ? redAmpClock : 0);
+        // SmartDashboard.putNumber("blue Amp Charge", blueAmpCount);
+        // SmartDashboard.putNumber("red Amp Charge", redAmpCount);
+        // SmartDashboard.putNumber("blue Amp Clock", blueAmpClock);
+        // SmartDashboard.putNumber("red Amp Clock", redAmpClock);
     }
 
-
     /**
+     *
+     *
      * <h2>Returns wether the specified team currently has an amped speaker</h2>
-     * This function returns true during autonomous since the autonomous mode behaves exactly like amplified game play. 
-     * @param isBlue Wether to check the blue or red alliance. 
-     * @return Wether the specified alliance is currently amplified. 
+     *
+     * This function returns true during autonomous since the autonomous mode behaves exactly like amplified game play.
+     *
+     * @param isBlue Wether to check the blue or red alliance.
+     * @return Wether the specified alliance is currently amplified.
      */
     public boolean isAmped(boolean isBlue) {
         if (isBlue) {
@@ -139,8 +160,12 @@ public class Arena2024Crescendo extends SimulatedArena {
     }
 
     /**
-     * <h2> Adds a charge to the amp of the specified team. One charge is equal to one note in the amp so two charges are needed to use the amp.</h2> 
-     * @param isBlue Wether the charge is added to the blue or red alliance. 
+     *
+     *
+     * <h2>Adds a charge to the amp of the specified team. One charge is equal to one note in the amp so two charges are
+     * needed to use the amp.</h2>
+     *
+     * @param isBlue Wether the charge is added to the blue or red alliance.
      */
     public void addAmpCharge(boolean isBlue) {
         if (isBlue) {
@@ -151,13 +176,16 @@ public class Arena2024Crescendo extends SimulatedArena {
     }
 
     /**
+     *
+     *
      * <h2>Activates the amp for the specified team.</h2>
+     *
      * @param isBlue Wether to amplify for the blue or red team.
-     * @return Returns true if the amplification was successful and false if it was not. 
+     * @return Returns true if the amplification was successful and false if it was not.
      */
     public boolean activateAmp(boolean isBlue) {
 
-        if (DriverStation.isAutonomous()){
+        if (DriverStation.isAutonomous()) {
             System.out.println("Amplification is not allowed during auto.");
             return false;
         }

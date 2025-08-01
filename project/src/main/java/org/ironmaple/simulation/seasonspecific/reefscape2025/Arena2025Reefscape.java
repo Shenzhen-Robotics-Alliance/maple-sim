@@ -95,6 +95,15 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         redProcessor = new ReefscapeProcessorSimulation(this, false);
         super.addCustomSimulation(redProcessor);
+
+        setupValueForMatchBreakdown("AlgaeInProcessor");
+        setupValueForMatchBreakdown("AlgaeInNet");
+        setupValueForMatchBreakdown("CoralScoredInAuto");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 1");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 2");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 3");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 4");
+        setupValueForMatchBreakdown("TotalCoralScored");
     }
 
     @Override

@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Translation3d;
  * <p>This class contains basic functions all game pieces will have so that game pieces of different types can be used
  * interchangeably in collision detection.
  */
-public interface GamePieceInterface {
+public interface GamePiece {
 
     /**
      *
@@ -20,7 +20,7 @@ public interface GamePieceInterface {
      *
      * @return The pose of this piece as a Pose3d.
      */
-    public Pose3d getPose3d();
+    Pose3d getPose3d();
 
     /**
      *
@@ -29,7 +29,7 @@ public interface GamePieceInterface {
      *
      * @return The game piece string type (ex "Coral", "Algae", "Note").
      */
-    public String getType();
+    String getType();
 
     /**
      *
@@ -40,7 +40,7 @@ public interface GamePieceInterface {
      *
      * @return The velocity of the game piece as a Translation3d.
      */
-    public Translation3d getVelocity3dMPS();
+    Translation3d getVelocity3dMPS();
 
     /**
      *
@@ -52,5 +52,5 @@ public interface GamePieceInterface {
      *
      * @return wether or not the piece is grounded.
      */
-    public boolean isGrounded();
+    boolean isGrounded();
 }

@@ -13,8 +13,8 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Arrays;
 import java.util.List;
-import org.ironmaple.simulation.gamepieces.GamePieceInterface;
-import org.ironmaple.simulation.goal;
+import org.ironmaple.simulation.Goal;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
@@ -25,10 +25,10 @@ import org.ironmaple.utils.FieldMirroringUtils;
  * <p>This class simulates a Reefscape branch where corals can be scored. This class should not be used directly and
  * instead should be used via a {@link ReefscapeReefSimulation} which will handle an entire reef.
  */
-public class ReefscapeReefBranch extends goal {
+public class ReefscapeReefBranch extends Goal {
 
     public final int level;
-    public final int col;
+    public final int column;
 
     public static final Translation2d origin =
             new Translation2d(FieldMirroringUtils.FIELD_WIDTH / 2, FieldMirroringUtils.FIELD_HEIGHT / 2);
@@ -103,35 +103,35 @@ public class ReefscapeReefBranch extends goal {
      * @param arena The host arena of this reef.
      * @param isBlue Wether the position is on the blue reef or the red reef.
      * @param level The level of the reef (0 indexed). Range of 0-3.
-     * @param col The pole or Colum of the reef (0 indexed). Range of 0-11.
+     * @param column The pole or Colum of the reef (0 indexed). Range of 0-11.
      */
-    public ReefscapeReefBranch(Arena2025Reefscape arena, boolean isBlue, int level, int col) {
+    public ReefscapeReefBranch(Arena2025Reefscape arena, boolean isBlue, int level, int column) {
         super(
                 arena,
                 level == 0 ? Centimeters.of(30) : Centimeters.of(10),
                 level == 0 ? Centimeters.of(100) : Centimeters.of(10),
                 Centimeters.of(30),
                 "Coral",
-                getPoseOfBranchAt(isBlue, level, col),
+                getPoseOfBranchAt(isBlue, level, column),
                 isBlue,
                 level == 0 ? 2 : 1);
 
         if (level == 1 || level == 2) {
             if (isBlue) {
                 setNeededAngle(
-                        new Rotation3d(0, -35 * Math.PI / 180, branchesFacingOutwardsBlue[col].getRadians()),
+                        new Rotation3d(0, -35 * Math.PI / 180, branchesFacingOutwardsBlue[column].getRadians()),
                         Degrees.of(10));
             } else {
                 setNeededAngle(
-                        new Rotation3d(0, -35 * Math.PI / 180, branchesFacingOutwardsRed[col].getRadians()),
+                        new Rotation3d(0, -35 * Math.PI / 180, branchesFacingOutwardsRed[column].getRadians()),
                         Degrees.of(10));
             }
         } else if (level == 3) {
             setNeededAngle(
-                    new Rotation3d(0, -Math.PI / 2, branchesFacingOutwardsRed[col].getRadians()), Degrees.of(10));
+                    new Rotation3d(0, -Math.PI / 2, branchesFacingOutwardsRed[column].getRadians()), Degrees.of(10));
         }
         this.level = level;
-        this.col = col;
+        this.column = column;
     }
 
     /**
@@ -146,11 +146,11 @@ public class ReefscapeReefBranch extends goal {
                 position,
                 pieceAngle != null
                         ? pieceAngle
-                        : new Rotation3d(0, 0, branchesFacingOutwardsBlue[col].getRadians()).plus(flip90));
+                        : new Rotation3d(0, 0, branchesFacingOutwardsBlue[column].getRadians()).plus(flip90));
     }
 
     @Override
-    public boolean checkRotation(GamePieceInterface gamePiece) {
+    public boolean checkRotation(GamePiece gamePiece) {
         if (level == 3) {
             Rotation3d rotation = gamePiece.getPose3d().getRotation();
             System.out.println(Math.abs(rotation.getY() + Math.PI / 2));
@@ -166,9 +166,8 @@ public class ReefscapeReefBranch extends goal {
     @Override
     protected void addPoints() {
         System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
-        arena.addValueToMatchBreakdown(isBlue, "CoralScoredInAuto", DriverStation.isAutonomous() ? 1 : 0);
+        arena.addValueToMatchBreakdown(isBlue, "Auto/CoralScoredInAuto", DriverStation.isAutonomous() ? 1 : 0);
         arena.addValueToMatchBreakdown(isBlue, "CoralScoredOnLevel " + String.valueOf(level + 1), 1);
-        arena.addValueToMatchBreakdown(isBlue, "TotalCoralScored", 1);
 
         if (DriverStation.isAutonomous()) {
             switch (level) {

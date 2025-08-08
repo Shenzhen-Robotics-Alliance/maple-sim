@@ -45,7 +45,7 @@ import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
  *   <li><strong>DOES NOT</strong> have collision space when flying.
  * </ul>
  */
-public class GamePieceProjectile implements GamePieceInterface {
+public class GamePieceProjectile implements GamePiece {
     /**
      * This value may seem unusual compared to the standard 9.8 m/s² for gravity. However, through experimentation, it
      * appears more realistic in our simulation, possibly due to the ignoring of air drag.
@@ -392,6 +392,7 @@ public class GamePieceProjectile implements GamePieceInterface {
      *
      * @return a {@link Pose3d} object representing the current pose of the game piece
      */
+    @Override
     public Pose3d getPose3d() {
         return new Pose3d(getPositionAtTime(launchedTimer.get()), gamePieceRotation);
     }
@@ -405,6 +406,7 @@ public class GamePieceProjectile implements GamePieceInterface {
      * @return a {@link Translation3d} object representing the calculated 3d velocity of the projectile at time <code>t
      *     </code>, in meters per second
      */
+    @Override
     public Translation3d getVelocity3dMPS() {
         return getVelocityMPSAtTime(launchedTimer.get());
     }

@@ -6,8 +6,8 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
-import org.ironmaple.simulation.gamepieces.GamePieceInterface;
-import org.ironmaple.simulation.goal;
+import org.ironmaple.simulation.Goal;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 
 /**
  *
@@ -17,7 +17,7 @@ import org.ironmaple.simulation.goal;
  * <p>This class simulates the <strong>SPEAKER</strong>s on the field where <strong>NOTES</strong>s can be scored. It
  * may be amplified by using the {@link Arena2024Crescendo#activateAmp(boolean)} function on the host arena.
  */
-public class CrescendoSpeaker extends goal {
+public class CrescendoSpeaker extends Goal {
 
     protected static final Translation3d redSpeakerPose = new Translation3d(16.52, 5.5825, 2.1);
     protected static final Translation3d blueSpeakerPose = new Translation3d(0, 5.5825, 2.1);
@@ -50,7 +50,7 @@ public class CrescendoSpeaker extends goal {
     }
 
     @Override
-    protected boolean checkVel(GamePieceInterface gamePiece) {
+    protected boolean checkVel(GamePiece gamePiece) {
         return gamePiece.getVelocity3dMPS().getZ() > 0;
     }
 

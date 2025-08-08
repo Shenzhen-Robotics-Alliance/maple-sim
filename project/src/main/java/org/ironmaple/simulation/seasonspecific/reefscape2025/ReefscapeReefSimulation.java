@@ -5,8 +5,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import java.util.ArrayList;
 import java.util.List;
+import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.goal;
 
 /**
  *
@@ -42,7 +42,7 @@ class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
                 branchPoses[2 * (tower * 4 + level)] = tempPose;
 
                 branchPoses[2 * (tower * 4 + level) + 1] =
-                        new Pose3d(tempPose.getTranslation(), goal.flipRotation(tempPose.getRotation()));
+                        new Pose3d(tempPose.getTranslation(), Goal.flipRotation(tempPose.getRotation()));
             }
         }
         reefPub = NetworkTableInstance.getDefault()

@@ -6,7 +6,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
-import org.ironmaple.simulation.goal;
+import org.ironmaple.simulation.Goal;
 
 /**
  *
@@ -15,7 +15,7 @@ import org.ironmaple.simulation.goal;
  *
  * <p>This class simulates the <strong>AMP</strong> on the field where <strong>NOTES</strong>s can be scored.
  */
-public class CrescendoAmp extends goal {
+public class CrescendoAmp extends Goal {
 
     protected static final Translation3d blueAmpPose = new Translation3d(1.81, 8.3, 0.66);
     protected static final Translation3d redAmpPose = new Translation3d(14.7, 8.3, 0.66);

@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.Set;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
-import org.ironmaple.simulation.gamepieces.GamePieceInterface;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 
 /**
  *
  *
  * <h2>A abstract class to handle scoring elements in simulation.</h2>
  */
-public abstract class goal implements SimulatedArena.Simulatable {
+public abstract class Goal implements SimulatedArena.Simulatable {
 
     protected Rectangle xyBox;
     protected final Distance height;
@@ -60,7 +60,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * @param isBlue Wether this is a blue goal or a red one.
      * @param max How many pieces can be scored in this goal.
      */
-    public goal(
+    public Goal(
             SimulatedArena arena,
             Distance xDimension,
             Distance yDimension,
@@ -95,7 +95,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * @param position The position of this goal.
      * @param isBlue Wether this is a blue goal or a red one.
      */
-    public goal(
+    public Goal(
             SimulatedArena arena,
             Distance xDimension,
             Distance yDimension,
@@ -114,10 +114,10 @@ public abstract class goal implements SimulatedArena.Simulatable {
     @Override
     public void simulationSubTick(int subTickNum) {
 
-        Set<GamePieceInterface> gamePieces = new HashSet<GamePieceInterface>(arena.getGamePiecesByType(gamePieceType));
-        Set<GamePieceInterface> toRemove = new HashSet<>();
+        Set<GamePiece> gamePieces = new HashSet<GamePiece>(arena.getGamePiecesByType(gamePieceType));
+        Set<GamePiece> toRemove = new HashSet<>();
 
-        for (GamePieceInterface gamePiece : gamePieces) {
+        for (GamePiece gamePiece : gamePieces) {
             if (gamePieceCount != max && !toRemove.contains(gamePiece) && this.checkValidity(gamePiece)) {
                 gamePieceCount++;
                 this.addPoints();
@@ -125,7 +125,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
             }
         }
 
-        for (GamePieceInterface gamePiece : toRemove) {
+        for (GamePiece gamePiece : toRemove) {
             this.arena.removePiece(gamePiece);
         }
     }
@@ -160,11 +160,11 @@ public abstract class goal implements SimulatedArena.Simulatable {
      *
      * <p>{@link org.dyn4j.geometry.AbstractShape#contains(Vector2 point)}
      *
-     * <p>{@link goal#checkHeight(GamePieceInterface)}
+     * <p>{@link Goal#checkHeight(GamePiece)}
      *
-     * <p>{@link goal#checkRotation(GamePieceInterface)}
+     * <p>{@link Goal#checkRotation(GamePiece)}
      *
-     * <p>{@link goal#checkVel(GamePieceInterface)}
+     * <p>{@link Goal#checkVel(GamePiece)}
      *
      * <p>Be aware that due to the nature of the goal class the above functions may or may not have the same
      * implementation for children of the goal class.
@@ -172,7 +172,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * @param gamePiece The game piece to be checked.
      * @return Wether or not the game piece is within this goal.
      */
-    protected boolean checkValidity(GamePieceInterface gamePiece) {
+    protected boolean checkValidity(GamePiece gamePiece) {
         return checkCollision(gamePiece) && checkRotation(gamePiece) && checkVel(gamePiece);
     }
 
@@ -181,7 +181,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      *
      * <h2>Checks wether or not the submitted game piece has a rotation able to be scored in this goal </h2>
      *
-     * By default the rotation needed and tolerance may be set using the {@link goal#setNeededAngle(Rotation3d, Angle)}
+     * By default the rotation needed and tolerance may be set using the {@link Goal#setNeededAngle(Rotation3d, Angle)}
      * function. However rotation checks may be handled differently by some children making this not apply. Additionally
      * be aware that this function only supports pitch and yaw, not role. If support for roll is needed a custom
      * implementation will have to be created.
@@ -189,7 +189,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * @param gamePiece The game piece to have its rotation checked.
      * @return Wether or not the pieces rotation is consistent with rotation that are able to be scored in this goal.
      */
-    protected boolean checkRotation(GamePieceInterface gamePiece) {
+    protected boolean checkRotation(GamePiece gamePiece) {
         if (pieceAngle == null) {
             System.out.println("test");
             return true;
@@ -217,7 +217,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * @param gamePiece The game piece to be checked.
      * @return Wether or not the game piece is within the goal.
      */
-    protected boolean checkCollision(GamePieceInterface gamePiece) {
+    protected boolean checkCollision(GamePiece gamePiece) {
         return xyBox.contains(new Vector2(
                         gamePiece.getPose3d().getX(), gamePiece.getPose3d().getY()))
                 && gamePiece.getPose3d().getZ() >= elevation.in(Units.Meters)
@@ -235,7 +235,7 @@ public abstract class goal implements SimulatedArena.Simulatable {
      * @param gamePiece The game piece to have its velocity checked.
      * @return Wether or not the pieces velocity is consistent with velocities that are able to be scored in this goal.
      */
-    protected boolean checkVel(GamePieceInterface gamePiece) {
+    protected boolean checkVel(GamePiece gamePiece) {
         return true;
     }
 

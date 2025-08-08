@@ -10,7 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
-import org.ironmaple.simulation.goal;
+import org.ironmaple.simulation.Goal;
 
 /**
  *
@@ -20,7 +20,7 @@ import org.ironmaple.simulation.goal;
  * <p>This class simulates a <strong>PROCESSOR</strong>s on the field where <strong>ALGAE</strong>s can be scored. It
  * will automatically launch the algae scored into the apposing barge and always hit.
  */
-public class ReefscapeProcessorSimulation extends goal {
+public class ReefscapeProcessorSimulation extends Goal {
 
     protected static final Translation3d blueProcessorPose = new Translation3d(6.34, -0.5, 0);
     protected static final Translation3d redProcessorPose = new Translation3d(11.5, 8.5, 0);

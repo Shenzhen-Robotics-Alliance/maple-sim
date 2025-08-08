@@ -5,9 +5,12 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -61,6 +64,7 @@ public abstract class SimulatedArena {
 
     protected int redScore = 0;
     protected int blueScore = 0;
+    protected double matchClock = 0;
 
     public Map<String, Double> redScoringBreakdown = new Hashtable<String, Double>();
     public Map<String, Double> blueScoringBreakdown = new Hashtable<String, Double>();
@@ -73,6 +77,17 @@ public abstract class SimulatedArena {
             NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown/blue Alliance");
     public NetworkTable genericInfoTable =
             NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown");
+
+    public DoublePublisher matchClockPublisher =
+            genericInfoTable.getDoubleTopic("Match Clock").publish();
+
+    public static BooleanPublisher resetFieldPublisher = NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard/MapleSim/MatchData")
+            .getBooleanTopic("Reset Field")
+            .publish();
+
+    public static BooleanSubscriber resetFieldSubscriber =
+            resetFieldPublisher.getTopic().subscribe(false);
 
     Boolean shouldPublishMatchBreakdown = true;
 
@@ -162,7 +177,7 @@ public abstract class SimulatedArena {
     public void addToScore(boolean isBlue, int toAdd) {
         if (isBlue) blueScore += toAdd;
         else redScore += toAdd;
-        addValueToMatchBreakdown(isBlue, DriverStation.isAutonomous() ? "AutoScore" : "TeleopScore", toAdd);
+        addValueToMatchBreakdown(isBlue, DriverStation.isAutonomous() ? "Auto/AutoScore" : "TeleopScore", toAdd);
     }
 
     /**
@@ -222,7 +237,8 @@ public abstract class SimulatedArena {
         this.intakeSimulations = new ArrayList<>();
         setupValueForMatchBreakdown("TotalScore");
         setupValueForMatchBreakdown("TeleopScore");
-        setupValueForMatchBreakdown("AutoScore");
+        setupValueForMatchBreakdown("Auto/AutoScore");
+        resetFieldPublisher.set(false);
     }
 
     /**
@@ -529,7 +545,15 @@ public abstract class SimulatedArena {
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
+            matchClock += getSimulationDt().in(Units.Seconds);
+
             SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
+
+            if (resetFieldSubscriber.get()) {
+                SimulatedArena.getInstance().resetFieldForAuto();
+                resetFieldPublisher.set(false);
+                matchClock = 0;
+            }
         }
     }
 
@@ -567,6 +591,7 @@ public abstract class SimulatedArena {
 
         if (shouldPublishMatchBreakdown) {
             publishBreakdown();
+            matchClockPublisher.set(matchClock);
         }
     }
 
@@ -673,6 +698,7 @@ public abstract class SimulatedArena {
      */
     public synchronized void resetFieldForAuto() {
         clearGamePieces();
+        matchClock = 0;
         placeGamePiecesOnField();
     }
 

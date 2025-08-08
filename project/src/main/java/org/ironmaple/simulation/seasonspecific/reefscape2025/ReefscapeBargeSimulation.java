@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.*;
 import org.ironmaple.simulation.gamepieces.GamePieceInterface;
 import org.ironmaple.simulation.goal;
@@ -67,6 +68,8 @@ public class ReefscapeBargeSimulation extends goal {
     @Override
     protected void addPoints() {
         arena.addValueToMatchBreakdown(isBlue, "AlgaeInNet", 1);
+        arena.addValueToMatchBreakdown(isBlue, "Auto/AlgaeScoredInAuto", DriverStation.isAutonomous() ? 1 : 0);
+
         arena.addToScore(isBlue, 4);
     }
 }

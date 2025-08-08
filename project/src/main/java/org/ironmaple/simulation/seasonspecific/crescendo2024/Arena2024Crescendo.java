@@ -102,13 +102,6 @@ public class Arena2024Crescendo extends SimulatedArena {
 
         redAmp = new CrescendoAmp(this, false);
         super.addCustomSimulation(redAmp);
-
-        setupValueForMatchBreakdown("TotalNotesInAmp");
-        setupValueForMatchBreakdown("TotalNotesInSpeaker");
-        setupValueForMatchBreakdown("TotalAmplifiedScore");
-        setupValueForMatchBreakdown("TotalTimeAmped");
-        setupValueForMatchBreakdown("AmpClock");
-        setupValueForMatchBreakdown("AmpCharge");
     }
 
     @Override
@@ -117,6 +110,12 @@ public class Arena2024Crescendo extends SimulatedArena {
             super.addGamePiece(new CrescendoNoteOnField(notePosition));
 
         super.addCustomSimulation(new CrescendoHumanPlayerSimulation(this));
+        setupValueForMatchBreakdown("TotalNotesInAmp");
+        setupValueForMatchBreakdown("TotalNotesInSpeaker");
+        setupValueForMatchBreakdown("TotalAmplifiedScore");
+        setupValueForMatchBreakdown("TotalTimeAmped");
+        setupValueForMatchBreakdown("AmpClock");
+        setupValueForMatchBreakdown("AmpCharge");
     }
 
     @Override

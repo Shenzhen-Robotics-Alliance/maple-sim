@@ -95,15 +95,6 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         redProcessor = new ReefscapeProcessorSimulation(this, false);
         super.addCustomSimulation(redProcessor);
-
-        setupValueForMatchBreakdown("AlgaeInProcessor");
-        setupValueForMatchBreakdown("AlgaeInNet");
-        setupValueForMatchBreakdown("CoralScoredInAuto");
-        setupValueForMatchBreakdown("CoralScoredOnLevel 1");
-        setupValueForMatchBreakdown("CoralScoredOnLevel 2");
-        setupValueForMatchBreakdown("CoralScoredOnLevel 3");
-        setupValueForMatchBreakdown("CoralScoredOnLevel 4");
-        setupValueForMatchBreakdown("TotalCoralScored");
     }
 
     @Override
@@ -118,6 +109,15 @@ public class Arena2025Reefscape extends SimulatedArena {
                         new Translation2d(FieldMirroringUtils.FIELD_WIDTH - bluePosition.getX(), bluePosition.getY()))
                 .toArray(Translation2d[]::new);
         for (Translation2d position : redPositions) super.addGamePiece(new ReefscapeCoralAlgaeStack(position));
+
+        setupValueForMatchBreakdown("AlgaeInProcessor");
+        setupValueForMatchBreakdown("AlgaeInNet");
+        setupValueForMatchBreakdown("Auto/CoralScoredInAuto");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 1");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 2");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 3");
+        setupValueForMatchBreakdown("CoralScoredOnLevel 4");
+        setupValueForMatchBreakdown("Auto/AlgaeScoredInAuto");
     }
 
     @Override

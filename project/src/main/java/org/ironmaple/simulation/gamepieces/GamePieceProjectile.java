@@ -45,7 +45,7 @@ import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
  *   <li><strong>DOES NOT</strong> have collision space when flying.
  * </ul>
  */
-public class GamePieceProjectile {
+public class GamePieceProjectile implements GamePiece {
     /**
      * This value may seem unusual compared to the standard 9.8 m/s² for gravity. However, through experimentation, it
      * appears more realistic in our simulation, possibly due to the ignoring of air drag.
@@ -114,7 +114,7 @@ public class GamePieceProjectile {
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeed the speed at which the game piece is launche
+     * @param launchingSpeed the speed at which the game piece is launch
      * @param shooterAngle the pitch angle of the shooter when launching
      */
     public GamePieceProjectile(
@@ -293,7 +293,7 @@ public class GamePieceProjectile {
 
     private boolean isOutOfField(double time) {
         final Translation3d position = getPositionAtTime(time);
-        final double EDGE_TOLERANCE = 0.5;
+        final double EDGE_TOLERANCE = 2;
         return position.getX() < -EDGE_TOLERANCE
                 || position.getX() > LegacyFieldMirroringUtils2024.FIELD_WIDTH + EDGE_TOLERANCE
                 || position.getY() < -EDGE_TOLERANCE
@@ -392,6 +392,7 @@ public class GamePieceProjectile {
      *
      * @return a {@link Pose3d} object representing the current pose of the game piece
      */
+    @Override
     public Pose3d getPose3d() {
         return new Pose3d(getPositionAtTime(launchedTimer.get()), gamePieceRotation);
     }
@@ -405,6 +406,7 @@ public class GamePieceProjectile {
      * @return a {@link Translation3d} object representing the calculated 3d velocity of the projectile at time <code>t
      *     </code>, in meters per second
      */
+    @Override
     public Translation3d getVelocity3dMPS() {
         return getVelocityMPSAtTime(launchedTimer.get());
     }
@@ -463,8 +465,7 @@ public class GamePieceProjectile {
             if (gamePieceProjectile.hasHitGround()) gamePieceProjectile.addGamePieceAfterTouchGround(simulatedArena);
         }
 
-        while (!toRemoves.isEmpty())
-            gamePieceProjectiles.remove(toRemoves.poll().cleanUp());
+        while (!toRemoves.isEmpty()) simulatedArena.removePiece(toRemoves.poll().cleanUp());
     }
 
     // The rest are methods to configure a game piece projectile simulation
@@ -624,5 +625,15 @@ public class GamePieceProjectile {
     public GamePieceProjectile withTouchGroundHeight(double heightAsTouchGround) {
         this.heightAsTouchGround = heightAsTouchGround;
         return this;
+    }
+
+    @Override
+    public String getType() {
+        return this.gamePieceType;
+    }
+
+    @Override
+    public boolean isGrounded() {
+        return false;
     }
 }

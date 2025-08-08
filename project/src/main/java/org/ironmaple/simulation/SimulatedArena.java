@@ -5,7 +5,15 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +26,7 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
@@ -52,6 +61,35 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 public abstract class SimulatedArena {
     /** Whether to allow the simulation to run a real robot This feature is HIGHLY RECOMMENDED to be turned OFF */
     public static boolean ALLOW_CREATION_ON_REAL_ROBOT = false;
+
+    protected int redScore = 0;
+    protected int blueScore = 0;
+    protected double matchClock = 0;
+
+    public Map<String, Double> redScoringBreakdown = new Hashtable<String, Double>();
+    public Map<String, Double> blueScoringBreakdown = new Hashtable<String, Double>();
+    protected Map<String, DoublePublisher> redPublishers = new Hashtable<String, DoublePublisher>();
+    protected Map<String, DoublePublisher> bluePublishers = new Hashtable<String, DoublePublisher>();
+
+    public NetworkTable redTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown/Red Alliance");
+    public NetworkTable blueTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown/blue Alliance");
+    public NetworkTable genericInfoTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/MapleSim/MatchData/Breakdown");
+
+    public DoublePublisher matchClockPublisher =
+            genericInfoTable.getDoubleTopic("Match Clock").publish();
+
+    public static BooleanPublisher resetFieldPublisher = NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard/MapleSim/MatchData")
+            .getBooleanTopic("Reset Field")
+            .publish();
+
+    public static BooleanSubscriber resetFieldSubscriber =
+            resetFieldPublisher.getTopic().subscribe(false);
+
+    Boolean shouldPublishMatchBreakdown = true;
 
     private static SimulatedArena instance = null;
     /**
@@ -107,6 +145,44 @@ public abstract class SimulatedArena {
     /**
      *
      *
+     * <h2>Returns the score of the specified team.</h2>
+     *
+     * @param isBlue The team to return the score of as a bool.
+     * @return The score of the specified team.
+     */
+    public int getScore(boolean isBlue) {
+        return isBlue ? blueScore : redScore;
+    }
+
+    /**
+     *
+     *
+     * <h2>Returns the score of the specified team.</h2>
+     *
+     * @param allianceColor The team to return the score of as a Alliance enum.
+     * @return The score of the specified team.
+     */
+    public int getScore(Alliance allianceColor) {
+        return getScore(allianceColor == Alliance.Blue);
+    }
+
+    /**
+     *
+     *
+     * <h2>Adds to the score of the specified team</h2>
+     *
+     * @param isBlue Wether to add to the blue or red team score.
+     * @param toAdd How many points to add.
+     */
+    public void addToScore(boolean isBlue, int toAdd) {
+        if (isBlue) blueScore += toAdd;
+        else redScore += toAdd;
+        addValueToMatchBreakdown(isBlue, DriverStation.isAutonomous() ? "Auto/AutoScore" : "TeleopScore", toAdd);
+    }
+
+    /**
+     *
+     *
      * <h2>Overrides the Timing Configurations of the Simulations.</h2>
      *
      * <h4>If Using <a href='https://github.com/Mechanical-Advantage/AdvantageKit'>Advantage-Kit</a>: DO NOT CHANGE THE
@@ -134,9 +210,10 @@ public abstract class SimulatedArena {
 
     protected final World<Body> physicsWorld;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
-    protected final Set<GamePieceOnFieldSimulation> gamePiecesOnField;
-    protected final Set<GamePieceProjectile> gamePiecesLaunched;
+
+    protected final Set<GamePiece> gamePieces;
     protected final List<Simulatable> customSimulations;
+
     private final List<IntakeSimulation> intakeSimulations;
 
     /**
@@ -156,9 +233,12 @@ public abstract class SimulatedArena {
         for (Body obstacle : obstaclesMap.obstacles) this.physicsWorld.addBody(obstacle);
         this.driveTrainSimulations = new HashSet<>();
         customSimulations = new ArrayList<>();
-        this.gamePiecesOnField = new HashSet<>();
-        this.gamePiecesLaunched = new HashSet<>();
+        this.gamePieces = new HashSet<>();
         this.intakeSimulations = new ArrayList<>();
+        setupValueForMatchBreakdown("TotalScore");
+        setupValueForMatchBreakdown("TeleopScore");
+        setupValueForMatchBreakdown("Auto/AutoScore");
+        resetFieldPublisher.set(false);
     }
 
     /**
@@ -232,6 +312,7 @@ public abstract class SimulatedArena {
      */
     public synchronized void addDriveTrainSimulation(AbstractDriveTrainSimulation driveTrainSimulation) {
         this.physicsWorld.addBody(driveTrainSimulation);
+
         this.driveTrainSimulations.add(driveTrainSimulation);
     }
 
@@ -249,7 +330,122 @@ public abstract class SimulatedArena {
      */
     public synchronized void addGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.addBody(gamePiece);
-        this.gamePiecesOnField.add(gamePiece);
+        this.gamePieces.add(gamePiece);
+    }
+
+    /**
+     *
+     *
+     * <h2>Tells the arena to start publishing the match breakdown data to network tables</h2>
+     */
+    public void enableBreakdownPublishing() {
+        shouldPublishMatchBreakdown = true;
+    }
+
+    /**
+     *
+     *
+     * <h2>Tells the arena to stop publishing the match breakdown data to network tables</h2>
+     */
+    public void disableBreakdownPublishing() {
+        shouldPublishMatchBreakdown = false;
+    }
+
+    /**
+     *
+     *
+     * <h2>Publishes the match breakdown data to network tables</h2>
+     */
+    protected void publishBreakdown() {
+
+        for (String key : redScoringBreakdown.keySet()) {
+            if (!redPublishers.containsKey(key))
+                redPublishers.put(key, redTable.getDoubleTopic(key).publish());
+
+            redPublishers.get(key).set(redScoringBreakdown.get(key));
+        }
+        for (String key : blueScoringBreakdown.keySet()) {
+            if (!bluePublishers.containsKey(key))
+                bluePublishers.put(key, blueTable.getDoubleTopic(key).publish());
+
+            bluePublishers.get(key).set(blueScoringBreakdown.get(key));
+        }
+
+        // genericInfoTable.getDoubleTopic("currentMatchTime").publish().set(blueScore);
+    }
+
+    /**
+     *
+     *
+     * <h2>replaces or adds a value to the match scoring breakdown published to network tables</h2>
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param valueKey The name of the value to be added
+     * @param value The value to be added
+     */
+    public void replaceValueInMatchBreakDown(boolean isBlueTeam, String valueKey, Double value) {
+        if (isBlueTeam) blueScoringBreakdown.put(valueKey, value);
+        else redScoringBreakdown.put(valueKey, value);
+    }
+
+    /**
+     *
+     *
+     * <h2>Defaults a value to 0 and creates it in the match breakdown. This is useful on startup to make sure all match
+     * breakdown values display before they are first updated</h2>
+     *
+     * @param valueKey The key to add to match breakdown
+     */
+    public void setupValueForMatchBreakdown(String valueKey) {
+        replaceValueInMatchBreakDown(true, valueKey, 0);
+        replaceValueInMatchBreakDown(false, valueKey, 0);
+    }
+
+    /**
+     *
+     *
+     * <h2>replaces or adds a value to the match scoring breakdown published to network tables</h2>
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param valueKey The name of the value to be added
+     * @param value The value to be added
+     */
+    public void replaceValueInMatchBreakDown(boolean isBlueTeam, String valueKey, Integer value) {
+        replaceValueInMatchBreakDown(isBlueTeam, valueKey, (double) value);
+    }
+
+    /**
+     *
+     *
+     * <h2>Adds too a value in the scoring breakdown. If value does not already exist in the scoring breakdown it will
+     * be defaulted to 0 and then added too
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param ValueKey The name of the value to be added too
+     * @param toAdd how much to be added to specified value
+     */
+    public void addValueToMatchBreakdown(boolean isBlueTeam, String ValueKey, Double toAdd) {
+        if (isBlueTeam) {
+            if (blueScoringBreakdown.get(ValueKey) == null) blueScoringBreakdown.put(ValueKey, toAdd);
+            else blueScoringBreakdown.put(ValueKey, blueScoringBreakdown.get(ValueKey) + toAdd);
+        } else {
+            if (redScoringBreakdown.get(ValueKey) == null) redScoringBreakdown.put(ValueKey, toAdd);
+            else redScoringBreakdown.put(ValueKey, redScoringBreakdown.get(ValueKey) + toAdd);
+        }
+    }
+
+    /**
+     *
+     *
+     * <h2>Adds too a value in the scoring breakdown. If value does not already exist in the scoring breakdown it will
+     * be defaulted to 0 and then added too
+     *
+     * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
+     * @param ValueKey The name of the value to be added too
+     * @param toAdd how much to be added to specified value
+     */
+    public void addValueToMatchBreakdown(boolean isBlueTeam, String valueKey, int toAdd) {
+        addValueToMatchBreakdown(isBlueTeam, valueKey, (double) toAdd);
     }
 
     /**
@@ -262,7 +458,7 @@ public abstract class SimulatedArena {
      * @param gamePieceProjectile the projectile to be registered and launched in the simulation
      */
     public synchronized void addGamePieceProjectile(GamePieceProjectile gamePieceProjectile) {
-        this.gamePiecesLaunched.add(gamePieceProjectile);
+        this.gamePieces.add(gamePieceProjectile);
         gamePieceProjectile.launch();
     }
 
@@ -278,7 +474,14 @@ public abstract class SimulatedArena {
      */
     public synchronized boolean removeGamePiece(GamePieceOnFieldSimulation gamePiece) {
         this.physicsWorld.removeBody(gamePiece);
-        return this.gamePiecesOnField.remove(gamePiece);
+        return this.gamePieces.remove(gamePiece);
+    }
+
+    public synchronized boolean removePiece(GamePiece toRemove) {
+        if (toRemove.isGrounded()) {
+            return removeGamePiece((GamePieceOnFieldSimulation) toRemove);
+        }
+        return removeProjectile((GamePieceProjectile) toRemove);
     }
 
     /**
@@ -292,7 +495,7 @@ public abstract class SimulatedArena {
      * @return <code>true</code> if this set contained the specified element
      */
     public synchronized boolean removeProjectile(GamePieceProjectile gamePieceLaunched) {
-        return this.gamePiecesLaunched.remove(gamePieceLaunched);
+        return this.gamePieces.remove(gamePieceLaunched);
     }
 
     /**
@@ -303,9 +506,21 @@ public abstract class SimulatedArena {
      * <p>This method clears all game pieces from the physics world and the simulation's game piece collection.
      */
     public synchronized void clearGamePieces() {
-        for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField) this.physicsWorld.removeBody(gamePiece);
-        this.gamePiecesOnField.clear();
-        this.gamePiecesLaunched.clear();
+        for (GamePieceOnFieldSimulation gamePiece : this.gamePiecesOnField()) this.physicsWorld.removeBody(gamePiece);
+
+        this.gamePieces.clear();
+        this.blueScore = 0;
+        this.redScore = 0;
+    }
+
+    /**
+     *
+     *
+     * <h2>Shuts down the current SimulatedArena and stops all simulation so that simulatable objects may be added to a
+     * new arena </h2>
+     */
+    public synchronized void shutDown() {
+        this.physicsWorld.removeAllBodies();
     }
 
     /**
@@ -330,7 +545,15 @@ public abstract class SimulatedArena {
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
+            matchClock += getSimulationDt().in(Units.Seconds);
+
             SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
+
+            if (resetFieldSubscriber.get()) {
+                SimulatedArena.getInstance().resetFieldForAuto();
+                resetFieldPublisher.set(false);
+                matchClock = 0;
+            }
         }
     }
 
@@ -350,26 +573,62 @@ public abstract class SimulatedArena {
      *       {@link SimulatedArena#addCustomSimulation(Simulatable)} .
      * </ul>
      */
-    private void simulationSubTick(int subTickNum) {
+    protected void simulationSubTick(int subTickNum) {
         SimulatedBattery.simulationSubTick();
         for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
             driveTrainSimulation.simulationSubTick();
 
-        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePiecesLaunched);
+        GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceLaunched());
 
         this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
         for (IntakeSimulation intakeSimulation : intakeSimulations) intakeSimulation.removeObtainedGamePieces(this);
 
         for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
+
+        replaceValueInMatchBreakDown(true, "TotalScore", blueScore);
+        replaceValueInMatchBreakDown(false, "TotalScore", redScore);
+
+        if (shouldPublishMatchBreakdown) {
+            publishBreakdown();
+            matchClockPublisher.set(matchClock);
+        }
     }
 
+    /**
+     *
+     *
+     * <h2>Returns a list of all grounded pieces on the field</h2>
+     *
+     * @return all grounded (aka not projectile) pieces on the field as a set of GamePieceOnFieldSimulation objects
+     */
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
-        return gamePiecesOnField;
+        Set<GamePieceOnFieldSimulation> returnList = new HashSet<GamePieceOnFieldSimulation>();
+        for (GamePiece gamePiece : this.gamePieces) {
+            if (gamePiece.isGrounded()) {
+                returnList.add((GamePieceOnFieldSimulation) gamePiece);
+            }
+        }
+
+        return returnList;
     }
 
+    /**
+     *
+     *
+     * <h2>Returns a list of all projectile pieces on the field</h2>
+     *
+     * @return all projectile pieces on the field as a set of GamePieceProjectile objects
+     */
     public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
-        return gamePiecesLaunched;
+        Set<GamePieceProjectile> returnList = new HashSet<GamePieceProjectile>();
+        for (GamePiece gamePiece : this.gamePieces) {
+            if (!gamePiece.isGrounded()) {
+                returnList.add((GamePieceProjectile) gamePiece);
+            }
+        }
+
+        return returnList;
     }
 
     /**
@@ -394,13 +653,10 @@ public abstract class SimulatedArena {
      * @param type the type of game piece, as determined by the constructor of {@link GamePieceOnFieldSimulation}
      * @return a {@link List} of {@link Pose3d} objects representing the 3D positions of the game pieces
      */
-    public synchronized List<Pose3d> getGamePiecesByType(String type) {
+    public synchronized List<Pose3d> getGamePiecesPosesByType(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceOnFieldSimulation gamePiece : gamePiecesOnField)
-            if (Objects.equals(gamePiece.type, type)) gamePiecesPoses.add(gamePiece.getPose3d());
-
-        for (GamePieceProjectile gamePiece : gamePiecesLaunched)
-            if (Objects.equals(gamePiece.gamePieceType, type)) gamePiecesPoses.add(gamePiece.getPose3d());
+        for (GamePiece gamePiece : gamePieces)
+            if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
         return gamePiecesPoses;
     }
@@ -410,10 +666,26 @@ public abstract class SimulatedArena {
      *
      * <h2>Obtains the 3D Poses of a Specific Type of Game Piece as an array.</h2>
      *
-     * @see #getGamePiecesByType(String)
+     * @see #getGamePiecesPosesByType(String)
      */
     public synchronized Pose3d[] getGamePiecesArrayByType(String type) {
-        return getGamePiecesByType(type).toArray(Pose3d[]::new);
+        return getGamePiecesPosesByType(type).toArray(Pose3d[]::new);
+    }
+
+    /**
+     *
+     *
+     * <h2>Returns all game pieces on the field of the specified type as a list
+     *
+     * @param type The string type to be selected.
+     * @return The game pieces as a list of {@link GamePiece}
+     */
+    public synchronized List<GamePiece> getGamePiecesByType(String type) {
+        final List<GamePiece> gamePiecesPoses = new ArrayList<>();
+        for (GamePiece gamePiece : gamePieces)
+            if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);
+
+        return gamePiecesPoses;
     }
 
     /**
@@ -426,6 +698,7 @@ public abstract class SimulatedArena {
      */
     public synchronized void resetFieldForAuto() {
         clearGamePieces();
+        matchClock = 0;
         placeGamePiecesOnField();
     }
 

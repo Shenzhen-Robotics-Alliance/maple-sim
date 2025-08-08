@@ -112,7 +112,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
             new Transform3d(new Translation3d(0, 0, 0.15), new Rotation3d(0, Math.toRadians(90), 0));
 
     public static List<Pose3d> getStackedCoralPoses(SimulatedArena arena) {
-        return arena.getGamePiecesByType(REEFSCAPE_STACK_INFO.type()).stream()
+        return arena.getGamePiecesPosesByType(REEFSCAPE_STACK_INFO.type()).stream()
                 .map(stackPose -> stackPose.plus(STACK_TO_CORAL))
                 .toList();
     }
@@ -133,7 +133,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
 
     /** @see #getStackedAlgaePoses() */
     public static List<Pose3d> getStackedAlgaePoses(SimulatedArena arena) {
-        return arena.getGamePiecesByType(REEFSCAPE_STACK_INFO.type()).stream()
+        return arena.getGamePiecesPosesByType(REEFSCAPE_STACK_INFO.type()).stream()
                 .map(stackPose -> stackPose.plus(STACK_TO_ALGAE))
                 .toList();
     }

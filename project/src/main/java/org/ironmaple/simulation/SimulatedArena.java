@@ -26,7 +26,7 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.world.PhysicsWorld;
 import org.dyn4j.world.World;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
-import org.ironmaple.simulation.gamepieces.GamePieceInterface;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
@@ -211,7 +211,7 @@ public abstract class SimulatedArena {
     protected final World<Body> physicsWorld;
     protected final Set<AbstractDriveTrainSimulation> driveTrainSimulations;
 
-    protected final Set<GamePieceInterface> gamePieces;
+    protected final Set<GamePiece> gamePieces;
     protected final List<Simulatable> customSimulations;
 
     private final List<IntakeSimulation> intakeSimulations;
@@ -477,7 +477,7 @@ public abstract class SimulatedArena {
         return this.gamePieces.remove(gamePiece);
     }
 
-    public synchronized boolean removePiece(GamePieceInterface toRemove) {
+    public synchronized boolean removePiece(GamePiece toRemove) {
         if (toRemove.isGrounded()) {
             return removeGamePiece((GamePieceOnFieldSimulation) toRemove);
         }
@@ -604,7 +604,7 @@ public abstract class SimulatedArena {
      */
     public synchronized Set<GamePieceOnFieldSimulation> gamePiecesOnField() {
         Set<GamePieceOnFieldSimulation> returnList = new HashSet<GamePieceOnFieldSimulation>();
-        for (GamePieceInterface gamePiece : this.gamePieces) {
+        for (GamePiece gamePiece : this.gamePieces) {
             if (gamePiece.isGrounded()) {
                 returnList.add((GamePieceOnFieldSimulation) gamePiece);
             }
@@ -622,7 +622,7 @@ public abstract class SimulatedArena {
      */
     public synchronized Set<GamePieceProjectile> gamePieceLaunched() {
         Set<GamePieceProjectile> returnList = new HashSet<GamePieceProjectile>();
-        for (GamePieceInterface gamePiece : this.gamePieces) {
+        for (GamePiece gamePiece : this.gamePieces) {
             if (!gamePiece.isGrounded()) {
                 returnList.add((GamePieceProjectile) gamePiece);
             }
@@ -655,7 +655,7 @@ public abstract class SimulatedArena {
      */
     public synchronized List<Pose3d> getGamePiecesPosesByType(String type) {
         final List<Pose3d> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceInterface gamePiece : gamePieces)
+        for (GamePiece gamePiece : gamePieces)
             if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece.getPose3d());
 
         return gamePiecesPoses;
@@ -678,11 +678,11 @@ public abstract class SimulatedArena {
      * <h2>Returns all game pieces on the field of the specified type as a list
      *
      * @param type The string type to be selected.
-     * @return The game pieces as a list of {@link GamePieceInterface}
+     * @return The game pieces as a list of {@link GamePiece}
      */
-    public synchronized List<GamePieceInterface> getGamePiecesByType(String type) {
-        final List<GamePieceInterface> gamePiecesPoses = new ArrayList<>();
-        for (GamePieceInterface gamePiece : gamePieces)
+    public synchronized List<GamePiece> getGamePiecesByType(String type) {
+        final List<GamePiece> gamePiecesPoses = new ArrayList<>();
+        for (GamePiece gamePiece : gamePieces)
             if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);
 
         return gamePiecesPoses;

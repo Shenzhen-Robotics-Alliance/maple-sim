@@ -4,10 +4,10 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AdvantageKit_AdvancedSwerveDriveProject.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AdvantageKit_AdvancedSwerveDriveProject.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AdvantageKit_AdvancedSwerveDriveProject.test.iml" filepath="$PROJECT_DIR$/.idea/modules/AdvantageKit_AdvancedSwerveDriveProject.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Code.maple-sim.project.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Code.maple-sim.project.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Code.maple-sim.project.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Code.maple-sim.project.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/VScode.maple-sim.project.main.iml" filepath="$PROJECT_DIR$/.idea/modules/VScode.maple-sim.project.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/VScode.maple-sim.project.test.iml" filepath="$PROJECT_DIR$/.idea/modules/VScode.maple-sim.project.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/code.maple-sim.project.main.iml" filepath="$PROJECT_DIR$/.idea/modules/code.maple-sim.project.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/code.maple-sim.project.test.iml" filepath="$PROJECT_DIR$/.idea/modules/code.maple-sim.project.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/maple-sim.iml" filepath="$PROJECT_DIR$/.idea/maple-sim.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/maple-sim.project.iml" filepath="$PROJECT_DIR$/.idea/modules/maple-sim.project.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/maple-sim.project.main.iml" filepath="$PROJECT_DIR$/.idea/modules/maple-sim.project.main.iml" />

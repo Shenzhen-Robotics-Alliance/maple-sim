@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.Distance;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.function.Predicate;
 import org.dyn4j.collision.CollisionBody;
 import org.dyn4j.collision.Fixture;
 import org.dyn4j.dynamics.Body;
@@ -60,6 +61,7 @@ public class IntakeSimulation extends BodyFixture {
     private final Queue<GamePieceOnFieldSimulation> gamePiecesToRemove;
     private final AbstractDriveTrainSimulation driveTrainSimulation;
     private final String targetedGamePieceType;
+    private Predicate<GamePieceOnFieldSimulation> customIntakeCondition = gp -> true;
 
     public enum IntakeSide {
         FRONT,
@@ -308,6 +310,7 @@ public class IntakeSimulation extends BodyFixture {
         }
 
         private void flagGamePieceForRemoval(GamePieceOnFieldSimulation gamePiece) {
+            if (!customIntakeCondition.test(gamePiece)) return;
             gamePiecesToRemove.add(gamePiece);
             gamePiecesInIntakeCount++;
         }
@@ -378,5 +381,26 @@ public class IntakeSimulation extends BodyFixture {
      */
     public boolean isRunning() {
         return intakeRunning;
+    }
+
+    /**
+     *
+     *
+     * <h2>Sets a Custom Intake Condition.</h2>
+     *
+     * <p>This method allows the user to define a custom condition for determining whether a game piece on the field can
+     * be collected by the intake. The condition is specified as a {@link Predicate} that takes a
+     * {@link GamePieceOnFieldSimulation} object as input and returns a boolean value.
+     *
+     * <p>The condition is used to determine whether a game piece should be collected by the intake. If the predicate
+     * returns true, the game piece will be collected by the intake. If the predicate returns false, the game piece will
+     * not be collected by the intake. Note how this predicate is only called if the game piece is in contact with the
+     * intake, and the intake is turned on, and it is the target game piece.
+     *
+     * @param customIntakeCondition a {@link Predicate} representing the custom condition for intake eligibility of game
+     *     pieces on the field
+     */
+    public void setCustomIntakeCondition(Predicate<GamePieceOnFieldSimulation> customIntakeCondition) {
+        this.customIntakeCondition = customIntakeCondition;
     }
 }

@@ -97,6 +97,9 @@ public class IntakeIOSim {
         ```
     </div>
 
+!!! tip
+      Use setCustomIntakeCondition(Predicate&lt;GamePieceOnFieldSimulation&gt;) to define a custom condition which controls which game pieces can enter the intake. Example usage: if you want your simulated intake to only intake game pieces that are in a specific orentation.
+
 ---
 ## 2. Using intake simulation
 Next, implement the methods defined by the `IntakeIO` interface.

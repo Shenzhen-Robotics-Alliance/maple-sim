@@ -62,8 +62,8 @@ public class ReefscapeReefBranch extends Goal {
 
     public static final Rotation2d[] branchesFacingOutwardsBlue = new Rotation2d[] {
         Rotation2d.fromDegrees(180), Rotation2d.fromDegrees(180), // A and B
-        Rotation2d.fromDegrees(-120), Rotation2d.fromDegrees(-120), // C and D
-        Rotation2d.fromDegrees(-60), Rotation2d.fromDegrees(-60), // E and F
+        Rotation2d.fromDegrees(240), Rotation2d.fromDegrees(240), // C and D
+        Rotation2d.fromDegrees(300), Rotation2d.fromDegrees(300), // E and F
         Rotation2d.fromDegrees(0), Rotation2d.fromDegrees(0), // G and H
         Rotation2d.fromDegrees(60), Rotation2d.fromDegrees(60), // I and J
         Rotation2d.fromDegrees(120), Rotation2d.fromDegrees(120), // K and L

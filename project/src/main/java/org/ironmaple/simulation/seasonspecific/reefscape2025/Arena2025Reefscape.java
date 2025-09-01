@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Arrays;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
@@ -144,5 +145,29 @@ public class Arena2025Reefscape extends SimulatedArena {
         super.clearGamePieces();
         redReefSimulation.clearReef();
         blueReefSimulation.clearReef();
+    }
+
+    /**
+     * Obtains the amount of <strong>CORAL</strong> held on the <strong>BRANCHES</strong>.
+     *
+     * <p>This method returns a 2D array of size 12 x 4, where each entry represents the number of
+     * <strong>CORAL</strong>s held on a particular branch.
+     *
+     * <p>The <strong>BRANCHES</strong> are tracked in FMS as A, B, C, D, E, F, G, H, I, J, K, L (as per the game
+     * manual), and are mapped to indices 0, 1, 2, ... in the array.
+     *
+     * <p>The [i][j] entry in the array represents the number of <strong>CORAL</strong>(s) held on the L<code>j-1</code>
+     * branch in the <code>i</code>th section.
+     *
+     * <p>For example, <code>getBranches()[2][3]</code> returns the number of CORALs held on L4 of Branch C.
+     *
+     * <p>Note that L2, L3, and L4 can only hold one <strong>CORAL</strong>, while L1 can hold up to two
+     * <strong>CORAL</strong>s.
+     *
+     * @param side the alliance side (Red or Blue) to check for CORAL counts
+     * @return a 2D array where each entry represents the number of <strong>CORAL</strong> held on each branch
+     */
+    public int[][] getBranches(DriverStation.Alliance side) {
+        return side == DriverStation.Alliance.Red ? redReefSimulation.getBranches() : blueReefSimulation.getBranches();
     }
 }

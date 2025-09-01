@@ -278,4 +278,15 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      *     AdvantageScope
      */
     public abstract void draw(List<Pose3d> drawList);
+
+    /**
+     *
+     *
+     * <h2>Returns the number of game pieces currently scored in this goal.</h2>
+     *
+     * @return This goals game piece count.
+     */
+    public int getGamePieceCount() {
+        return gamePieceCount;
+    }
 }

@@ -51,4 +51,4 @@ https://shenzhen-robotics-alliance.github.io/maple-sim/vendordep/maple-sim.json
 
 - If you think the API for an existing feature could be improved for better readability or usability, please [submit an issue](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/issues/new/choose) and select the "API Enhancement" option.
 
-- For detailed guidelines on contributing to the project, please refer to the [contribution guide](docs/CONTRIBUTION.md).
+- For detailed guidelines on contributing to the project, please refer to the [contribution guide](https://shenzhen-robotics-alliance.github.io/maple-sim/CONTRIBUTION/index.html)).

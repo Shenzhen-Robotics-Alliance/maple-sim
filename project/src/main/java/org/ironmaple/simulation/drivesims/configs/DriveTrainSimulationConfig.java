@@ -82,6 +82,44 @@ public class DriveTrainSimulationConfig {
     /**
      *
      *
+     * <h2>Backwards Compatibility Constructor</h2>
+     *
+     * <p>This constructor retains backwards compatibility with existing code by omitting the {@code centerOfMass}
+     * parameter and defaulting it to (0, 0, 0).
+     *
+     * @param robotMass the mass of the robot, including bumpers.
+     * @param bumperLengthX the length of the bumper (distance from front to back).
+     * @param bumperWidthY the width of the bumper (distance from left to right).
+     * @param trackLengthX the distance between the front and rear wheels.
+     * @param trackWidthY the distance between the left and right wheels.
+     * @param gyroSimulationFactory the factory that creates appropriate gyro simulation for the drivetrain.
+     * @param swerveModuleSimulationFactory the factory or factories that create appropriate swerve module
+     *     simulation(s). You can specify one factory (applies to all modules), or four factories in the order (FL, FR,
+     *     BL, BR).
+     */
+    @SafeVarargs
+    public DriveTrainSimulationConfig(
+            Mass robotMass,
+            Distance bumperLengthX,
+            Distance bumperWidthY,
+            Distance trackLengthX,
+            Distance trackWidthY,
+            Supplier<GyroSimulation> gyroSimulationFactory,
+            Supplier<SwerveModuleSimulation>... swerveModuleSimulationFactory) {
+        this(
+                robotMass,
+                bumperLengthX,
+                bumperWidthY,
+                trackLengthX,
+                trackWidthY,
+                gyroSimulationFactory,
+                new Translation3d(0, 0, 0),
+                swerveModuleSimulationFactory);
+    }
+
+    /**
+     *
+     *
      * <h2>Default Constructor.</h2>
      *
      * <p>Creates a {@link DriveTrainSimulationConfig} with all the data set to default values.

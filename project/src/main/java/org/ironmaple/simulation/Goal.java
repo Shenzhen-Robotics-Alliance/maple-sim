@@ -196,88 +196,56 @@ public abstract class Goal implements SimulatedArena.Simulatable {
             System.out.println("test");
             return true;
         }
-        System.out.println("Peice");
-        System.out.println(gamePiece.getPose3d().getRotation().getMeasureY().in(Degrees));
-        System.out.println(gamePiece.getPose3d().getRotation().getMeasureZ().in(Degrees));
 
-        System.out.println("flip");
-        System.out.println(
-                flipRotation(gamePiece.getPose3d().getRotation()).getMeasureY().in(Degrees));
-        System.out.println(
-                flipRotation(gamePiece.getPose3d().getRotation()).getMeasureZ().in(Degrees));
+        Rotation3d normalDiff = gamePiece.getPose3d().getRotation().minus(pieceAngle);
+        Rotation3d flippedDiff =
+                flipRotation(gamePiece.getPose3d().getRotation()).minus(pieceAngle);
 
-        System.out.println("goal");
-        System.out.println(pieceAngle.getMeasureY().in(Degrees));
-        System.out.println(pieceAngle.getMeasureZ().in(Degrees));
+        // System.out.println("Peice");
+        // System.out.println(gamePiece.getPose3d().getRotation().getMeasureY().in(Degrees));
+        // System.out.println(gamePiece.getPose3d().getRotation().getMeasureZ().in(Degrees));
 
-        System.out.println("originalDiff");
-        System.out.println(gamePiece.getPose3d().getRotation().minus(pieceAngle));
+        // System.out.println("flip");
+        // System.out.println(
+        //         flipRotation(gamePiece.getPose3d().getRotation()).getMeasureY().in(Degrees));
+        // System.out.println(
+        //         flipRotation(gamePiece.getPose3d().getRotation()).getMeasureZ().in(Degrees));
 
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .minus(pieceAngle)
-                .getMeasureY()
-                .in(Degrees));
-        System.out.println(gamePiece
-                .getPose3d()
-                .getRotation()
-                .minus(pieceAngle)
-                .getMeasureZ()
-                .in(Degrees));
+        // System.out.println("goal");
+        // System.out.println(pieceAngle.getMeasureY().in(Degrees));
+        // System.out.println(pieceAngle.getMeasureZ().in(Degrees));
 
-        System.out.println((gamePiece.getPose3d().getRotation())
-                .minus(pieceAngle)
-                .getMeasureAngle()
-                .in(Degrees));
+        // System.out.println("originalDiff");
+        // System.out.println(normalDiff.minus(pieceAngle));
 
-        System.out.println(
-                (gamePiece.getPose3d().getRotation()).minus(pieceAngle).getAngle() * 180 / Math.PI);
+        // System.out.println(normalDiff.getMeasureY().in(Degrees));
+        // System.out.println(normalDiff.getMeasureZ().in(Degrees));
 
-        System.out.println("flip diff");
-        System.out.println(flipRotation(gamePiece.getPose3d().getRotation()).minus(pieceAngle));
+        // System.out.println(normalDiff.getMeasureAngle().in(Degrees));
 
-        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
-                .minus(pieceAngle)
-                .getMeasureY()
-                .in(Degrees));
-        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
-                .minus(pieceAngle)
-                .getMeasureZ()
-                .in(Degrees));
+        // System.out.println("flip diff");
+        // System.out.println(flippedDiff);
 
-        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
-                .minus(pieceAngle)
-                .getMeasureAngle()
-                .in(Degrees));
+        // System.out.println(flippedDiff.getMeasureY().in(Degrees));
+        // System.out.println(flippedDiff.getMeasureZ().in(Degrees));
 
-        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
-                        .minus(pieceAngle)
-                        .getAngle()
-                * 180
-                / Math.PI);
+        // System.out.println(flippedDiff.getMeasureAngle().in(Degrees));
 
-        System.out.println("Diff");
-        System.out.println((gamePiece.getPose3d().getRotation())
-                .minus(pieceAngle)
-                .getMeasureAngle()
-                .in(Units.Degrees));
-        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
-                .minus(pieceAngle)
-                .getMeasureAngle()
-                .in(Units.Degrees));
+        // System.out.println("Diff");
+        // System.out.println(new Rotation3d(Degrees.of(0), normalDiff.getMeasureZ(), normalDiff.getMeasureZ())
+        //         .getMeasureAngle()
+        //         .in(Units.Degrees));
+        // System.out.println(new Rotation3d(Degrees.of(0), flippedDiff.getMeasureZ(), flippedDiff.getMeasureZ())
+        //         .getMeasureAngle()
+        //         .in(Units.Degrees));
 
-        System.out.println();
+        // System.out.println();
 
-        return gamePiece
-                                .getPose3d()
-                                .getRotation()
-                                .minus(pieceAngle)
+        return new Rotation3d(Degrees.of(0), normalDiff.getMeasureZ(), normalDiff.getMeasureZ())
                                 .getMeasureAngle()
                                 .in(Units.Degrees)
                         < pieceAngleTolerance.in(Units.Degrees)
-                || flipRotation(gamePiece.getPose3d().getRotation())
-                                .minus(pieceAngle)
+                || new Rotation3d(Degrees.of(0), flippedDiff.getMeasureZ(), flippedDiff.getMeasureZ())
                                 .getMeasureAngle()
                                 .in(Units.Degrees)
                         < pieceAngleTolerance.in(Units.Degrees);
@@ -310,6 +278,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @return Wether or not the pieces velocity is consistent with velocities that are able to be scored in this goal.
      */
     protected boolean checkVel(GamePiece gamePiece) {
+
         return true;
     }
 

@@ -1,5 +1,7 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -194,6 +196,78 @@ public abstract class Goal implements SimulatedArena.Simulatable {
             System.out.println("test");
             return true;
         }
+        System.out.println("Peice");
+        System.out.println(gamePiece.getPose3d().getRotation().getMeasureY().in(Degrees));
+        System.out.println(gamePiece.getPose3d().getRotation().getMeasureZ().in(Degrees));
+
+        System.out.println("flip");
+        System.out.println(
+                flipRotation(gamePiece.getPose3d().getRotation()).getMeasureY().in(Degrees));
+        System.out.println(
+                flipRotation(gamePiece.getPose3d().getRotation()).getMeasureZ().in(Degrees));
+
+        System.out.println("goal");
+        System.out.println(pieceAngle.getMeasureY().in(Degrees));
+        System.out.println(pieceAngle.getMeasureZ().in(Degrees));
+
+        System.out.println("originalDiff");
+        System.out.println(gamePiece.getPose3d().getRotation().minus(pieceAngle));
+
+        System.out.println(gamePiece
+                .getPose3d()
+                .getRotation()
+                .minus(pieceAngle)
+                .getMeasureY()
+                .in(Degrees));
+        System.out.println(gamePiece
+                .getPose3d()
+                .getRotation()
+                .minus(pieceAngle)
+                .getMeasureZ()
+                .in(Degrees));
+
+        System.out.println((gamePiece.getPose3d().getRotation())
+                .minus(pieceAngle)
+                .getMeasureAngle()
+                .in(Degrees));
+
+        System.out.println(
+                (gamePiece.getPose3d().getRotation()).minus(pieceAngle).getAngle() * 180 / Math.PI);
+
+        System.out.println("flip diff");
+        System.out.println(flipRotation(gamePiece.getPose3d().getRotation()).minus(pieceAngle));
+
+        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+                .minus(pieceAngle)
+                .getMeasureY()
+                .in(Degrees));
+        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+                .minus(pieceAngle)
+                .getMeasureZ()
+                .in(Degrees));
+
+        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+                .minus(pieceAngle)
+                .getMeasureAngle()
+                .in(Degrees));
+
+        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+                        .minus(pieceAngle)
+                        .getAngle()
+                * 180
+                / Math.PI);
+
+        System.out.println("Diff");
+        System.out.println((gamePiece.getPose3d().getRotation())
+                .minus(pieceAngle)
+                .getMeasureAngle()
+                .in(Units.Degrees));
+        System.out.println(flipRotation(gamePiece.getPose3d().getRotation())
+                .minus(pieceAngle)
+                .getMeasureAngle()
+                .in(Units.Degrees));
+
+        System.out.println();
 
         return gamePiece
                                 .getPose3d()

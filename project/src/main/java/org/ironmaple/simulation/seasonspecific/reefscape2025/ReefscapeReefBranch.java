@@ -214,7 +214,7 @@ public class ReefscapeReefBranch extends Goal {
             drawList.add(getPose());
         }
         if (this.gamePieceCount > 1) {
-            drawList.add(getPose().transformBy(new Transform3d(0, 0.12, 0, new Rotation3d())));
+            drawList.add(getPose().transformBy(new Transform3d(0, isBlue ? 0.12 : -0.12, 0, new Rotation3d())));
         }
     }
 }

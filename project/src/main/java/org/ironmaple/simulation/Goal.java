@@ -1,5 +1,7 @@
 package org.ironmaple.simulation;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -195,15 +197,17 @@ public abstract class Goal implements SimulatedArena.Simulatable {
             return true;
         }
 
-        return gamePiece
-                                .getPose3d()
-                                .getRotation()
-                                .minus(pieceAngle)
+        Rotation3d normalDiff = gamePiece.getPose3d().getRotation().minus(pieceAngle);
+        Rotation3d flippedDiff =
+                flipRotation(gamePiece.getPose3d().getRotation()).minus(pieceAngle);
+
+
+
+        return new Rotation3d(Degrees.of(0), normalDiff.getMeasureZ(), normalDiff.getMeasureZ())
                                 .getMeasureAngle()
                                 .in(Units.Degrees)
                         < pieceAngleTolerance.in(Units.Degrees)
-                || flipRotation(gamePiece.getPose3d().getRotation())
-                                .minus(pieceAngle)
+                || new Rotation3d(Degrees.of(0), flippedDiff.getMeasureZ(), flippedDiff.getMeasureZ())
                                 .getMeasureAngle()
                                 .in(Units.Degrees)
                         < pieceAngleTolerance.in(Units.Degrees);
@@ -236,6 +240,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @return Wether or not the pieces velocity is consistent with velocities that are able to be scored in this goal.
      */
     protected boolean checkVel(GamePiece gamePiece) {
+
         return true;
     }
 

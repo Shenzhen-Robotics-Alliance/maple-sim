@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f57e4d3f-16ad-409c-82f6-da91213bb687" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefBranch.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefBranch.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/vendordep/maple-sim.json" beforeDir="false" afterPath="$PROJECT_DIR$/docs/vendordep/maple-sim.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,15 +79,20 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;adding-scoring-utils&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/artemis/code/maple-sim&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/_Project Files/FRC/Code/maple-sim&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.24847251&quot;
+    &quot;settings.editor.splitter.proportion&quot;: &quot;0.24847251&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RunManager" selected="Gradle.project [publishToMavenLocal]">
@@ -142,6 +148,14 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-IU-252.25557.131" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -150,10 +164,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1730811328457</updated>
+      <workItem from="1763081800469" duration="187000" />
+      <workItem from="1763602434177" duration="1430000" />
+      <workItem from="1763844850513" duration="18000" />
+      <workItem from="1763905366351" duration="20000" />
     </task>
     <servers />
   </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
   <component name="WpiLibVersionService">
-    <option name="lastChecked" value="20241106102946" />
+    <option name="lastChecked" value="20251123084245" />
   </component>
 </project>

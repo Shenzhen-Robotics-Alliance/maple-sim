@@ -3,5 +3,9 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../templates/AdvantageKit-SparkSwerveTemplate-MapleSim" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../templates/AdvantageKit-TalonSwerveTemplate-MapleSim" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../templates/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../templates/CTRE-Swerve-MapleSim" vcs="Git" />
   </component>
 </project>

@@ -24,18 +24,13 @@ public class ArenaEvergreen extends SimulatedArena {
          */
         public EvergreenFieldObstacleMap withWalls() {
             // blue wall
-            super.addBorderLine(new Translation2d(0, 1.270), new Translation2d(0, 6.782));
-
+            super.addBorderLine(new Translation2d(0, 0), new Translation2d(0, 8));
             // red wall
-            super.addBorderLine(new Translation2d(17.548, 1.270), new Translation2d(17.548, 6.782));
-
-            // upper walls
-            super.addBorderLine(new Translation2d(1.672, 8.052), new Translation2d(11, 8.052));
-            super.addBorderLine(new Translation2d(12, 8.052), new Translation2d(17.548 - 1.672, 8.052));
-
-            // lower walls
-            super.addBorderLine(new Translation2d(1.672, 0), new Translation2d(5.8, 0));
-            super.addBorderLine(new Translation2d(6.3, 0), new Translation2d(17.548 - 1.672, 0));
+            super.addBorderLine(new Translation2d(17.548, 0), new Translation2d(17.548, 8));
+            // upper wall
+            super.addBorderLine(new Translation2d(0, 8.052), new Translation2d(20, 8.052));
+            // lower wall
+            super.addBorderLine(new Translation2d(0, 0), new Translation2d(20, 0));
             return this;
         }
     }
@@ -50,7 +45,7 @@ public class ArenaEvergreen extends SimulatedArena {
      * @param withWalls used to add wall obstacles when desired.
      */
 	public ArenaEvergreen(boolean withWalls) {
-        super(withWalls ? new EvergreenFieldObstacleMap() : new EvergreenFieldObstacleMap().withWalls());
+        super(withWalls ? new EvergreenFieldObstacleMap().withWalls() : new EvergreenFieldObstacleMap());
     }
 
     /**

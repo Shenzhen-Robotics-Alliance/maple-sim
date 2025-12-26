@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Launch SmartDashboard (12)" type="JarApplication" activateToolWindowBeforeRun="false">
+    <option name="JAR_PATH" value="C:\Users\Public\wpilib\2025\tools\artifacts\SmartDashboard-2025.1.1-winx64.jar" />
+    <module name="YAMS.main" />
+    <method v="2" />
+  </configuration>
+</component>

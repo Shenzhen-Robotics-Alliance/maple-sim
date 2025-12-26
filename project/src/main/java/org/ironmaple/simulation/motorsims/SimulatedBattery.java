@@ -35,6 +35,15 @@ public class SimulatedBattery {
     // The current battery voltage in volts.
     private static double batteryVoltageVolts = BATTERY_NOMINAL_VOLTAGE;
 
+    private static boolean disableBatterySim = false;
+
+    /** Disables the battery simulation. This is a lazy quick fix to help the opponent simulation. */
+    public static void disableBatterySim() {
+        disableBatterySim = true;
+        electricalAppliances.clear();
+        batteryVoltageVolts = BATTERY_NOMINAL_VOLTAGE;
+    }
+
     /**
      *
      *
@@ -74,8 +83,6 @@ public class SimulatedBattery {
         double totalCurrentAmps = getTotalCurrentDrawn().in(Amps);
         totalCurrentAmps = currentFilter.calculate(totalCurrentAmps);
 
-        batteryVoltageVolts = BatterySim.calculateLoadedBatteryVoltage(BATTERY_NOMINAL_VOLTAGE, 0.02, totalCurrentAmps);
-
         if (Double.isNaN(batteryVoltageVolts)) {
             batteryVoltageVolts = 12.0;
             DriverStation.reportError(
@@ -88,8 +95,13 @@ public class SimulatedBattery {
             DriverStation.reportError("[MapleSim] BrownOut Detected, protecting battery voltage...", false);
         }
 
-        RoboRioSim.setVInVoltage(batteryVoltageVolts);
+        /// Quick fix to lock battery simulation to nominal voltage.
+        if (!disableBatterySim) {
+            batteryVoltageVolts =
+                    BatterySim.calculateLoadedBatteryVoltage(BATTERY_NOMINAL_VOLTAGE, 0.02, totalCurrentAmps);
+        }
 
+        RoboRioSim.setVInVoltage(batteryVoltageVolts);
         SmartDashboard.putNumber("BatterySim/TotalCurrent (Amps)", totalCurrentAmps);
         SmartDashboard.putNumber("BatterySim/BatteryVoltage (Volts)", batteryVoltageVolts);
     }

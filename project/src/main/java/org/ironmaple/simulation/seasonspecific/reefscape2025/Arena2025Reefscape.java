@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Arrays;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.opponentsim.ReefscapeOpponentManager;
 import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
@@ -23,7 +24,6 @@ public class Arena2025Reefscape extends SimulatedArena {
     public static final class ReefscapeFieldObstacleMap extends FieldMap {
         public ReefscapeFieldObstacleMap() {
             super();
-
             // blue wall
             super.addBorderLine(new Translation2d(0, 1.270), new Translation2d(0, 6.782));
 
@@ -78,6 +78,7 @@ public class Arena2025Reefscape extends SimulatedArena {
 
     public Arena2025Reefscape() {
         super(new ReefscapeFieldObstacleMap());
+        super.withOpponentManager(new ReefscapeOpponentManager());
 
         redReefSimulation = new ReefscapeReefSimulation(this, false);
         super.addCustomSimulation(redReefSimulation);
@@ -96,6 +97,19 @@ public class Arena2025Reefscape extends SimulatedArena {
 
         redProcessor = new ReefscapeProcessorSimulation(this, false);
         super.addCustomSimulation(redProcessor);
+    }
+
+    /**
+     * Gets the opponent manager for FRC 2025 Reefscape.
+     *
+     * @return this {@link ReefscapeOpponentManager}.
+     */
+    @Override
+    public ReefscapeOpponentManager getOpponentManager() {
+        if (opponentManager == null) {
+            DriverStation.reportWarning("Something went wrong, no OpponentManager found in Arena2025Reefscape", false);
+        }
+        return (ReefscapeOpponentManager) opponentManager;
     }
 
     @Override

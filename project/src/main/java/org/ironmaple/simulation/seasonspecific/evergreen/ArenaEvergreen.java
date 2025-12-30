@@ -5,7 +5,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import org.ironmaple.simulation.SimulatedArena;
 
 /**
- * <h1> A field with no obstacles </h1>
+ *
+ *
+ * <h1>A field with no obstacles </h1>
  *
  * <p>This class represents the playing field for the simulated Evergreen Field
  *
@@ -41,7 +43,9 @@ public class ArenaEvergreen extends SimulatedArena {
     }
 
     /**
-     * <h1> A field with no obstacles </h1>
+     *
+     *
+     * <h1>A field with no obstacles </h1>
      *
      * <p>This class represents the playing field for the simulated Evergreen Field
      *
@@ -49,12 +53,14 @@ public class ArenaEvergreen extends SimulatedArena {
      *
      * @param withWalls used to add wall obstacles when desired.
      */
-	public ArenaEvergreen(boolean withWalls) {
+    public ArenaEvergreen(boolean withWalls) {
         super(withWalls ? new EvergreenFieldObstacleMap() : new EvergreenFieldObstacleMap().withWalls());
     }
 
     /**
-     * <h2> Evergreen does not have game pieces, this method does nothing. </h2>
+     *
+     *
+     * <h2>Evergreen does not have game pieces, this method does nothing. </h2>
      *
      * <p>Places Game Pieces on the Field for Autonomous Mode.
      *

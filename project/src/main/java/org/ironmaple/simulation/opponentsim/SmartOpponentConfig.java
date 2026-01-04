@@ -7,6 +7,9 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.AngularAccelerationUnit;
+import edu.wpi.first.units.LinearAccelerationUnit;
+import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -14,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.*;
 import java.util.function.Supplier;
+
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.*;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -66,7 +71,8 @@ public class SmartOpponentConfig {
 
     /// Opponent Management
     protected OpponentManager manager;
-    private boolean commandInProgress = false;
+    protected Time pollRate;
+    public boolean commandInProgress = false;
     // Opponents current and last states.
     public String currentState = "";
     public String desiredState;
@@ -79,13 +85,13 @@ public class SmartOpponentConfig {
         /// Sets the required basic options.
         this.requiredBasicOptions = EnumSet.allOf(BasicOptions.class);
         withPathfindOffset(Transform2d.kZero); // Sets a zero offset for default use.
+        withPollRate(SimulatedArena.getSimulationDt());
 
         /// Prepares empty config.
         this.chassis = new ChassisConfig();
 
         /// Prepares Telemetry
-        this.telemetryPath = "SmartDashboard/MapleSim/"; // Default Path
-        this.smartDashboardPath = "MapleSim/";
+        withTelemetryPath("MapleSim/");
         this.behaviorChooser = new SendableChooser<>();
     }
 
@@ -231,7 +237,9 @@ public class SmartOpponentConfig {
      * @return this, for chaining.
      */
     public SmartOpponentConfig withTelemetryPath(String telemetryPath) {
-        this.telemetryPath = telemetryPath;
+        // Force a smartdashboard path since it's needed for the SendableChooser.
+        this.telemetryPath = "SmartDashboard/" + telemetryPath;
+        this.smartDashboardPath = telemetryPath;
         return this;
     }
 
@@ -273,6 +281,17 @@ public class SmartOpponentConfig {
     // TODO
     public SmartOpponentConfig withPathfindOffset(Transform2d pathfindOffset) {
         this.pathfindOffset = pathfindOffset;
+        return this;
+    }
+
+    /**
+     * This sets a dynamic poll rate for various obstacle and pose getters.
+     *
+     * @param pollRate how long to wait before refreshing our getters.
+     * @return this, for chaining.
+     */
+    public SmartOpponentConfig withPollRate(Time pollRate) {
+        this.pollRate = pollRate;
         return this;
     }
 
@@ -809,6 +828,8 @@ public class SmartOpponentConfig {
         public Supplier<GyroSimulation> gyroSimulation;
         /// Sets of required options set here.
         public Set<ChassisOptions> requiredChassisOptions;
+        public LinearAcceleration maxLinearAcceleration;
+        public AngularAcceleration maxAngularAcceleration;
         // Saved simulation for later use
         private SwerveModuleSimulationConfig moduleSimConfig;
         public RobotConfig pathplannerConfig;
@@ -818,9 +839,13 @@ public class SmartOpponentConfig {
             /// Adds the required options to the checklist.
             this.requiredChassisOptions = EnumSet.allOf(ChassisOptions.class);
             /// Optional chassis options
-            this.driveToPoseTolerance = Inches.of(4);
-            this.driveToPoseAngleTolerance = Degrees.of(4);
+            this.driveToPoseTolerance = Inches.of(3);
+            this.driveToPoseAngleTolerance = Degrees.of(12);
             this.gyroSimulation = COTS.ofGenericGyro();
+
+            //TODO
+            this.maxLinearAcceleration = MetersPerSecondPerSecond.of(14);
+            this.maxAngularAcceleration = DegreesPerSecondPerSecond.of(360);
         }
 
         /**
@@ -1157,12 +1182,12 @@ public class SmartOpponentConfig {
             public ChassisConfig getConfig() {
                 return switch (this) {
                     case SimpleSetup -> new ChassisConfig()
-                            .withMOI(KilogramSquareMeters.of(0.1))
+                            .withMOI(KilogramSquareMeters.of(8))
                             .withModule(ModuleConfig.Presets.SimpleSetup.getConfig());
                     case SimpleSquareChassis -> new ChassisConfig()
-                            .withSquareChassis(Inches.of(32), Inches.of(24)) // 32x32 bumper, 24 track width
-                            .withMass(Pounds.of(60))
-                            .withMOI(KilogramSquareMeters.of(6))
+                            .withSquareChassis(Inches.of(32), Inches.of(23)) // 32x32 bumper, 24 track width
+                            .withMass(Kilograms.of(55))
+                            .withMOI(KilogramSquareMeters.of(8))
                             .withMaxLinearVelocity(MetersPerSecond.of(8.5))
                             .withMaxAngularVelocity(DegreesPerSecond.of(480))
                             .withModule(ModuleConfig.Presets.MK4i.getConfig());
@@ -1360,6 +1385,7 @@ public class SmartOpponentConfig {
          */
         public ModuleConfig withDriveGearRatio(double driveGearRatio) {
             this.driveGearRatio = driveGearRatio;
+            //this.driveMotor = driveMotor.withReduction(driveGearRatio);
             this.requiredModuleOptions.remove(ModuleOptions.DriveRatio);
             return this;
         }
@@ -1372,6 +1398,7 @@ public class SmartOpponentConfig {
          */
         public ModuleConfig withSteerGearRatio(double steerGearRatio) {
             this.steerGearRatio = steerGearRatio;
+            //this.steerMotor = steerMotor.withReduction(steerGearRatio);
             this.requiredModuleOptions.remove(ModuleOptions.SteerRatio);
             return this;
         }

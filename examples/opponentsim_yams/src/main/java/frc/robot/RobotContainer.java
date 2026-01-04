@@ -18,18 +18,20 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.ManipulatorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
-import org.ironmaple.simulation.seasonspecific.evergreen.ArenaEvergreen;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
+import org.ironmaple.simulation.seasonspecific.reefscape2025.opponentsim.KitBot;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.opponentsim.SuperKitBot;
 
 public class RobotContainer
 {
   // The YAMS swerve drive subsystem.
   private final SwerveSubsystem drive = new SwerveSubsystem();
+  // The YAMS and Maple manipulator subsystem
+  private final ManipulatorSubsystem manip = new ManipulatorSubsystem(drive);
   // Xbox Controller to drive the robot.
   private final CommandXboxController xboxController = new CommandXboxController(0);
 
@@ -59,15 +61,15 @@ public class RobotContainer
     configureBindings();
 
     /// Lower our subtick timing for slightly easier processing.
-    SimulatedArena.overrideSimulationTimings(Seconds.of(0.02), 3);
+    //SimulatedArena.overrideSimulationTimings(Seconds.of(0.02), 3);
 
     /// Let's add some opponents.
       // Since we are using opponent sim I want to disable battery sim since they statically share a battery.
       SimulatedBattery.disableBatterySim();
-      new SuperKitBot("Super Bot 1", DriverStation.Alliance.Blue)
+      new KitBot("Super Bot 1", DriverStation.Alliance.Blue)
               .withXboxController(new CommandXboxController(1));
-      new SuperKitBot("Super Bot 2", DriverStation.Alliance.Blue);
-      new SuperKitBot("Super Bot 3", DriverStation.Alliance.Blue);
+      new KitBot("Super Bot 2", DriverStation.Alliance.Blue);
+      new KitBot("Super Bot 3", DriverStation.Alliance.Blue);
       new SuperKitBot("Super Bot 4", DriverStation.Alliance.Red);
       new SuperKitBot("Super Bot 5", DriverStation.Alliance.Red);
       new SuperKitBot("Super Bot 6", DriverStation.Alliance.Red);
@@ -89,9 +91,9 @@ public class RobotContainer
                                                                     Meters.of(4),
                                                                     Rotation2d.fromDegrees(180))));
     // Zero Gyro and Reset Odometry
-    xboxController.leftBumper().whileTrue(drive.zeroGyro());
+    xboxController.leftBumper().whileTrue(manip.intake());
     // Reset Odometry
-    xboxController.rightBumper().onTrue(drive.resetOdometry(new Pose2d(1.5, 3, Rotation2d.fromDegrees(0))));
+    xboxController.rightBumper().onTrue(manip.score());
     // Drop coral at all stations at once.
     xboxController.start().onTrue(Commands.runOnce(() -> addCoralAllStations(true)));
 
@@ -102,8 +104,6 @@ public class RobotContainer
    * It is recommended to call these somewhere more appropriate in your code.
    */
   public void simulationPeriodic() {
-      /// MapleSim must be updated every simulation loop, it doesn't matter where so long as it's called.
-      SimulatedArena.getInstance().simulationPeriodic();
       /// Update MapleSim GamePiece Poses
       coralPoses.set(SimulatedArena.getInstance()
               .getGamePiecesArrayByType("Coral"));

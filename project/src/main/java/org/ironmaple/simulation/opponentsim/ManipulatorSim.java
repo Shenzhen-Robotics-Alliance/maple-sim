@@ -1,6 +1,5 @@
 package org.ironmaple.simulation.opponentsim;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.HashMap;
@@ -11,18 +10,15 @@ import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
-public class OpponentManipulatorSim extends SubsystemBase {
+public class ManipulatorSim extends SubsystemBase {
     /// Simulation Maps of saved manipulators
     private final Map<String, IntakeSimulation> intakeSimulations;
     private final Map<String, Supplier<GamePieceProjectile>> projectileSimulations;
-    /// Opponent pose supplier
-    Supplier<Pose2d> opponentPose;
 
     /** Creates a new manipulator simulation. */
-    public OpponentManipulatorSim(SmartOpponent opponent) {
+    public ManipulatorSim() {
         this.intakeSimulations = new HashMap<>();
         this.projectileSimulations = new HashMap<>();
-        this.opponentPose = () -> opponent.drivetrainSim.getActualPoseInSimulationWorld();
     }
 
     /**
@@ -50,7 +46,7 @@ public class OpponentManipulatorSim extends SubsystemBase {
      * @param intakeSimulation The simulation to add.
      * @return this, for chaining.
      */
-    public OpponentManipulatorSim addIntakeSimulation(String intakeName, IntakeSimulation intakeSimulation) {
+    public ManipulatorSim addIntakeSimulation(String intakeName, IntakeSimulation intakeSimulation) {
         this.intakeSimulations.put(intakeName, intakeSimulation);
         return this;
     }
@@ -62,7 +58,7 @@ public class OpponentManipulatorSim extends SubsystemBase {
      * @param projectileSimulation The simulation to add.
      * @return this, for chaining.
      */
-    public OpponentManipulatorSim addProjectileSimulation(
+    public ManipulatorSim addProjectileSimulation(
             String projectileName, Supplier<GamePieceProjectile> projectileSimulation) {
         this.projectileSimulations.put(projectileName, projectileSimulation);
         return this;
@@ -95,8 +91,8 @@ public class OpponentManipulatorSim extends SubsystemBase {
      * @return
      */
     public Command intake(String intakeName) {
-        return runEnd(() -> getIntakeSimulation(intakeName).startIntake(), () -> getIntakeSimulation(intakeName)
-                .stopIntake());
+        return runEnd(() -> getIntakeSimulation(intakeName).startIntake(),
+                () -> getIntakeSimulation(intakeName).stopIntake());
     }
 
     /**

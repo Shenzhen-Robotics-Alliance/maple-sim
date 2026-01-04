@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -107,7 +109,10 @@ public class SuperKitBot extends SmartOpponent {
      */
     @Override
     protected Command collectState() {
-        return pathfind(getTargetFromMap(config.getCollectingMap()), Seconds.of(6))
+        final Pair<String, Pose2d> target = getCollectTarget();
+        if (target == null) return Commands.none();
+
+        return pathfind(getCollectTarget())
                 .andThen(manipulatorSim.intake("Intake").withTimeout(0.5))
                 .finallyDo(() -> setState("Score"))
                 .withTimeout(10);
@@ -120,7 +125,10 @@ public class SuperKitBot extends SmartOpponent {
      */
     @Override
     protected Command scoreState() {
-        return pathfind(getTargetFromMap(config.getScoringMap()), Seconds.of(10))
+        final Pair<String, Pose2d> target = getScoringTarget();
+        if (target == null) return Commands.none();
+
+        return pathfind(getScoringTarget())
                 .andThen(Commands.waitSeconds(0.2))
                 .andThen(isCoralTarget() ? manipulatorSim.score("Coral") : manipulatorSim.score("Algae"))
                 .andThen(Commands.waitSeconds(0.5))

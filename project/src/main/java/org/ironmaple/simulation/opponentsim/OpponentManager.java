@@ -8,8 +8,13 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DriverStation;
+import org.ironmaple.simulation.opponentsim.pathfinding.MapleADStar;
+
+import java.lang.reflect.Parameter;
 import java.util.*;
 
 public class OpponentManager {
@@ -17,6 +22,28 @@ public class OpponentManager {
     protected static final Map<String, Map<String, Pose2d>> scoringMap = new HashMap<>();
     // Map of possible collecting poses and types. For example, Map<"CollectStation", Map<"StationCenter", Pose2d>>
     protected static final Map<String, Map<String, Pose2d>> collectingMap = new HashMap<>();
+    /// Cached opponent data for dynamic polling.
+    // Cached list of all opponent obstacles.
+    protected static final List<Pair<Translation2d, Translation2d>> opponentObstacles = new ArrayList<>();
+    protected double lastObstaclePoll = 0;
+    protected static final List<Pair<Translation2d, Translation2d>> blueOpponentObstacles = new ArrayList<>();
+    protected double lastBlueObstaclePoll = 0;
+    protected static final List<Pair<Translation2d, Translation2d>> redOpponentObstacles = new ArrayList<>();
+    protected double lastRedObstaclePoll = 0;
+    // Cached list of all opponent targets.
+    protected static final List<Pair<String, Pose2d>> opponentTargets = new ArrayList<>();
+    protected double lastTargetPoll = 0;
+    protected static final List<Pair<String, Pose2d>> blueOpponentTargets = new ArrayList<>();
+    protected double lastBlueTargetPoll = 0;
+    protected static final List<Pair<String, Pose2d>> redOpponentTargets = new ArrayList<>();
+    protected double lastRedTargetPoll = 0;
+    // Cached list of all opponent poses.
+    protected static final List<Pose2d> opponentPoses = new ArrayList<>();
+    protected double lastPosePoll = 0;
+    protected static final List<Pose2d> blueOpponentPoses = new ArrayList<>();
+    protected double lastBluePosePoll = 0;
+    protected static final List<Pose2d> redOpponentPoses = new ArrayList<>();
+    protected double lastRedPosePoll = 0;
     // List of possible starting poses
     protected static final List<Pose2d> initialBluePoses = new ArrayList<>();
     protected static final List<Pose2d> initialRedPoses = new ArrayList<>();
@@ -33,7 +60,7 @@ public class OpponentManager {
     /** MapleSim Opponent currently relies on Pathplanner with a modified pathfinder. This is to be changed soon. ^TM */
     public OpponentManager() {
         boundingBoxBuffer = Meters.of(0.6);
-        boundingBoxTranslation = new Translation2d(boundingBoxBuffer, boundingBoxBuffer);
+        this.boundingBoxTranslation = new Translation2d(boundingBoxBuffer, boundingBoxBuffer);
     }
 
     /**
@@ -55,7 +82,9 @@ public class OpponentManager {
      */
     public OpponentManager withDefaults() {
         PathfindingCommand.warmupCommand().schedule();
-        withDefaultInitialPoses().withDefaultQueeningPoses();
+        this
+                .withDefaultInitialPoses()
+                .withDefaultQueeningPoses();
         return this;
     }
 
@@ -133,28 +162,70 @@ public class OpponentManager {
      * @param alliance which {@link DriverStation.Alliance} targets to grab.
      * @return a list of poses targeted by opponents on the given alliance.
      */
-    public List<Pair<String, Pose2d>> getOpponentTargets(DriverStation.Alliance alliance) {
-        List<Pair<String, Pose2d>> targets = new ArrayList<>();
-        for (SmartOpponent opponent : opponents) {
-            if (opponent.config.alliance == alliance) {
-                targets.add(opponent.getTarget());
-            }
+    public List<Pair<String, Pose2d>> getOpponentTargetsDynamic(DriverStation.Alliance alliance, Time pollRate) {
+        // If elapsed time is less than pollRate return our cached list.
+        final var isBlue = alliance == DriverStation.Alliance.Blue;
+        final var targetList = isBlue ? blueOpponentTargets : redOpponentTargets;
+        if (System.currentTimeMillis() - (isBlue ? lastBlueTargetPoll : lastRedTargetPoll) < pollRate.in(Milliseconds)) {
+            return targetList;
         }
-        return targets;
+        // New list to filter.
+        final var filteredOpponents = new ArrayList<>(opponents);
+        // If elapsed time exceeds our pollRate, refresh the list.
+        targetList.clear();
+        filteredOpponents.stream()
+                // Remove all opponents not on given alliance.
+                .filter(opponent -> opponent.config.alliance != alliance)
+                // Collect all their poses.
+                .forEach(opponent -> targetList.add(opponent.getTarget()));
+        // Update our refresh timestamp.
+        if (isBlue) {
+            lastBlueTargetPoll = System.currentTimeMillis();
+        } else {
+            lastRedTargetPoll = System.currentTimeMillis();
+        }
+        return targetList;
     }
 
     /**
-     * Returns all registered opponent target poses.
-     *
-     * @return a list of all poses targeted by opponents on the given alliance.
+     * TODO
+     * @param pollRate
+     * @return
      */
-    public List<Pair<String, Pose2d>> getOpponentTargets() {
-        List<SmartOpponent> allOpponents = getOpponents();
-        List<Pair<String, Pose2d>> targets = new ArrayList<>();
-        for (SmartOpponent opponent : allOpponents) {
-            targets.add(opponent.getTarget());
+    public List<Pair<String, Pose2d>> getOpponentTargetsDynamic(Time pollRate)
+    {
+        // If elapsed time is less than pollRate return our cached list.
+        if (System.currentTimeMillis() - lastTargetPoll < pollRate.in(Milliseconds)) {
+            return opponentTargets;
         }
-        return targets;
+        // If elapsed time exceeds our pollRate, refresh the list.
+        opponentTargets.clear();
+        // Call the other dynamic methods so we don't update if not needed.
+        opponentTargets.addAll(getOpponentTargetsDynamic(DriverStation.Alliance.Blue, pollRate));
+        opponentTargets.addAll(getOpponentTargetsDynamic(DriverStation.Alliance.Red, pollRate));
+        // Update our refresh timestamp.
+        lastTargetPoll = System.currentTimeMillis();
+        return opponentTargets;
+    }
+
+    /**
+     * Checks if the given pose is near any opponent target pose.
+     *
+     * @param pose the pose to check against.
+     * @param pollRate TODO
+     * @param tolerance the translation tolerance in {@link Distance}.
+     * @return
+     */
+    public boolean isNearTarget(Pose2d pose, Time pollRate, Distance tolerance) {
+        for (Pair<String, Pose2d> existingTarget : getOpponentTargetsDynamic(pollRate)) {
+            // Check if the new target is within the tolerance distance of any existing target
+            if (Objects.nonNull(existingTarget)) {
+                if (existingTarget.getSecond().getTranslation().getDistance(pose.getTranslation()) < tolerance.in(Meters)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -163,14 +234,29 @@ public class OpponentManager {
      * @param alliance which {@link DriverStation.Alliance} poses to grab.
      * @return a list of opponent poses on the given alliance.
      */
-    public List<Pose2d> getOpponentPoses(DriverStation.Alliance alliance) {
-        List<Pose2d> poses = new ArrayList<>();
-        for (SmartOpponent opponent : opponents) {
-            if (opponent.config.alliance == alliance) {
-                poses.add(opponent.getOpponentPose());
-            }
+    public List<Pose2d> getOpponentPosesDynamic(DriverStation.Alliance alliance, Time pollRate) {
+        // If elapsed time is less than pollRate return our cached list.
+        final var isBlue = alliance == DriverStation.Alliance.Blue;
+        final var poseList = isBlue ? blueOpponentPoses : redOpponentPoses;
+        if (System.currentTimeMillis() - (isBlue ? lastBluePosePoll : lastRedPosePoll) < pollRate.in(Milliseconds)) {
+            return poseList;
         }
-        return poses;
+        // New list to filter.
+        final var filteredOpponents = new ArrayList<>(opponents);
+        // If elapsed time exceeds our pollRate, refresh the list.
+        poseList.clear();
+        filteredOpponents.stream()
+                // Remove all opponents not on a given alliance.
+                .filter(opponent -> opponent.config.alliance != alliance)
+                // Collect all their poses.
+                .forEach(opponent -> poseList.add(opponent.getOpponentPose()));
+        // Update our refresh timestamp.
+        if (isBlue) {
+            lastBluePosePoll = System.currentTimeMillis();
+        } else {
+            lastRedPosePoll = System.currentTimeMillis();
+        }
+        return poseList;
     }
 
     /**
@@ -178,12 +264,93 @@ public class OpponentManager {
      *
      * @return a list of all opponents poses on the given alliance.
      */
-    public List<Pose2d> getOpponentPoses() {
-        List<Pose2d> allPoses = new ArrayList<>();
-        for (SmartOpponent opponent : opponents) {
-            allPoses.add(opponent.getOpponentPose());
+    public List<Pose2d> getOpponentPosesDynamic(Time pollRate)
+    {
+        // If elapsed time is less than pollRate return our cached list.
+        if (System.currentTimeMillis() - lastPosePoll < pollRate.in(Milliseconds)) {
+            return opponentPoses;
         }
-        return allPoses;
+        // If elapsed time exceeds our pollRate, refresh the list.
+        opponentPoses.clear();
+        // Call the other dynamic methods so we don't update if not needed.
+        opponentPoses.addAll(getOpponentPosesDynamic(DriverStation.Alliance.Blue, pollRate));
+        opponentPoses.addAll(getOpponentPosesDynamic(DriverStation.Alliance.Red, pollRate));
+        // Update our refresh timestamp.
+        lastPosePoll = System.currentTimeMillis();
+        return opponentPoses;
+    }
+
+    /**
+     * Saves a list globally in {@link OpponentManager} and returns that list only updating it if the last update
+     * exceeds the given time.
+     *
+     * @param pollRate how long to wait before updating.
+     * @return a list of obstacles usable by {@link MapleADStar}.
+     */
+    protected List<Pair<Translation2d, Translation2d>> getObstaclesDynamic(DriverStation.Alliance alliance, Time pollRate) {
+        // If elapsed time is less than pollRate return our cached list.
+        final var isBlue = alliance == DriverStation.Alliance.Blue;
+        final var obstacleList = isBlue ? blueOpponentObstacles : redOpponentObstacles;
+        if (System.currentTimeMillis() - (isBlue ? lastBlueObstaclePoll : lastRedObstaclePoll) < pollRate.in(Milliseconds)) {
+            return obstacleList;
+        }
+        // New list to filter.
+        final var targets = isBlue
+                ? getOpponentTargetsDynamic(DriverStation.Alliance.Blue, pollRate)
+                : getOpponentTargetsDynamic(DriverStation.Alliance.Red, pollRate);
+        final var poses = isBlue
+                ? getOpponentPosesDynamic(DriverStation.Alliance.Blue, pollRate)
+                : getOpponentPosesDynamic(DriverStation.Alliance.Red, pollRate);
+        obstacleList.clear();
+        // Format poses into obstacles and add them.
+        targets.forEach(target -> {
+            obstacleList.add(poseToObstacle(Objects.requireNonNullElse(target.getSecond(), Pose2d.kZero)));
+        });
+        poses.forEach(pose -> {
+            obstacleList.add(poseToObstacle(pose));
+        });
+        // Update our refresh timestamp.
+        if (isBlue) {
+            lastBlueObstaclePoll = System.currentTimeMillis();
+        } else {
+            lastRedObstaclePoll = System.currentTimeMillis();
+        }
+        return obstacleList;
+    }
+
+    /**
+     * Saves a list globally in {@link OpponentManager} and returns that list only updating it if the last update
+     * exceeds the given time.
+     *
+     * @param pollRate how long to wait before updating.
+     * @return a list of obstacles usable by {@link MapleADStar}.
+     */
+    protected List<Pair<Translation2d, Translation2d>> getObstaclesDynamic(Time pollRate) {
+        // If elapsed time is less than pollRate return our cached list.
+        if (System.currentTimeMillis() - lastObstaclePoll < pollRate.in(Milliseconds)) {
+            return opponentObstacles;
+        }
+        // If elapsed time exceeds our pollRate, refresh the list.
+        opponentObstacles.clear();
+        // Call the other dynamic methods so we don't update if not needed.
+        opponentObstacles.addAll(getObstaclesDynamic(DriverStation.Alliance.Blue, pollRate));
+        opponentObstacles.addAll(getObstaclesDynamic(DriverStation.Alliance.Red, pollRate));
+        // Update our refresh timestamp.
+        lastObstaclePoll = System.currentTimeMillis();
+        return opponentObstacles;
+    }
+
+    /**
+     * Formats a pose2d as a bounding box for obstacles using the boundingBoxBuffer.
+     *
+     * @param pose the pose to format.
+     * @return an obstacle usable by pathplanner.
+     */
+    protected Pair<Translation2d, Translation2d> poseToObstacle(Pose2d pose) {
+        return Pair.of(
+                pose.getTranslation().plus(boundingBoxTranslation),
+                pose.getTranslation().minus(boundingBoxTranslation)
+        );
     }
 
     /**

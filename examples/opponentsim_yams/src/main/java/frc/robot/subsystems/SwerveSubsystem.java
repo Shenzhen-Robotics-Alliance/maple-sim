@@ -195,6 +195,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void simulationPeriodic()
   {
+    /// MapleSim must be updated every simulation loop, it doesn't matter where so long as it's called.
+    SimulatedArena.getInstance().simulationPeriodic();
     /// Run the simulation loop, maplesim runs together with default YAMS simulation.
     drive.simIterate();
     // If we're running in simulation, add the odometry pose to the field.

@@ -10,25 +10,26 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-// TODO better explain MapleADStar from the original.
+// TODO better explain MapleADStar from the original. 
 
 /**
  * Implementation of AD* running locally in a background thread
  *
- * <p>COPIED INTO MapleSim with minor modifications exposing things.
+ * COPIED INTO MapleSim with minor modifications exposing things.
  *
- * <p>I would like to apologize to anyone trying to understand this code. The implementation I translated it from was
- * much worse.
+ * <p>I would like to apologize to anyone trying to understand this code. The implementation I
+ * translated it from was much worse.
  */
 public class MapleADStar implements Pathfinder {
     private static final double SMOOTHING_ANCHOR_PCT = 0.8;
@@ -45,7 +46,7 @@ public class MapleADStar implements Pathfinder {
     private final ReadWriteLock pathLock = new ReentrantReadWriteLock();
     private final ReadWriteLock requestLock = new ReentrantReadWriteLock();
     public List<Waypoint> currentWaypoints = new ArrayList<>();
-    public List<Pose2d> currentPathPoses = new ArrayList<>();
+    public List<Pose2d> currentPathPoses =  new ArrayList<>();
     public List<GridPosition> currentPathFull = new ArrayList<>();
     private double fieldLength = 16.54;
     private double fieldWidth = 8.02;
@@ -62,9 +63,12 @@ public class MapleADStar implements Pathfinder {
     private boolean requestReset = true;
     private boolean newPathAvailable = false;
 
-    /** Create a new pathfinder that runs AD* locally in a background thread */
+    /**
+     * Create a new pathfinder that runs AD* locally in a background thread
+     */
     public MapleADStar() {
         planningThread = new Thread(this::runThread);
+        planningThread.setPriority(10); // Priority is 1-10. Higher is a greater priority.
 
         requestStart = new GridPosition(0, 0);
         requestRealStartPos = Translation2d.kZero;
@@ -138,7 +142,7 @@ public class MapleADStar implements Pathfinder {
     /**
      * Get the most recently calculated path
      *
-     * @param constraints The path constraints to use when creating the path
+     * @param constraints  The path constraints to use when creating the path
      * @param goalEndState The goal end state to use when creating the path
      * @return The PathPlannerPath created from the points calculated by the pathfinder
      */
@@ -163,8 +167,8 @@ public class MapleADStar implements Pathfinder {
     /**
      * Set the start position to pathfind from
      *
-     * @param startPosition Start position on the field. If this is within an obstacle it will be moved to the nearest
-     *     non-obstacle node.
+     * @param startPosition Start position on the field. If this is within an obstacle it will be
+     *                      moved to the nearest non-obstacle node.
      */
     @Override
     public void setStartPosition(Translation2d startPosition) {
@@ -184,8 +188,8 @@ public class MapleADStar implements Pathfinder {
     /**
      * Set the goal position to pathfind to
      *
-     * @param goalPosition Goal position on the field. f this is within an obstacle it will be moved to the nearest
-     *     non-obstacle node.
+     * @param goalPosition Goal position on the field. f this is within an obstacle it will be moved
+     *                     to the nearest non-obstacle node.
      */
     @Override
     public void setGoalPosition(Translation2d goalPosition) {
@@ -207,13 +211,14 @@ public class MapleADStar implements Pathfinder {
     /**
      * Set the dynamic obstacles that should be avoided while pathfinding.
      *
-     * @param obs A List of Translation2d pairs representing obstacles. Each Translation2d represents opposite corners
-     *     of a bounding box.
-     * @param currentRobotPos The current position of the robot. This is needed to change the start position of the path
-     *     if the robot is now within an obstacle.
+     * @param obs             A List of Translation2d pairs representing obstacles. Each Translation2d represents
+     *                        opposite corners of a bounding box.
+     * @param currentRobotPos The current position of the robot. This is needed to change the start
+     *                        position of the path if the robot is now within an obstacle.
      */
     @Override
-    public void setDynamicObstacles(List<Pair<Translation2d, Translation2d>> obs, Translation2d currentRobotPos) {
+    public void setDynamicObstacles(
+            List<Pair<Translation2d, Translation2d>> obs, Translation2d currentRobotPos) {
         Set<GridPosition> newObs = new HashSet<>();
 
         for (var obstacle : obs) {
@@ -283,13 +288,13 @@ public class MapleADStar implements Pathfinder {
             if (reset || minor || major) {
                 doWork(reset, minor, major, start, goal, realStart, realGoal, requestObstacles);
             }
-            //            else {
-            //                try {
-            //                    //Thread.sleep(10);
-            //                } catch (InterruptedException e) {
-            //                    throw new RuntimeException(e);
-            //                }
-            //            }
+//            else {
+//                try {
+//                    //Thread.sleep(10);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
         } catch (Exception e) {
             // Something messed up. Reset and hope for the best
             requestLock.writeLock().lock();
@@ -315,7 +320,8 @@ public class MapleADStar implements Pathfinder {
             computeOrImprovePath(sStart, sGoal, obstacles);
 
             List<GridPosition> pathPositions = extractPath(sStart, sGoal, obstacles);
-            List<Waypoint> waypoints = createWaypoints(pathPositions, realStartPos, realGoalPos, obstacles);
+            List<Waypoint> waypoints =
+                    createWaypoints(pathPositions, realStartPos, realGoalPos, obstacles);
 
             pathLock.writeLock().lock();
             currentPathFull = pathPositions;
@@ -333,7 +339,8 @@ public class MapleADStar implements Pathfinder {
                 computeOrImprovePath(sStart, sGoal, obstacles);
 
                 List<GridPosition> pathPositions = extractPath(sStart, sGoal, obstacles);
-                List<Waypoint> waypoints = createWaypoints(pathPositions, realStartPos, realGoalPos, obstacles);
+                List<Waypoint> waypoints =
+                        createWaypoints(pathPositions, realStartPos, realGoalPos, obstacles);
 
                 pathLock.writeLock().lock();
                 currentPathFull = pathPositions;
@@ -345,7 +352,8 @@ public class MapleADStar implements Pathfinder {
         }
     }
 
-    private List<GridPosition> extractPath(GridPosition sStart, GridPosition sGoal, Set<GridPosition> obstacles) {
+    private List<GridPosition> extractPath(
+            GridPosition sStart, GridPosition sGoal, Set<GridPosition> obstacles) {
         if (sGoal.equals(sStart)) {
             return new ArrayList<>();
         }
@@ -411,30 +419,28 @@ public class MapleADStar implements Pathfinder {
         fieldPosPath.set(fieldPosPath.size() - 1, realGoalPos);
 
         List<Pose2d> pathPoses = new ArrayList<>();
-        pathPoses.add(new Pose2d(
-                fieldPosPath.get(0),
-                fieldPosPath.get(1).minus(fieldPosPath.get(0)).getAngle()));
+        pathPoses.add(
+                new Pose2d(fieldPosPath.get(0), fieldPosPath.get(1).minus(fieldPosPath.get(0)).getAngle()));
         for (int i = 1; i < fieldPosPath.size() - 1; i++) {
             Translation2d last = fieldPosPath.get(i - 1);
             Translation2d current = fieldPosPath.get(i);
             Translation2d next = fieldPosPath.get(i + 1);
 
-            Translation2d anchor1 =
-                    current.minus(last).times(SMOOTHING_ANCHOR_PCT).plus(last);
+            Translation2d anchor1 = current.minus(last).times(SMOOTHING_ANCHOR_PCT).plus(last);
             Rotation2d heading1 = current.minus(last).getAngle();
-            Translation2d anchor2 =
-                    current.minus(next).times(SMOOTHING_ANCHOR_PCT).plus(next);
+            Translation2d anchor2 = current.minus(next).times(SMOOTHING_ANCHOR_PCT).plus(next);
             Rotation2d heading2 = next.minus(anchor2).getAngle();
 
             pathPoses.add(new Pose2d(anchor1, heading1));
             pathPoses.add(new Pose2d(anchor2, heading2));
         }
-        pathPoses.add(new Pose2d(
-                fieldPosPath.get(fieldPosPath.size() - 1),
-                fieldPosPath
-                        .get(fieldPosPath.size() - 1)
-                        .minus(fieldPosPath.get(fieldPosPath.size() - 2))
-                        .getAngle()));
+        pathPoses.add(
+                new Pose2d(
+                        fieldPosPath.get(fieldPosPath.size() - 1),
+                        fieldPosPath
+                                .get(fieldPosPath.size() - 1)
+                                .minus(fieldPosPath.get(fieldPosPath.size() - 2))
+                                .getAngle()));
 
         return pathPoses;
     }
@@ -471,30 +477,28 @@ public class MapleADStar implements Pathfinder {
         fieldPosPath.set(fieldPosPath.size() - 1, realGoalPos);
 
         List<Pose2d> pathPoses = new ArrayList<>();
-        pathPoses.add(new Pose2d(
-                fieldPosPath.get(0),
-                fieldPosPath.get(1).minus(fieldPosPath.get(0)).getAngle()));
+        pathPoses.add(
+                new Pose2d(fieldPosPath.get(0), fieldPosPath.get(1).minus(fieldPosPath.get(0)).getAngle()));
         for (int i = 1; i < fieldPosPath.size() - 1; i++) {
             Translation2d last = fieldPosPath.get(i - 1);
             Translation2d current = fieldPosPath.get(i);
             Translation2d next = fieldPosPath.get(i + 1);
 
-            Translation2d anchor1 =
-                    current.minus(last).times(SMOOTHING_ANCHOR_PCT).plus(last);
+            Translation2d anchor1 = current.minus(last).times(SMOOTHING_ANCHOR_PCT).plus(last);
             Rotation2d heading1 = current.minus(last).getAngle();
-            Translation2d anchor2 =
-                    current.minus(next).times(SMOOTHING_ANCHOR_PCT).plus(next);
+            Translation2d anchor2 = current.minus(next).times(SMOOTHING_ANCHOR_PCT).plus(next);
             Rotation2d heading2 = next.minus(anchor2).getAngle();
 
             pathPoses.add(new Pose2d(anchor1, heading1));
             pathPoses.add(new Pose2d(anchor2, heading2));
         }
-        pathPoses.add(new Pose2d(
-                fieldPosPath.get(fieldPosPath.size() - 1),
-                fieldPosPath
-                        .get(fieldPosPath.size() - 1)
-                        .minus(fieldPosPath.get(fieldPosPath.size() - 2))
-                        .getAngle()));
+        pathPoses.add(
+                new Pose2d(
+                        fieldPosPath.get(fieldPosPath.size() - 1),
+                        fieldPosPath
+                                .get(fieldPosPath.size() - 1)
+                                .minus(fieldPosPath.get(fieldPosPath.size() - 2))
+                                .getAngle()));
         this.currentPathPoses = pathPoses;
         return PathPlannerPath.waypointsFromPoses(pathPoses);
     }
@@ -585,7 +589,8 @@ public class MapleADStar implements Pathfinder {
         open.put(sGoal, key(sGoal, sStart));
     }
 
-    private void computeOrImprovePath(GridPosition sStart, GridPosition sGoal, Set<GridPosition> obstacles) {
+    private void computeOrImprovePath(
+            GridPosition sStart, GridPosition sGoal, Set<GridPosition> obstacles) {
         while (true) {
             var sv = topKey();
             if (sv == null) {
@@ -617,7 +622,8 @@ public class MapleADStar implements Pathfinder {
         }
     }
 
-    private void updateState(GridPosition s, GridPosition sStart, GridPosition sGoal, Set<GridPosition> obstacles) {
+    private void updateState(
+            GridPosition s, GridPosition sStart, GridPosition sGoal, Set<GridPosition> obstacles) {
         if (!s.equals(sGoal)) {
             rhs.put(s, Double.POSITIVE_INFINITY);
 
@@ -744,7 +750,8 @@ public class MapleADStar implements Pathfinder {
     }
 
     private Translation2d gridPosToTranslation2d(GridPosition pos) {
-        return new Translation2d((pos.x * nodeSize) + (nodeSize / 2.0), (pos.y * nodeSize) + (nodeSize / 2.0));
+        return new Translation2d(
+                (pos.x * nodeSize) + (nodeSize / 2.0), (pos.y * nodeSize) + (nodeSize / 2.0));
     }
 
     /**

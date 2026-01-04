@@ -68,7 +68,7 @@ public class KitBot extends SmartOpponent {
      */
     @Override
     protected Command collectState() {
-        return pathfind(getTargetFromMap(config.getCollectingMap()), Seconds.of(6))
+        return pathfind(getCollectTarget())
                 .andThen(manipulatorSim.intake("Intake").withTimeout(0.5))
                 .finallyDo(() -> setState("Score"))
                 .withTimeout(10);
@@ -81,7 +81,7 @@ public class KitBot extends SmartOpponent {
      */
     @Override
     protected Command scoreState() {
-        return pathfind(getTargetFromMap(config.getScoringMap()), Seconds.of(10))
+        return pathfind(getScoringTarget())
                 .andThen(Commands.waitSeconds(0.2))
                 .andThen(manipulatorSim.score("Coral"))
                 .andThen(Commands.waitSeconds(0.5))
@@ -95,7 +95,7 @@ public class KitBot extends SmartOpponent {
         config.withState("Joystick", this::joystickState);
         config.withBehavior(
                 "Player",
-                startingState("Joystick").andThen(startingState("Joystick").ignoringDisable(true)));
+                startingState("Joystick").andThen(startingState("Joystick").ignoringDisable(false)));
         config.updateBehaviorChooser();
         /// Enable Manipulator control
         xboxController.leftBumper().and(config.isStateTrigger("Joystick")).whileTrue(manipulatorSim.intake("Intake"));

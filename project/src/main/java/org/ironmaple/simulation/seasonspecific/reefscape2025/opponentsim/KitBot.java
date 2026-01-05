@@ -24,7 +24,9 @@ public class KitBot extends SmartOpponent {
                 .withName(name)
                 .withAlliance(alliance)
                 .withManager(Arena2025Reefscape.getInstance().getOpponentManager())
-                .withChassisConfig(SmartOpponentConfig.ChassisConfig.Presets.SimpleSquareChassis.getConfig())
+                .withChassisConfig(SmartOpponentConfig.ChassisConfig.Presets.SimpleSquareChassis.getConfig()
+                        .withMaxLinearVelocity(MetersPerSecond.of(4))
+                        .withMaxAngularVelocity(DegreesPerSecond.of(360)))
                 .removeScoringPoseType("Barge")
                 .withAutoEnable());
         /// Adds a separate subsystem thread for the manipulator, this allows better manual control support.
@@ -68,10 +70,10 @@ public class KitBot extends SmartOpponent {
      */
     @Override
     protected Command collectState() {
-        return pathfind(getCollectTarget())
-                .andThen(manipulatorSim.intake("Intake").withTimeout(0.5))
+        return pathfind(getCollectTarget(), MetersPerSecond.of(2))
+                .andThen(manipulatorSim.intake("Intake").withTimeout(1.5))
                 .finallyDo(() -> setState("Score"))
-                .withTimeout(10);
+                .withTimeout(12);
     }
 
     /**
@@ -81,12 +83,12 @@ public class KitBot extends SmartOpponent {
      */
     @Override
     protected Command scoreState() {
-        return pathfind(getScoringTarget())
-                .andThen(Commands.waitSeconds(0.2))
+        return pathfind(getScoringTarget(), MetersPerSecond.of(2))
+                .andThen(Commands.waitSeconds(1.5))
                 .andThen(manipulatorSim.score("Coral"))
                 .andThen(Commands.waitSeconds(0.5))
                 .finallyDo(() -> setState("Collect"))
-                .withTimeout(13);
+                .withTimeout(12);
     }
 
     // TODO
@@ -114,13 +116,13 @@ public class KitBot extends SmartOpponent {
                 () -> new ChassisSpeeds(
                         MathUtil.applyDeadband(
                                 xbox.getLeftY() * -config.chassis.maxLinearVelocity.in(MetersPerSecond),
-                                config.joystickdeadband),
+                                config.joystickDeadband),
                         MathUtil.applyDeadband(
                                 xbox.getLeftX() * -config.chassis.maxLinearVelocity.in(MetersPerSecond),
-                                config.joystickdeadband),
+                                config.joystickDeadband),
                         MathUtil.applyDeadband(
                                 xbox.getRightX() * -config.chassis.maxAngularVelocity.in(RadiansPerSecond),
-                                config.joystickdeadband)),
+                                config.joystickDeadband)),
                 false);
     }
 }

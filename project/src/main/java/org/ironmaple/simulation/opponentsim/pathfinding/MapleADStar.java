@@ -68,7 +68,7 @@ public class MapleADStar implements Pathfinder {
      */
     public MapleADStar() {
         planningThread = new Thread(this::runThread);
-        planningThread.setPriority(10); // Priority is 1-10. Higher is a greater priority.
+        planningThread.setPriority(7); // Priority is 1-10. Higher is a greater priority.
 
         requestStart = new GridPosition(0, 0);
         requestRealStartPos = Translation2d.kZero;

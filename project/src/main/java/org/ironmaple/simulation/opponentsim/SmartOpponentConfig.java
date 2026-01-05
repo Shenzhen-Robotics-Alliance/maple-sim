@@ -7,9 +7,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.units.AngularAccelerationUnit;
-import edu.wpi.first.units.LinearAccelerationUnit;
-import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -37,7 +34,7 @@ public class SmartOpponentConfig {
     protected final SendableChooser<Command> behaviorChooser;
     // Joystick Options
     protected Optional<Object> joystick = Optional.empty();
-    public double joystickdeadband = 0.1;
+    public double joystickDeadband = 0.15;
     // Pathfind pose offset translation to compensate for different chassis'
     public Transform2d pathfindOffset;
     // Auto Enable and Disable Opponent Support
@@ -274,7 +271,7 @@ public class SmartOpponentConfig {
      * @return this, for chaining.
      */
     public SmartOpponentConfig withJoystickDeadband(double deadband) {
-        this.joystickdeadband = deadband;
+        this.joystickDeadband = deadband;
         return this;
     }
 
@@ -839,8 +836,8 @@ public class SmartOpponentConfig {
             /// Adds the required options to the checklist.
             this.requiredChassisOptions = EnumSet.allOf(ChassisOptions.class);
             /// Optional chassis options
-            this.driveToPoseTolerance = Inches.of(3);
-            this.driveToPoseAngleTolerance = Degrees.of(12);
+            this.driveToPoseTolerance = Inches.of(2);
+            this.driveToPoseAngleTolerance = Degrees.of(6);
             this.gyroSimulation = COTS.ofGenericGyro();
 
             //TODO

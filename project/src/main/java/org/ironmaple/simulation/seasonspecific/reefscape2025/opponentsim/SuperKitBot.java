@@ -3,19 +3,20 @@ package org.ironmaple.simulation.seasonspecific.reefscape2025.opponentsim;
 import static edu.wpi.first.units.Units.*;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import java.util.Objects;
+
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.opponentsim.SmartOpponent;
 import org.ironmaple.simulation.opponentsim.SmartOpponentConfig;
@@ -56,40 +57,6 @@ public class SuperKitBot extends SmartOpponent {
                                 IntakeSimulation.IntakeSide.FRONT,
                                 // Max game piece capacity.
                                 1))
-                /// Adds a way to score. This specifies how the game piece leaves the robot to be scored.
-                .addProjectileSimulation(
-                        // We are scoring coral.
-                        "Coral",
-                        // The new projectile sim. This supplies the sim with the robot pose, so it must be a supplier
-                        // of a new projectile.
-                        () -> new ReefscapeCoralOnFly(
-                                // Get the pose of the robot so we can score from it.
-                                drivetrainSim.getActualPoseInSimulationWorld().getTranslation(),
-                                // Where the game piece should spawn relative to the robot.
-                                new Translation2d(Inches.of(0), Inches.of(-18)),
-                                /// Now we want this piece to leave the robot horizontally, so we have to do things a
-                                // little differently.
-                                // The robot speeds to help determine how fast the game piece should be when leaving the
-                                // robot.
-                                drivetrainSim
-                                        .getActualSpeedsFieldRelative()
-                                        // Now, to get our horizontal piece to fly correctly, we change the robot
-                                        // speeds.
-                                        .plus(ChassisSpeeds.fromRobotRelativeSpeeds(
-                                                // Since our scorer it
-                                                new ChassisSpeeds(
-                                                        1, 0, 0), // Added chassis speeds to change coral velocity,
-                                                drivetrainSim
-                                                        .getActualPoseInSimulationWorld()
-                                                        .getRotation())), // this is because we want a horizontal score
-                                drivetrainSim
-                                        .getActualPoseInSimulationWorld()
-                                        .getRotation()
-                                        .rotateBy(
-                                                Rotation2d.kCCW_90deg), // Rotated by 90 degrees for horizontal shooter.
-                                Inches.of(30), // Shooter Height
-                                MetersPerSecond.of(0), // Initial piece speed
-                                Degrees.of(0))) // Shooter angle
                 .addProjectileSimulation(
                         "Algae",
                         () -> new ReefscapeAlgaeOnFly(
@@ -99,7 +66,45 @@ public class SuperKitBot extends SmartOpponent {
                                 drivetrainSim.getActualPoseInSimulationWorld().getRotation(), // Shooter heading
                                 Meters.of(2.5), // Shooter Height
                                 MetersPerSecond.of(2), // Shooter speed
-                                Degrees.of(20))); // Shooter angle
+                                Degrees.of(20))) // Shooter angle
+                .addProjectileSimulation("Reef L1", () -> newCoral(Meters.of(.7)))
+                .addProjectileSimulation("Reef L2", () -> newCoral(Meters.of(1)))
+                .addProjectileSimulation("Reef L3", () -> newCoral(Meters.of(1.5)))
+                .addProjectileSimulation("Reef L4", () -> newCoral(Meters.of(3), Degrees.of(-75)));
+
+                System.out.println("Projectile Simulation Started: " + manipulatorSim.getProjectileSimulations().toString());
+    }
+
+    /**
+     * TODO
+     * @param height
+     * @return
+     */
+    private ReefscapeCoralOnFly newCoral(Distance height) {
+        return newCoral(height, Degrees.of(-15));
+    }
+
+    /**
+     *
+     * @param height
+     * @return
+     */
+    private ReefscapeCoralOnFly newCoral(Distance height, Angle angle) {
+        return new ReefscapeCoralOnFly(
+                // Obtain robot position from drive simulation
+                drivetrainSim.getActualPoseInSimulationWorld().getTranslation(),
+                // The scoring mechanism is installed at (x, y) (meters) on the robot
+                new Translation2d(Inches.of(20), Inches.of(0)),
+                // Obtain robot speed from drive simulation
+                drivetrainSim.getActualSpeedsRobotRelative(),
+                // Obtain robot facing from drive simulation
+                drivetrainSim.getActualPoseInSimulationWorld().getRotation(),
+                // The height at which the coral is ejected
+                height,
+                // The initial speed of the coral
+                MetersPerSecond.of(2),
+                // The coral is ejected at a 35-degree slope
+                angle);
     }
 
     /**
@@ -111,11 +116,25 @@ public class SuperKitBot extends SmartOpponent {
     protected Command collectState() {
         final Pair<String, Pose2d> target = getCollectTarget();
         if (target == null) return Commands.none();
-
-        return pathfind(getCollectTarget())
+        return pathfind(target, MetersPerSecond.of(8))
                 .andThen(manipulatorSim.intake("Intake").withTimeout(0.5))
                 .finallyDo(() -> setState("Score"))
-                .withTimeout(10);
+                .withTimeout(12);
+    }
+
+    /**
+     * TODO
+     * @return
+     */
+    private Command scoreReef() {
+        // Random integer from 0-4;
+        final int target = (int) (Math.random() * 4);
+        return switch (target) {
+            case 1 -> manipulatorSim.score("Reef L2");
+            case 2 -> manipulatorSim.score("Reef L3");
+            case 3 -> manipulatorSim.score("Reef L4");
+            default -> manipulatorSim.score("Reef L1");
+        };
     }
 
     /**
@@ -127,13 +146,12 @@ public class SuperKitBot extends SmartOpponent {
     protected Command scoreState() {
         final Pair<String, Pose2d> target = getScoringTarget();
         if (target == null) return Commands.none();
-
-        return pathfind(getScoringTarget())
-                .andThen(Commands.waitSeconds(0.2))
-                .andThen(isCoralTarget() ? manipulatorSim.score("Coral") : manipulatorSim.score("Algae"))
+        return pathfind(target, MetersPerSecond.of(8))
                 .andThen(Commands.waitSeconds(0.5))
+                .andThen(isCoralTarget() ? scoreReef() : manipulatorSim.score("Algae"))
+                .andThen(Commands.waitSeconds(0.2))
                 .finallyDo(() -> setState("Collect"))
-                .withTimeout(13);
+                .withTimeout(12);
     }
 
     // TODO
@@ -151,7 +169,10 @@ public class SuperKitBot extends SmartOpponent {
         config.updateBehaviorChooser();
         /// Enable Manipulator control
         xboxController.leftBumper().and(config.isStateTrigger("Joystick")).whileTrue(manipulatorSim.intake("Intake"));
-        xboxController.rightBumper().and(config.isStateTrigger("Joystick")).onTrue(manipulatorSim.score("Coral"));
+        xboxController.rightBumper().and(config.isStateTrigger("Joystick")).onTrue(manipulatorSim.score("Reef L1"));
+        xboxController.b().and(config.isStateTrigger("Joystick")).onTrue(manipulatorSim.score("Reef L2"));
+        xboxController.x().and(config.isStateTrigger("Joystick")).onTrue(manipulatorSim.score("Reef L3"));
+        xboxController.y().and(config.isStateTrigger("Joystick")).onTrue(manipulatorSim.score("Reef L4"));
         xboxController.a().and(config.isStateTrigger("Joystick")).onTrue(manipulatorSim.score("Algae"));
         return this;
     }
@@ -167,13 +188,13 @@ public class SuperKitBot extends SmartOpponent {
                 () -> new ChassisSpeeds(
                         MathUtil.applyDeadband(
                                 xbox.getLeftY() * -config.chassis.maxLinearVelocity.in(MetersPerSecond),
-                                config.joystickdeadband),
+                                config.joystickDeadband),
                         MathUtil.applyDeadband(
                                 xbox.getLeftX() * -config.chassis.maxLinearVelocity.in(MetersPerSecond),
-                                config.joystickdeadband),
+                                config.joystickDeadband),
                         MathUtil.applyDeadband(
                                 xbox.getRightX() * -config.chassis.maxAngularVelocity.in(RadiansPerSecond),
-                                config.joystickdeadband)),
+                                config.joystickDeadband)),
                 false);
     }
 }

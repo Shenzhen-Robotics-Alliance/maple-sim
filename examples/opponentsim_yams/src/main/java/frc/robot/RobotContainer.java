@@ -70,7 +70,8 @@ public class RobotContainer
               .withXboxController(new CommandXboxController(1));
       new KitBot("Super Bot 2", DriverStation.Alliance.Blue);
       new KitBot("Super Bot 3", DriverStation.Alliance.Blue);
-      new SuperKitBot("Super Bot 4", DriverStation.Alliance.Red);
+      new SuperKitBot("Super Bot 4", DriverStation.Alliance.Red)
+              .withXboxController(new CommandXboxController(2));
       new SuperKitBot("Super Bot 5", DriverStation.Alliance.Red);
       new SuperKitBot("Super Bot 6", DriverStation.Alliance.Red);
 

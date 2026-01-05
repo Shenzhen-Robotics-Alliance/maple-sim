@@ -702,10 +702,9 @@ public abstract class SimulatedArena {
      * @return The game pieces as a list of {@link GamePiece}
      */
     public synchronized List<GamePiece> getGamePiecesByType(String type) {
-        final List<GamePiece> gamePiecesPoses = new ArrayList<>();
-        for (GamePiece gamePiece : gamePieces)
-            if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);
-
+        final List<GamePiece> gamePiecesPoses = new ArrayList<>(this.gamePieces);
+        gamePiecesPoses.stream().filter(
+                gamePiece -> !Objects.equals(gamePiece.getType(), type));
         return gamePiecesPoses;
     }
 

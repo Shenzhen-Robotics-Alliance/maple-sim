@@ -25,7 +25,13 @@ import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeAlgaeOnFly
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 
 public class SuperKitBot extends SmartOpponent {
-    // TODO add commenr
+    /**
+     * A SmartOpponent for FRC Reefscape. This robot breaks rules, hence "Super" KitBot.
+     *
+     * @param name the opponent name. Typically just "SuperKitBot 1".
+     *             Names should not be the same.
+     * @param alliance the opponents {@link edu.wpi.first.wpilibj.DriverStation.Alliance}.
+     */
     public SuperKitBot(String name, DriverStation.Alliance alliance) {
         /// All Options should be set in the constructor.
         super(new SmartOpponentConfig()
@@ -76,18 +82,21 @@ public class SuperKitBot extends SmartOpponent {
     }
 
     /**
-     * TODO
-     * @param height
-     * @return
+     * Creates a new CoralOnTheFly with static variables for the reef.
+     *
+     * @param height initial coral height.
+     * @return the new {@link ReefscapeCoralOnFly}.
      */
     private ReefscapeCoralOnFly newCoral(Distance height) {
         return newCoral(height, Degrees.of(-15));
     }
 
     /**
+     * Creates a new CoralOnTheFly with static variables for the reef.
      *
-     * @param height
-     * @return
+     * @param height initial coral height.
+     * @param angle initial coral angle.
+     * @return the new {@link ReefscapeCoralOnFly}.
      */
     private ReefscapeCoralOnFly newCoral(Distance height, Angle angle) {
         return new ReefscapeCoralOnFly(
@@ -123,8 +132,9 @@ public class SuperKitBot extends SmartOpponent {
     }
 
     /**
-     * TODO
-     * @return
+     * Gets a random reef level to score.
+     *
+     * @return a random reef level to score.
      */
     private Command scoreReef() {
         // Random integer from 0-4;
@@ -154,12 +164,21 @@ public class SuperKitBot extends SmartOpponent {
                 .withTimeout(12);
     }
 
-    // TODO
+    /**
+     * Whether the current target is coral.
+     *
+     * @return whether the current target is coral.
+     */
     private boolean isCoralTarget() {
         return !Objects.equals(target.getFirst(), "Barge Net");
     }
 
-    // TODO
+    /**
+     * SuperKitBot Specific joystick method. Has button bindings too.
+     *
+     * @param xboxController the controller to use.
+     * @return this, for chaining.
+     */
     public SuperKitBot withXboxController(CommandXboxController xboxController) {
         config.withJoystick(xboxController);
         config.withState("Joystick", this::joystickState);

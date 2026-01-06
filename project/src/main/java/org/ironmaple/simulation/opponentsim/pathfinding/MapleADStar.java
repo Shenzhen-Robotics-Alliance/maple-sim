@@ -20,9 +20,6 @@ import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-// TODO better explain MapleADStar from the original. 
-
 /**
  * Implementation of AD* running locally in a background thread
  *

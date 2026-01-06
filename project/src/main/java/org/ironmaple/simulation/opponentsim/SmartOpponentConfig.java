@@ -20,7 +20,10 @@ import org.ironmaple.simulation.drivesims.*;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 
-// TODO
+/**
+ * The config is required to make a {@link SmartOpponent}.
+ * It should throw if configured wrong.
+ */
 public class SmartOpponentConfig {
     /// Basic Required Options
     public String name;
@@ -275,7 +278,12 @@ public class SmartOpponentConfig {
         return this;
     }
 
-    // TODO
+    /**
+     * Sets the Pathfinding offset.
+     *
+     * @param pathfindOffset value to transform targets by.
+     * @return this, for chaining.
+     */
     public SmartOpponentConfig withPathfindOffset(Transform2d pathfindOffset) {
         this.pathfindOffset = pathfindOffset;
         return this;
@@ -293,9 +301,11 @@ public class SmartOpponentConfig {
     }
 
     /**
-     * TODO
+     * Adds a scoring weight to a target pose.
+     * The weight is 1 by default, raise it to go there more often.
      *
-     * @param weights
+     * @param weights the map of weights to add.
+     * @return this, for chaining.
      */
     public SmartOpponentConfig withScoringPoseWeights(Map<String, Double> weights) {
         this.scoringWeightMap.putAll(weights);
@@ -303,11 +313,12 @@ public class SmartOpponentConfig {
     }
 
     /**
-     * TODO
+     * Adds a scoring weight to a target pose.
+     * The weight is 1 by default, raise it to go there more often.
      *
-     * @param name
-     * @param weight
-     * @return
+     * @param name the pose to add it to.
+     * @param weight the weight to add.
+     * @return this, for chaining.
      */
     public SmartOpponentConfig withScoringPoseWeights(String name, double weight) {
         this.scoringWeightMap.put(name, weight);
@@ -315,19 +326,20 @@ public class SmartOpponentConfig {
     }
 
     /**
-     * TODO
+     * Gets the map of scoring weights.
      *
-     * @return
+     * @return the map of scoring weights.
      */
     public Map<String, Double> getScoringWeights() {
         return scoringWeightMap;
     }
 
     /**
-     * TODO
+     * Adds a scoring weight to a target pose.
+     * The weight is 1 by default, raise it to go there more often.
      *
-     * @param weights
-     * @return
+     * @param weights the map of weights to add.
+     * @return this, for chaining.
      */
     public SmartOpponentConfig withCollectPoseWeights(Map<String, Double> weights) {
         this.collectWeightMap.putAll(weights);
@@ -335,11 +347,12 @@ public class SmartOpponentConfig {
     }
 
     /**
-     * TODO
+     * Adds a scoring weight to a target pose.
+     * The weight is 1 by default, raise it to go there more often.
      *
-     * @param name
-     * @param weight
-     * @return
+     * @param name the pose to add it to.
+     * @param weight the weight to add.
+     * @return this, for chaining.
      */
     public SmartOpponentConfig withCollectPoseWeights(String name, double weight) {
         this.collectWeightMap.put(name, weight);
@@ -347,9 +360,9 @@ public class SmartOpponentConfig {
     }
 
     /**
-     * TODO
+     * Gets the map of collect weights.
      *
-     * @return
+     * @return the map of collect weights.
      */
     public Map<String, Double> getCollectWeights() {
         return collectWeightMap;
@@ -544,7 +557,6 @@ public class SmartOpponentConfig {
      * @return the refreshed behavior {@link SendableChooser<Command>}.
      */
     public SendableChooser<Command> updateBehaviorChooser() {
-        // TODO replace for loop?
         boolean hasDefault = false;
         /// Load all behaviours
         for (Map.Entry<String, Pair<Command, Boolean>> entry : behavior.entrySet()) {
@@ -779,7 +791,6 @@ public class SmartOpponentConfig {
      * @throws IllegalArgumentException if any config is incorrect.
      */
     public boolean validateConfigs() {
-        // TODO replace for?
         boolean validConfig = chassis.validConfig() && requiredBasicOptions.isEmpty();
         // If not set correct, report settings to update. Then throw an error.
         if (!validConfig) {
@@ -807,7 +818,9 @@ public class SmartOpponentConfig {
         InitialPose
     }
 
-    // TODO
+    /**
+     * The SmartOpponent's Chassis Config, this is an inner config that is only chassis configuration.
+     */
     public static class ChassisConfig {
         /// Required chassis options to be set later.
         public Distance trackWidth;
@@ -839,19 +852,21 @@ public class SmartOpponentConfig {
             this.driveToPoseTolerance = Inches.of(2);
             this.driveToPoseAngleTolerance = Degrees.of(6);
             this.gyroSimulation = COTS.ofGenericGyro();
-
-            //TODO
-            this.maxLinearAcceleration = MetersPerSecondPerSecond.of(14);
-            this.maxAngularAcceleration = DegreesPerSecondPerSecond.of(360);
         }
 
         /**
          * Constructor for ChassisConfig.
          *
+         * @param trackWidth the distance from one center of a rear wheel to the other.
+         * @param trackHeight the distance from one center of a left or right wheel to the other.
+         * @param bumperWidth the distance from the left of the robot to the right with bumpers.
+         * @param bumperHeight the distance from the front of the robot to the rear with the bumpers.
          * @param mass the mass of the robot.
          * @param moi the moment of inertia of the robot.
          * @param maxLinearVelocity the max linear velocity of the robot.
+         * @param maxLinearAcceleration the max linear acceleration of the robot.
          * @param maxAngularVelocity the max angular velocity of the robot.
+         * @param maxAngularAcceleration the max angular acceleration of the robot.
          * @param module the {@link ModuleConfig} for the robot's swerve modules.
          */
         ChassisConfig(
@@ -862,7 +877,9 @@ public class SmartOpponentConfig {
                 Mass mass,
                 MomentOfInertia moi,
                 LinearVelocity maxLinearVelocity,
+                LinearAcceleration maxLinearAcceleration,
                 AngularVelocity maxAngularVelocity,
+                AngularAcceleration maxAngularAcceleration,
                 ModuleConfig module) {
             /// Creates a new config using the empty base.
             this();
@@ -874,7 +891,9 @@ public class SmartOpponentConfig {
                     .withMass(mass)
                     .withMOI(moi)
                     .withMaxLinearVelocity(maxLinearVelocity)
+                    .withMaxLinearAcceleration(maxLinearAcceleration)
                     .withMaxAngularVelocity(maxAngularVelocity)
+                    .withMaxAngularAcceleration(maxAngularAcceleration)
                     .withModule(module);
         }
 
@@ -898,7 +917,9 @@ public class SmartOpponentConfig {
                 Mass mass,
                 MomentOfInertia moi,
                 LinearVelocity maxLinearVelocity,
+                LinearAcceleration maxLinearAcceleration,
                 AngularVelocity maxAngularVelocity,
+                AngularAcceleration maxAngularAcceleration,
                 Distance wheelRadius,
                 double wheelCOF,
                 DCMotor driveMotor,
@@ -919,7 +940,9 @@ public class SmartOpponentConfig {
                     mass,
                     moi,
                     maxLinearVelocity,
+                    maxLinearAcceleration,
                     maxAngularVelocity,
+                    maxAngularAcceleration,
                     new ModuleConfig(
                             wheelRadius,
                             wheelCOF,
@@ -978,7 +1001,6 @@ public class SmartOpponentConfig {
          * @return true if the config is valid, false otherwise.
          */
         public boolean validConfig() {
-            // TODO use streaming?
             boolean validConfig = module.validConfig() && requiredChassisOptions.isEmpty();
             if (!validConfig) {
                 for (ChassisOptions option : requiredChassisOptions) {
@@ -1089,6 +1111,18 @@ public class SmartOpponentConfig {
         }
 
         /**
+         * Sets the max linear acceleration of the robot.
+         *
+         * @param maxLinearAcceleration The max linear acceleration of the robot.
+         * @return this, for chaining.
+         */
+        public ChassisConfig withMaxLinearAcceleration(LinearAcceleration maxLinearAcceleration) {
+            this.maxLinearAcceleration = maxLinearAcceleration;
+            this.requiredChassisOptions.remove(ChassisOptions.MaxLinearAcceleration);
+            return this;
+        }
+
+        /**
          * Sets the max angular velocity of the robot.
          *
          * @param maxAngularVelocity The max angular velocity of the robot.
@@ -1097,6 +1131,18 @@ public class SmartOpponentConfig {
         public ChassisConfig withMaxAngularVelocity(AngularVelocity maxAngularVelocity) {
             this.maxAngularVelocity = maxAngularVelocity;
             this.requiredChassisOptions.remove(ChassisOptions.MaxAngularVelocity);
+            return this;
+        }
+
+        /**
+         * Sets the max angular acceleration of the robot.
+         *
+         * @param maxAngularAcceleration The max angular acceleration of the robot.
+         * @return this, for chaining.
+         */
+        public ChassisConfig withMaxAngularAcceleration(AngularAcceleration maxAngularAcceleration) {
+            this.maxAngularAcceleration = maxAngularAcceleration;
+            this.requiredChassisOptions.remove(ChassisOptions.MaxAngularAcceleration);
             return this;
         }
 
@@ -1157,13 +1203,19 @@ public class SmartOpponentConfig {
             MOI,
             /// Opponent Robot Max Linear Velocity
             MaxLinearVelocity,
+            /// Opponent Robot Max Linear Acceleration
+            MaxLinearAcceleration,
             /// Opponent Robot Max Angular Velocity
             MaxAngularVelocity,
+            /// Opponent Robot Max Angular Acceleration
+            MaxAngularAcceleration,
             /// Opponent Module Config
             ModuleConfig
         }
 
-        // TODO
+        /**
+         * A few chassis presets to simplify configs that don't need to be specific.
+         */
         public enum Presets {
             /// <p> Opponent Swerve Chassis config presets to ease creation. </p>
             /// A simple config that defaults harder values to viable values.
@@ -1186,13 +1238,20 @@ public class SmartOpponentConfig {
                             .withMass(Kilograms.of(55))
                             .withMOI(KilogramSquareMeters.of(8))
                             .withMaxLinearVelocity(MetersPerSecond.of(8.5))
-                            .withMaxAngularVelocity(DegreesPerSecond.of(480))
+                            .withMaxLinearAcceleration(MetersPerSecondPerSecond.of(12))
+                            .withMaxAngularVelocity(DegreesPerSecond.of(360))
+                            .withMaxAngularAcceleration(DegreesPerSecondPerSecond.of(480))
                             .withModule(ModuleConfig.Presets.MK4i.getConfig());
                 };
             }
         }
 
-        // TODO
+        /**
+         * Loads another config into this config.
+         *
+         * @param other the config to copy.
+         * @return return the updated config.
+         */
         public ChassisConfig copy(ChassisConfig other) {
             this.withTrackWidth(other.trackWidth)
                     .withTrackLength(other.trackLength)
@@ -1206,13 +1265,20 @@ public class SmartOpponentConfig {
             return this;
         }
 
-        // TODO
+        /**
+         * Creates a new clone of a config.
+         *
+         * @param other the config to clone.
+         * @return the newly cloned config.
+         */
         public static ChassisConfig clone(ChassisConfig other) {
             return new ChassisConfig().copy(other);
         }
     }
 
-    // TODO
+    /**
+     * The SmartOpponent's Module Config, this is an inner config that is only the module configuration.
+     */
     public static class ModuleConfig {
         /// Constants to be initialized in the constructor.
         public Distance wheelRadius;
@@ -1487,7 +1553,9 @@ public class SmartOpponentConfig {
             DriveCurrentLimit
         }
 
-        // TODO add comment
+        /**
+         * A few module presets to simplify configs that don't need to be specific.
+         */
         public enum Presets {
             /// <p> Opponent Swerve module config presets to ease creation. </p>
             /// A simple config that defaults harder values to viable values.

@@ -7,9 +7,8 @@ import edu.wpi.first.math.util.Units;
 import org.ironmaple.simulation.opponentsim.OpponentManager;
 
 public class ReefscapeOpponentManager extends OpponentManager {
-    // TODO add better pose addition commenting
     public ReefscapeOpponentManager() {
-        super(true);
+        super(true); // Default Starting and queening poses.
         super
                 /// All reef scoring poses
                 .addScoringPose("Reef", "Reef South Left", PoseConstants.REEF_SOUTH_LEFT_POSE)

@@ -188,9 +188,10 @@ public class OpponentManager {
     }
 
     /**
-     * TODO
-     * @param pollRate
-     * @return
+     * Dynamically caches and refreshed a list of opponent targets.
+     *
+     * @param pollRate how long to wait before refreshing
+     * @return the list of registered opponent target poses.
      */
     public List<Pair<String, Pose2d>> getOpponentTargetsDynamic(Time pollRate)
     {
@@ -212,7 +213,7 @@ public class OpponentManager {
      * Checks if the given pose is near any opponent target pose.
      *
      * @param pose the pose to check against.
-     * @param pollRate TODO
+     * @param pollRate how long to wait before refreshing
      * @param tolerance the translation tolerance in {@link Distance}.
      * @return
      */

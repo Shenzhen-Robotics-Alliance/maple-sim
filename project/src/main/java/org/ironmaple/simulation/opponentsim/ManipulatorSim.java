@@ -122,16 +122,12 @@ public class ManipulatorSim extends SubsystemBase {
      * A command that only calls score(String) when there is greater than zero(>0)
      * {@link org.ironmaple.simulation.gamepieces.GamePiece} in the intake.
      *
-     * @param intakeName
-     * @param projectileName
-     * @return
+     * @param intakeName the intake to check.
+     * @param projectileName the piece to score.
+     * @return score(String) when valid.
      */
     public Command scoreWithIntake(String intakeName, String projectileName) {
-        // TODO fix
-        return runOnce(() -> {
-            if (getIntakeSimulation(intakeName).getGamePiecesAmount() > 0) {
-                score(projectileName);
-            }
-        });
+        return score(projectileName)
+                .onlyIf(() -> getIntakeSimulation(intakeName).getGamePiecesAmount() > 0);
     }
 }

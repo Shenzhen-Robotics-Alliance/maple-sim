@@ -199,80 +199,12 @@ public abstract class SmartOpponent extends SubsystemBase {
     /**
      * The collect state to run.
      *
-     * <p>
-     *
-     * <h1>Commands should be structured like below to prevent InstantCommands, causing the opponent to cycle states
-     * without the command finishing.</h1>
-     *
-     * <p>
-     *
-     * <p>
-     *
-     * <h1>Good </h1>
-     *
-     * <pre><code>
-     *     pathfind(getRandomFromMap(config.getPoseMap).withTimeout(7)) /// Go to element
-     *     .andThen(run(() -> Runnable).withTimeout(0.5)) /// Run intake
-     *     .andThen(runOnce(() -> Runnable)) /// Stop Intake
-     *     .andThen(Commands.waitSeconds(0.5)) /// Wait before continuing
-     *     .finallyDo(() -> setState("Score")); /// Now cycle to next state.
-     * </code></pre>
-     *
-     * <p>
-     *
-     * <p>
-     *
-     * <h1>Bad </h1>
-     *
-     * <pre><code>
-     *     pathfind
-     *     /// This adds the command then adds the timeout to the entire command.
-     *     .andThen(run(() -> Runnable)).withTimeout(1)
-     *     /// This results in an InstantCommand ending instantly.
-     *     .andThen(() -> Runnable);
-     * </code></pre>
-     *
      * @return a runnable that runs the state.
      */
     protected abstract Command collectState();
-    // TODO update state command commenting
+
     /**
      * The score state to run.
-     *
-     * <p>
-     *
-     * <h1>Commands should be structured like below to prevent InstantCommands, causing the opponent to cycle states
-     * without the command finishing.</h1>
-     *
-     * <p>
-     *
-     * <p>
-     *
-     * <h1>Good </h1>
-     *
-     * <pre><code>
-     *     pathfind(getRandomFromMap(config.getPoseMap)).withTimeout(7) // Go to element
-     *     .andThen(manipulatorSim.intake("Intake").withTimeout(0.5)) // Run intake
-     *     .andThen(manipulatorSim.intake("Intake") // Run intake
-     *              .withDeadline(Commands.waitSeconds(1)) // Add deadline timer to only intake()
-     *     .andThen(runOnce(() -> Runnable)) // Stop something
-     *     .andThen(Commands.waitSeconds(0.5)) // Wait before continuing
-     *     .finallyDo(() -> setState("Score")); // Now cycle to next state.
-     * </code></pre>
-     *
-     * <p>
-     *
-     * <p>
-     *
-     * <h1>Bad </h1>
-     *
-     * <pre><code>
-     *     pathfind
-     *     /// This adds the command then adds the timeout to the entire command sequence.
-     *     .andThen(run(() -> Runnable)).withTimeout(1)
-     *     /// This results in an InstantCommand ending instantly.
-     *     .andThen(() -> Runnable);
-     * </code></pre>
      *
      * @return a runnable that runs the state.
      */
@@ -435,13 +367,14 @@ public abstract class SmartOpponent extends SubsystemBase {
     }
 
     /**
-     * TODO
-     * @param target
-     * @return
+     * Has the opponent run a new FollowPathCommand.
+     *
+     * @param path the path to follow.
+     * @return a follow path command.
      */
-    protected Command followPath(Pair<String, PathPlannerPath> target) {
+    protected Command followPath(PathPlannerPath path) {
         return new FollowPathCommand(
-                target.getSecond(),
+                path,
                 () -> drivetrainSim.getActualPoseInSimulationWorld(),
                 () -> drivetrainSim.getActualSpeedsRobotRelative(),
                 (speeds, ffNotUsed) -> drivetrainSim.runChassisSpeeds(speeds, new Translation2d(), false, false),
@@ -505,9 +438,9 @@ public abstract class SmartOpponent extends SubsystemBase {
     }
 
     /**
-     * TODO
+     * Gets a random scoring target based on pose weights.
      *
-     * @return
+     * @return a random scoring target based on pose weights.
      */
     protected Pair<String, Pose2d> getScoringTarget() {
         // If no entries exist, fail.
@@ -554,8 +487,9 @@ public abstract class SmartOpponent extends SubsystemBase {
     }
 
     /**
-     * TODO
-     * @return
+     * Gets a random collect target based on pose weights.
+     *
+     * @return a random collect target based on pose weights.
      */
     protected Pair<String, Pose2d> getCollectTarget() {
         // If no entries exist, fail.

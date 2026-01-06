@@ -17,7 +17,13 @@ import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralOnFly;
 
 public class KitBot extends SmartOpponent {
-    // TODO
+    /**
+     * A SmartOpponent for FRC Reefscape.
+     *
+     * @param name the opponent name. Typically just "SuperKitBot 1".
+     *             Names should not be the same.
+     * @param alliance the opponents {@link edu.wpi.first.wpilibj.DriverStation.Alliance}.
+     */
     public KitBot(String name, DriverStation.Alliance alliance) {
         /// All Options should be set in the constructor.
         super(new SmartOpponentConfig()

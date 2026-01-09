@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Launch Shuffleboard (4)" type="JarApplication" activateToolWindowBeforeRun="false">
-    <option name="JAR_PATH" value="C:\Users\Public\wpilib\2025\tools\artifacts\Shuffleboard-2025.1.1-winx64.jar" />
-    <module name="YAMS.main" />
-    <method v="2" />
-  </configuration>
-</component>

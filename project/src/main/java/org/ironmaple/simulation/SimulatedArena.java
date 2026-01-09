@@ -30,6 +30,7 @@ import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
+import org.ironmaple.simulation.opponentsim.OpponentManager;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
@@ -92,6 +93,7 @@ public abstract class SimulatedArena {
     Boolean shouldPublishMatchBreakdown = true;
 
     private static SimulatedArena instance = null;
+    protected OpponentManager opponentManager;
     /**
      *
      *
@@ -441,7 +443,7 @@ public abstract class SimulatedArena {
      * be defaulted to 0 and then added too
      *
      * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
-     * @param ValueKey The name of the value to be added too
+     * @param valueKey The name of the value to be added too
      * @param toAdd how much to be added to specified value
      */
     public void addValueToMatchBreakdown(boolean isBlueTeam, String valueKey, int toAdd) {
@@ -629,6 +631,26 @@ public abstract class SimulatedArena {
         }
 
         return returnList;
+    }
+
+
+    /**
+     * Adds an OpponentManager to the SimulatedArena.
+     *
+     * @param opponentManager the OpponentManager to use.
+     */
+    protected void withOpponentManager(OpponentManager opponentManager) {
+        this.opponentManager = opponentManager;
+    }
+
+    /**
+     * Gets the current {@link OpponentManager}. Use casting for your Arena, some arenas may override with castless
+     * methods. WILL return null if not set.
+     *
+     * @return the {@link OpponentManager} in use.
+     */
+    public OpponentManager getOpponentManager() {
+        return opponentManager;
     }
 
     /**

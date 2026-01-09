@@ -55,7 +55,7 @@ public class GamePieceProjectile implements GamePiece {
     // Properties of the game piece projectile:
     protected final GamePieceOnFieldSimulation.GamePieceInfo info;
     public final String gamePieceType;
-    protected final Translation2d initialPosition;
+    protected Translation2d initialPosition;
     protected final Translation2d initialLaunchingVelocityMPS;
     protected final double initialHeight, initialVerticalSpeedMPS;
     protected final Rotation3d gamePieceRotation;
@@ -624,6 +624,19 @@ public class GamePieceProjectile implements GamePiece {
      */
     public GamePieceProjectile withTouchGroundHeight(double heightAsTouchGround) {
         this.heightAsTouchGround = heightAsTouchGround;
+        return this;
+    }
+
+    /**
+     *
+     *
+     * <h2>Configures the position of the robot (not the shooter) at the time of launching the game piece.</h2>
+     *
+     * @param initialPosition the position of the robot (not the shooter) at the time of launching the game piece
+     * @return the current instance of {@link GamePieceProjectile} to allow method chaining
+     */
+    public GamePieceProjectile replaceRobotPosition(Translation2d initialPosition) {
+        this.initialPosition = initialPosition;
         return this;
     }
 

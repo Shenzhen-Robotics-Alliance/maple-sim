@@ -60,34 +60,34 @@ public interface SimulatedMotorController {
          */
         public Voltage constrainOutputVoltage(
                 Angle encoderAngle, AngularVelocity encoderVelocity, Voltage requestedVoltage) {
-            final double kCurrentThreshold = 1.2;
-
-            // don't use WpiLib Units for calculations
+            // Don't use WPILib Units
             final double motorCurrentVelocityRadPerSec = encoderVelocity.in(RadiansPerSecond);
-            final double currentLimitAmps = currentLimit.in(Amps);
             final double requestedOutputVoltageVolts = requestedVoltage.in(Volts);
+            final double currentLimitAmps = currentLimit.in(Amps);
+            final double kCurrentThreshold = 1.2;
+            final double thresholdedCurrentLimitAmps = kCurrentThreshold * currentLimitAmps;
+
             final double currentAtRequestedVoltageAmps =
                     model.getCurrent(motorCurrentVelocityRadPerSec, requestedOutputVoltageVolts);
 
+            double limitedVoltage = requestedOutputVoltageVolts;
+
             // Resource for current limiting:
             // https://file.tavsys.net/control/controls-engineering-in-frc.pdf (sec 12.1.3)
-            double limitedVoltage = requestedOutputVoltageVolts;
-            final boolean currentTooHigh =
-                    Math.abs(currentAtRequestedVoltageAmps) > (kCurrentThreshold * currentLimitAmps);
-            if (currentTooHigh) {
+            if (Math.abs(currentAtRequestedVoltageAmps) > thresholdedCurrentLimitAmps) {
                 final double limitedCurrent = Math.copySign(currentLimitAmps, currentAtRequestedVoltageAmps);
                 limitedVoltage = model.getVoltage(model.getTorque(limitedCurrent), motorCurrentVelocityRadPerSec);
+
+                // Ensure the current limit doesn't cause an increase to output voltage
+                if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltageVolts))
+                    limitedVoltage = requestedOutputVoltageVolts;
             }
 
-            // ensure the current limit doesn't cause an increase to output voltage
-            if (Math.abs(limitedVoltage) > Math.abs(requestedOutputVoltageVolts))
-                limitedVoltage = requestedOutputVoltageVolts;
+            // Apply software limits
+            if (limitedVoltage > 0 && encoderAngle.gte(forwardSoftwareLimit)) limitedVoltage = 0;
+            if (limitedVoltage < 0 && encoderAngle.lte(reverseSoftwareLimit)) limitedVoltage = 0;
 
-            // apply software limits
-            if (encoderAngle.gte(forwardSoftwareLimit) && limitedVoltage > 0) limitedVoltage = 0;
-            if (encoderAngle.lte(reverseSoftwareLimit) && limitedVoltage < 0) limitedVoltage = 0;
-
-            // constrain the output voltage to the battery voltage
+            // Constrain the output voltage to the battery voltage
             return Volts.of(limitedVoltage);
         }
 

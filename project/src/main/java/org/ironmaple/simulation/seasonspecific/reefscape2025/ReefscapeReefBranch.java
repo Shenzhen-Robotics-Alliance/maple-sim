@@ -153,9 +153,6 @@ public class ReefscapeReefBranch extends Goal {
     public boolean checkRotation(GamePiece gamePiece) {
         if (level == 3) {
             Rotation3d rotation = gamePiece.getPose3d().getRotation();
-            System.out.println(Math.abs(rotation.getY() + Math.PI / 2));
-            System.out.println(Math.abs(rotation.getY() - Math.PI / 2));
-
             return Math.abs(rotation.getY() + Math.PI / 2) < Degrees.of(10).in(Units.Radians)
                     || Math.abs(rotation.getY() - Math.PI / 2) < Degrees.of(10).in(Units.Radians);
         } else {

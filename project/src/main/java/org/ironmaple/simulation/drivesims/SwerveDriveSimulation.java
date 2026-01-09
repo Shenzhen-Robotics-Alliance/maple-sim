@@ -248,12 +248,12 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <p>The total friction force should not exceed the tire's grip limit.
      */
     private void simulateModulePropellingForces() {
-        for (int i = 0; i < moduleSimulations.length; i++) {
+        final int arrayLength = moduleSimulations.length; // Call it once
+        final Rotation2d driveRotation = getSimulatedDriveTrainPose().getRotation(); // Call it once per 4 modules.
+        for (int i = 0; i < arrayLength; i++) {
             final Vector2 moduleWorldPosition = getWorldPoint(GeometryConvertor.toDyn4jVector2(moduleTranslations[i]));
             final Vector2 moduleForce = moduleSimulations[i].updateSimulationSubTickGetModuleForce(
-                    super.getLinearVelocity(moduleWorldPosition),
-                    getSimulatedDriveTrainPose().getRotation(),
-                    gravityForceOnEachModule);
+                    super.getLinearVelocity(moduleWorldPosition), driveRotation, gravityForceOnEachModule);
             super.applyForce(moduleForce, moduleWorldPosition);
         }
     }

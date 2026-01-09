@@ -1,0 +1,21 @@
+{
+    "fileName": "yams.json",
+    "name": "Yet Another Mechanism System",
+    "version": "2025.12.22",
+    "frcYear": "2025",
+    "uuid": "a1051e86-a979-4880-a28b-a0d5362d1d96",
+    "mavenUrls": [
+        "https://yet-another-software-suite.github.io/YAMS/releases/"
+    ],
+    "jsonUrl": "https://yet-another-software-suite.github.io/YAMS/yams.json",
+    "javaDependencies": [
+        {
+            "groupId": "yams",
+            "artifactId": "YAMS-java",
+            "version": "2025.12.22"
+        }
+    ],
+    "cppDependencies": [],
+    "jniDependencies": [],
+    "requires": []
+}

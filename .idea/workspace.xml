@@ -5,9 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f57e4d3f-16ad-409c-82f6-da91213bb687" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/vendordep/maple-sim.json" beforeDir="false" afterPath="$PROJECT_DIR$/docs/vendordep/maple-sim.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/examples/opponentsim_yams/src/main/java/frc/robot/subsystems/ManipulatorSubsystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/opponentsim_yams/src/main/java/frc/robot/RobotContainer.java" beforeDir="false" afterPath="$PROJECT_DIR$/examples/opponentsim_yams/src/main/java/frc/robot/RobotContainer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/opponentsim_yams/src/main/java/frc/robot/subsystems/SwerveSubsystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/examples/opponentsim_yams/src/main/java/frc/robot/subsystems/SwerveSubsystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/opponentsim/OpponentManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/opponentsim/OpponentManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/opponentsim/OpponentManipulatorSim.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/opponentsim/ManipulatorSim.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/opponentsim/SmartOpponentConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/opponentsim/SmartOpponentConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/opponentsim/SuperKitBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/reefscape2025/opponentsim/SuperKitBot.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,31 +75,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.project [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.project [publishToMavenLocal].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/_Project Files/FRC/Code/maple-sim&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.24847251&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.project [build].executor": "Run",
+    "Gradle.project [publishToMavenLocal].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/_Project Files/FRC/Code/maple-sim",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "settings.editor.splitter.proportion": "0.24847251",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected="Gradle.project [publishToMavenLocal]">
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\_Project Files\FRC\Code\maple-sim\examples\opponentsim_yams\vendordeps" />
+      <recent name="D:\_Project Files\FRC\Code\maple-sim\project\vendordeps" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.project [build]">
     <configuration name="project [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -142,19 +153,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.project [publishToMavenLocal]" />
-        <item itemvalue="Gradle.project [publishToMavenLocal]" />
         <item itemvalue="Gradle.project [build]" />
+        <item itemvalue="Gradle.project [publishToMavenLocal]" />
+        <item itemvalue="Gradle.project [publishToMavenLocal]" />
       </list>
     </recent_temporary>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
-        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-IU-252.25557.131" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -168,6 +171,8 @@
       <workItem from="1763602434177" duration="1430000" />
       <workItem from="1763844850513" duration="18000" />
       <workItem from="1763905366351" duration="20000" />
+      <workItem from="1766699834864" duration="6957000" />
+      <workItem from="1766790943557" duration="18000" />
     </task>
     <servers />
   </component>
@@ -175,6 +180,6 @@
     <option name="version" value="3" />
   </component>
   <component name="WpiLibVersionService">
-    <option name="lastChecked" value="20251123084245" />
+    <option name="lastChecked" value="20251226181544" />
   </component>
 </project>

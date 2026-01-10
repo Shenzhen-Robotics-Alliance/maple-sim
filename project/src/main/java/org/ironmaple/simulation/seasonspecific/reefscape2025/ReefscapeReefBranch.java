@@ -46,9 +46,8 @@ public class ReefscapeReefBranch extends Goal {
     public static void setAngleTolerance(Angle tolerance) {
         angleTolerance = tolerance;
         // Update all existing instances
-        for (ReefscapeReefBranch branch : allInstances) {
+        for (ReefscapeReefBranch branch : allInstances) 
             branch.updateRotationChecker();
-        }
     }
 
     public static final Translation2d origin =

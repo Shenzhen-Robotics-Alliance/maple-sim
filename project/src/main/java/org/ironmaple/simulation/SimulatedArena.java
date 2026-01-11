@@ -30,6 +30,7 @@ import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
+import org.ironmaple.simulation.opponentsim.OpponentManager;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
@@ -92,6 +93,7 @@ public abstract class SimulatedArena {
     Boolean shouldPublishMatchBreakdown = true;
 
     private static SimulatedArena instance = null;
+
     /**
      *
      *
@@ -126,6 +128,7 @@ public abstract class SimulatedArena {
      * @param newInstance the new simulation arena instance to override the current one
      */
     public static void overrideInstance(SimulatedArena newInstance) {
+        if (instance != null) instance = new Arena2025Reefscape();
         instance = newInstance;
     }
 
@@ -441,7 +444,7 @@ public abstract class SimulatedArena {
      * be defaulted to 0 and then added too
      *
      * @param isBlueTeam Wether to add to the blue teams match breakdown or the red teams match breakdown
-     * @param ValueKey The name of the value to be added too
+     * @param valueKey The name of the value to be added too
      * @param toAdd how much to be added to specified value
      */
     public void addValueToMatchBreakdown(boolean isBlueTeam, String valueKey, int toAdd) {
@@ -575,16 +578,14 @@ public abstract class SimulatedArena {
      */
     protected void simulationSubTick(int subTickNum) {
         SimulatedBattery.simulationSubTick();
-        for (AbstractDriveTrainSimulation driveTrainSimulation : driveTrainSimulations)
-            driveTrainSimulation.simulationSubTick();
+        driveTrainSimulations.forEach(AbstractDriveTrainSimulation::simulationSubTick);
 
         GamePieceProjectile.updateGamePieceProjectiles(this, this.gamePieceLaunched());
 
         this.physicsWorld.step(1, SIMULATION_DT.in(Seconds));
 
-        for (IntakeSimulation intakeSimulation : intakeSimulations) intakeSimulation.removeObtainedGamePieces(this);
-
-        for (Simulatable customSimulation : customSimulations) customSimulation.simulationSubTick(subTickNum);
+        intakeSimulations.forEach(intake -> intake.removeObtainedGamePieces(this));
+        customSimulations.forEach(sim -> sim.simulationSubTick(subTickNum));
 
         replaceValueInMatchBreakDown(true, "TotalScore", blueScore);
         replaceValueInMatchBreakDown(false, "TotalScore", redScore);
@@ -681,10 +682,9 @@ public abstract class SimulatedArena {
      * @return The game pieces as a list of {@link GamePiece}
      */
     public synchronized List<GamePiece> getGamePiecesByType(String type) {
-        final List<GamePiece> gamePiecesPoses = new ArrayList<>();
-        for (GamePiece gamePiece : gamePieces)
-            if (Objects.equals(gamePiece.getType(), type)) gamePiecesPoses.add(gamePiece);
-
+        final List<GamePiece> gamePiecesPoses = new ArrayList<>(this.gamePieces);
+        gamePiecesPoses.stream().filter(
+                gamePiece -> !Objects.equals(gamePiece.getType(), type));
         return gamePiecesPoses;
     }
 

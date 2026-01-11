@@ -51,7 +51,7 @@ public class RebuiltOutpost extends Goal {
                 Centimeters.of(0),
                 Centimeters.of(0),
                 "Fuel",
-                isBlue ? blueProcessorPose : redProcessorPose,
+                isBlue ? blueLaunchPose : redLaunchPose,
                 isBlue);
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()

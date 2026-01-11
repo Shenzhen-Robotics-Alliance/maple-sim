@@ -1,4 +1,4 @@
-package org.ironmaple.simulation.seasonspecific.reefscape2025;
+package org.ironmaple.simulation.seasonspecific.rebuilt2026;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -17,10 +17,10 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  * rubber playground ball with a ±½ inch (~12 mm) diameter, featured as a game piece in the 2025 Reefscape game.
  */
 public class RebuiltFuelOnField extends GamePieceOnFieldSimulation {
-    public static final GamePieceInfo REEFSCAPE_ALGAE_INFO =
-            new GamePieceInfo("Fuel", new Circle(Centimeters.of(7.5).in(Meters)), Centimeter.of(15), Kilograms.of(213), 1.8, 5, 0.8);
+    public static final GamePieceInfo REBUILT_FUEL_INFO = new GamePieceInfo(
+            "Fuel", new Circle(Centimeters.of(7.5).in(Meters)), Centimeter.of(15), Kilograms.of(2.13), 1.8, 5, 0.8);
 
     public RebuiltFuelOnField(Translation2d initialPosition) {
-        super(REEFSCAPE_ALGAE_INFO, new Pose2d(initialPosition, new Rotation2d()));
+        super(REBUILT_FUEL_INFO, new Pose2d(initialPosition, new Rotation2d()));
     }
 }

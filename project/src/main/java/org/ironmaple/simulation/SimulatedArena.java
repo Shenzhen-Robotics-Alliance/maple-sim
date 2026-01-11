@@ -30,8 +30,7 @@ import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
-import org.ironmaple.simulation.opponentsim.OpponentManager;
-import org.ironmaple.simulation.seasonspecific.reefscape2025.Arena2025Reefscape;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
 
 /**
@@ -109,7 +108,7 @@ public abstract class SimulatedArena {
             throw new IllegalStateException(
                     "MapleSim is running on a real robot! (If you would actually want that, set SimulatedArena.ALLOW_CREATION_ON_REAL_ROBOT to true).");
 
-        if (instance == null) instance = new Arena2025Reefscape();
+        if (instance == null) instance = new org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt();
 
         return instance;
     }
@@ -128,7 +127,7 @@ public abstract class SimulatedArena {
      * @param newInstance the new simulation arena instance to override the current one
      */
     public static void overrideInstance(SimulatedArena newInstance) {
-        if (instance != null) instance = new Arena2025Reefscape();
+        if (instance != null) instance = new Arena2026Rebuilt();
         instance = newInstance;
     }
 
@@ -683,8 +682,7 @@ public abstract class SimulatedArena {
      */
     public synchronized List<GamePiece> getGamePiecesByType(String type) {
         final List<GamePiece> gamePiecesPoses = new ArrayList<>(this.gamePieces);
-        gamePiecesPoses.stream().filter(
-                gamePiece -> !Objects.equals(gamePiece.getType(), type));
+        gamePiecesPoses.stream().filter(gamePiece -> !Objects.equals(gamePiece.getType(), type));
         return gamePiecesPoses;
     }
 

@@ -1,143 +1,138 @@
-package org.ironmaple.simulation.seasonspecific.crescendo2024;
+package org.ironmaple.simulation.seasonspecific.rebuilt2026;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2026Rebuilt extends SimulatedArena {
 
-    protected double blueAmpClock = 0;
-    protected int blueAmpCount = 0;
+    protected boolean shouldClock = true;
 
-    protected double redAmpClock = 0;
-    protected int redAmpCount = 0;
+    protected double clock = 0;
+    protected boolean blueIsOnClock = true;
 
-    BooleanPublisher redAmpPublisher = redTable.getBooleanTopic("redIsAmped").publish();
-    BooleanPublisher blueAmpPublisher = blueTable.getBooleanTopic("blueIsAmped").publish();
+    protected DoublePublisher phaseClockPublisher =
+            genericInfoTable.getDoubleTopic("Time left in current phase").publish();
 
-    protected final CrescendoSpeaker redSpeaker;
-    protected final CrescendoSpeaker blueSpeaker;
+    protected BooleanPublisher redActivePublisher =
+            redTable.getBooleanTopic("Red is active").publish();
+    protected BooleanPublisher blueActivePublisher =
+            blueTable.getBooleanTopic("Blue is active").publish();
 
-    protected final CrescendoAmp redAmp;
-    protected final CrescendoAmp blueAmp;
+    protected RebuiltHub blueHub;
+    protected RebuiltHub redHub;
+
+    protected RebuiltOutpost blueOutpost;
+    protected RebuiltOutpost redOutpost;
+
+    protected static Translation2d centerPieceBottomRightCorner = new Translation2d(8.270494, 1.724406);
 
     /** the obstacles on the 2024 competition field */
-    public static final class CrescendoFieldObstaclesMap extends FieldMap {
+    public static final class RebuiltFieldObstaclesMap extends FieldMap {
         private static final double FIELD_WIDTH = 16.54;
 
-        public CrescendoFieldObstaclesMap() {
-            super();
+        public RebuiltFieldObstaclesMap() {
+            super.addBorderLine(new Translation2d(0, 1.270), new Translation2d(0, 6.782));
 
-            // left wall
-            super.addBorderLine(new Translation2d(0, 1), new Translation2d(0, 4.51));
-            super.addBorderLine(new Translation2d(0, 4.51), new Translation2d(0.9, 5));
+            // red wall
+            super.addBorderLine(new Translation2d(17.548, 1.270), new Translation2d(17.548, 6.782));
 
-            super.addBorderLine(new Translation2d(0.9, 5), new Translation2d(0.9, 6.05));
+            // upper walls
+            super.addBorderLine(new Translation2d(1.672, 8.052), new Translation2d(11, 8.052));
+            super.addBorderLine(new Translation2d(12, 8.052), new Translation2d(17.548 - 1.672, 8.052));
 
-            super.addBorderLine(new Translation2d(0.9, 6.05), new Translation2d(0, 6.5));
-            super.addBorderLine(new Translation2d(0, 6.5), new Translation2d(0, 8.2));
-
-            // upper wall
-            super.addBorderLine(new Translation2d(0, 8.12), new Translation2d(FIELD_WIDTH, 8.12));
-
-            // righter wall
-            super.addBorderLine(new Translation2d(FIELD_WIDTH, 1), new Translation2d(FIELD_WIDTH, 4.51));
-            super.addBorderLine(new Translation2d(FIELD_WIDTH, 4.51), new Translation2d(FIELD_WIDTH - 0.9, 5));
-            super.addBorderLine(new Translation2d(FIELD_WIDTH - 0.9, 5), new Translation2d(FIELD_WIDTH - 0.9, 6.05));
-            super.addBorderLine(new Translation2d(FIELD_WIDTH - 0.9, 6.05), new Translation2d(FIELD_WIDTH, 6.5));
-            super.addBorderLine(new Translation2d(FIELD_WIDTH, 6.5), new Translation2d(FIELD_WIDTH, 8.2));
-
-            // lower wall
-            super.addBorderLine(new Translation2d(1.92, 0), new Translation2d(FIELD_WIDTH - 1.92, 0));
-
-            // red source wall
-            super.addBorderLine(new Translation2d(1.92, 0), new Translation2d(0, 1));
-
-            // blue source wall
-            super.addBorderLine(new Translation2d(FIELD_WIDTH - 1.92, 0), new Translation2d(FIELD_WIDTH, 1));
-
-            // blue state
-            super.addRectangularObstacle(0.35, 0.35, new Pose2d(3.4, 4.1, new Rotation2d()));
-            super.addRectangularObstacle(0.35, 0.35, new Pose2d(5.62, 4.1 - 1.28, Rotation2d.fromDegrees(30)));
-            super.addRectangularObstacle(0.35, 0.35, new Pose2d(5.62, 4.1 + 1.28, Rotation2d.fromDegrees(60)));
-
-            // red stage
-            super.addRectangularObstacle(0.35, 0.35, new Pose2d(FIELD_WIDTH - 3.4, 4.1, new Rotation2d()));
-            super.addRectangularObstacle(
-                    0.35, 0.35, new Pose2d(FIELD_WIDTH - 5.62, 4.1 - 1.28, Rotation2d.fromDegrees(60)));
-            super.addRectangularObstacle(
-                    0.35, 0.35, new Pose2d(FIELD_WIDTH - 5.62, 4.1 + 1.28, Rotation2d.fromDegrees(30)));
+            // lower walls
+            super.addBorderLine(new Translation2d(1.672, 0), new Translation2d(5.8, 0));
+            super.addBorderLine(new Translation2d(6.3, 0), new Translation2d(17.548 - 1.672, 0));
         }
     }
 
-    private static final Translation2d[] NOTE_INITIAL_POSITIONS = new Translation2d[] {
-        new Translation2d(2.9, 4.1),
-        new Translation2d(2.9, 5.55),
-        new Translation2d(2.9, 7),
-        new Translation2d(8.27, 0.75),
-        new Translation2d(8.27, 2.43),
-        new Translation2d(8.27, 4.1),
-        new Translation2d(8.27, 5.78),
-        new Translation2d(8.27, 7.46),
-        new Translation2d(13.64, 4.1),
-        new Translation2d(13.64, 5.55),
-        new Translation2d(13.64, 7),
-    };
+    public Arena2026Rebuilt() {
+        super(new RebuiltFieldObstaclesMap());
 
-    public Arena2024Crescendo() {
-        super(new CrescendoFieldObstaclesMap());
+        blueHub = new RebuiltHub(this, true);
+        super.addCustomSimulation(blueHub);
 
-        redSpeaker = new CrescendoSpeaker(this, false);
-        super.addCustomSimulation(redSpeaker);
+        redHub = new RebuiltHub(this, false);
+        super.addCustomSimulation(redHub);
 
-        blueSpeaker = new CrescendoSpeaker(this, true);
-        super.addCustomSimulation(blueSpeaker);
+        blueOutpost = new RebuiltOutpost(this, true);
+        super.addCustomSimulation(blueOutpost);
 
-        blueAmp = new CrescendoAmp(this, true);
-        super.addCustomSimulation(blueAmp);
+        redOutpost = new RebuiltOutpost(this, false);
+        super.addCustomSimulation(redOutpost);
+    }
 
-        redAmp = new CrescendoAmp(this, false);
-        super.addCustomSimulation(redAmp);
+    public static double randomInRange(double variance) {
+        return (Math.random() - 0.5) / variance;
+    }
+
+    public void addPieceWithVariance(
+            Translation2d piecePose,
+            Rotation2d yaw,
+            Distance height,
+            LinearVelocity speed,
+            Angle pitch,
+            double positionVariance,
+            double yawVariance,
+            double speedVariance,
+            double pitchVariance) {
+        addGamePieceProjectile(new RebuiltFuelOnFly(
+                piecePose.plus(new Translation2d(randomInRange(positionVariance), randomInRange(positionVariance))),
+                new Translation2d(),
+                new ChassisSpeeds(),
+                yaw.plus(Rotation2d.fromDegrees(randomInRange(yawVariance))),
+                height,
+                speed.plus(MetersPerSecond.of(randomInRange(speedVariance))),
+                Degrees.of(pitch.in(Degrees) + randomInRange(pitchVariance))));
     }
 
     @Override
     public void placeGamePiecesOnField() {
-        for (Translation2d notePosition : NOTE_INITIAL_POSITIONS)
-            super.addGamePiece(new CrescendoNoteOnField(notePosition));
+        blueOutpost.reset();
+        redOutpost.reset();
 
-        super.addCustomSimulation(new CrescendoHumanPlayerSimulation(this));
-        setupValueForMatchBreakdown("TotalNotesInAmp");
-        setupValueForMatchBreakdown("TotalNotesInSpeaker");
-        setupValueForMatchBreakdown("TotalAmplifiedScore");
-        setupValueForMatchBreakdown("TotalTimeAmped");
-        setupValueForMatchBreakdown("AmpClock");
-        setupValueForMatchBreakdown("AmpCharge");
+        for (int x = 0; x < 12; x++) {
+            for (int y = 0; y < 30; y++) {
+                addGamePiece(new RebuiltFuelOnField(centerPieceBottomRightCorner.plus(
+                        new Translation2d(Inches.of(5.991 * x), Inches.of(5.95 * y)))));
+            }
+        }
+
+        setupValueForMatchBreakdown("CurrentFuelInOutpost");
+        setupValueForMatchBreakdown("TotalFuelInOutpost");
+        setupValueForMatchBreakdown("TotalFuelInHub");
+        setupValueForMatchBreakdown("WastedFuel");
     }
 
     @Override
     public void simulationSubTick(int tickNum) {
-        addValueToMatchBreakdown(
-                false, "totalTimeAmped", redAmpClock > 0 ? getSimulationDt().in(Units.Seconds) : 0);
-        addValueToMatchBreakdown(
-                true, "totalTimeAmped", blueAmpClock > 0 ? getSimulationDt().in(Units.Seconds) : 0);
 
-        redAmpClock -= getSimulationDt().in(Units.Seconds);
-        blueAmpClock -= getSimulationDt().in(Units.Seconds);
+        clock -= getSimulationDt().in(Units.Seconds);
+
+        if (clock <= 0) {
+            clock = 25;
+            blueIsOnClock = !blueIsOnClock;
+        }
 
         super.simulationSubTick(tickNum);
 
-        replaceValueInMatchBreakDown(true, "AmpCharge", blueAmpCount);
-        replaceValueInMatchBreakDown(false, "AmpCharge", redAmpCount);
-        replaceValueInMatchBreakDown(true, "AmpClock", blueAmpClock > 0 ? blueAmpClock : 0);
-        replaceValueInMatchBreakDown(false, "AmpClock", redAmpClock > 0 ? redAmpClock : 0);
-        // SmartDashboard.putNumber("blue Amp Charge", blueAmpCount);
-        // SmartDashboard.putNumber("red Amp Charge", redAmpCount);
-        // SmartDashboard.putNumber("blue Amp Clock", blueAmpClock);
-        // SmartDashboard.putNumber("red Amp Clock", redAmpClock);
+        blueActivePublisher.set(shouldClock || blueIsOnClock);
+        redActivePublisher.set(shouldClock || !blueIsOnClock);
+
+        phaseClockPublisher.set((shouldClock || DriverStation.isAutonomous() ? clock : null));
     }
 
     /**
@@ -150,61 +145,15 @@ public class Arena2026Rebuilt extends SimulatedArena {
      * @param isBlue Wether to check the blue or red alliance.
      * @return Wether the specified alliance is currently amplified.
      */
-    public boolean isAmped(boolean isBlue) {
+    public boolean isActive(boolean isBlue) {
         if (isBlue) {
-            return blueAmpClock > 0 || DriverStation.isAutonomous();
+            return blueIsOnClock || DriverStation.isAutonomous() || !shouldClock;
         } else {
-            return redAmpClock > 0 || DriverStation.isAutonomous();
+            return !blueIsOnClock || DriverStation.isAutonomous() || !shouldClock;
         }
     }
 
-    /**
-     *
-     *
-     * <h2>Adds a charge to the amp of the specified team. One charge is equal to one note in the amp so two charges are
-     * needed to use the amp.</h2>
-     *
-     * @param isBlue Wether the charge is added to the blue or red alliance.
-     */
-    public void addAmpCharge(boolean isBlue) {
-        if (isBlue) {
-            blueAmpCount = Math.min(blueAmpCount + 1, 2);
-        } else {
-            redAmpCount = Math.min(redAmpCount + 1, 2);
-        }
-    }
-
-    /**
-     *
-     *
-     * <h2>Activates the amp for the specified team.</h2>
-     *
-     * @param isBlue Wether to amplify for the blue or red team.
-     * @return Returns true if the amplification was successful and false if it was not.
-     */
-    public boolean activateAmp(boolean isBlue) {
-
-        if (DriverStation.isAutonomous()) {
-            System.out.println("Amplification is not allowed during auto.");
-            return false;
-        }
-
-        if (isBlue && blueAmpCount == 2) {
-            blueAmpCount = 0;
-            blueAmpClock = 5;
-            System.out.println("blue amped it up");
-            return true;
-        }
-        if (!isBlue && redAmpCount == 2) {
-            redAmpCount = 0;
-            redAmpClock = 5;
-            System.out.println("red amped it up");
-            return true;
-        }
-        System.out.println(
-                isBlue
-                        ? "Blue "
-                        : "Red " + "Only has " + (isBlue ? blueAmpCount : redAmpCount) + "of needed 2 to use amp");
-        return false;
+    public void setShouldRunClock(boolean shouldRunClock) {
+        shouldClock = shouldRunClock;
     }
 }

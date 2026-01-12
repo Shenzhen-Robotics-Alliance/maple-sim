@@ -11,11 +11,8 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 /**
  *
  *
- * <h1>Represents an ALGAE in the 2025 Reefscape game.</h1>
- *
- * <p>The Algae (<a href="https://www.andymark.com/products/frc-2024?sku=am-5602">am-5602</a>) is a 16-inch (41 cm)
- * rubber playground ball with a ±½ inch (~12 mm) diameter, featured as a game piece in the 2025 Reefscape game.
- */
+ * <h1>Represents an fuel in the 2026 Rebuilt game.</h1>
+*/
 public class RebuiltFuelOnField extends GamePieceOnFieldSimulation {
     public static final GamePieceInfo REBUILT_FUEL_INFO = new GamePieceInfo(
             "Fuel", new Circle(Centimeters.of(7.5).in(Meters)), Centimeter.of(15), Kilograms.of(2.13), 1.8, 5, 0.8);

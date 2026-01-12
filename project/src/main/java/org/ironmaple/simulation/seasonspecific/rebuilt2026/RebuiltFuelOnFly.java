@@ -16,7 +16,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  *
  * <h1>Represents an FUEL launched into the air.</h1>
  *
- * <p>This class models a {@link ReefscapeAlgaeOnField} launched into the air.
+ * <p>This class models a {@link RebuiltFuelOnField} launched into the air.
  *
  * <p>The simulation will determine if the FUEL hits its target—the HUB.
  *
@@ -29,9 +29,9 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
     /**
      *
      *
-     * <h2>Specifies a callback for when any ALGAE launched into the air hits the NET.</h2>
+     * <h2>Specifies a callback for when any fuel launched into the air hits the hub.</h2>
      *
-     * @param callBack a {@link Runnable} to be invoked when an ALGAE hits the NET
+     * @param callBack a {@link Runnable} to be invoked when an fuel hits the hub
      */
     public static void setHitNetCallBack(Runnable callBack) {
         hitNetCallBack = callBack;

@@ -40,7 +40,8 @@ public class ReefscapeBargeSimulation extends Goal {
                 Centimeters.of(100),
                 "Algae",
                 isBlue ? blueBargePose : redBargePose,
-                isBlue);
+                isBlue,
+                false);
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueBarge" : "RedBarge", Pose3d.struct)

@@ -114,7 +114,8 @@ public class ReefscapeReefBranch extends Goal {
                 "Coral",
                 getPoseOfBranchAt(isBlue, level, column),
                 isBlue,
-                level == 0 ? 2 : 1);
+                level == 0 ? 2 : 1,
+                false);
 
         if (level == 1 || level == 2) {
             if (isBlue) {

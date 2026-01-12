@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.LinearVelocity;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
 
@@ -23,16 +24,18 @@ import org.ironmaple.simulation.Goal;
  */
 public class RebuiltOutpost extends Goal {
 
-    protected static final Translation3d blueOutpostPose = new Translation3d(8.0518, 15.621, 0);
-    protected static final Translation3d redOutpostPose = new Translation3d(0.665988, -0.254, 0);
-    protected static final Translation3d blueLaunchPose = new Translation3d(7.8, 16, 0);
-    protected static final Translation3d redLaunchPose = new Translation3d(-0.2, 0.254, 0);
-    protected static final Translation3d blueDumpPose = new Translation3d(7.8, 15.621, 0);
-    protected static final Translation3d redDumpPose = new Translation3d(0.665988, 0.254, 0);
+    protected static final Translation3d redOutpostPose = new Translation3d(16.621, 7.403338, 0);
+    protected static final Translation3d redLaunchPose = new Translation3d(16, 8.2, 0);
+    protected static final Translation3d redDumpPose = new Translation3d(16.421, 7.2, 0);
+
+    protected static final Translation3d blueOutpostPose = new Translation3d(0, 0.665988, 0);
+    protected static final Translation3d blueDumpPose = new Translation3d(0.2, 0.665988, 0);
+    protected static final Translation3d blueLaunchPose = new Translation3d(0.665988, -0.254, 0);
+
+    protected static final Translation3d redRenderPose = new Translation3d(16.640988, 7.7, 0.844502);
+    protected static final Translation3d blueRenderPose = new Translation3d(-0.12, 0.325, 0.844502);
 
     StructPublisher<Pose3d> posePublisher;
-
-    protected int fuelCount = 24;
 
     protected Arena2026Rebuilt arena;
 
@@ -47,54 +50,88 @@ public class RebuiltOutpost extends Goal {
     public RebuiltOutpost(Arena2026Rebuilt arena, boolean isBlue) {
         super(
                 arena,
+                Centimeters.of(3),
                 Inches.of(21),
-                Centimeters.of(26),
                 Centimeters.of(10),
                 "Fuel",
-                isBlue ? blueLaunchPose : redLaunchPose,
-                isBlue);
+                isBlue ? blueOutpostPose : redOutpostPose,
+                isBlue,
+                true);
 
         this.arena = arena;
+        gamePieceCount = 24;
 
-        StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
+        StructPublisher<Pose3d> OutpostPublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueOutpost" : "RedOutpost", Pose3d.struct)
                 .publish();
-        heldAlgaePublisher.set(new Pose3d(position, new Rotation3d()));
+
+        StructPublisher<Pose3d> OutpostThrowPublisher = NetworkTableInstance.getDefault()
+                .getStructTopic(isBlue ? "BlueOutpostThrow" : "RedOutpostThrow", Pose3d.struct)
+                .publish();
+        StructPublisher<Pose3d> OutpostDumpPublisher = NetworkTableInstance.getDefault()
+                .getStructTopic(isBlue ? "BlueOutpostDump" : "RedOutpostDump", Pose3d.struct)
+                .publish();
+
+        OutpostPublisher.set(new Pose3d(position, new Rotation3d()));
+        OutpostDumpPublisher.set(new Pose3d(isBlue ? blueDumpPose : redDumpPose, new Rotation3d()));
+        OutpostThrowPublisher.set(new Pose3d(isBlue ? blueLaunchPose : redLaunchPose, new Rotation3d()));
     }
 
     @Override
     protected void addPoints() {
         arena.addValueToMatchBreakdown(isBlue, "TotalFuelInOutpost", 1);
-        this.fuelCount++;
+        this.gamePieceCount++;
     }
 
     @Override
     public void simulationSubTick(int subTickNum) {
         super.simulationSubTick(subTickNum);
-        arena.addValueToMatchBreakdown(isBlue, "CurrentFuelInOutpost", fuelCount);
+        arena.replaceValueInMatchBreakDown(isBlue, "CurrentFuelInOutpost", gamePieceCount);
     }
 
     @Override
     public void draw(List<Pose3d> drawList) {
-        return;
+
+        int count = 0;
+        for (int col = 0; col < 5 && count < gamePieceCount; col++) {
+            for (int row = 0; row < 5 && count < gamePieceCount; row++) {
+                count++;
+                if (isBlue) {
+                    drawList.add(new Pose3d(
+                            blueRenderPose.plus(
+                                    new Translation3d(Inches.of(-6 * col), Inches.of(6 * row), Inches.of(1.3 * col))),
+                            new Rotation3d()));
+                } else {
+                    drawList.add(new Pose3d(
+                            redRenderPose.plus(
+                                    new Translation3d(Inches.of(6 * col), Inches.of(-6 * row), Inches.of(1.3 * col))),
+                            new Rotation3d()));
+                }
+            }
+        }
     }
 
     public void reset() {
-        fuelCount = 24;
+        gamePieceCount = 24;
     }
 
     public void throwForGoal() {
-        throwAtPoint(null, pieceAngleTolerance);
+        throwAtPoint(
+                isBlue ? Rotation2d.fromDegrees(45) : Rotation2d.fromDegrees(220),
+                Degrees.of(75),
+                MetersPerSecond.of(11.2));
     }
 
     public void dump() {
-        for (int i = 0; i < 24 && fuelCount > 0; i++) {
+        for (int i = 0; i < 24 && gamePieceCount > 0; i++) {
+            gamePieceCount--;
             this.arena.addPieceWithVariance(
-                    blueDumpPose.toTranslation2d(),
-                    isBlue ? Rotation2d.fromDegrees(180) : Rotation2d.fromDegrees(0),
+                    isBlue ? blueDumpPose.toTranslation2d() : redDumpPose.toTranslation2d(),
+                    new Rotation2d(),
                     Meters.of(1.7),
-                    MetersPerSecond.of(7),
+                    isBlue ? MetersPerSecond.of(2) : MetersPerSecond.of(-2),
                     Degrees.of(0),
+                    0,
                     0.2,
                     5,
                     0.2,
@@ -102,17 +139,20 @@ public class RebuiltOutpost extends Goal {
         }
     }
 
-    public void throwAtPoint(Rotation2d yaw, Angle pitch) {
-
-        arena.addPieceWithVariance(
-                isBlue ? blueLaunchPose.toTranslation2d() : redLaunchPose.toTranslation2d(),
-                yaw,
-                Meters.of(1.7),
-                MetersPerSecond.of(7),
-                pitch,
-                0,
-                2,
-                0,
-                0);
+    public void throwAtPoint(Rotation2d yaw, Angle pitch, LinearVelocity speed) {
+        if (gamePieceCount > 0) {
+            gamePieceCount--;
+            arena.addPieceWithVariance(
+                    isBlue ? blueLaunchPose.toTranslation2d() : redLaunchPose.toTranslation2d(),
+                    yaw,
+                    Meters.of(1.7),
+                    speed,
+                    pitch,
+                    0,
+                    0,
+                    15,
+                    2,
+                    5);
+        }
     }
 }

@@ -40,7 +40,8 @@ public class CrescendoSpeaker extends Goal {
                 Centimeters.of(100),
                 "Note",
                 isBlue ? blueSpeakerPose : redSpeakerPose,
-                isBlue);
+                isBlue,
+                false);
 
         crescendoArena = arena;
         StructPublisher<Pose3d> speakerPosePublisher = NetworkTableInstance.getDefault()

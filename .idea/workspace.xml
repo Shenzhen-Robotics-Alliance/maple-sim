@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f57e4d3f-16ad-409c-82f6-da91213bb687" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/docs/vendordep/maple-sim.json" beforeDir="false" afterPath="$PROJECT_DIR$/docs/vendordep/maple-sim.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/publish.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/project/publish.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/SimulatedArena.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/SimulatedArena.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/Goal.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/Goal.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/Arena2026Rebuilt.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/Arena2026Rebuilt.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltFuelOnField.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltFuelOnField.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltFuelOnFly.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltFuelOnFly.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltHub.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltHub.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltOutpost.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/simulation/seasonspecific/rebuilt2026/RebuiltOutpost.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/utils/FieldMirroringUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/project/src/main/java/org/ironmaple/utils/FieldMirroringUtils.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

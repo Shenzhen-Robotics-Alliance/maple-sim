@@ -12,7 +12,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  *
  *
  * <h1>Represents an fuel in the 2026 Rebuilt game.</h1>
-*/
+ */
 public class RebuiltFuelOnField extends GamePieceOnFieldSimulation {
     public static final GamePieceInfo REBUILT_FUEL_INFO = new GamePieceInfo(
             "Fuel", new Circle(Centimeters.of(7.5).in(Meters)), Centimeter.of(15), Kilograms.of(2.13), 1.8, 5, 0.8);

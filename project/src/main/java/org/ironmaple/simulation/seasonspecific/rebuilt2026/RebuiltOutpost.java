@@ -17,10 +17,14 @@ import org.ironmaple.simulation.Goal;
 /**
  *
  *
- * <h2>Simulates a <strong>PROCESSOR</strong>s on the field.</h2>
+ * <h2>Simulates a <strong>OUTPOST</strong>s on the field.</h2>
  *
- * <p>This class simulates a <strong>PROCESSOR</strong>s on the field where <strong>ALGAE</strong>s can be scored. It
- * will automatically launch the algae scored into the apposing barge and always hit.
+ * <p>This class simulates a outpost on the field where fuel can be scored. It has a store of fuel which can be added
+ * too by scoring in it. This fuel can then be dumped via {@link #dump()} or
+ * {@link Arena2026Rebuilt#outpostDump(boolean)}, thrown at the goal via {@link #throwForGoal()} or
+ * {@link Arena2026Rebuilt#outpostThrowForGoal(boolean)}, or thrown with specific parameters via
+ * {@link #throwFuel(Rotation2d, Angle, LinearVelocity)} or {@link Arena2026Rebuilt#outpostThrow(boolean, Rotation2d,
+ * Angle, LinearVelocity)},
  */
 public class RebuiltOutpost extends Goal {
 
@@ -42,10 +46,10 @@ public class RebuiltOutpost extends Goal {
     /**
      *
      *
-     * <h2>Creates an processor of the specified color.</h2>
+     * <h2>Creates an outpost of the specified color.</h2>
      *
-     * @param arena The host arena of this processor.
-     * @param isBlue Wether this is the blue processor or the red one.
+     * @param arena The host arena of this outpost.
+     * @param isBlue Wether this is the blue outpost or the red one.
      */
     public RebuiltOutpost(Arena2026Rebuilt arena, boolean isBlue) {
         super(
@@ -111,17 +115,38 @@ public class RebuiltOutpost extends Goal {
         }
     }
 
+    /** <he>Resets the outposts internal fuel counter too 24.</h2> */
     public void reset() {
         gamePieceCount = 24;
     }
 
+    /**
+     *
+     *
+     * <h2>Attempts too throw a game piece at the specified goal.</h2>
+     *
+     * <p>This method comes with variance built in (to simulate human inconsistency) and will therefore only hit about
+     * half the time. Additionally if the hub does not have game pieces stored this method will not do anything. If you
+     * would like to manually control how the human player throws game pieces use {@link #outpostThrow(boolean,
+     * Rotation2d, Angle, LinearVelocity)}
+     */
     public void throwForGoal() {
-        throwAtPoint(
+        throwFuel(
                 isBlue ? Rotation2d.fromDegrees(45) : Rotation2d.fromDegrees(220),
                 Degrees.of(75),
                 MetersPerSecond.of(11.2));
     }
 
+    /**
+     *
+     *
+     * <h2>Dumps game pieces from the specified outpost.</h2>
+     *
+     * This function will dump up to 24 game pieces, dependent on how many game pieces are currently stored in the
+     * outpost. For more manual control of the game pieces in the outpost use {@link #outpostThrow(boolean, Rotation2d,
+     * Angle, LinearVelocity)}. To have a human player attempt to throw a game piece into the hub use
+     * {@link #outpostThrowForGoal(boolean)}.
+     */
     public void dump() {
         for (int i = 0; i < 24 && gamePieceCount > 0; i++) {
             gamePieceCount--;
@@ -139,7 +164,19 @@ public class RebuiltOutpost extends Goal {
         }
     }
 
-    public void throwAtPoint(Rotation2d yaw, Angle pitch, LinearVelocity speed) {
+    /**
+     *
+     *
+     * <h2>Throws a game piece from the outpost at the specified angle and speed. </h2>
+     *
+     * <p>This method comes with variance built in (to simulate human inconsistency). Additionally if the hub does not
+     * have game pieces stored this method will not do anything. If you would like to have the human player throw at the
+     * hub use {@link #outpostThrowForGoal(boolean)}
+     *
+     * @param throwYaw The yaw at which too throw the ball.
+     * @param throwPitch The pitch at which too throw the ball.
+     */
+    public void throwFuel(Rotation2d yaw, Angle pitch, LinearVelocity speed) {
         if (gamePieceCount > 0) {
             gamePieceCount--;
             arena.addPieceWithVariance(

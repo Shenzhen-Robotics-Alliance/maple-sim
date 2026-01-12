@@ -23,7 +23,7 @@ import org.ironmaple.utils.mathutils.GeometryConvertor;
 /**
  *
  *
- * <h1>Simulates a Game Piece on the Field.</h1>
+ *<h1>Simulates a Game Piece on the Field.</h1>
  *
  * <p>This class simulates a game piece on the field, which has a collision space and interacts with other objects.
  *

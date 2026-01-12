@@ -256,6 +256,22 @@ public class IntakeSimulation extends BodyFixture {
 
         return toReturn;
     }
+    /**
+     *
+     *
+     * <h2>Adds a number of game pieces to the intake.</h2>
+     *
+     * If the number of pieces added would drive the intake above capacity the intake will only add pieces up to max.
+     *
+     * @param piecesToAdd The number of pieces to add too the intake.
+     * @return Wether or not all game pieces could be added to the intake. Just because this returns false does not mean
+     *     that no pieces were added.
+     */
+    public boolean addGamePiecesToIntake(int piecesToAdd) {
+        boolean toReturn = gamePiecesInIntakeCount + piecesToAdd <= capacity;
+        gamePiecesInIntakeCount = Math.max(gamePiecesInIntakeCount + piecesToAdd, capacity);
+        return toReturn;
+    }
 
     /**
      *

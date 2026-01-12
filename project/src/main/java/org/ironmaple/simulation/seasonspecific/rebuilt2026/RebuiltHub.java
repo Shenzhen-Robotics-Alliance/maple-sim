@@ -10,16 +10,15 @@ import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.gamepieces.GamePiece;
-import org.ironmaple.simulation.seasonspecific.crescendo2024.Arena2024Crescendo;
 import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
  *
  *
- * <h2>Simulates a <strong>SPEAKER</strong>s on the field.</h2>
+ * <h2>Simulates a <strong>HUB</strong>s on the field.</h2>
  *
- * <p>This class simulates the <strong>SPEAKER</strong>s on the field where <strong>NOTES</strong>s can be scored. It
- * may be amplified by using the {@link Arena2024Crescendo#activateAmp(boolean)} function on the host arena.
+ * <p>This class simulates the <strong>HUB</strong>s on the field where <strong>FUEL</strong>s can be scored. Whether it
+ * is active can be determined by using {@link Arena2026Rebuilt#isActive(boolean)}
  */
 public class RebuiltHub extends Goal {
 
@@ -40,21 +39,6 @@ public class RebuiltHub extends Goal {
                 new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(-33.75)))
     };
 
-    // protected static final Pose3d[] blueShootPoses = {
-    //     new Pose3d(
-    //             blueHubPose.plus(new Translation3d(0, 0, -0)),
-    //             new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(33.75))),
-    //     new Pose3d(
-    //             blueHubPose.plus(new Translation3d(0, 0, -0)),
-    //             new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(11.25))),
-    //     new Pose3d(
-    //             blueHubPose.plus(new Translation3d(0, 0, -0)),
-    //             new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(11.25))),
-    //     new Pose3d(
-    //             blueHubPose.plus(new Translation3d(0, 0, -0)),
-    //             new Rotation3d(Degrees.of(0), Degrees.of(-15), Degrees.of(-33.75)))
-    // };
-
     public static final double GoalRadius = 0.5969;
     static final Random rng = new Random();
 
@@ -71,10 +55,10 @@ public class RebuiltHub extends Goal {
     /**
      *
      *
-     * <h2>Creates an Speaker of the specified color.</h2>
+     * <h2>Creates an HUB of the specified color.</h2>
      *
-     * @param arena The host arena of this speaker.
-     * @param isBlue Wether this is the blue speaker or the red one.
+     * @param arena The host arena of this HUB.
+     * @param isBlue Wether this is the blue HUB or the red one.
      */
     public RebuiltHub(Arena2026Rebuilt arena, boolean isBlue) {
         super(

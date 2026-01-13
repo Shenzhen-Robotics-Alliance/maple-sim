@@ -15,7 +15,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
  */
 public class RebuiltFuelOnField extends GamePieceOnFieldSimulation {
     public static final GamePieceInfo REBUILT_FUEL_INFO = new GamePieceInfo(
-            "Fuel", new Circle(Centimeters.of(7.5).in(Meters)), Centimeter.of(15), Kilograms.of(2.13), 1.8, 5, 0.8);
+            "Fuel", new Circle(Centimeters.of(7.5).in(Meters)), Centimeter.of(15), Pounds.of(0.5), 1.8, 5, 0.8);
 
     public RebuiltFuelOnField(Translation2d initialPosition) {
         super(REBUILT_FUEL_INFO, new Pose2d(initialPosition, new Rotation2d()));

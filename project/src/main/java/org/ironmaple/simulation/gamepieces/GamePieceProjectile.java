@@ -636,4 +636,20 @@ public class GamePieceProjectile implements GamePiece {
     public boolean isGrounded() {
         return false;
     }
+
+
+    public void triggerHitTargeCallBack(){
+        hitTargetCallBack.run();
+    }
+
+    /**
+     * <h2>Registers a function that will be called whenever this game piece interacts with a goal object or collides with the specified target.</h2>
+     * Note: Certain goals like the rebuilt hub or the reefscape processor appear to reintroduce scored pieces into the field.
+     * However these pieces are actually new objects and so will not save any call back functions. 
+     * @param hitTargetCallBack The call back to be set.
+     */
+    public void setHitTargetCallBack(Runnable hitTargetCallBack){
+        this.hitTargetCallBack = hitTargetCallBack;
+    }
+
 }

@@ -24,18 +24,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  * hits the HUB.
  */
 public class RebuiltFuelOnFly extends GamePieceProjectile {
-    private static Runnable hitNetCallBack = () -> {};
 
-    /**
-     *
-     *
-     * <h2>Specifies a callback for when any fuel launched into the air hits the hub.</h2>
-     *
-     * @param callBack a {@link Runnable} to be invoked when an fuel hits the hub
-     */
-    public static void setHitNetCallBack(Runnable callBack) {
-        hitNetCallBack = callBack;
-    }
 
     public RebuiltFuelOnFly(
             Translation2d robotPosition,

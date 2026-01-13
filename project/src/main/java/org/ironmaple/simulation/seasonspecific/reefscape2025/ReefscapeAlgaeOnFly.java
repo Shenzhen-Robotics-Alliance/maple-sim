@@ -21,18 +21,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  * hits the NET.
  */
 public class ReefscapeAlgaeOnFly extends GamePieceProjectile {
-    private static Runnable hitNetCallBack = () -> System.out.println("hit target!");
 
-    /**
-     *
-     *
-     * <h2>Specifies a callback for when any ALGAE launched into the air hits the NET.</h2>
-     *
-     * @param callBack a {@link Runnable} to be invoked when an ALGAE hits the NET
-     */
-    public static void setHitNetCallBack(Runnable callBack) {
-        hitNetCallBack = callBack;
-    }
 
     public ReefscapeAlgaeOnFly(
             Translation2d robotPosition,

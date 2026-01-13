@@ -49,7 +49,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
     protected static Translation2d redDepotBottomRightCorner = new Translation2d(0.02, 5.53);
     protected static Translation2d blueDepotBottomRightCorner = new Translation2d(16.0274, 1.646936);
 
-    /** the obstacles on the 2024 competition field */
+    /** the obstacles on the 2026 competition field */
     public static final class RebuiltFieldObstaclesMap extends FieldMap {
         private static final double FIELD_WIDTH = 16.54;
 

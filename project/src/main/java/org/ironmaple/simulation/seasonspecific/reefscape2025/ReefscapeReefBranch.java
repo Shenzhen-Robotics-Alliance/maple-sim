@@ -163,12 +163,12 @@ public class ReefscapeReefBranch extends Goal {
         switch (level) {
             case 1, 2 -> {
                 Rotation3d targetAngle = new Rotation3d(
-                        0,
-                        -35 * Math.PI / 180,
-                        (isBlue ? branchesFacingOutwardsBlue : branchesFacingOutwardsRed)[column].getRadians());
+                        Degrees.zero(),
+                        Degrees.of(-35),
+                        (isBlue ? branchesFacingOutwardsBlue : branchesFacingOutwardsRed)[column].getMeasure());
                 setNeededAngle(targetAngle, angleTolerance);
             }
-            case 3 -> withCustomRotationChecker(Goal.vertical(angleTolerance));
+            case 3 -> setNeededAngle(new Rotation3d(Degrees.zero(), Degrees.of(90), Degrees.zero()), angleTolerance);
         } // case 0 uses default anyRotation() from parent
     }
 

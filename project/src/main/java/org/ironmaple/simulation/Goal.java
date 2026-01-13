@@ -8,9 +8,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
@@ -93,6 +91,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      */
     public static RotationChecker absoluteAngle(Rotation3d expectedAngle, Angle tolerance) {
         return gamePiece -> {
+            // Call our values just once.
             Rotation3d actualRotation = gamePiece.getPose3d().getRotation();
             Rotation3d normalDiff = actualRotation.minus(expectedAngle);
             Rotation3d flippedDiff = flipRotation(actualRotation).minus(expectedAngle);
@@ -128,24 +127,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return gamePiece -> {
             double actualPitch = gamePiece.getPose3d().getRotation().getY();
             return Math.abs(actualPitch - expectedPitchRadians) < tolerance.in(Units.Radians);
-        };
-    }
-
-    /**
-     *
-     *
-     * <h2>Creates a Vertical Orientation Rotation Checker</h2>
-     *
-     * <p>Validates that a game piece is oriented vertically (pitch of ±90 degrees).
-     *
-     * @param tolerance the allowed deviation from vertical
-     * @return rotation checker for vertical orientation
-     */
-    public static RotationChecker vertical(Angle tolerance) {
-        return gamePiece -> {
-            double pitch = gamePiece.getPose3d().getRotation().getY();
-            return Math.abs(pitch + Math.PI / 2) < tolerance.in(Units.Radians)
-                    || Math.abs(pitch - Math.PI / 2) < tolerance.in(Units.Radians);
         };
     }
 
@@ -249,21 +230,19 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      */
     @Override
     public void simulationSubTick(int subTickNum) {
-
-        Set<GamePiece> gamePieces = new HashSet<GamePiece>(arena.getGamePiecesByType(gamePieceType));
-        Set<GamePiece> toRemove = new HashSet<>();
-
-        for (GamePiece gamePiece : gamePieces) {
-            if (gamePieceCount != max && !toRemove.contains(gamePiece) && this.checkValidity(gamePiece)) {
-                gamePieceCount++;
-                this.addPoints();
-                toRemove.add(gamePiece);
-            }
-        }
-
-        for (GamePiece gamePiece : toRemove) {
-            this.arena.removePiece(gamePiece);
-        }
+        if (gamePieceCount >= max) return; // Early exit if already at max
+        /// Use list filtering for more efficient bulk checking.
+        // Get all pieces of our type as a list.
+        arena.getGamePiecesByType(gamePieceType).stream()
+                .filter(gamePiece -> !checkGrounded(gamePiece))
+                .filter(this::checkValidity)
+                .limit(max - gamePieceCount) // Only score what we can
+                .forEach(
+                        gamePiece -> { // If a piece passes, score it.
+                            gamePieceCount++;
+                            this.addPoints();
+                            arena.removePiece(gamePiece);
+                        });
     }
 
     /**
@@ -276,17 +255,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      */
     public void setNeededAngle(Rotation3d angle, Angle angleTolerance) {
         this.rotationChecker = absoluteAngle(angle, angleTolerance);
-    }
-
-    /**
-     *
-     *
-     * <h2>Sets the Angle to be Used When Checking Game Piece Rotation</h2>
-     *
-     * @param angle The angle that pieces should have when interacting with this goal
-     */
-    public void setNeededAngle(Rotation3d angle) {
-        setNeededAngle(angle, Degrees.of(15));
     }
 
     /**
@@ -315,6 +283,22 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @param validator predicate that accepts GamePiece and returns true if rotation is valid
      * @return this Goal instance for method chaining
      */
+    protected boolean checkValidity(GamePiece gamePiece) {
+        return rotationChecker.isValidRotation(gamePiece) && velocityValidator.test(gamePiece) && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
+    }
+
+    /**
+     *
+     *
+     * <h2>Checks whether the submitted game piece is grounded </h2>
+     *
+     * @param gamePiece The game piece to have its groundedness checked.
+     * @return Whether the piece is grounded.
+     */
+    protected boolean checkGrounded(GamePiece gamePiece) {
+        return gamePiece.isGrounded();
+    }
+
     public Goal withCustomRotationValidator(Predicate<GamePiece> validator) {
         this.rotationChecker = validator::test;
         return this;
@@ -371,12 +355,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return this;
     }
 
-    /**
-     *
-     *
-     * <h2>Sets a Custom Velocity Validator</h2>
-     *
-     * <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
+     /** <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
      * descending, or moving within certain speed ranges.
      *
      * <p>The predicate receives the {@link GamePiece} and should return {@code true} if the velocity is acceptable for
@@ -388,31 +367,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
     public Goal withCustomVelocityValidator(Predicate<GamePiece> validator) {
         this.velocityValidator = validator;
         return this;
-    }
-
-    /**
-     *
-     *
-     * <h2>Checks Whether the Provided Piece is Valid for Scoring</h2>
-     *
-     * <p>A high level call to check whether or not the provided piece is within this goals hit box and meets all
-     * requirements to be scored.
-     *
-     * <p>This method checks:
-     *
-     * <ul>
-     *   <li>Position validity using {@link PositionChecker}
-     *   <li>Rotation validity using {@link RotationChecker}
-     *   <li>Velocity validity using the velocity validator
-     * </ul>
-     *
-     * @param gamePiece The game piece to be checked.
-     * @return Whether or not the game piece is within this goal.
-     */
-    protected boolean checkValidity(GamePiece gamePiece) {
-        return positionChecker.isInBounds(gamePiece.getPose3d().getTranslation())
-                && rotationChecker.isValidRotation(gamePiece)
-                && velocityValidator.test(gamePiece);
     }
 
     /**

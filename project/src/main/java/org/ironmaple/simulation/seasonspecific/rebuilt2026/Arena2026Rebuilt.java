@@ -146,7 +146,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
      *
      * <h2>Creates an Arena for the 2026 FRC game rebuilt </h2>
      *
-     * <p>Due to the nature of maple sim they can not be fully simulated and so ether must be non existent or treated as
+     * <p>Due to the nature of maple sim they can not be fully simulated and so either must be non existent or treated as
      * full colliders. This behavior can be changed with the AddRampCollider variable. Additionally due to performance
      * issues the arena will not spawn all fuel by default. If you would like to change this use
      * {@link #setEfficiencyMode(boolean)}

@@ -9,7 +9,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Predicate;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
@@ -92,6 +91,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      */
     public static RotationChecker absoluteAngle(Rotation3d expectedAngle, Angle tolerance) {
         return gamePiece -> {
+            // Call our values just once.
             Rotation3d actualRotation = gamePiece.getPose3d().getRotation();
             Rotation3d normalDiff = actualRotation.minus(expectedAngle);
             Rotation3d flippedDiff = flipRotation(actualRotation).minus(expectedAngle);
@@ -127,24 +127,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return gamePiece -> {
             double actualPitch = gamePiece.getPose3d().getRotation().getY();
             return Math.abs(actualPitch - expectedPitchRadians) < tolerance.in(Units.Radians);
-        };
-    }
-
-    /**
-     *
-     *
-     * <h2>Creates a Vertical Orientation Rotation Checker</h2>
-     *
-     * <p>Validates that a game piece is oriented vertically (pitch of ±90 degrees).
-     *
-     * @param tolerance the allowed deviation from vertical
-     * @return rotation checker for vertical orientation
-     */
-    public static RotationChecker vertical(Angle tolerance) {
-        return gamePiece -> {
-            double pitch = gamePiece.getPose3d().getRotation().getY();
-            return Math.abs(pitch + Math.PI / 2) < tolerance.in(Units.Radians)
-                    || Math.abs(pitch - Math.PI / 2) < tolerance.in(Units.Radians);
         };
     }
 
@@ -278,17 +260,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
     /**
      *
      *
-     * <h2>Sets the Angle to be Used When Checking Game Piece Rotation</h2>
-     *
-     * @param angle The angle that pieces should have when interacting with this goal
-     */
-    public void setNeededAngle(Rotation3d angle) {
-        setNeededAngle(angle, Degrees.of(15));
-    }
-
-    /**
-     *
-     *
      * <h2>Sets a Custom Rotation Checker for This Goal</h2>
      *
      * <p>Replaces the default rotation validation logic with a custom checker. This allows for complex rotation checks
@@ -313,7 +284,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @return this Goal instance for method chaining
      */
     protected boolean checkValidity(GamePiece gamePiece) {
-        return checkRotation(gamePiece) & checkVel(gamePiece) & checkCollision(gamePiece);
+        return rotationChecker.isValidRotation(gamePiece) && velocityValidator.test(gamePiece) && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
     }
 
     /**
@@ -326,6 +297,8 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      */
     protected boolean checkGrounded(GamePiece gamePiece) {
         return gamePiece.isGrounded();
+    }
+
     public Goal withCustomRotationValidator(Predicate<GamePiece> validator) {
         this.rotationChecker = validator::test;
         return this;
@@ -382,22 +355,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return this;
     }
 
-    /**
-     *
-     *
-     * <h2>Sets a Custom Velocity Validator</h2>
-     *
-     * @param gamePiece The game piece to be checked.
-     * @return Wether or not the game piece is within the goal.
-     */
-    protected boolean checkCollision(GamePiece gamePiece) {
-        // Call our values just once.
-        var pose = gamePiece.getPose3d();
-        double minZ = elevation.in(Units.Meters);
-        double maxZ = minZ + height.in(Units.Meters);
-
-        return xyBox.contains(new Vector2(pose.getX(), pose.getY())) && pose.getZ() >= minZ && pose.getZ() <= maxZ;
-     * <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
+     /** <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
      * descending, or moving within certain speed ranges.
      *
      * <p>The predicate receives the {@link GamePiece} and should return {@code true} if the velocity is acceptable for
@@ -409,30 +367,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
     public Goal withCustomVelocityValidator(Predicate<GamePiece> validator) {
         this.velocityValidator = validator;
         return this;
-    }
-
-    /**
-     *
-     *
-     * <h2>Checks Whether the Provided Piece is Valid for Scoring</h2>
-     *
-     * <p>A high level call to check whether or not the provided piece is within this goals hit box and meets all
-     * requirements to be scored.
-     *
-     * <p>This method checks:
-     *
-     * <ul>
-     *   <li>Position validity using {@link PositionChecker}
-     *   <li>Rotation validity using {@link RotationChecker}
-     *   <li>Velocity validity using the velocity validator
-     * </ul>
-     *
-     * @param gamePiece The game piece to be checked.
-     * @return Whether or not the game piece is within this goal.
-     */
-    protected boolean checkVel(GamePiece gamePiece) {
-
-        return true;
     }
 
     /**

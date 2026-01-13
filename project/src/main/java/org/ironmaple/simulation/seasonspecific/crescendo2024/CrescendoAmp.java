@@ -44,12 +44,13 @@ public class CrescendoAmp extends Goal {
 
         crescendoArena = arena;
 
-        setNeededAngle(new Rotation3d(0, Math.PI / 2, Math.PI / 2));
+        Rotation3d ampAngle = new Rotation3d(0, Math.PI / 2, Math.PI / 2);
+        setNeededAngle(ampAngle);
 
         StructPublisher<Pose3d> ampPublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueAmp" : "RedAmp", Pose3d.struct)
                 .publish();
-        ampPublisher.set(new Pose3d(position, this.pieceAngle));
+        ampPublisher.set(new Pose3d(position, ampAngle));
     }
 
     @Override

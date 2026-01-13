@@ -174,6 +174,37 @@ See [Simulating Projectiles](./simulating-projectiles.md).
 ![](./media/scoring%20coral%20on%20L3.gif)
 ![](./media/scoring%20coral%20on%20L4.gif)
 
+### Configuring Angle Tolerance for Scoring
+
+!!! info ""
+    By default, ***CORAL*** must be aligned within **10 degrees** of the ***BRANCH*** direction to score. You can adjust this tolerance to make scoring easier or harder:
+
+```java
+// Make scoring more forgiving (allow 15 degrees of misalignment)
+ReefscapeReefBranch.setAngleTolerance(Degrees.of(15));
+
+// Make scoring more strict (allow only 5 degrees of misalignment)
+ReefscapeReefBranch.setAngleTolerance(Degrees.of(5));
+```
+
+!!! tip
+    - You can call `setAngleTolerance()` at any time, even after the arena has been created
+    - The change applies immediately to all existing branches
+    - This is useful for testing your scoring mechanism with different difficulty levels
+
+!!! example "Use Case: Testing Scoring Consistency"
+
+```java
+// During testing, use a more forgiving tolerance
+ReefscapeReefBranch.setAngleTolerance(Degrees.of(20));
+
+// Once your mechanism is reliable, test with competition tolerance
+ReefscapeReefBranch.setAngleTolerance(Degrees.of(10));
+
+// For extra challenge, test with stricter tolerance
+ReefscapeReefBranch.setAngleTolerance(Degrees.of(5));
+```
+
 To obtain the amount of corals scored on each branch, use:
 
 ```java
@@ -185,4 +216,5 @@ if (reefSimulation.isPresent()) {
         [3]; // L4
 }
 ```
+
 See the [javadocs](https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefSimulation.html) for more info.

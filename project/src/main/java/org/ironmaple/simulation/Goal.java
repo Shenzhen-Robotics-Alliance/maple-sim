@@ -139,8 +139,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
                             gamePieceCount++;
                             this.addPoints();
                             gamePiece.triggerHitTargeCallBack();
-                            ;
-
                             arena.removePiece(gamePiece);
                         });
     }

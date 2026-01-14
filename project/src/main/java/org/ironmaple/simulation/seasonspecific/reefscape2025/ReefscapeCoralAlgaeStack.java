@@ -80,7 +80,6 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
     private void throwCoralToGround() {
         ReefscapeCoralOnField coral = new ReefscapeCoralOnField(new Pose2d(
                 stackPosition().plus(new Translation2d(0.15, 0).rotateBy(velocityDirection())), velocityDirection()));
-        System.out.println("coral position: " + coral.getPoseOnField());
         coral.setLinearVelocity(getLinearVelocity());
         arena.addGamePiece(coral);
     }

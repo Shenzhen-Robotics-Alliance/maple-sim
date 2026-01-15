@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
-import org.ironmaple.simulation.gamepieces.GamePiece;
 
 /**
  *
@@ -44,15 +43,13 @@ public class CrescendoSpeaker extends Goal {
                 false);
 
         crescendoArena = arena;
+
+        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3dMPS().getZ() > 0);
+
         StructPublisher<Pose3d> speakerPosePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueSpeaker" : "RedSpeaker", Pose3d.struct)
                 .publish();
         speakerPosePublisher.set(new Pose3d(position, new Rotation3d()));
-    }
-
-    @Override
-    protected boolean checkVel(GamePiece gamePiece) {
-        return gamePiece.getVelocity3dMPS().getZ() > 0;
     }
 
     @Override

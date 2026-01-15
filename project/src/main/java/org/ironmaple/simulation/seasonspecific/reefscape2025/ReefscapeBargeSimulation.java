@@ -9,7 +9,6 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
-import org.ironmaple.simulation.gamepieces.GamePiece;
 
 /**
  *
@@ -43,6 +42,8 @@ public class ReefscapeBargeSimulation extends Goal {
                 isBlue,
                 false);
 
+        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3dMPS().getZ() < 0);
+
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(isBlue ? "BlueBarge" : "RedBarge", Pose3d.struct)
                 .publish();
@@ -53,17 +54,12 @@ public class ReefscapeBargeSimulation extends Goal {
     public void draw(List<Pose3d> algaePosesToDisplay) {
         for (int i = 0; i < gamePieceCount; i++) {
             algaePosesToDisplay.add(new Pose3d(
-                            xyBox.getCenter().x,
-                            xyBox.getCenter().y - xyBox.getHeight() / 2,
-                            elevation.in(Units.Meters) + height.in(Units.Meters) / 2,
+                            position.getX(),
+                            position.getY() - Centimeters.of(343).in(Units.Meters) / 2,
+                            position.getZ() + Centimeters.of(100).in(Units.Meters) / 2,
                             new Rotation3d())
                     .plus(new Transform3d(0, i * 0.35, 0, new Rotation3d())));
         }
-    }
-
-    @Override
-    protected boolean checkVel(GamePiece gamePiece) {
-        return gamePiece.getVelocity3dMPS().getZ() < 0;
     }
 
     @Override

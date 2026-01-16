@@ -284,7 +284,9 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @return this Goal instance for method chaining
      */
     protected boolean checkValidity(GamePiece gamePiece) {
-        return rotationChecker.isValidRotation(gamePiece) && velocityValidator.test(gamePiece) && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
+        return rotationChecker.isValidRotation(gamePiece)
+                && velocityValidator.test(gamePiece)
+                && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
     }
 
     /**
@@ -355,7 +357,8 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return this;
     }
 
-     /** <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
+    /**
+     * Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
      * descending, or moving within certain speed ranges.
      *
      * <p>The predicate receives the {@link GamePiece} and should return {@code true} if the velocity is acceptable for

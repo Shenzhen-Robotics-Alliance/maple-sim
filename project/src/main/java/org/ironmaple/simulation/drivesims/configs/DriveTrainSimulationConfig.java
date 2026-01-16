@@ -153,8 +153,8 @@ public class DriveTrainSimulationConfig {
      * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
      */
     public DriveTrainSimulationConfig withTrackLengthTrackWidth(Distance trackLengthX, Distance trackWidthY) {
-        BoundingCheck.check(trackLengthX.in(Meters), 0.5, 1.5, "track length", "meters");
-        BoundingCheck.check(trackWidthY.in(Meters), 0.5, 1.5, "track width", "meters");
+        BoundingCheck.check(trackLengthX.in(Meters), 0.2, 1.5, "track length", "meters");
+        BoundingCheck.check(trackWidthY.in(Meters), 0.2, 1.5, "track width", "meters");
 
         this.moduleTranslations = new Translation2d[] {
             new Translation2d(trackLengthX.in(Meters) / 2, trackWidthY.in(Meters) / 2),
@@ -307,8 +307,8 @@ public class DriveTrainSimulationConfig {
     }
 
     private void checkBumperSize() {
-        BoundingCheck.check(bumperLengthX.in(Meters), 0.5, 1.5, "bumper length", "meters");
-        BoundingCheck.check(bumperWidthY.in(Meters), 0.5, 1.5, "bumper width", "meters");
+        BoundingCheck.check(bumperLengthX.in(Meters), 0.2, 1.5, "bumper length", "meters");
+        BoundingCheck.check(bumperWidthY.in(Meters), 0.2, 1.5, "bumper width", "meters");
     }
 
     private void checkModuleTranslations() {

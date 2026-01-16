@@ -22,7 +22,6 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  */
 public class ReefscapeAlgaeOnFly extends GamePieceProjectile {
 
-
     public ReefscapeAlgaeOnFly(
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,

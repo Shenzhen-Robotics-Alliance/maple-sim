@@ -25,7 +25,6 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  */
 public class RebuiltFuelOnFly extends GamePieceProjectile {
 
-
     public RebuiltFuelOnFly(
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,

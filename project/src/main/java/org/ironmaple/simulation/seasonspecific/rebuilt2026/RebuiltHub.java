@@ -79,11 +79,6 @@ public class RebuiltHub extends Goal {
     }
 
     @Override
-    protected boolean checkVel(GamePiece gamePiece) {
-        return gamePiece.getVelocity3dMPS().getZ() < 0;
-    }
-
-    @Override
     protected boolean checkCollision(GamePiece GamePiece) {
         return Math.pow(GamePiece.getPose3d().getX() - position.getX(), 2)
                         + Math.pow(GamePiece.getPose3d().getY() - position.getY(), 2)

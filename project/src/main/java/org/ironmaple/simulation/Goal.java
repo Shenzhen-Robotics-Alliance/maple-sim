@@ -152,20 +152,11 @@ public abstract class Goal implements SimulatedArena.Simulatable {
     public final boolean isBlue;
     protected int gamePieceCount = 0;
 
+    double minZMeters;
+    double maxZMeters;
 
     protected final boolean allowGrounded;
 
-    /**
-     *
-     *
-     * <h2>Reverses a rotation so that the returned rotation points directly "behind" the original rotation.</h2>
-     *
-     * @param toFlip The rotation to be flipped.
-     * @return The flipped rotation.
-     */
-    public static Rotation3d flipRotation(Rotation3d toFlip) {
-        return new Rotation3d(0, -toFlip.getY(), toFlip.getZ() + Math.PI);
-    }
     protected RotationChecker rotationChecker;
     protected PositionChecker positionChecker;
     protected Predicate<GamePiece> velocityValidator;
@@ -204,19 +195,17 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         this.height = height;
         this.elevation = Distance.ofBaseUnits(position.getZ(), Units.Meters);
 
-       this.allowGrounded = allowGrounded;
-
+        this.allowGrounded = allowGrounded;
 
         this.xyBox = new Rectangle(xDimension.in(Units.Meters), yDimension.in(Units.Meters));
         this.xyBox.translate(new Vector2(position.getX(), position.getY()));
 
-        double minZMeters = position.getZ();
-        double maxZMeters = position.getZ() + height.in(Units.Meters);
+        minZMeters = position.getZ();
+        maxZMeters = position.getZ() + height.in(Units.Meters);
 
         this.rotationChecker = anyRotation();
         this.positionChecker = box(xyBox, minZMeters, maxZMeters);
         this.velocityValidator = (gamePiece) -> true;
-
     }
 
     /**
@@ -232,7 +221,6 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @param position The position of this goal.
      * @param isBlue Wether this is a blue goal or a red one.
      * @param allowsGrounded Wether or not grounded pieces can be scored in this goal
-
      */
     public Goal(
             SimulatedArena arena,
@@ -284,6 +272,17 @@ public abstract class Goal implements SimulatedArena.Simulatable {
     /**
      *
      *
+     * <h2>Sets the Angle to be Used When Checking Game Piece Rotation</h2>
+     *
+     * @param angle The angle that pieces should have when interacting with this goal
+     */
+    public void setNeededAngle(Rotation3d angle) {
+        this.rotationChecker = absoluteAngle(angle, Degrees.of(10));
+    }
+
+    /**
+     *
+     *
      * <h2>Sets a Custom Rotation Checker for This Goal</h2>
      *
      * <p>Replaces the default rotation validation logic with a custom checker. This allows for complex rotation checks
@@ -308,7 +307,9 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @return this Goal instance for method chaining
      */
     protected boolean checkValidity(GamePiece gamePiece) {
-        return rotationChecker.isValidRotation(gamePiece) && velocityValidator.test(gamePiece) && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
+        return rotationChecker.isValidRotation(gamePiece)
+                && velocityValidator.test(gamePiece)
+                && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
     }
 
     /**
@@ -363,7 +364,10 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         // Call our values just once.
         var pose = gamePiece.getPose3d();
 
-        return xyBox.contains(new Vector2(pose.getX(), pose.getY())) && pose.getZ() >= minZ && pose.getZ() <= maxZ;
+        return xyBox.contains(new Vector2(pose.getX(), pose.getY()))
+                && pose.getZ() >= minZMeters
+                && pose.getZ() <= maxZMeters;
+    }
 
     public Goal withCustomPositionChecker(PositionChecker checker) {
         this.positionChecker = checker;
@@ -385,7 +389,8 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return this;
     }
 
-     /** <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
+    /**
+     * Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
      * descending, or moving within certain speed ranges.
      *
      * <p>The predicate receives the {@link GamePiece} and should return {@code true} if the velocity is acceptable for

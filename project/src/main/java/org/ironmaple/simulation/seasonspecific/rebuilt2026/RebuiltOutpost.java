@@ -71,11 +71,11 @@ public class RebuiltOutpost extends Goal {
 
         StructPublisher<Pose3d> OutpostThrowPublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(
-                        "/SmartDashboard/MapleSim/" + (isBlue ? "BlueOutpostThrow" : "RedOutpostThrow"), Pose3d.struct)
+                        "/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueOutpostThrow" : "RedOutpostThrow"), Pose3d.struct)
                 .publish();
         StructPublisher<Pose3d> OutpostDumpPublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(
-                        "/SmartDashboard/MapleSim/" + (isBlue ? "BlueOutpostDump" : "RedOutpostDump"), Pose3d.struct)
+                        "/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueOutpostDump" : "RedOutpostDump"), Pose3d.struct)
                 .publish();
 
         OutpostPublisher.set(new Pose3d(position, new Rotation3d()));

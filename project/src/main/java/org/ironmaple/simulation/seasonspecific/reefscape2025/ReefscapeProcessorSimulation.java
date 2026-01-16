@@ -50,7 +50,7 @@ public class ReefscapeProcessorSimulation extends Goal {
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(
-                        "/SmartDashboard/MapleSim/" + (isBlue ? "BlueProcessor" : "RedProcessor"), Pose3d.struct)
+                        "/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueProcessor" : "RedProcessor"), Pose3d.struct)
                 .publish();
         heldAlgaePublisher.set(new Pose3d(position, new Rotation3d()));
     }

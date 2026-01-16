@@ -66,7 +66,7 @@ public class RebuiltOutpost extends Goal {
         gamePieceCount = 24;
 
         StructPublisher<Pose3d> OutpostPublisher = NetworkTableInstance.getDefault()
-                .getStructTopic("/SmartDashboard/MapleSim/" + (isBlue ? "BlueOutpost" : "RedOutpost"), Pose3d.struct)
+                .getStructTopic("/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueOutpost" : "RedOutpost"), Pose3d.struct)
                 .publish();
 
         StructPublisher<Pose3d> OutpostThrowPublisher = NetworkTableInstance.getDefault()

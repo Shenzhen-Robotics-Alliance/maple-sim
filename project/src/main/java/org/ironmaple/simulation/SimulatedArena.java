@@ -65,7 +65,7 @@ public abstract class SimulatedArena {
     protected int redScore = 0;
     protected int blueScore = 0;
     protected double matchClock = 0;
-    protected double lastMeasuredTimestamp=System.nanoTime();
+    protected double lastMeasuredTimestamp=System.currentTimeMillis();
 
     public Map<String, Double> redScoringBreakdown = new Hashtable<String, Double>();
     public Map<String, Double> blueScoringBreakdown = new Hashtable<String, Double>();

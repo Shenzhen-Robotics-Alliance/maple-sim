@@ -3,8 +3,8 @@
   <groupId>org.ironmaple</groupId>
   <artifactId>maplesim-java</artifactId>
   <versioning>
-    <latest>0.3.14</latest>
-    <release>0.3.14</release>
+    <latest>0.4.0-beta</latest>
+    <release>0.4.0-beta</release>
     <versions>
       <version>0.2.0</version>
       <version>0.1.6</version>
@@ -32,7 +32,8 @@
       <version>0.3.11prev</version>
       <version>0.3.13</version>
       <version>0.3.14</version>
+      <version>0.4.0-beta</version>
     </versions>
-    <lastUpdated>20250910012201</lastUpdated>
+    <lastUpdated>20260117054617</lastUpdated>
   </versioning>
 </metadata>

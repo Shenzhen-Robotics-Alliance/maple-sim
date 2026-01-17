@@ -46,7 +46,8 @@ public class ReefscapeReefSimulation implements SimulatedArena.Simulatable {
             }
         }
         reefPub = NetworkTableInstance.getDefault()
-                .getStructArrayTopic("/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueReef" : "RedReef"), Pose3d.struct)
+                .getStructArrayTopic(
+                        "/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueReef" : "RedReef"), Pose3d.struct)
                 .publish();
 
         reefPub.set(branchPoses);

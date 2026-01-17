@@ -45,6 +45,13 @@ public interface GamePiece {
     /**
      *
      *
+     * <h2>Internal function called to trigger a callback whenever this game piece is scored in a goal </h2>
+     */
+    public void triggerHitTargeCallBack();
+
+    /**
+     *
+     *
      * <h2>Gives wether or not the piece is "grounded".</h2>
      *
      * A grounded piece is likely a child of {@link GamePieceOnFieldSimulation} while a non grounded piece is likely a

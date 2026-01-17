@@ -39,14 +39,15 @@ public class CrescendoSpeaker extends Goal {
                 Centimeters.of(100),
                 "Note",
                 isBlue ? blueSpeakerPose : redSpeakerPose,
-                isBlue);
+                isBlue,
+                false);
 
         crescendoArena = arena;
 
         withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3dMPS().getZ() > 0);
 
         StructPublisher<Pose3d> speakerPosePublisher = NetworkTableInstance.getDefault()
-                .getStructTopic(isBlue ? "BlueSpeaker" : "RedSpeaker", Pose3d.struct)
+                .getStructTopic("/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueSpeaker" : "RedSpeaker"), Pose3d.struct)
                 .publish();
         speakerPosePublisher.set(new Pose3d(position, new Rotation3d()));
     }

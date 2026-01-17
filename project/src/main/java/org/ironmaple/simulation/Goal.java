@@ -152,6 +152,11 @@ public abstract class Goal implements SimulatedArena.Simulatable {
     public final boolean isBlue;
     protected int gamePieceCount = 0;
 
+    double minZMeters;
+    double maxZMeters;
+
+    protected final boolean allowGrounded;
+
     protected RotationChecker rotationChecker;
     protected PositionChecker positionChecker;
     protected Predicate<GamePiece> velocityValidator;
@@ -169,6 +174,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @param position The position of this goal.
      * @param isBlue Whether this is a blue goal or a red one.
      * @param max How many pieces can be scored in this goal.
+     * @param allowsGrounded Wether or not grounded pieces can be scored in this goal
      */
     public Goal(
             SimulatedArena arena,
@@ -178,7 +184,8 @@ public abstract class Goal implements SimulatedArena.Simulatable {
             String gamePieceType,
             Translation3d position,
             boolean isBlue,
-            int max) {
+            int max,
+            boolean allowGrounded) {
 
         this.gamePieceType = gamePieceType;
         this.position = position;
@@ -188,11 +195,13 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         this.height = height;
         this.elevation = Distance.ofBaseUnits(position.getZ(), Units.Meters);
 
+        this.allowGrounded = allowGrounded;
+
         this.xyBox = new Rectangle(xDimension.in(Units.Meters), yDimension.in(Units.Meters));
         this.xyBox.translate(new Vector2(position.getX(), position.getY()));
 
-        double minZMeters = position.getZ();
-        double maxZMeters = position.getZ() + height.in(Units.Meters);
+        minZMeters = position.getZ();
+        maxZMeters = position.getZ() + height.in(Units.Meters);
 
         this.rotationChecker = anyRotation();
         this.positionChecker = box(xyBox, minZMeters, maxZMeters);
@@ -210,7 +219,8 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @param height The height or z dimension of the default box collider.
      * @param gamePieceType the string game piece type to be handled by this goal.
      * @param position The position of this goal.
-     * @param isBlue Whether this is a blue goal or a red one.
+     * @param isBlue Wether this is a blue goal or a red one.
+     * @param allowsGrounded Wether or not grounded pieces can be scored in this goal
      */
     public Goal(
             SimulatedArena arena,
@@ -219,8 +229,9 @@ public abstract class Goal implements SimulatedArena.Simulatable {
             Distance height,
             String gamePieceType,
             Translation3d position,
-            boolean isBlue) {
-        this(arena, xDimension, yDimension, height, gamePieceType, position, isBlue, 99999);
+            boolean isBlue,
+            boolean allowsGrounded) {
+        this(arena, xDimension, yDimension, height, gamePieceType, position, isBlue, 99999, allowsGrounded);
     }
 
     /**
@@ -234,13 +245,14 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         /// Use list filtering for more efficient bulk checking.
         // Get all pieces of our type as a list.
         arena.getGamePiecesByType(gamePieceType).stream()
-                .filter(gamePiece -> !checkGrounded(gamePiece))
+                .filter(gamePiece -> checkGrounded(gamePiece))
                 .filter(this::checkValidity)
                 .limit(max - gamePieceCount) // Only score what we can
                 .forEach(
                         gamePiece -> { // If a piece passes, score it.
                             gamePieceCount++;
                             this.addPoints();
+                            gamePiece.triggerHitTargeCallBack();
                             arena.removePiece(gamePiece);
                         });
     }
@@ -255,6 +267,17 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      */
     public void setNeededAngle(Rotation3d angle, Angle angleTolerance) {
         this.rotationChecker = absoluteAngle(angle, angleTolerance);
+    }
+
+    /**
+     *
+     *
+     * <h2>Sets the Angle to be Used When Checking Game Piece Rotation</h2>
+     *
+     * @param angle The angle that pieces should have when interacting with this goal
+     */
+    public void setNeededAngle(Rotation3d angle) {
+        this.rotationChecker = absoluteAngle(angle, Degrees.of(10));
     }
 
     /**
@@ -284,19 +307,21 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @return this Goal instance for method chaining
      */
     protected boolean checkValidity(GamePiece gamePiece) {
-        return rotationChecker.isValidRotation(gamePiece) && velocityValidator.test(gamePiece) && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
+        return rotationChecker.isValidRotation(gamePiece)
+                && velocityValidator.test(gamePiece)
+                && positionChecker.isInBounds(gamePiece.getPose3d().getTranslation());
     }
 
     /**
      *
      *
-     * <h2>Checks whether the submitted game piece is grounded </h2>
+     * <h2>Checks whether the submitted game piece is grounded and if this is acceptable </h2>
      *
      * @param gamePiece The game piece to have its groundedness checked.
-     * @return Whether the piece is grounded.
+     * @return Whether the piece is acceptable for this goal.
      */
     protected boolean checkGrounded(GamePiece gamePiece) {
-        return gamePiece.isGrounded();
+        return allowGrounded || !gamePiece.isGrounded();
     }
 
     public Goal withCustomRotationValidator(Predicate<GamePiece> validator) {
@@ -335,6 +360,15 @@ public abstract class Goal implements SimulatedArena.Simulatable {
      * @param checker position checker that validates 3D positions
      * @return this Goal instance for method chaining
      */
+    protected boolean checkCollision(GamePiece gamePiece) {
+        // Call our values just once.
+        var pose = gamePiece.getPose3d();
+
+        return xyBox.contains(new Vector2(pose.getX(), pose.getY()))
+                && pose.getZ() >= minZMeters
+                && pose.getZ() <= maxZMeters;
+    }
+
     public Goal withCustomPositionChecker(PositionChecker checker) {
         this.positionChecker = checker;
         return this;
@@ -355,7 +389,8 @@ public abstract class Goal implements SimulatedArena.Simulatable {
         return this;
     }
 
-     /** <p>Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
+    /**
+     * Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
      * descending, or moving within certain speed ranges.
      *
      * <p>The predicate receives the {@link GamePiece} and should return {@code true} if the velocity is acceptable for

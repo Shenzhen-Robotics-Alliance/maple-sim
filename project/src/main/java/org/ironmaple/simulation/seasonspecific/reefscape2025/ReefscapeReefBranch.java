@@ -46,8 +46,7 @@ public class ReefscapeReefBranch extends Goal {
     public static void setAngleTolerance(Angle tolerance) {
         angleTolerance = tolerance;
         // Update all existing instances
-        for (ReefscapeReefBranch branch : allInstances) 
-            branch.updateRotationChecker();
+        for (ReefscapeReefBranch branch : allInstances) branch.updateRotationChecker();
     }
 
     public static final Translation2d origin =
@@ -135,7 +134,8 @@ public class ReefscapeReefBranch extends Goal {
                 "Coral",
                 getPoseOfBranchAt(isBlue, level, column),
                 isBlue,
-                level == 0 ? 2 : 1);
+                level == 0 ? 2 : 1,
+                false);
 
         if (level < MIN_LEVEL || level > MAX_LEVEL) {
             throw new IllegalArgumentException(

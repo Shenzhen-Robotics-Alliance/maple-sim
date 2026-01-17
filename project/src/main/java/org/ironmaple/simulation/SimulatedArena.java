@@ -548,8 +548,8 @@ public abstract class SimulatedArena {
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
-            matchClock += System.nanoTime() - lastMeasuredTimestamp;
-            lastMeasuredTimestamp = System.nanoTime();
+            matchClock += (System.currentTimeMillis() - lastMeasuredTimestamp)/1000.0;
+            lastMeasuredTimestamp = System.currentTimeMillis();
             SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
 
             if (resetFieldSubscriber.get()) {

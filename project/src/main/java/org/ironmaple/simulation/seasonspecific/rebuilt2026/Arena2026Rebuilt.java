@@ -51,80 +51,121 @@ public class Arena2026Rebuilt extends SimulatedArena {
 
     /** the obstacles on the 2026 competition field */
     public static final class RebuiltFieldObstaclesMap extends FieldMap {
-        private static final double FIELD_WIDTH = 16.54;
+
+        private static final double FIELD_X_MIN = 0.00000;
+        private static final double FIELD_X_MAX = 16.54105;
+        private static final double FIELD_Y_MIN = 0.00000;
+        private static final double FIELD_Y_MAX = 8.06926;
+
+        private static final double HUB_X_LEN = 1.19380;
+        private static final double HUB_Y_LEN = 1.19380;
+        private static final double HUB_X = 4.625594;
+        private static final double HUB_Y = 4.03463;
+        private static final double HUB_RAMP_LENGTH = Inches.of(73.0).in(Meters);
+
+        private static final double UPRIGHT_X_LEN = Inches.of(3.5).in(Meters);
+        private static final double UPRIGHT_Y_LEN = Inches.of(1.5).in(Meters);
+        private static final double UPRIGHT_OFFSET_FROM_END_WALL = 1.06204;
+        private static final double UPRIGHT_OFFSET_FROM_SIDE_WALL = 3.31524;
+        private static final double UPRIGHT_Y_SPACING = Inches.of(33.75).in(Meters);
+
+        private static final double TRENCH_WALL_Y_LEN = Inches.of(12.0).in(Meters);
+        private static final double TRENCH_WALL_X_LEN = Inches.of(47.0).in(Meters);
+        private static final double TRENCH_WALL_OFFSET_FROM_END_WALL = 4.61769;
+        private static final double TRENCH_WALL_OFFSET_FROM_SIDE_WALL = 1.43113;
 
         public RebuiltFieldObstaclesMap(boolean AddRampCollider) {
-            super.addBorderLine(new Translation2d(0, 0), new Translation2d(0, 8.052));
+
+            // blue wall
+            addBorderLine(new Translation2d(FIELD_X_MIN, FIELD_Y_MIN), new Translation2d(FIELD_X_MIN, FIELD_Y_MAX));
 
             // red wall
-            super.addBorderLine(new Translation2d(16.540988, 0), new Translation2d(16.540988, 8.052));
+            addBorderLine(new Translation2d(FIELD_X_MAX, FIELD_Y_MIN), new Translation2d(FIELD_X_MAX, FIELD_Y_MAX));
 
-            // upper walls
-            super.addBorderLine(new Translation2d(16.540988, 8.052), new Translation2d(0, 8.052));
+            // scoring area walls
+            addBorderLine(new Translation2d(FIELD_X_MIN, FIELD_Y_MIN), new Translation2d(FIELD_X_MAX, FIELD_Y_MIN));
 
-            // lower walls
-            super.addBorderLine(new Translation2d(0, 0), new Translation2d(16.540988, 0));
+            // opposite side
+            addBorderLine(new Translation2d(FIELD_X_MIN, FIELD_Y_MAX), new Translation2d(FIELD_X_MAX, FIELD_Y_MAX));
 
-            // Trench Walls (47 inch height, 12 inch width)
-            double trenchWallDistX =
-                    Inches.of(120.0).in(Meters) + Inches.of(47.0 / 2).in(Meters);
+            // blue tower uprights
+            addRectangularObstacle(
+                    UPRIGHT_X_LEN,
+                    UPRIGHT_Y_LEN,
+                    new Pose2d(UPRIGHT_OFFSET_FROM_END_WALL, UPRIGHT_OFFSET_FROM_SIDE_WALL, new Rotation2d()));
+            addRectangularObstacle(
+                    UPRIGHT_X_LEN,
+                    UPRIGHT_Y_LEN,
+                    new Pose2d(
+                            UPRIGHT_OFFSET_FROM_END_WALL,
+                            UPRIGHT_OFFSET_FROM_SIDE_WALL + UPRIGHT_Y_SPACING,
+                            new Rotation2d()));
 
-            double trenchWallDistY = Inches.of(73.0).in(Meters)
-                    + Inches.of(47.0 / 2).in(Meters)
-                    + Inches.of(6).in(Meters);
+            // red tower uprights
+            addRectangularObstacle(
+                    UPRIGHT_X_LEN,
+                    UPRIGHT_Y_LEN,
+                    new Pose2d(
+                            FIELD_X_MAX - UPRIGHT_OFFSET_FROM_END_WALL,
+                            FIELD_Y_MAX - UPRIGHT_OFFSET_FROM_SIDE_WALL,
+                            new Rotation2d()));
+            addRectangularObstacle(
+                    UPRIGHT_X_LEN,
+                    UPRIGHT_Y_LEN,
+                    new Pose2d(
+                            FIELD_X_MAX - UPRIGHT_OFFSET_FROM_END_WALL,
+                            FIELD_Y_MAX - UPRIGHT_OFFSET_FROM_SIDE_WALL - UPRIGHT_Y_SPACING,
+                            new Rotation2d()));
 
-            super.addRectangularObstacle(
-                    Inches.of(53).in(Meters),
-                    Inches.of(12).in(Meters),
-                    new Pose2d(8.27 - trenchWallDistX, 4.035 - trenchWallDistY, Rotation2d.kZero));
-            super.addRectangularObstacle(
-                    Inches.of(53).in(Meters),
-                    Inches.of(12).in(Meters),
-                    new Pose2d(8.27 + trenchWallDistX, 4.035 - trenchWallDistY, Rotation2d.kZero));
-            super.addRectangularObstacle(
-                    Inches.of(53).in(Meters),
-                    Inches.of(12).in(Meters),
-                    new Pose2d(8.27 - trenchWallDistX, 4.035 + trenchWallDistY, Rotation2d.kZero));
-            super.addRectangularObstacle(
-                    Inches.of(53).in(Meters),
-                    Inches.of(12).in(Meters),
-                    new Pose2d(8.27 - trenchWallDistX, 4.035 - trenchWallDistY, Rotation2d.kZero));
+            // blue trench wall
+            addRectangularObstacle(
+                    TRENCH_WALL_X_LEN,
+                    TRENCH_WALL_Y_LEN,
+                    new Pose2d(TRENCH_WALL_OFFSET_FROM_END_WALL, TRENCH_WALL_OFFSET_FROM_SIDE_WALL, new Rotation2d()));
+            addRectangularObstacle(
+                    TRENCH_WALL_X_LEN,
+                    TRENCH_WALL_Y_LEN,
+                    new Pose2d(
+                            TRENCH_WALL_OFFSET_FROM_END_WALL,
+                            FIELD_Y_MAX - TRENCH_WALL_OFFSET_FROM_SIDE_WALL,
+                            new Rotation2d()));
 
-            // poles of the tower
-            super.addRectangularObstacle(
-                    Inches.of(2).in(Meters),
-                    Inches.of(47).in(Meters),
-                    new Pose2d(new Translation2d(Inches.of(42), Inches.of(159)), new Rotation2d()));
-
-            super.addRectangularObstacle(
-                    Inches.of(2).in(Meters),
-                    Inches.of(47).in(Meters),
-                    new Pose2d(new Translation2d(Inches.of(651 - 42), Inches.of(170)), new Rotation2d()));
+            // red trench wall
+            addRectangularObstacle(
+                    TRENCH_WALL_X_LEN,
+                    TRENCH_WALL_Y_LEN,
+                    new Pose2d(
+                            FIELD_X_MAX - TRENCH_WALL_OFFSET_FROM_END_WALL,
+                            TRENCH_WALL_OFFSET_FROM_SIDE_WALL,
+                            new Rotation2d()));
+            addRectangularObstacle(
+                    TRENCH_WALL_X_LEN,
+                    TRENCH_WALL_Y_LEN,
+                    new Pose2d(
+                            FIELD_X_MAX - TRENCH_WALL_OFFSET_FROM_END_WALL,
+                            FIELD_Y_MAX - TRENCH_WALL_OFFSET_FROM_SIDE_WALL,
+                            new Rotation2d()));
 
             // Colliders to describe the hub plus ramps
             if (AddRampCollider) {
-                super.addRectangularObstacle(
-                        Inches.of(47).in(Meters),
-                        Inches.of(217).in(Meters),
-                        new Pose2d(RebuiltHub.blueHubPose.toTranslation2d(), new Rotation2d()));
 
-                super.addRectangularObstacle(
-                        Inches.of(47).in(Meters),
-                        Inches.of(217).in(Meters),
-                        new Pose2d(RebuiltHub.redHubPose.toTranslation2d(), new Rotation2d()));
-            }
+                // blue hub + ramps
+                addRectangularObstacle(
+                        HUB_X_LEN, HUB_Y_LEN + 2.0 * HUB_RAMP_LENGTH, new Pose2d(HUB_X, HUB_Y, new Rotation2d()));
 
-            // Colliders to describe just the hub
-            else {
-                super.addRectangularObstacle(
-                        Inches.of(47).in(Meters),
-                        Inches.of(47).in(Meters),
-                        new Pose2d(RebuiltHub.blueHubPose.toTranslation2d(), new Rotation2d()));
+                // red hub + ramps
+                addRectangularObstacle(
+                        HUB_X_LEN,
+                        HUB_Y_LEN + 2.0 * HUB_RAMP_LENGTH,
+                        new Pose2d(FIELD_X_MAX - HUB_X, HUB_Y, new Rotation2d()));
 
-                super.addRectangularObstacle(
-                        Inches.of(47).in(Meters),
-                        Inches.of(47).in(Meters),
-                        new Pose2d(RebuiltHub.redHubPose.toTranslation2d(), new Rotation2d()));
+            } else {
+
+                // blue hub
+                addRectangularObstacle(HUB_X_LEN, HUB_Y_LEN, new Pose2d(HUB_X, HUB_Y, new Rotation2d()));
+
+                // red hub
+                addRectangularObstacle(HUB_X_LEN, HUB_Y_LEN, new Pose2d(FIELD_X_MAX - HUB_X, HUB_Y, new Rotation2d()));
             }
         }
     }

@@ -1,7 +1,6 @@
 package org.ironmaple.simulation.drivesims;
 
 import static edu.wpi.first.units.Units.*;
-import static edu.wpi.first.units.Units.KilogramSquareMeters;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import java.util.function.Supplier;
@@ -108,6 +107,52 @@ public class COTS {
                     default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
                 },
                 18.75,
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
+    }
+
+    /**
+     * creates a <a href="https://www.swervedrivespecialties.com/products/mk5n-swerve-module">SDS Mark5-n Swerve
+     * Module</a> for simulation
+     */
+    public static SwerveModuleSimulationConfig ofMark5n(
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+        return new SwerveModuleSimulationConfig(
+                driveMotor,
+                steerMotor,
+                switch (gearRatioLevel) {
+                    case 1 -> 7.03;
+                    case 2 -> 6.03;
+                    case 3 -> 5.27;
+                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                },
+                287.0 / 11.0,
+                Volts.of(0.1),
+                Volts.of(0.2),
+                Inches.of(2),
+                KilogramSquareMeters.of(0.03),
+                wheelCOF);
+    }
+
+    /**
+     * creates a <a href="https://www.swervedrivespecialties.com/products/mk5i-swerve-module">SDS Mark5-i Swerve
+     * Module</a> for simulation
+     */
+    public static SwerveModuleSimulationConfig ofMark5i(
+            DCMotor driveMotor, DCMotor steerMotor, double wheelCOF, int gearRatioLevel) {
+        return new SwerveModuleSimulationConfig(
+                driveMotor,
+                steerMotor,
+                switch (gearRatioLevel) {
+                    case 1 -> 7.03;
+                    case 2 -> 6.03;
+                    case 3 -> 5.27;
+                    default -> throw new IllegalStateException("Unknown gearing level: " + gearRatioLevel);
+                },
+                26.0,
                 Volts.of(0.1),
                 Volts.of(0.2),
                 Inches.of(2),

@@ -637,7 +637,7 @@ public class GamePieceProjectile implements GamePiece {
         return false;
     }
 
-    public void triggerHitTargeCallBack() {
+    public void triggerHitTargetCallBack() {
         hitTargetCallBack.run();
     }
 

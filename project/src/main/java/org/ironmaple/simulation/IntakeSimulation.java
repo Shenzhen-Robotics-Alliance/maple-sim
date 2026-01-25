@@ -269,7 +269,7 @@ public class IntakeSimulation extends BodyFixture {
      */
     public boolean addGamePiecesToIntake(int piecesToAdd) {
         boolean toReturn = gamePiecesInIntakeCount + piecesToAdd <= capacity;
-        gamePiecesInIntakeCount = Math.max(gamePiecesInIntakeCount + piecesToAdd, capacity);
+        gamePiecesInIntakeCount = Math.min(gamePiecesInIntakeCount + piecesToAdd, capacity);
         return toReturn;
     }
 

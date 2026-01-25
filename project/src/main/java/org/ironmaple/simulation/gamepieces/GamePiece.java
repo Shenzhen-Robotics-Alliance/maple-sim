@@ -47,7 +47,7 @@ public interface GamePiece {
      *
      * <h2>Internal function called to trigger a callback whenever this game piece is scored in a goal </h2>
      */
-    public void triggerHitTargeCallBack();
+    public void triggerHitTargetCallBack();
 
     /**
      *

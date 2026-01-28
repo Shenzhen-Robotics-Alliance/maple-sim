@@ -131,7 +131,7 @@ public class RebuiltOutpost extends Goal {
      * <h2>Attempts too throw a game piece at the specified goal.</h2>
      *
      * <p>This method comes with variance built in (to simulate human inconsistency) and will therefore only hit about
-     * half the time. Additionally if the hub does not have game pieces stored this method will not do anything. If you
+     * half the time. Additionally if the outpost does not have game pieces stored this method will not do anything. If you
      * would like to manually control how the human player throws game pieces use {@link #outpostThrow(boolean,
      * Rotation2d, Angle, LinearVelocity)}
      */
@@ -174,7 +174,7 @@ public class RebuiltOutpost extends Goal {
      *
      * <h2>Throws a game piece from the outpost at the specified angle and speed. </h2>
      *
-     * <p>This method comes with variance built in (to simulate human inconsistency). Additionally if the hub does not
+     * <p>This method comes with variance built in (to simulate human inconsistency). Additionally if the outpost does not
      * have game pieces stored this method will not do anything. If you would like to have the human player throw at the
      * hub use {@link #outpostThrowForGoal(boolean)}
      *

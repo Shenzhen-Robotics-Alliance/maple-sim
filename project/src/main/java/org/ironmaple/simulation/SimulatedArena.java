@@ -65,6 +65,7 @@ public abstract class SimulatedArena {
     protected int redScore = 0;
     protected int blueScore = 0;
     protected double matchClock = 0;
+    protected double lastMeasuredTimestamp=System.currentTimeMillis();
 
     public Map<String, Double> redScoringBreakdown = new Hashtable<String, Double>();
     public Map<String, Double> blueScoringBreakdown = new Hashtable<String, Double>();
@@ -547,8 +548,8 @@ public abstract class SimulatedArena {
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
-            matchClock += getSimulationDt().in(Units.Seconds);
-
+            matchClock += (System.currentTimeMillis() - lastMeasuredTimestamp)/1000.0;
+            lastMeasuredTimestamp = System.currentTimeMillis();
             SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
 
             if (resetFieldSubscriber.get()) {

@@ -1,0 +1,1192 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://shenzhen-robotics-alliance.github.io/maple-sim/reefscape/">
+      
+      
+        <link rel="prev" href="../simulating-projectiles/">
+      
+      
+        <link rel="next" href="../CONTRIBUTION/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../media/team_logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Reefscape Simulation - MapleSim</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+  
+  
+  
+  
+  <style>:root{--md-annotation-icon:url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M22%2012a10%2010%200%200%201-10%2010A10%2010%200%200%201%202%2012%2010%2010%200%200%201%2012%202a10%2010%200%200%201%2010%2010M6%2013h8l-3.5%203.5%201.42%201.42L17.84%2012l-5.92-5.92L10.5%207.5%2014%2011H6z%22/%3E%3C/svg%3E');}</style>
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#2025-reefscape-simulation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="MapleSim" class="md-header__button md-logo" aria-label="MapleSim" data-md-component="logo">
+      
+  <img src="../media/team_logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MapleSim
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Reefscape Simulation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="pink"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="MapleSim" class="md-nav__button md-logo" aria-label="MapleSim" data-md-component="logo">
+      
+  <img src="../media/team_logo.png" alt="logo">
+
+    </a>
+    MapleSim
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulation-details/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulation Details
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installing-maple-sim/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-the-simulated-arena/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Using the Simulated Arena
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Swerve Simulation
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Swerve Simulation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swerve-simulation-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swerve-sim-easy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simple Swerve Sim
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../swerve-sim-hardware-abstraction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware Abstraction Sim
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulating-intake/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulating Intake
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulating-opponent-robots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulating Opponent Robots
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simulating-projectiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Simulating Projectiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reefscape Simulation
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reefscape Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#coral-and-algae-on-the-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CORAL and ALGAE on the Field
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-coral-algae-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The CORAL-ALGAE Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-coral-and-algae" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with CORAL and ALGAE
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#launching-algae-into-the-air" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Launching ALGAE into the air
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoring-coral-on-reef" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoring CORAL on REEF
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scoring CORAL on REEF">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-angle-tolerance-for-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Angle Tolerance for Scoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CONTRIBUTION/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes/version0.3.0-beta2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#coral-and-algae-on-the-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CORAL and ALGAE on the Field
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-coral-algae-stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The CORAL-ALGAE Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interacting-with-coral-and-algae" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interacting with CORAL and ALGAE
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#launching-algae-into-the-air" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Launching ALGAE into the air
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#scoring-coral-on-reef" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoring CORAL on REEF
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scoring CORAL on REEF">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuring-angle-tolerance-for-scoring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuring Angle Tolerance for Scoring
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="2025-reefscape-simulation">2025 Reefscape Simulation</h1>
+<p><img alt="alt text" src="../media/fd_frc_socialgraphics_fb_post.png" /></p>
+<h2 id="coral-and-algae-on-the-field"><strong><em>CORAL</em></strong> and <strong><em>ALGAE</em></strong> on the Field</h2>
+<div class="admonition info">
+<p><strong><em>CORAL</em></strong> and <strong><em>ALGAE</em></strong> can be added to the field as game pieces:</p>
+</div>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">addGamePiece</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ReefscapeCoral</span><span class="p">(</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="c1">// We must specify a heading since the coral is a tube</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">new</span><span class="w"> </span><span class="n">Pose2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">Rotation2d</span><span class="p">.</span><span class="na">fromDegrees</span><span class="p">(</span><span class="mi">90</span><span class="p">))));</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">addGamePiece</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ReefscapeAlgaeOnField</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Translation2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)));</span>
+</span></code></pre></div>
+<p>You can visualize them by calling:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">Logger</span><span class="p">.</span><span class="na">recordOutput</span><span class="p">(</span><span class="s">&quot;FieldSimulation/Algae&quot;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">getGamePiecesArrayByType</span><span class="p">(</span><span class="s">&quot;Algae&quot;</span><span class="p">));</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">Logger</span><span class="p">.</span><span class="na">recordOutput</span><span class="p">(</span><span class="s">&quot;FieldSimulation/Coral&quot;</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">getGamePiecesArrayByType</span><span class="p">(</span><span class="s">&quot;Coral&quot;</span><span class="p">));</span>
+</span></code></pre></div>
+<p>And display the data in AdvantageScope:</p>
+<p><img alt="" src="../media/reefscape%20coral%20algae%20ascope.png" /></p>
+<p><img alt="Reefscape Game Pieces" src="../media/reefscape%20game%20pieces.gif" /></p>
+<div class="admonition abstract">
+<p class="admonition-title">Detailed Documents on Game Pieces Simulation</p>
+<p><strong><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/#3-adding-game-pieces-to-the-field"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Adding Game Pieces to the Field</a></strong></p>
+<p><strong><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/using-the-simulated-arena/#4-visualizing-game-pieces"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Visualizing Game Pieces</a></strong></p>
+</div>
+<h2 id="the-coral-algae-stack">The <strong><em>CORAL-ALGAE</em></strong> Stack</h2>
+<div class="admonition info">
+<p><strong><em>CORAL</em></strong> are staged on the field with <strong><em>ALGAE</em></strong> on top. You can place these stacks on the field:</p>
+</div>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">addGamePiece</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ReefscapeCoralAlgaeStack</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Translation2d</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)));</span>
+</span></code></pre></div>
+<p>Or reset the layout by performing a field reset:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">().</span><span class="na">resetFieldForAuto</span><span class="p">();</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When you display <strong><em>CORAL</em></strong> and <strong><em>ALGAE</em></strong> using the method specified above, the <strong><em>CORAL</em></strong> and <strong><em>ALGAE</em></strong> in the stacks will also be displayed.</p>
+</div>
+<p><img alt="alt text" src="../media/reefscape%20stack%20ascope.png" /></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Stacks will collapse and become a <strong><em>CORAL</em></strong> and <strong><em>ALGAE</em></strong> on the field if you hit them:</p>
+</div>
+<p><img alt="" src="../media/reefscape%20stack.gif" /></p>
+<h2 id="interacting-with-coral-and-algae">Interacting with <strong><em>CORAL</em></strong> and <strong><em>ALGAE</em></strong></h2>
+<div class="admonition info">
+<p>Users can use <code>IntakeSimulation</code> to simulate the interaction between robot intakes and the game pieces. </p>
+</div>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">this</span><span class="p">.</span><span class="na">intakeSimulation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IntakeSimulation</span><span class="p">.</span><span class="na">OverTheBumperIntake</span><span class="p">(</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">        </span><span class="c1">// Specify the type of game pieces that the intake can collect</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">        </span><span class="s">&quot;Coral&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">        </span><span class="c1">// Specify the drivetrain to which this intake is attached</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">        </span><span class="n">driveTrainSimulation</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">        </span><span class="c1">// Width of the intake</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">        </span><span class="n">Meters</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mf">0.4</span><span class="p">),</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">        </span><span class="c1">// The extension length of the intake beyond the robot&#39;s frame (when activated)</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">        </span><span class="n">Meters</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="c1">// The intake is mounted on the back side of the chassis</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">        </span><span class="n">IntakeSimulation</span><span class="p">.</span><span class="na">IntakeSide</span><span class="p">.</span><span class="na">BACK</span><span class="p">,</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">        </span><span class="c1">// The intake can hold up to 1 note</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">        </span><span class="mi">1</span><span class="p">);</span>
+</span></code></pre></div>
+<div class="admonition abstract">
+<p class="admonition-title">Detailed Documents on IntakeSimulation</p>
+<p><strong><a href="https://shenzhen-robotics-alliance.github.io/maple-sim/simulating-intake/"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.22 19.03a.75.75 0 0 1 0-1.06L18.19 13H3.75a.75.75 0 0 1 0-1.5h14.44l-4.97-4.97a.749.749 0 0 1 .326-1.275.75.75 0 0 1 .734.215l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0"/></svg></span> Simulating Intake</a></strong></p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<ul>
+<li>If your <code>IntakeSimulation</code> is targeted to <strong><em>CORAL</em></strong>, it will also be able to grab the <strong><em>CORAL</em></strong> from the <strong><em>CORAL-ALGAE</em></strong> stack. And the <strong><em>ALGAE</em></strong> will fall to the ground as the <strong><em>CORAL</em></strong> disapear.</li>
+<li>Vise versa, if your <code>IntakeSimulation</code> is targeted to <strong><em>ALGAE</em></strong>, it will also be able to grab the <strong><em>ALGAE</em></strong> from the <strong><em>CORAL-ALGAE</em></strong> stack. And the <strong><em>CORAL</em></strong> will fall to the ground as the <strong><em>ALGAE</em></strong> disapear.</li>
+</ul>
+</div>
+<h2 id="launching-algae-into-the-air">Launching <strong><em>ALGAE</em></strong> into the air</h2>
+<div class="admonition info">
+<p><strong><em>ALGAE</em></strong> can be launched into the air, and the simulation will detect if it reaches its target—the <strong><em>NET</em></strong>.</p>
+</div>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">ReefscapeAlgaeOnFly</span><span class="p">.</span><span class="na">setHitNetCallBack</span><span class="p">(()</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;ALGAE hits NET!&quot;</span><span class="p">));</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">()</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="p">.</span><span class="na">addGamePieceProjectile</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ReefscapeAlgaeOnFly</span><span class="p">(</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getSimulatedDriveTrainPose</span><span class="p">().</span><span class="na">getTranslation</span><span class="p">(),</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">Translation2d</span><span class="p">(),</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getDriveTrainSimulatedChassisSpeedsFieldRelative</span><span class="p">(),</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getSimulatedDriveTrainPose</span><span class="p">().</span><span class="na">getRotation</span><span class="p">(),</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">        </span><span class="mf">0.4</span><span class="p">,</span><span class="w"> </span><span class="c1">// initial height of the ball, in meters</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">        </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="c1">// initial velocity, in m/s</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">        </span><span class="n">Math</span><span class="p">.</span><span class="na">toRadians</span><span class="p">(</span><span class="mi">70</span><span class="p">))</span><span class="w"> </span><span class="c1">// shooter angle</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">        </span><span class="p">.</span><span class="na">withProjectileTrajectoryDisplayCallBack</span><span class="p">(</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="w">            </span><span class="p">(</span><span class="n">poses</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Logger</span><span class="p">.</span><span class="na">recordOutput</span><span class="p">(</span><span class="s">&quot;successfulShotsTrajectory&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">poses</span><span class="p">.</span><span class="na">toArray</span><span class="p">(</span><span class="n">Pose3d</span><span class="o">[]</span><span class="p">::</span><span class="k">new</span><span class="p">)),</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">            </span><span class="p">(</span><span class="n">poses</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">Logger</span><span class="p">.</span><span class="na">recordOutput</span><span class="p">(</span><span class="s">&quot;missedShotsTrajectory&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">poses</span><span class="p">.</span><span class="na">toArray</span><span class="p">(</span><span class="n">Pose3d</span><span class="o">[]</span><span class="p">::</span><span class="k">new</span><span class="p">))));</span>
+</span></code></pre></div>
+<p>See <a href="../simulating-projectiles/">Simulating Projectiles</a>.</p>
+<p><img alt="" src="../media/launching%20algae.gif" /></p>
+<h2 id="scoring-coral-on-reef">Scoring <strong><em>CORAL</em></strong> on <strong><em>REEF</em></strong></h2>
+<div class="admonition info">
+<p>You can eject a <strong><em>CORAL</em></strong> from your scoring mechanism during simulation. If a <strong><em>CORAL</em></strong> ejected into the air is in contact with a <strong><em>BRANCH</em></strong> at the correct angle, it will be attached to that branch. Maple-Sim will automatically detect the contact and simulate the scoring process (requires v0.3.3 or above).</p>
+</div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="scoring-on-l3-branch" name="__tabbed_1" type="radio" /><input id="scoring-on-l4-branch" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="scoring-on-l3-branch">Scoring on L3 branch</label><label for="scoring-on-l4-branch">Scoring on L4 branch</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-java highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">()</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="p">.</span><span class="na">addGamePieceProjectile</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ReefscapeCoralOnFly</span><span class="p">(</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">        </span><span class="c1">// Obtain robot position from drive simulation</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getSimulatedDriveTrainPose</span><span class="p">().</span><span class="na">getTranslation</span><span class="p">(),</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">        </span><span class="c1">// The scoring mechanism is installed at (0.46, 0) (meters) on the robot</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">Translation2d</span><span class="p">(</span><span class="mf">0.35</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">        </span><span class="c1">// Obtain robot speed from drive simulation</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getDriveTrainSimulatedChassisSpeedsFieldRelative</span><span class="p">(),</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">        </span><span class="c1">// Obtain robot facing from drive simulation</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getSimulatedDriveTrainPose</span><span class="p">().</span><span class="na">getRotation</span><span class="p">(),</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">        </span><span class="c1">// The height at which the coral is ejected</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="w">        </span><span class="n">Meters</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mf">1.28</span><span class="p">),</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="w">        </span><span class="c1">// The initial speed of the coral</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="w">        </span><span class="n">MetersPerSecond</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a><span class="w">        </span><span class="c1">// The coral is ejected at a 35-degree slope</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a><span class="w">        </span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="o">-</span><span class="mi">35</span><span class="p">)));</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-java highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">SimulatedArena</span><span class="p">.</span><span class="na">getInstance</span><span class="p">()</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="p">.</span><span class="na">addGamePieceProjectile</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">ReefscapeCoralOnFly</span><span class="p">(</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">        </span><span class="c1">// Obtain robot position from drive simulation</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getSimulatedDriveTrainPose</span><span class="p">().</span><span class="na">getTranslation</span><span class="p">(),</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">        </span><span class="c1">// The scoring mechanism is installed at (0.46, 0) (meters) on the robot</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span><span class="k">new</span><span class="w"> </span><span class="n">Translation2d</span><span class="p">(</span><span class="mf">0.46</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">        </span><span class="c1">// Obtain robot speed from drive simulation</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getDriveTrainSimulatedChassisSpeedsFieldRelative</span><span class="p">(),</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="c1">// Obtain robot facing from drive simulation</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="n">driveSimulation</span><span class="p">.</span><span class="na">getSimulatedDriveTrainPose</span><span class="p">().</span><span class="na">getRotation</span><span class="p">(),</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">        </span><span class="c1">// The height at which the coral is ejected</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="n">Meters</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mf">2.1</span><span class="p">),</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="c1">// The initial speed of the coral</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">        </span><span class="n">MetersPerSecond</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">        </span><span class="c1">// The coral is ejected vertically downwards</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">        </span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="o">-</span><span class="mi">90</span><span class="p">)));</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><strong><em>CORAL</em></strong>s that miss the target will be dropped on the floor:</p>
+</div>
+<p><img alt="" src="../media/scoring%20coral%20on%20field.gif" /></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p><strong><em>CORAL</em></strong>s that fall on the <strong><em>TROUGH</em></strong> will remain on the trough:</p>
+</div>
+<p><img alt="" src="../media/scoring%20coral%20on%20trough.gif" /></p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>To score a <strong><em>CORAL</em></strong> on a <strong><em>BRANCH</em></strong>, it must:</p>
+<ul>
+<li>Be in contact with the <strong><em>BRANCH</em></strong>.</li>
+<li>Be aligned with the direction of the <strong><em>BRANCH</em></strong>.</li>
+<li>Be moving in the correct direction (i.e., if the coral is moving upwards, it cannot score).</li>
+</ul>
+</div>
+<p><img alt="" src="../media/scoring%20coral%20on%20L3.gif" />
+<img alt="" src="../media/scoring%20coral%20on%20L4.gif" /></p>
+<h3 id="configuring-angle-tolerance-for-scoring">Configuring Angle Tolerance for Scoring</h3>
+<div class="admonition info">
+<p>By default, <strong><em>CORAL</em></strong> must be aligned within <strong>10 degrees</strong> of the <strong><em>BRANCH</em></strong> direction to score. You can adjust this tolerance to make scoring easier or harder:</p>
+</div>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1">// Make scoring more forgiving (allow 15 degrees of misalignment)</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">ReefscapeReefBranch</span><span class="p">.</span><span class="na">setAngleTolerance</span><span class="p">(</span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">15</span><span class="p">));</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">// Make scoring more strict (allow only 5 degrees of misalignment)</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">ReefscapeReefBranch</span><span class="p">.</span><span class="na">setAngleTolerance</span><span class="p">(</span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<ul>
+<li>You can call <code>setAngleTolerance()</code> at any time, even after the arena has been created</li>
+<li>The change applies immediately to all existing branches</li>
+<li>This is useful for testing your scoring mechanism with different difficulty levels</li>
+</ul>
+</div>
+<div class="admonition example">
+<p class="admonition-title">Use Case: Testing Scoring Consistency</p>
+</div>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1">// During testing, use a more forgiving tolerance</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">ReefscapeReefBranch</span><span class="p">.</span><span class="na">setAngleTolerance</span><span class="p">(</span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">20</span><span class="p">));</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1">// Once your mechanism is reliable, test with competition tolerance</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="n">ReefscapeReefBranch</span><span class="p">.</span><span class="na">setAngleTolerance</span><span class="p">(</span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1">// For extra challenge, test with stricter tolerance</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="n">ReefscapeReefBranch</span><span class="p">.</span><span class="na">setAngleTolerance</span><span class="p">(</span><span class="n">Degrees</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+</span></code></pre></div>
+<p>To obtain the amount of corals scored on each branch, use:</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ReefscapeReefSimulation</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reefSimulation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReefscapeReefSimulation</span><span class="p">.</span><span class="na">getInstance</span><span class="p">();</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">amountOfCoralsOnBranch_G_L4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">reefSimulation</span><span class="p">.</span><span class="na">isPresent</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="n">amountOfCoralsOnBranch_G_L4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reefSimulation</span><span class="p">.</span><span class="na">get</span><span class="p">().</span><span class="na">getBranches</span><span class="p">()</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">        </span><span class="o">[</span><span class="mi">6</span><span class="o">]</span><span class="w"> </span><span class="c1">// branch G</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">        </span><span class="o">[</span><span class="mi">3</span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="c1">// L4</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>See the <a href="https://shenzhen-robotics-alliance.github.io/maple-sim/javadocs/org/ironmaple/simulation/seasonspecific/reefscape2025/ReefscapeReefSimulation.html">javadocs</a> for more info.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../simulating-projectiles/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Simulating Projectiles">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Simulating Projectiles
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../CONTRIBUTION/" class="md-footer__link md-footer__link--next" aria-label="Next: Contributing">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Contributing
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate", "content.code.select.title", "toc.follow", "content.tabs.link", "search.share", "search.highlight", "search.suggest", "announce.dismiss", "navigation.instant", "navigation.footer"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

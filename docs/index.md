@@ -44,42 +44,35 @@ For an in-depth description of the simulations, please refer to [Simulation Deta
     ---
     The [CTRE Generated Swerve Code](https://v6.docs.ctr-electronics.com/en/latest/docs/tuner/tuner-swerve/index.html), enhanced with maple-sim integration for improved chassis physics simulation. 
 
-    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/CTRE%20Swerve%20with%20maple-sim)
+    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/CTRE-Swerve-MapleSim/)
 
 -   **YAGSL**
 
     ---
     Maple-sim is officially included in the amazing [Yet Another Generic Swervedrive Library (YAGSL)](https://github.com/BroncBotz3481/YAGSL) for 2025!
 
-    [:octicons-arrow-right-24: YAGSL 2025 release](https://github.com/BroncBotz3481/YAGSL-Example/releases/tag/2025.1.0)
+    [:octicons-arrow-right-24: YAGSL 2025 release](https://github.com/Shenzhen-Robotics-Alliance/YAGSL-maple-sim)
 
--   **AdvantageKit SparkMax Swerve Template**
+-   **AdvantageKit SparkMax/Flex Swerve Template**
 
     ---
-    The [AdvantageKit Swerve Template with REV SparkMax hardware](https://docs.advantagekit.org/getting-started/template-projects/spark-swerve-template), enhanced with maple-sim integration for improved chassis physics simulation. 
+    The [AdvantageKit Swerve Template with REV SparkMax/SparkFlex hardware](https://docs.advantagekit.org/getting-started/template-projects/spark-swerve-template), enhanced with maple-sim integration for improved chassis physics simulation.
     
-    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_SparkSwerveTemplate-maple-sim)
+    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-SparkSwerveTemplate-MapleSim/)
 
 -   **AdvantageKit Talon Swerve Template**
 
-    --- 
-    The [AdvantageKit Swerve Template with CTRE hardware](https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template), enhanced with maple-sim integration for improved chassis physics simulation. 
+      --- 
+      The [AdvantageKit Swerve Template with CTRE hardware](https://docs.advantagekit.org/getting-started/template-projects/talonfx-swerve-template), enhanced with maple-sim integration for improved chassis physics simulation.
     
-    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_TalonSwerveTemplate-maple-sim)
+      [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim/)
     
 -   **AdvantageKit Talon Swerve Template - *Enhanced Version***
 
     ---    
     A further enhanced version of the *TalonSwerveTemplate-maple-sim* project, utilizing [Phoenix 6 simulation](https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/simulation/simulation-intro.html) to simulate CTRE motor controller closed-loops and the CAN bus
     
-    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/AdvantageKit_TalonSwerveTemplate_EnhancedPhoenixSimulation)
-
--   **Base Talon Swerve**
-
-    ---
-    [Base-Talon-Swerve](https://github.com/dirtbikerxz/BaseTalonFXSwerve), modified with advanced drivetrain simulation. This is an example implementation of the [Simplified Swerve Simulation](https://shenzhen-robotics-alliance.github.io/maple-sim/3.1_SWERVE_SIM_EZ_MODE.html).
-    
-    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/tree/main/templates/BaseTalonSwerve-maple-sim)
+    [:octicons-arrow-right-24: Project Page](https://github.com/Shenzhen-Robotics-Alliance/AdvantageKit-TalonSwerveTemplate-MapleSim-Enhanced/)
 </div>
 
 ??? example "Other Custom Templates & Examples"

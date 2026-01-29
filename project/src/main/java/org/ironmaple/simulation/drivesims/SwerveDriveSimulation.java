@@ -15,7 +15,6 @@ import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
-import org.ironmaple.utils.mathutils.MapleCommonMath;
 
 /**
  *
@@ -69,7 +68,9 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     protected final GyroSimulation gyroSimulation;
     protected final Translation2d[] moduleTranslations;
     protected final SwerveDriveKinematics kinematics;
-    private final double gravityForceOnEachModule;
+    private final Translation2d centerOfMassOffset;
+    private final double totalWeightNewtons;
+    private ChassisSpeeds previousChassisSpeeds = new ChassisSpeeds();
 
     /**
      *
@@ -95,7 +96,8 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
         super.setAngularDamping(1.4);
         this.kinematics = new SwerveDriveKinematics(moduleTranslations);
 
-        this.gravityForceOnEachModule = config.robotMass.in(Kilograms) * 9.8 / moduleSimulations.length;
+        this.centerOfMassOffset = new Translation2d(config.centerOfMass.getX(), config.centerOfMass.getY());
+        this.totalWeightNewtons = config.robotMass.in(Kilograms) * 9.8;
     }
 
     /**
@@ -106,8 +108,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <p>This method performs the following actions during each sub-tick of the simulation:
      *
      * <ul>
-     *   <li>Applies the translational friction force to the physics engine.
-     *   <li>Applies the rotational friction torque to the physics engine.
+     *   <li>Applies friction forces per module to the physics engine (handles both translation and rotation).
      *   <li>Updates the simulation of each swerve module.
      *   <li>Applies the propelling forces of the modules to the physics engine.
      *   <li>Updates the gyro simulation of the drivetrain.
@@ -115,146 +116,120 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      */
     @Override
     public void simulationSubTick() {
-        simulateChassisFrictionForce();
+        final double[] currentGravityForces = calculateDynamicWeightDistribution();
 
-        simulateChassisFrictionTorque();
+        simulateModuleFrictionForces(currentGravityForces);
 
-        simulateModulePropellingForces();
+        simulateModulePropellingForces(currentGravityForces);
 
         gyroSimulation.updateSimulationSubTick(super.getAngularVelocity());
-    }
 
-    private Translation2d previousModuleSpeedsFieldRelative = new Translation2d();
-
-    /**
-     *
-     *
-     * <h2>Simulates the Translational Friction Force and Applies It to the Physics Engine.</h2>
-     *
-     * <p>This method simulates the translational friction forces acting on the robot and applies them to the physics
-     * engine. There are two components of the friction forces:
-     *
-     * <ul>
-     *   <li>A portion of the friction force pushes the robot from its current ground speeds
-     *       ({@link #getDriveTrainSimulatedChassisSpeedsRobotRelative()}) toward its current module speeds
-     *       ({@link #getModuleSpeeds()}).
-     *   <li>Another portion of the friction force is the centripetal force, which occurs when the chassis changes its
-     *       direction of movement.
-     * </ul>
-     *
-     * <p>The total friction force should not exceed the tire's grip limit.
-     */
-    private void simulateChassisFrictionForce() {
-        final ChassisSpeeds moduleSpeeds = getModuleSpeeds();
-
-        /* The friction force that tries to bring the chassis from floor speeds to module speeds */
-        final ChassisSpeeds differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative =
-                moduleSpeeds.minus(getDriveTrainSimulatedChassisSpeedsRobotRelative());
-        final Translation2d floorAndModuleSpeedsDiffFieldRelative = new Translation2d(
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vxMetersPerSecond,
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vyMetersPerSecond)
-                .rotateBy(getSimulatedDriveTrainPose().getRotation());
-        final double FRICTION_FORCE_GAIN = 3.0,
-                totalGrippingForce =
-                        moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
-                                * moduleSimulations.length;
-        final Vector2 speedsDifferenceFrictionForce = Vector2.create(
-                Math.min(
-                        FRICTION_FORCE_GAIN * totalGrippingForce * floorAndModuleSpeedsDiffFieldRelative.getNorm(),
-                        totalGrippingForce),
-                MapleCommonMath.getAngle(floorAndModuleSpeedsDiffFieldRelative).getRadians());
-
-        /* the centripetal friction force during turning */
-        final ChassisSpeeds moduleSpeedsFieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(
-                moduleSpeeds, getSimulatedDriveTrainPose().getRotation());
-        final Rotation2d dTheta = MapleCommonMath.getAngle(
-                        GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
-                .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
-
-        final double orbitalAngularVelocity =
-                dTheta.getRadians() / SimulatedArena.getSimulationDt().in(Seconds);
-        final Rotation2d centripetalForceDirection =
-                MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative).plus(Rotation2d.fromDegrees(90));
-        final Vector2 centripetalFrictionForce = Vector2.create(
-                previousModuleSpeedsFieldRelative.getNorm() * orbitalAngularVelocity * config.robotMass.in(Kilograms),
-                centripetalForceDirection.getRadians());
-        previousModuleSpeedsFieldRelative =
-                GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative);
-
-        /* apply force to physics engine */
-        final Vector2
-                totalFrictionForceUnlimited = centripetalFrictionForce.copy().add(speedsDifferenceFrictionForce),
-                totalFrictionForce =
-                        Vector2.create(
-                                Math.min(totalGrippingForce, totalFrictionForceUnlimited.getMagnitude()),
-                                totalFrictionForceUnlimited.getDirection());
-        super.applyForce(totalFrictionForce);
+        // Update previous chassis speeds for next iteration
+        previousChassisSpeeds = getDriveTrainSimulatedChassisSpeedsRobotRelative();
     }
 
     /**
      *
      *
-     * <h2>Simulates the Rotational Friction Torque and Applies It to the Physics Engine.</h2>
+     * <h2>Simulates the Friction Forces Per Module and Applies Them to the Physics Engine.</h2>
      *
-     * <p>This method simulates the rotational friction torque acting on the robot and applies them to the physics
-     * engine.
+     * <p>This method simulates the friction forces acting on each module individually. The friction force pulls each
+     * module from its current ground velocity toward its desired module velocity.
      *
-     * <p>The friction torque pushes the robot from its current ground angular velocity
-     * ({@link #getDriveTrainSimulatedChassisSpeedsRobotRelative()}) toward its current modules' angular velocity
-     * ({@link #getModuleSpeeds()}).
+     * <p>By applying forces at each module position, both translational and rotational friction effects are naturally
+     * handled through the physics engine's torque calculations.
+     *
+     * <p>The friction force for each module should not exceed that module's grip limit based on its weight
+     * distribution.
      */
-    private void simulateChassisFrictionTorque() {
-        final double
-                desiredRotationalMotionPercent =
-                        Math.abs(getDesiredSpeed().omegaRadiansPerSecond
-                                / maxAngularVelocity().in(RadiansPerSecond)),
-                actualRotationalMotionPercent =
-                        Math.abs(getAngularVelocity() / maxAngularVelocity().in(RadiansPerSecond)),
-                differenceBetweenFloorSpeedAndModuleSpeed =
-                        getModuleSpeeds().omegaRadiansPerSecond - getAngularVelocity(),
-                grippingTorqueMagnitude =
-                        moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
-                                * moduleTranslations[0].getNorm()
-                                * moduleSimulations.length,
-                FRICTION_TORQUE_GAIN = 1;
+    private void simulateModuleFrictionForces(double[] currentGravityForces) {
+        final double FRICTION_FORCE_GAIN = 3.0;
+        final Rotation2d robotRotation = getSimulatedDriveTrainPose().getRotation();
 
-        if (actualRotationalMotionPercent < 0.01 && desiredRotationalMotionPercent < 0.02) super.setAngularVelocity(0);
-        else
-            super.applyTorque(Math.copySign(
-                    Math.min(
-                            FRICTION_TORQUE_GAIN
-                                    * grippingTorqueMagnitude
-                                    * Math.abs(differenceBetweenFloorSpeedAndModuleSpeed),
-                            grippingTorqueMagnitude),
-                    differenceBetweenFloorSpeedAndModuleSpeed));
+        for (int i = 0; i < moduleSimulations.length; i++) {
+            // Get module position and current ground velocity
+            final Vector2 moduleWorldPosition = getWorldPoint(GeometryConvertor.toDyn4jVector2(moduleTranslations[i]));
+            final Vector2 moduleGroundVelocity = super.getLinearVelocity(moduleWorldPosition);
+
+            // Get module's desired velocity from its current state
+            final SwerveModuleState moduleState = moduleSimulations[i].getCurrentState();
+            final Rotation2d moduleWorldFacing = moduleState.angle.plus(robotRotation);
+            final Vector2 desiredModuleVelocity =
+                    Vector2.create(moduleState.speedMetersPerSecond, moduleWorldFacing.getRadians());
+
+            // Calculate velocity difference (direction friction force should pull)
+            final Vector2 velocityDifference = new Vector2(
+                    desiredModuleVelocity.x - moduleGroundVelocity.x, desiredModuleVelocity.y - moduleGroundVelocity.y);
+
+            // Calculate gripping force for this module
+            final double moduleGrippingForce =
+                    moduleSimulations[i].config.getGrippingForceNewtons(currentGravityForces[i]);
+
+            // Calculate friction force magnitude (proportional to velocity difference, capped by grip limit)
+            final double velocityDiffMagnitude = velocityDifference.getMagnitude();
+            final double frictionForceMagnitude =
+                    Math.min(FRICTION_FORCE_GAIN * moduleGrippingForce * velocityDiffMagnitude, moduleGrippingForce);
+
+            // Create friction force vector
+            Vector2 frictionForce;
+            if (velocityDiffMagnitude > 1e-6) {
+                frictionForce = Vector2.create(frictionForceMagnitude, velocityDifference.getDirection());
+            } else {
+                frictionForce = new Vector2(0, 0);
+            }
+
+            // Apply force at module position
+            if (centerOfMassOffset.getNorm() > 1e-6) {
+                // Apply force at module position (Dyn4j will calculate torque relative to geometric center)
+                super.applyForce(frictionForce, moduleWorldPosition);
+
+                // Dyn4j calculates: torque_dyn4j = (module - geometricCenter) × F
+                // We want: torque_desired = (module - centerOfMass) × F
+                // Correction: torque_correction = (geometricCenter - centerOfMass) × F
+                final double torqueCorrection =
+                        -centerOfMassOffset.getX() * frictionForce.y + centerOfMassOffset.getY() * frictionForce.x;
+                super.applyTorque(torqueCorrection);
+            } else {
+                super.applyForce(frictionForce, moduleWorldPosition);
+            }
+        }
     }
 
     /**
      *
      *
-     * <h2>Simulates the Translational Friction Force and Applies It to the Physics Engine.</h2>
+     * <h2>Simulates the Propelling Forces Per Module and Applies Them to the Physics Engine.</h2>
      *
-     * <p>This method simulates the translational friction forces acting on the robot and applies them to the physics
-     * engine. There are two components of the friction forces:
+     * <p>This method simulates the propelling forces generated by each module's drive motor and applies them to the
+     * physics engine. Each module generates a force in its facing direction based on the motor torque, which is capped
+     * by the module's gripping force limit.
      *
-     * <ul>
-     *   <li>A portion of the friction force pushes the robot from its current ground speeds
-     *       ({@link #getDriveTrainSimulatedChassisSpeedsRobotRelative()}) toward its current module speeds
-     *       ({@link #getModuleSpeeds()}).
-     *   <li>Another portion of the friction force is the centripetal force, which occurs when the chassis changes its
-     *       direction of movement.
-     * </ul>
-     *
-     * <p>The total friction force should not exceed the tire's grip limit.
+     * <p>Forces are applied at each module position, allowing the physics engine to automatically calculate the correct
+     * torques based on the force application points.
      */
-    private void simulateModulePropellingForces() {
+    private void simulateModulePropellingForces(double[] currentGravityForces) {
         for (int i = 0; i < moduleSimulations.length; i++) {
             final Vector2 moduleWorldPosition = getWorldPoint(GeometryConvertor.toDyn4jVector2(moduleTranslations[i]));
             final Vector2 moduleForce = moduleSimulations[i].updateSimulationSubTickGetModuleForce(
                     super.getLinearVelocity(moduleWorldPosition),
                     getSimulatedDriveTrainPose().getRotation(),
-                    gravityForceOnEachModule);
-            super.applyForce(moduleForce, moduleWorldPosition);
+                    currentGravityForces[i]);
+
+            // If center of mass is offset, we need to correct the torque calculation
+            if (centerOfMassOffset.getNorm() > 1e-6) {
+                // Apply force at module position (Dyn4j will calculate torque relative to geometric center)
+                super.applyForce(moduleForce, moduleWorldPosition);
+
+                // Dyn4j calculates: torque_dyn4j = (module - geometricCenter) × F
+                // We want: torque_desired = (module - centerOfMass) × F
+                // Correction: torque_correction = (geometricCenter - centerOfMass) × F
+                final double torqueCorrection =
+                        -centerOfMassOffset.getX() * moduleForce.y + centerOfMassOffset.getY() * moduleForce.x;
+                super.applyTorque(torqueCorrection);
+            } else {
+                // Default behavior: apply force at module position
+                super.applyForce(moduleForce, moduleWorldPosition);
+            }
         }
     }
 
@@ -355,6 +330,102 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 * moduleTranslations[0].getNorm()
                 * moduleSimulations.length
                 / super.getMass().getInertia());
+    }
+
+    /**
+     *
+     *
+     * <h2>Calculates the dynamic weight distribution across modules based on center of mass offset and acceleration.
+     * </h2>
+     *
+     * <p>This method calculates the weight on each module accounting for:
+     *
+     * <ul>
+     *   <li>Static weight distribution based on center of mass offset (modules closer to center of mass bear more
+     *       weight)
+     *   <li>Dynamic weight transfer due to acceleration (weight shifts in the direction opposite to acceleration)
+     * </ul>
+     *
+     * <p>When accelerating forward, weight shifts to rear modules. When decelerating, weight shifts to front modules.
+     * When turning, weight shifts to outside modules.
+     *
+     * @return an array of weight forces (in newtons) for each module
+     */
+    private double[] calculateDynamicWeightDistribution() {
+        /*
+            Matrix form of the equations:
+            [1,  1,  1,  1]   [W_1]    [m * g]                           (sum of all weights)
+            [1,  -1,  -1,  1] [W_2]    [0]                               (diagonal sum of weights are equal)
+            [x1, x2, x3, x4]  [W_3] =  [m * g * x_com - m * a_com_x * z_com] (x direction weight transfer)
+            [y1, y2, y3, y4]  [W_4]    [m * g * y_com + m * a_com_y * z_com] (y direction weight transfer)
+
+            For a symmetrical rectangle with modules at:
+            Module 1: (L/2, W/2), Module 2: (L/2, -W/2), Module 3: (-L/2, W/2), Module 4: (-L/2, -W/2)
+
+            Solved using closed-form algebraic solution:
+            W_1 = (m*g)/4 + (m*g*x_com - m*a_com_x*z_com)/(2*L) + (m*g*y_com + m*a_com_y*z_com)/(2*W)
+            W_2 = (m*g)/4 + (m*g*x_com - m*a_com_x*z_com)/(2*L) - (m*g*y_com + m*a_com_y*z_com)/(2*W)
+            W_3 = (m*g)/4 - (m*g*x_com - m*a_com_x*z_com)/(2*L) + (m*g*y_com + m*a_com_y*z_com)/(2*W)
+            W_4 = (m*g)/4 - (m*g*x_com - m*a_com_x*z_com)/(2*L) - (m*g*y_com + m*a_com_y*z_com)/(2*W)
+        */
+
+        final double mg = totalWeightNewtons;
+        final double massKg = config.robotMass.in(Kilograms);
+        final double L = config.trackLengthX().in(Meters);
+        final double W = config.trackWidthY().in(Meters);
+        final double xCom = centerOfMassOffset.getX();
+        final double yCom = centerOfMassOffset.getY();
+        final double zCom = config.centerOfMass.getZ();
+
+        final ChassisSpeeds currentSpeeds = getDriveTrainSimulatedChassisSpeedsRobotRelative();
+        final double dt = SimulatedArena.getSimulationDt().in(Seconds);
+
+        // Calculate accelerations of the geometric center of the robot
+        final double chassisAccelX = (currentSpeeds.vxMetersPerSecond - previousChassisSpeeds.vxMetersPerSecond) / dt;
+        final double chassisAccelY = (currentSpeeds.vyMetersPerSecond - previousChassisSpeeds.vyMetersPerSecond) / dt;
+        final double chassisOmega = currentSpeeds.omegaRadiansPerSecond;
+        final double chassisAlpha =
+                (currentSpeeds.omegaRadiansPerSecond - previousChassisSpeeds.omegaRadiansPerSecond) / dt;
+
+        // Calculate acceleration of center of mass
+        // a_com = a_geometric_center + alpha × r_com + omega × (omega × r_com)
+        final double omegaSquared = chassisOmega * chassisOmega;
+        final double a_com_x = chassisAccelX - chassisAlpha * yCom - omegaSquared * xCom;
+        final double a_com_y = chassisAccelY + chassisAlpha * xCom - omegaSquared * yCom;
+
+        // Calculate the right-hand side terms
+        final double rhsX = mg * xCom - massKg * a_com_x * zCom;
+        final double rhsY = mg * yCom + massKg * a_com_y * zCom;
+
+        // Base weight per module (quarter of total weight)
+        final double baseWeight = mg / 4.0;
+
+        // Weight transfer terms
+        final double xTransfer = rhsX / (2.0 * L);
+        final double yTransfer = rhsY / (2.0 * W);
+
+        final double W1 = baseWeight + xTransfer + yTransfer;
+        final double W2 = baseWeight + xTransfer - yTransfer;
+        final double W3 = baseWeight - xTransfer + yTransfer;
+        final double W4 = baseWeight - xTransfer - yTransfer;
+
+        // Check if any weights are negative (this means that wheels are lifting off the ground)
+        // In this situation, all bets are off
+        // So clamp the negative weights to zero, and rescale the rest to sum to total weight
+        double[] weights = new double[] {W1, W2, W3, W4};
+        double sumPositives = 0.0;
+        for (int i = 0; i < weights.length; i++) {
+            if (weights[i] < 0) {
+                weights[i] = 0.0;
+            } else {
+                sumPositives += weights[i];
+            }
+        }
+
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] *= totalWeightNewtons / sumPositives;
+        }
+        return weights;
     }
 
     public SwerveModuleSimulation[] getModules() {

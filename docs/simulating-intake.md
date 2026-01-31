@@ -47,7 +47,7 @@ public class IntakeIOSim {
             ```Java
             this.intakeSimulation = IntakeSimulation.InTheFrameIntake(
                     // Specify the type of game pieces that the intake can collect
-                    "Note",
+                    "Fuel",
                     // Specify the drivetrain to which this intake is attached
                     driveTrainSimulation,
                     // Specify width of the intake
@@ -68,7 +68,7 @@ public class IntakeIOSim {
             ```Java
             this.intakeSimulation = IntakeSimulation.OverTheBumperIntake(
                     // Specify the type of game pieces that the intake can collect
-                    "Note",
+                    "Fuel",
                     // Specify the drivetrain to which this intake is attached
                     driveTrainSimulation,
                     // Width of the intake
@@ -87,7 +87,7 @@ public class IntakeIOSim {
         ```Java
         this.intakeSimulation = new IntakeSimulation(
                 // Specify the type of game pieces that the intake can collect
-                "Note",
+                "Fuel",
                 // Specify the drivetrain to which this intake is attached
                 driveTrainSimulation, 
                 // Our intake has a custom shape of a triangle (shape is specified in chassis frame-of-reference)
@@ -120,12 +120,12 @@ public class IntakeIOSim implements IntakeIO {
     }
 
     @Override // Defined by IntakeIO
-    public boolean isNoteInsideIntake() {
+    public boolean isFuelInsideIntake() {
         return intakeSimulation.getGamePiecesAmount() != 0; // True if there is a game piece in the intake
     }
 
     @Override // Defined by IntakeIO
-    public void launchNote() {
+    public void launchFuel() {
         // if there is a note in the intake, it will be removed and return true; otherwise, returns false
         if (intakeSimulation.obtainGamePieceFromIntake())
             ShooterIOSim.launchNote(); // notify the simulated flywheels to launch a note
@@ -138,7 +138,4 @@ public class IntakeIOSim implements IntakeIO {
       As shown in the code above, you can notify `FlyWheelIOSim` (the simulated flywheel mechansim) to shoot the note out when the note is passed to the shooter from the intake. See [Simulating GamePiece Projectiles](./simulating-projectiles.md) for more details.
 
    
-      If you want to simulate how the note moves inside the intake/feeder, you can take the indefinite integral of the intake/feeder voltage over time since the note entered the intake.  This gives an approximation of the note's position in the feeder.
-
-      An example of simulating an intake together with flywheels can be found [here](https://github.com/Shenzhen-Robotics-Alliance/maple-sim/blob/main/templates/AdvantageKit_AdvancedSwerveDriveProject/src/main/java/frc/robot/subsystems/intake/IntakeIOSim.java).
-
+      If you want to simulate how the note moves inside the intake/feeder, you can take the indefinite integral of the intake/feeder voltage over time since the fuel entered the intake.  This gives an approximation of the note's position in the feeder.

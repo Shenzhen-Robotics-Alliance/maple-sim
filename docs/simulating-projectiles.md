@@ -24,10 +24,10 @@ Projectiles are game pieces launched into the air, typically from flywheels. In 
 
 The `GamePieceProjectile` is an abstract class representing any game piece that flies in the air. You will need to create an instance of this class.
 
-Currently, the only subclass of `GamePieceProjectile` is `NoteOnFly`, which represents a Crescendo Note launched into the air.
+For Rebuilt, the subclass of `GamePieceProjectile` is `RebuiltFuelOnFly`, which represents a Rebuilt Fuel launched into the air.
 
 ```java
-FuelOnFly fuelOnFly = new FuelOnFly(
+RebuiltFuelOnFly fuelOnFly = new RebuiltFuelOnFly(
         // Specify the position of the chassis when the note is launched
         robotSimulationWorldPose.getTranslation(),
         // Specify the translation of the shooter from the robot center (in the shooter’s reference frame)

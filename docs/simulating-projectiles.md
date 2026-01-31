@@ -27,7 +27,7 @@ The `GamePieceProjectile` is an abstract class representing any game piece that 
 Currently, the only subclass of `GamePieceProjectile` is `NoteOnFly`, which represents a Crescendo Note launched into the air.
 
 ```java
-NoteOnFly noteOnFly = new NoteOnFly(
+FuelOnFly fuelOnFly = new FuelOnFly(
         // Specify the position of the chassis when the note is launched
         robotSimulationWorldPose.getTranslation(),
         // Specify the translation of the shooter from the robot center (in the shooter’s reference frame)
@@ -56,43 +56,29 @@ You can configure the projectile to have a target. If the projectile is within a
 This can be done through the following configuration:
 
 ```java
-noteOnFly
-        // Set the target center to the Crescendo Speaker of the current alliance
+fuelOnFly
+        // Set the target center to the Rebbuilt Hub of the current alliance
         .withTargetPosition(() -> FieldMirroringUtils.toCurrentAllianceTranslation(new Translation3d(0.25, 5.56, 2.3)))
         // Set the tolerance: x: ±0.5m, y: ±1.2m, z: ±0.3m (this is the size of the speaker's "mouth")
         .withTargetTolerance(new Translation3d(0.5, 1.2, 0.3))
-        // Set a callback to run when the note hits the target
-        .withHitTargetCallBack(() -> System.out.println("Hit speaker, +2 points!"));
-```
-For this specific season, you can use `asSpeakerShotNote(Runnable)` and `asAmpShotNote(Runnable)` from `NoteOnFly`.
-
-```java
-noteOnFly
-        // Configure the Speaker (of the current alliance) as the target of the projectile
-        .asSpeakerShotNote(() -> System.out.println("Hit speaker, +2 points!"));
-
-```
-
-```java
-noteOnFly
-        // Configure the Amp (of the current alliance) as the target of the projectile
-        .asAmpShotNote(() -> System.out.println("Hit amp, +1 point!"));
+        // Set a callback to run when the fuel hits the target
+        .withHitTargetCallBack(() -> System.out.println("Hit hub, +1 point!"));
 ```
 
 ### Visualizing Trajectory
 ```java
-noteOnFly
+fuelOnFly
         // Configure callbacks to visualize the flight trajectory of the projectile
         .withProjectileTrajectoryDisplayCallBack(
-        // Callback for when the note will eventually hit the target (if configured)
-        (pose3ds) -> Logger.recordOutput("Flywheel/NoteProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
-        // Callback for when the note will eventually miss the target, or if no target is configured
-        (pose3ds) -> Logger.recordOutput("Flywheel/NoteProjectileUnsuccessfulShot", pose3ds.toArray(Pose3d[]::new))
+        // Callback for when the fuel will eventually hit the target (if configured)
+        (pose3ds) -> Logger.recordOutput("Flywheel/FuelProjectileSuccessfulShot", pose3ds.toArray(Pose3d[]::new)),
+        // Callback for when the fuel will eventually miss the target, or if no target is configured
+        (pose3ds) -> Logger.recordOutput("Flywheel/FuelProjectileUnsuccessfulShot", pose3ds.toArray(Pose3d[]::new))
         );
 ```
 
 !!! tip 
-      On Advantage Scope, you can visualize the two trajectories with different colors (e.g., green and red) to see if the note missed the target.
+      On Advantage Scope, you can visualize the two trajectories with different colors (e.g., green and red) to see if the fuel missed the target.
 
 ### Becoming GamePieceOnFieldSimulation
 In this simulation, a game piece launched into the air can be configured to become a `GamePieceOnFieldSimulation` upon touchdown.
@@ -100,9 +86,9 @@ In this simulation, a game piece launched into the air can be configured to beco
 When the projectile touches down, a `GamePieceOnFieldSimulation` will be added to the `SimulatedArena`, conserving the projectile’s air velocity.
 
 ```java
-noteOnFly
+fuelOnFly
         // Configure the note projectile to become a NoteOnField upon touching the ground
-        .enableBecomeNoteOnFieldAfterTouchGround();
+        .enableBecomesGamePieceOnFieldAfterTouchGround();
 ```
 
 ---
@@ -114,7 +100,7 @@ To register the projectile, use:
 
 ```java
 // Add the projectile to the simulated arena
-SimulatedArena.getInstance().addGamePieceProjectile(noteOnFly);
+SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
 ```
 
 The real-time positions of the flying game pieces are also visualized with other game pieces, as described [here](./using-the-simulated-arena.md#visualizing-game-pieces).

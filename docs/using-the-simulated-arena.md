@@ -52,22 +52,23 @@ SimulatedArena.overrideSimulationTimings(0.01, 3);
 
 ---
 ## 3. Adding Game Pieces to the Field
-Game pieces, such as Crescendo Notes, can be added to the field as rigid bodies with collision detection.
+Game pieces, such as Rebuilt Fuel, can be added to the field as rigid bodies with collision detection.
 Your robot can interact with these pieces by bumping into them or grabbing them (see [Intake Simulation](./simulating-intake.md)).
 
 To add or clear game pieces from the field:
 
 ```java
 // Add a Crescendo note to the field
-SimulatedArena.getInstance().addGamePiece(new CrescendoNoteOnField(new Translation2d(3, 3)));
+SimulatedArena.getInstance().addGamePiece(new RebuiltFuelOnField(new Translation2d(3, 3)));
 
 // Clear all game pieces from the field
 SimulatedArena.getInstance().clearGamePieces();
 ```
 
-!!! tip 
-      In the Crescendo Simulation Arena, notes are automatically dropped from the human player station when no notes are near the source zone.
-      In addition to notes on field, **maple-sim** also provides simulation for projectiles, see [Simulating GamePiece Projectiles](./simulating-projectiles.md)
+!!! tip
+      Use ```java
+            SimulatedArena.getInstance().resetFieldForAuto();
+      ``` to populate the field with Fuel as if a match was just about to start.
 
 ---
 ## 4. Visualizing game pieces
@@ -77,25 +78,25 @@ You can retrieve the positions of game pieces, including those on the ground and
 === "AdvantageKit" 
       ```java 
       void periodic() {
-            // Get the positions of the notes (both on the field and in the air)
-            Pose3d[] notesPoses = SimulatedArena.getInstance()
-                  .getGamePiecesArrayByType("Note");
+            // Get the positions of the fuel (both on the field and in the air)
+            Pose3d[] fuelPoses = SimulatedArena.getInstance()
+                  .getGamePiecesArrayByType("Fuel");
             // Publish to telemetry using AdvantageKit
-            Logger.recordOutput("FieldSimulation/NotesPositions", notesPoses);
+            Logger.recordOutput("FieldSimulation/FuelPositions", fuelPoses);
       }
       ``` 
 === "WPILib Networktables" 
       ```java
-      StructArrayPublisher<Pose3d> notePoses = NetworkTableInstance.getDefault()
+      StructArrayPublisher<Pose3d> fuelPoses = NetworkTableInstance.getDefault()
             .getStructArrayTopic("MyPoseArray", Pose3d.struct)
             .publish();
 
       void periodic() {
-            // Get the positions of the notes (both on the field and in the air)
-            Pose3d[] notesPoses = SimulatedArena.getInstance()
-                  .getGamePiecesArrayByType("Note");
-            notePoses.accept(SimulatedArena.getInstance()
-                  .getGamePiecesByType("Note")
+            // Get the positions of the fuel (both on the field and in the air)
+            Pose3d[] fuelPoses = SimulatedArena.getInstance()
+                  .getGamePiecesArrayByType("Fuel");
+            fuelPoses.accept(SimulatedArena.getInstance()
+                  .getGamePiecesByType("Fuel")
                   .toArray(Pose3d::new));
       }
       ```

@@ -1,0 +1,16 @@
+{
+  "title": "MapleSim",
+  "pages": [
+    "index",
+    "simulation-details",
+    "installing-maple-sim",
+    "using-the-simulated-arena",
+    "(swerve-simulation)",
+    "simulating-intake",
+    "simulating-opponent-robots",
+    "simulating-projectiles",
+    "rebuilt",
+    "CONTRIBUTION",
+    "release-notes"
+  ]
+}

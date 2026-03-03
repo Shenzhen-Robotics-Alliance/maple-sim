@@ -1,15 +1,11 @@
 {
   "title": "MapleSim",
   "pages": [
-    "index",
-    "simulation-details",
-    "installing-maple-sim",
-    "using-the-simulated-arena",
+    "(overview)",
+    "(getting-started)",
+    "(core-concepts)",
     "(swerve-simulation)",
-    "simulating-intake",
-    "simulating-opponent-robots",
-    "simulating-projectiles",
-    "rebuilt",
+    "(simulation-guides)",
     "CONTRIBUTION",
     "release-notes"
   ]

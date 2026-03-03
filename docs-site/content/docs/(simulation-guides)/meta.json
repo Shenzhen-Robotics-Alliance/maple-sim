@@ -1,0 +1,9 @@
+{
+  "title": "Simulation Guides",
+  "pages": [
+    "simulating-intake",
+    "simulating-projectiles",
+    "simulating-opponent-robots",
+    "rebuilt"
+  ]
+}

@@ -9,7 +9,7 @@ export default function HomePage() {
   const basePath = process.env.BASE_PATH ?? '';
 
   return (
-    <main className="relative overflow-hidden bg-[#0f1014] px-4 py-20 text-white">
+    <main className="relative min-h-screen overflow-hidden bg-[#0f1014] px-4 py-20 text-white">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#ef4444]/30 blur-[140px]" />
         <div className="absolute bottom-0 right-0 h-[420px] w-[420px] translate-x-1/3 rounded-full bg-[#ec4899]/25 blur-[140px]" />

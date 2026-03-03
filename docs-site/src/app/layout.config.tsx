@@ -21,13 +21,12 @@ export const baseOptions: BaseLayoutProps = {
     title: (
       <>
         <Image
-          className="size-9 object-contain"
-          src={`${process.env.BASE_PATH ?? ''}/media/team_logo.png`}
-          alt="MapleSim Logo"
-          width={36}
-          height={36}
+          className="h-6 w-auto object-contain"
+          src={`${process.env.BASE_PATH ?? ''}/media/icon.png`}
+          alt="MapleSim"
+          width={140}
+          height={32}
         />
-        <span>MapleSim</span>
       </>
     ),
     url: '/'

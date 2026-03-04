@@ -7,9 +7,14 @@ const inter = Inter({
   subsets: ['latin']
 });
 
+const basePath = process.env.BASE_PATH ?? '';
+
 export const metadata = {
   icons: {
-    icon: `${process.env.BASE_PATH ?? ''}/favicon.png`
+    icon: [
+      { url: `${basePath}/favicon.ico` },
+      { url: `${basePath}/favicon.png`, sizes: '512x512', type: 'image/png' }
+    ]
   }
 };
 

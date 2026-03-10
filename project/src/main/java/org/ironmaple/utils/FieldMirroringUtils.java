@@ -3,6 +3,7 @@ package org.ironmaple.utils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -31,7 +32,7 @@ public class FieldMirroringUtils {
     public static Pose3d flip(Pose3d toFlip) {
         return new Pose3d(
                 new Translation3d(FIELD_WIDTH - toFlip.getX(), FIELD_HEIGHT - toFlip.getY(), toFlip.getZ()),
-                toFlip.getRotation());
+                toFlip.getRotation().plus(new Rotation3d(Rotation2d.k180deg)));
     }
 
     public static Translation3d toCurrentAllianceTranslation(Translation3d translation3dAtBlueSide) {

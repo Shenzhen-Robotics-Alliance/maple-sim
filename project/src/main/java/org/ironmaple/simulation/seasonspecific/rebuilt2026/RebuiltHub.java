@@ -58,7 +58,7 @@ public class RebuiltHub extends Goal {
      * <h2>Creates an HUB of the specified color.</h2>
      *
      * @param arena The host arena of this HUB.
-     * @param isBlue Wether this is the blue HUB or the red one.
+     * @param isBlue Whether this is the blue HUB or the red one.
      */
     public RebuiltHub(Arena2026Rebuilt arena, boolean isBlue) {
         super(

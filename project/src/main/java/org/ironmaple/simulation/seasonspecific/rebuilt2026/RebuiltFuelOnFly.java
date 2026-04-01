@@ -14,7 +14,7 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 /**
  *
  *
- * <h1>Represents an FUEL launched into the air.</h1>
+ * <h1>Represents a FUEL launched into the air.</h1>
  *
  * <p>This class models a {@link RebuiltFuelOnField} launched into the air.
  *
@@ -38,7 +38,7 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the FUEL when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeed the speed at which the FUEL is launch
+     * @param launchingSpeed the speed at which the FUEL is launched
      * @param shooterAngle the pitch angle of the shooter when launching
      */
     public RebuiltFuelOnFly(

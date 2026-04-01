@@ -9,8 +9,6 @@ import org.dyn4j.geometry.Circle;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 
 /**
- *
- *
  * <h1>Represents an fuel in the 2026 Rebuilt game.</h1>
  */
 public class RebuiltFuelOnField extends GamePieceOnFieldSimulation {

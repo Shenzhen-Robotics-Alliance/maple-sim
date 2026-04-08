@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -26,7 +25,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
 
     protected boolean shouldClock = true;
 
-    protected double nextClockSwapTime=0;
+    protected double nextClockSwapTime = 0;
     protected boolean blueIsOnClock = Math.random() < 0.5;
 
     protected DoublePublisher phaseClockPublisher =
@@ -44,8 +43,6 @@ public class Arena2026Rebuilt extends SimulatedArena {
     protected RebuiltOutpost redOutpost;
 
     protected boolean isInEfficiencyMode = true;
-
-
 
     protected static Translation2d centerPieceBottomRightCorner = new Translation2d(7.35737, 1.724406);
     protected static Translation2d redDepotBottomRightCorner = new Translation2d(0.02, 5.53);
@@ -189,8 +186,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
      *
      * <h2>Creates an Arena for the 2026 FRC game rebuilt </h2>
      *
-     * <p>Due to the nature of maple sim the arena cannot be fully simulated, and so either must be non-existent or treated
-     * as full colliders. This behavior can be changed with the AddRampCollider variable. Additionally, due to
+     * <p>Due to the nature of maple sim the arena cannot be fully simulated, and so either must be non-existent or
+     * treated as full colliders. This behavior can be changed with the AddRampCollider variable. Additionally, due to
      * performance issues, the arena will not spawn all fuel by default. If you would like to change this use
      * {@link #setEfficiencyMode(boolean)}
      *
@@ -237,8 +234,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
      *
      * <h2>Adds a game piece to the arena with a certain random variance.</h2>
      *
-     * This method is useful for certain spawners, like the return chutes on the hub, to prevent the game pieces from being
-     * returned to the exact same position every time.
+     * This method is useful for certain spawners, like the return chutes on the hub, to prevent the game pieces from
+     * being returned to the exact same position every time.
      *
      * @param info the info of the game piece
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
@@ -335,14 +332,12 @@ public class Arena2026Rebuilt extends SimulatedArena {
                 nextClockSwapTime = matchClock.get() + 25;
                 blueIsOnClock = !blueIsOnClock;
             }
-            phaseClockPublisher.set((nextClockSwapTime-matchClock.get()));
-
+            phaseClockPublisher.set((nextClockSwapTime - matchClock.get()));
 
         } else {
             phaseClockPublisher.set((25));
         }
 
-        
         super.simulationSubTick(tickNum);
 
         blueActivePublisher.set(isActive(true));
@@ -404,8 +399,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
      * <h2>Attempts to throw a game piece at the specified goal.</h2>
      *
      * <p>This method comes with variance built in (to simulate human inconsistency) and will therefore only hit about
-     * half the time. Additionally, if the hub does not have game pieces stored, this method will not do anything. If you
-     * would like to manually control how the human player throws game pieces, use {@link #outpostThrow(boolean,
+     * half the time. Additionally, if the hub does not have game pieces stored, this method will not do anything. If
+     * you would like to manually control how the human player throws game pieces, use {@link #outpostThrow(boolean,
      * Rotation2d, Angle, LinearVelocity)}
      *
      * @param isBlue whether to throw for the blue or red HUB.
@@ -420,8 +415,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
      * <h2>Throws a game piece from the outpost at the specified angle and speed.</h2>
      *
      * <p>This method comes with variance built in (to simulate human inconsistency). Additionally, if the hub does not
-     * have game pieces stored, this method will not do anything. If you would like to have the human player throw at the
-     * hub, use {@link #outpostThrowForGoal(boolean)}
+     * have game pieces stored, this method will not do anything. If you would like to have the human player throw at
+     * the hub, use {@link #outpostThrowForGoal(boolean)}
      *
      * @param isBlue whether to throw from the blue or red OUTPOST.
      * @param throwYaw The yaw at which to throw the ball.

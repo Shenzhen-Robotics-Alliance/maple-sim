@@ -47,11 +47,11 @@ dependencies {
     implementation "edu.wpi.first.wpiunits:wpiunits-java:$wpilibVersion"
     implementation "edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:$wpilibVersion"
     implementation "edu.wpi.first.hal:hal-java:$wpilibVersion"
-    implementation "org.ejml:ejml-simple:0.43.1"
-    implementation "com.fasterxml.jackson.core:jackson-annotations:2.15.2"
-    implementation "com.fasterxml.jackson.core:jackson-core:2.15.2"
-    implementation "com.fasterxml.jackson.core:jackson-databind:2.15.2"
-    implementation 'edu.wpi.first.thirdparty.frc2024.opencv:opencv-java:4.8.0-2'
+    implementation "org.ejml:ejml-simple:0.44.0"
+    implementation "com.fasterxml.jackson.core:jackson-annotations:2.19.2"
+    implementation "com.fasterxml.jackson.core:jackson-core:2.19.2"
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.19.2"
+    implementation 'edu.wpi.first.thirdparty.frc2025.opencv:opencv-java:4.10.0-2'
 }
 
 // Set up exports properly
@@ -91,7 +91,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         greclipse()
-        indentWithSpaces(4)
+        leadingTabsToSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -101,7 +101,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         trimTrailingWhitespace()
-        indentWithSpaces(4)
+        leadingTabsToSpaces(4)
         endWithNewline()
     }
 }
@@ -111,5 +111,5 @@ compileJava.dependsOn 'spotlessApply'
 apply from: 'publish.gradle'
 
 wrapper {
-    gradleVersion '8.11'
+    gradleVersion '8.14.3'
 }

@@ -42,12 +42,8 @@ public class RebuiltHub extends Goal {
     public static final double GoalRadius = 0.5969;
     static final Random rng = new Random();
 
-    public static final Pose3d[] redShootPoses = Arrays.stream(blueShootPoses)
-            .map(FieldMirroringUtils::flip)
-            .map((Pose3d toRotate) -> {
-                return toRotate.rotateBy(new Rotation3d(Rotation2d.fromDegrees(180)));
-            })
-            .toArray(Pose3d[]::new);
+    public static final Pose3d[] redShootPoses =
+            Arrays.stream(blueShootPoses).map(FieldMirroringUtils::flip).toArray(Pose3d[]::new);
 
     StructPublisher<Pose3d> posePublisher;
     protected final Arena2026Rebuilt arena;

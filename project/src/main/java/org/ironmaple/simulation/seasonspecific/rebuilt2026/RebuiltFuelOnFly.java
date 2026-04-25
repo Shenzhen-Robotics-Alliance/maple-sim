@@ -35,6 +35,7 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
      *     frame of reference
      * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the FUEL,
      *     influencing the initial velocity of the FUEL
+     * @param chassisFacing the direction in which the robot chassis is facing at launch
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the FUEL when launched, i.e., the height of the shooter from the
      *     ground
@@ -45,6 +46,7 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
             ChassisSpeeds chassisSpeedsFieldRelative,
+            Rotation2d chassisFacing,
             Rotation2d shooterFacing,
             Distance initialHeight,
             LinearVelocity launchingSpeed,
@@ -54,6 +56,7 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
                 robotPosition,
                 shooterPositionOnRobot,
                 chassisSpeedsFieldRelative,
+                chassisFacing,
                 shooterFacing,
                 initialHeight,
                 launchingSpeed,
@@ -61,5 +64,41 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
 
         super.withTouchGroundHeight(Inches.of(3).in(Meters));
         super.enableBecomesGamePieceOnFieldAfterTouchGround();
+    }
+
+    /**
+     *
+     *
+     * <h2>Creates a FUEL Projectile Ejected from a Shooter.</h2>
+     *
+     * @param robotPosition the position of the robot (not the shooter) at the time of launching the FUEL
+     * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
+     *     frame of reference
+     * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the FUEL,
+     *     influencing the initial velocity of the FUEL
+     * @param chassisFacing the direction in which the robot chassis is facing at launch. Assumes the shooter is facing
+     *     the same direction.
+     * @param initialHeight the initial height of the FUEL when launched, i.e., the height of the shooter from the
+     *     ground
+     * @param launchingSpeed the speed at which the FUEL is launch
+     * @param shooterAngle the pitch angle of the shooter when launching
+     */
+    public RebuiltFuelOnFly(
+            Translation2d robotPosition,
+            Translation2d shooterPositionOnRobot,
+            ChassisSpeeds chassisSpeedsFieldRelative,
+            Rotation2d chassisFacing,
+            Distance initialHeight,
+            LinearVelocity launchingSpeed,
+            Angle shooterAngle) {
+        this(
+                robotPosition,
+                shooterPositionOnRobot,
+                chassisSpeedsFieldRelative,
+                chassisFacing,
+                chassisFacing,
+                initialHeight,
+                launchingSpeed,
+                shooterAngle);
     }
 }

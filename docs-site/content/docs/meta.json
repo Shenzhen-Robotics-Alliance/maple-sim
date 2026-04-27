@@ -1,0 +1,13 @@
+{
+  "title": "MapleSim",
+  "pages": [
+    "(overview)",
+    "(getting-started)",
+    "(core-concepts)",
+    "(swerve-simulation)",
+    "(mechanisms)",
+    "(match-simulation)",
+    "CONTRIBUTION",
+    "release-notes"
+  ]
+}

@@ -4,23 +4,23 @@ package org.ironmaple.utils.mathutils;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.kinematics.SwerveModuleVelocity;
 
-public class SwerveStateProjection {
+public class SwerveVelocityProjection {
     /**
-     * Projects the swerve module speed onto the direction of the current swerve facing.
+     * Projects the swerve module velocity onto the direction of the current swerve facing.
      *
-     * @param swerveSpeed The current speed and direction of the swerve module.
+     * @param swerveVelocity The current velocity and direction of the swerve module.
      * @param currentSwerveFacing The desired direction to project onto.
-     * @return The projected speed in the direction of currentSwerveFacing.
+     * @return The projected velocity in the direction of currentSwerveFacing.
      */
-    public static double project(SwerveModuleVelocity swerveSpeed, Rotation2d currentSwerveFacing) {
+    public static double project(SwerveModuleVelocity swerveVelocity, Rotation2d currentSwerveFacing) {
         // Get the angle of the swerve module's current direction
-        Rotation2d swerveModuleAngle = swerveSpeed.angle;
+        Rotation2d swerveModuleAngle = swerveVelocity.angle;
 
         // Calculate the cosine of the angle difference between swerve module direction and the desired
         // direction
         double cosTheta = Math.cos(swerveModuleAngle.minus(currentSwerveFacing).getRadians());
 
-        // Scale the speed by the cosine value to get the projection
-        return swerveSpeed.velocity * cosTheta;
+        // Scale the velocity by the cosine value to get the projection
+        return swerveVelocity.velocity * cosTheta;
     }
 }

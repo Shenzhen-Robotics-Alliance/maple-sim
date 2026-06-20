@@ -16,19 +16,19 @@ public class NoteOnFly extends GamePieceProjectile {
     public NoteOnFly(
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
-            ChassisVelocities chassisSpeeds,
+            ChassisVelocities chassisVelocities,
             Rotation2d shooterFacing,
             Distance initialHeight,
-            LinearVelocity launchingSpeed,
+            LinearVelocity launchingVelocity,
             Angle shooterAngle) {
         super(
                 CRESCENDO_NOTE_INFO,
                 robotPosition,
                 shooterPositionOnRobot,
-                chassisSpeeds,
+                chassisVelocities,
                 shooterFacing,
                 initialHeight,
-                launchingSpeed,
+                launchingVelocity,
                 shooterAngle);
         super.withTouchGroundHeight(0.6);
     }

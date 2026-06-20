@@ -3,7 +3,6 @@ package org.ironmaple.simulation.motorsims;
 import static org.wpilib.units.Units.*;
 
 import org.wpilib.units.measure.*;
-import org.wpilib.math.system.DCMotor;
 
 /**
  *

@@ -43,7 +43,7 @@ public class ReefscapeBargeSimulation extends Goal {
                 isBlue,
                 false);
 
-        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3dMPS().getZ() < 0);
+        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3d().getZ() < 0);
 
         StructPublisher<Pose3d> heldAlgaePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic("/SmartDashboard/MapleSim/Goals/" + (isBlue ? "BlueBarge" : "RedBarge"), Pose3d.struct)

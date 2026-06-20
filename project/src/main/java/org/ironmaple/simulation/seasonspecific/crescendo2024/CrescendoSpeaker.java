@@ -44,7 +44,7 @@ public class CrescendoSpeaker extends Goal {
 
         crescendoArena = arena;
 
-        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3dMPS().getZ() > 0);
+        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3d().getZ() > 0);
 
         StructPublisher<Pose3d> speakerPosePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(

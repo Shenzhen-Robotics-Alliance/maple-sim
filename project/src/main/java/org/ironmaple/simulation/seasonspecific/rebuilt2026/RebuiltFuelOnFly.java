@@ -33,30 +33,30 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the FUEL
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
-     * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the FUEL,
+     * @param chassisVelocitiesFieldRelative the field-relative velocity of the robot chassis when launching the FUEL,
      *     influencing the initial velocity of the FUEL
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the FUEL when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeed the speed at which the FUEL is launched
+     * @param launchingVelocity the velocity at which the FUEL is launched
      * @param shooterAngle the pitch angle of the shooter when launching
      */
     public RebuiltFuelOnFly(
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
-            ChassisVelocities chassisSpeedsFieldRelative,
+            ChassisVelocities chassisVelocitiesFieldRelative,
             Rotation2d shooterFacing,
             Distance initialHeight,
-            LinearVelocity launchingSpeed,
+            LinearVelocity launchingVelocity,
             Angle shooterAngle) {
         super(
                 RebuiltFuelOnField.REBUILT_FUEL_INFO,
                 robotPosition,
                 shooterPositionOnRobot,
-                chassisSpeedsFieldRelative,
+                chassisVelocitiesFieldRelative,
                 shooterFacing,
                 initialHeight,
-                launchingSpeed,
+                launchingVelocity,
                 shooterAngle);
 
         super.withTouchGroundHeight(Inches.of(3).in(Meters));

@@ -18,7 +18,7 @@ import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
-import org.ironmaple.utils.mathutils.SwerveStateProjection;
+import org.ironmaple.utils.mathutils.SwerveVelocityProjection;
 
 /**
  *
@@ -258,33 +258,33 @@ public class SelfControlledSwerveDriveSimulation {
     /**
      *
      *
-     * <h2>Runs chassis speeds on the simulated swerve drive.</h2>
+     * <h2>Runs chassis velocities on the simulated swerve drive.</h2>
      *
-     * <p>Runs the specified chassis speeds, either robot-centric or field-centric.
+     * <p>Runs the specified chassis velocities, either robot-centric or field-centric.
      *
-     * @param chassisSpeeds The speeds to run, in either robot-centric or field-centric coordinates.
+     * @param chassisVelocities The velocities to run, in either robot-centric or field-centric coordinates.
      * @param centerOfRotationMeters The center of rotation. For example, if you set the center of rotation at one
-     *     corner of the robot and provide a chassis speed that has only a dtheta component, the robot will rotate
+     *     corner of the robot and provide a chassis velocity that has only a dtheta component, the robot will rotate
      *     around that corner.
-     * @param fieldCentricDrive Whether to execute field-centric drive with the provided speed.
-     * @param discretizeSpeeds Whether to apply {@link ChassisSpeeds#discretize(ChassisSpeeds, double)} to the provided
-     *     speed.
+     * @param fieldCentricDrive Whether to execute field-centric drive with the provided velocity.
+     * @param discretizeVelocities Whether to apply {@link ChassisVelocities#discretize(ChassisVelocities, double)} to the provided
+     *     velocity.
      */
-    public void runChassisSpeeds(
-            ChassisVelocities chassisSpeeds,
+    public void runChassisVelocities(
+            ChassisVelocities chassisVelocities,
             Translation2d centerOfRotationMeters,
             boolean fieldCentricDrive,
-            boolean discretizeSpeeds) {
+            boolean discretizeVelocities) {
         if (fieldCentricDrive) {
-            chassisSpeeds = chassisSpeeds.toRobotRelative(
+            chassisVelocities = chassisVelocities.toRobotRelative(
                      getOdometryEstimatedPose().getRotation());
         }
-        if (discretizeSpeeds) {
-            chassisSpeeds = chassisSpeeds.discretize(
+        if (discretizeVelocities) {
+            chassisVelocities = chassisVelocities.discretize(
                     SimulatedArena.getSimulationDt().in(Seconds) * SimulatedArena.getSimulationSubTicksIn1Period());
         }
-        final SwerveModuleVelocity[] setPoints = kinematics.toSwerveModuleVelocities(chassisSpeeds, centerOfRotationMeters);
-        runSwerveStates(setPoints);
+        final SwerveModuleVelocity[] setPoints = kinematics.toSwerveModuleVelocities(chassisVelocities, centerOfRotationMeters);
+        runSwerveVelocities(setPoints);
     }
 
     /**
@@ -296,7 +296,7 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * @param setPoints an array of {@link SwerveModuleVelocity} yielding the requested states
      */
-    public void runSwerveStates(SwerveModuleVelocity[] setPoints) {
+    public void runSwerveVelocities(SwerveModuleVelocity[] setPoints) {
         for (int i = 0; i < moduleSimulations.length; i++)
             setPointsOptimized[i] = moduleSimulations[i].optimizeAndRunModuleState(setPoints[i]);
     }
@@ -321,14 +321,14 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * <h2>Obtain the optimized SETPOINTS of the swerve.</h2>
      *
-     * <p>The setpoints are calculated using {@link SwerveDriveKinematics#toSwerveModuleStates(ChassisSpeeds)} in the
-     * most recent call to {@link #runChassisSpeeds(ChassisSpeeds, Translation2d, boolean, boolean)}.
+     * <p>The setpoints are calculated using {@link SwerveDriveKinematics#toSwerveModuleStates(ChassisVelocities)} in the
+     * most recent call to {@link #runChassisVelocities(ChassisVelocities, Translation2d, boolean, boolean)}.
      *
      * <p>The setpoints are optimized using {@link SwerveModuleState#optimize(SwerveModuleState, Rotation2d)}.
      *
      * <p>The order of the swerve modules is: front-left, front-right, back-left, back-right.
      *
-     * @return The optimized setpoints of the swerve, calculated during the last chassis speed run.
+     * @return The optimized setpoints of the swerve, calculated during the last chassis velocity run.
      */
     public SwerveModuleVelocity[] getSetPointsOptimized() {
         return setPointsOptimized;
@@ -337,41 +337,41 @@ public class SelfControlledSwerveDriveSimulation {
     /**
      *
      *
-     * <h2>Obtain the field-relative chassis speeds measured from the encoders.</h2>
+     * <h2>Obtain the field-relative chassis velocities measured from the encoders.</h2>
      *
-     * <p>The speeds are measured from the simulated swerve modules.
+     * <p>The velocities are measured from the simulated swerve modules.
      *
      * @param useGyroForAngularVelocity Whether to use the gyro for a more accurate angular velocity measurement.
-     * @return The measured chassis speeds, <strong>field-relative</strong>.
+     * @return The measured chassis velocities, <strong>field-relative</strong>.
      */
-    public ChassisVelocities getMeasuredSpeedsFieldRelative(boolean useGyroForAngularVelocity) {
-        ChassisVelocities speeds = getMeasuredSpeedsRobotRelative(useGyroForAngularVelocity);
-        speeds = speeds.toFieldRelative(
+    public ChassisVelocities getMeasuredVelocitiesFieldRelative(boolean useGyroForAngularVelocity) {
+        ChassisVelocities velocities = getMeasuredVelocitiesRobotRelative(useGyroForAngularVelocity);
+        velocities = velocities.toFieldRelative(
                  getOdometryEstimatedPose().getRotation());
-        return speeds;
+        return velocities;
     }
 
     /**
      *
      *
-     * <h2>Obtain the robot-relative chassis speeds measured from the encoders.</h2>
+     * <h2>Obtain the robot-relative chassis velocities measured from the encoders.</h2>
      *
-     * <p>The speeds are measured from the simulated swerve modules.
+     * <p>The velocities are measured from the simulated swerve modules.
      *
      * @param useGyroForAngularVelocity Whether to use the gyro for a more accurate angular velocity measurement.
-     * @return The measured chassis speeds, <strong>robot-relative</strong>.
+     * @return The measured chassis velocities, <strong>robot-relative</strong>.
      */
-    public ChassisVelocities getMeasuredSpeedsRobotRelative(boolean useGyroForAngularVelocity) {
-        final ChassisVelocities swerveSpeeds = kinematics.toChassisVelocities(getMeasuredStates());
+    public ChassisVelocities getMeasuredVelocitiesRobotRelative(boolean useGyroForAngularVelocity) {
+        final ChassisVelocities swerveVelocities = kinematics.toChassisVelocities(getMeasuredStates());
         return new ChassisVelocities(
-                swerveSpeeds.vx,
-                swerveSpeeds.vy,
+                swerveVelocities.vx,
+                swerveVelocities.vy,
                 useGyroForAngularVelocity
                         ? swerveDriveSimulation
                                 .gyroSimulation
                                 .getMeasuredAngularVelocity()
                                 .in(RadiansPerSecond)
-                        : swerveSpeeds.omega);
+                        : swerveVelocities.omega);
     }
 
     /**
@@ -402,27 +402,27 @@ public class SelfControlledSwerveDriveSimulation {
     /**
      *
      *
-     * <h2>Get the ACTUAL field-relative chassis speeds of the robot.</h2>
+     * <h2>Get the ACTUAL field-relative chassis velocities of the robot.</h2>
      *
-     * <p>Wraps around {@link SwerveDriveSimulation#getDriveTrainSimulatedChassisSpeedsFieldRelative()}.
+     * <p>Wraps around {@link SwerveDriveSimulation#getDriveTrainSimulatedChassisVelocitiesFieldRelative()}.
      *
-     * @return the actual chassis speeds in the simulation world, <strong>field-relative</strong>
+     * @return the actual chassis velocities in the simulation world, <strong>field-relative</strong>
      */
-    public ChassisVelocities getActualSpeedsFieldRelative() {
-        return this.swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative();
+    public ChassisVelocities getActualVelocitiesFieldRelative() {
+        return this.swerveDriveSimulation.getDriveTrainSimulatedChassisVelocitiesFieldRelative();
     }
 
     /**
      *
      *
-     * <h2>Get the ACTUAL robot-relative chassis speeds of the robot.</h2>
+     * <h2>Get the ACTUAL robot-relative chassis velocities of the robot.</h2>
      *
-     * <p>Wraps around {@link SwerveDriveSimulation#getDriveTrainSimulatedChassisSpeedsRobotRelative()}.
+     * <p>Wraps around {@link SwerveDriveSimulation#getDriveTrainSimulatedChassisVelocitiesRobotRelative()}.
      *
-     * @return the actual chassis speeds in the simulation world, <strong>robot-relative</strong>
+     * @return the actual chassis velocities in the simulation world, <strong>robot-relative</strong>
      */
-    public ChassisVelocities getActualSpeedsRobotRelative() {
-        return this.swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsRobotRelative();
+    public ChassisVelocities getActualVelocitiesRobotRelative() {
+        return this.swerveDriveSimulation.getDriveTrainSimulatedChassisVelocitiesRobotRelative();
     }
 
     /**
@@ -506,9 +506,9 @@ public class SelfControlledSwerveDriveSimulation {
 
         public void runModuleState(SwerveModuleVelocity setPoint) {
             final double
-                    cosProjectedSpeedMPS = SwerveStateProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
+                    cosProjectedVelocityMPS = SwerveVelocityProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
                     driveWheelVelocitySetPointRadPerSec =
-                            cosProjectedSpeedMPS / instance.config.WHEEL_RADIUS.in(Meters);
+                            cosProjectedVelocityMPS / instance.config.WHEEL_RADIUS.in(Meters);
 
             driveMotor.requestVoltage(instance.config.driveMotorConfigs.calculateVoltage(
                     Amps.of(0), RadiansPerSecond.of(driveWheelVelocitySetPointRadPerSec)));

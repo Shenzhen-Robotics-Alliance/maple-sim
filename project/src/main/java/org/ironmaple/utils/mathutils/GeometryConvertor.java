@@ -39,15 +39,15 @@ public class GeometryConvertor {
                 toWpilibRotation2d(dyn4jTransform.getRotation()));
     }
 
-    public static Vector2 toDyn4jLinearVelocity(ChassisVelocities wpilibChassisSpeeds) {
-        return new Vector2(wpilibChassisSpeeds.vx, wpilibChassisSpeeds.vy);
+    public static Vector2 toDyn4jLinearVelocity(ChassisVelocities wpilibChassisVelocities) {
+        return new Vector2(wpilibChassisVelocities.vx, wpilibChassisVelocities.vy);
     }
 
-    public static ChassisVelocities toWpilibChassisSpeeds(Vector2 dyn4jLinearVelocity, double angularVelocityRadPerSec) {
+    public static ChassisVelocities toWpilibChassisVelocities(Vector2 dyn4jLinearVelocity, double angularVelocityRadPerSec) {
         return new ChassisVelocities(dyn4jLinearVelocity.x, dyn4jLinearVelocity.y, angularVelocityRadPerSec);
     }
 
-    public static Translation2d getChassisSpeedsTranslationalComponent(ChassisVelocities chassisSpeeds) {
-        return new Translation2d(chassisSpeeds.vx, chassisSpeeds.vy);
+    public static Translation2d getChassisVelocitiesTranslationalComponent(ChassisVelocities chassisVelocities) {
+        return new Translation2d(chassisVelocities.vx, chassisVelocities.vy);
     }
 }

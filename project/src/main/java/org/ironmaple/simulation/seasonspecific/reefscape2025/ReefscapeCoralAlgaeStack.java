@@ -54,12 +54,12 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
                 && getLinearVelocity().getMagnitude() > 0.3) collapse();
     }
 
-    private Translation2d velocityMPS() {
+    private Translation2d velocity() {
         return GeometryConvertor.toWpilibTranslation2d(getLinearVelocity());
     }
 
     private Rotation2d velocityDirection() {
-        return velocityMPS().getAngle();
+        return velocity().getAngle();
     }
 
     private Translation2d stackPosition() {
@@ -91,7 +91,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
                 new ChassisVelocities(),
                 velocityDirection(),
                 Meters.of(0.3).plus(Inches.of(8)),
-                MetersPerSecond.of(velocityMPS().getNorm() * 0.6),
+                MetersPerSecond.of(velocity().getNorm() * 0.6),
                 Degrees.zero()));
     }
 

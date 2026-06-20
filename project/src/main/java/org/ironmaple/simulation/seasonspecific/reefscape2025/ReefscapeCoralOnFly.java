@@ -19,19 +19,19 @@ public class ReefscapeCoralOnFly extends GamePieceProjectile {
     public ReefscapeCoralOnFly(
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
-            ChassisVelocities chassisSpeeds,
+            ChassisVelocities chassisVelocities,
             Rotation2d shooterFacing,
             Distance initialHeight,
-            LinearVelocity launchingSpeed,
+            LinearVelocity launchingVelocity,
             Angle shooterAngle) {
         super(
                 ReefscapeCoralOnField.REEFSCAPE_CORAL_INFO,
                 robotPosition,
                 shooterPositionOnRobot,
-                chassisSpeeds,
+                chassisVelocities,
                 shooterFacing,
                 initialHeight,
-                launchingSpeed,
+                launchingVelocity,
                 shooterAngle);
         super.enableBecomesGamePieceOnFieldAfterTouchGround();
         super.withTouchGroundHeight(0.2);
@@ -92,7 +92,7 @@ public class ReefscapeCoralOnFly extends GamePieceProjectile {
                         getPositionAtTime(super.launchedTimer.get()).getZ()),
                 new Pose2d(
                         getPositionAtTime(launchedTimer.get()).toTranslation2d(),
-                        initialLaunchingVelocityMPS.getAngle()),
-                super.initialLaunchingVelocityMPS));
+                        initialLaunchingVelocity.getAngle()),
+                super.initialLaunchingVelocity));
     }
 }

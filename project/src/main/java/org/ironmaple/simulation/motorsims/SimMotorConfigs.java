@@ -1,10 +1,8 @@
 package org.ironmaple.simulation.motorsims;
 
 import static org.wpilib.units.Units.*;
-import static org.wpilib.units.Units.Volts;
 
 import org.wpilib.math.system.DCMotor;
-import org.wpilib.units.*;
 import org.wpilib.units.measure.*;
 
 /**
@@ -17,9 +15,9 @@ import org.wpilib.units.measure.*;
  *
  * <ul>
  *   <li><strong>motor:</strong> The motor model used in the simulation (e.g., Falcon 500, NEO).
- *   <li><strong>gearing:</strong> The gear ratio between the motor and the load, affecting the output torque and speed.
+ *   <li><strong>gearing:</strong> The gear ratio between the motor and the load, affecting the output torque and velocity.
  *   <li><strong>loadMOI:</strong> The moment of inertia (MOI) of the load connected to the motor, which determines the
- *       resistance to changes in rotational speed.
+ *       resistance to changes in rotational velocity.
  *   <li><strong>friction:</strong> The torque friction characteristics applied to the motor's simulation, representing
  *       real-world losses.
  *   <li><strong>positionVoltageController:</strong> PID controller for controlling the motor's position via voltage.
@@ -27,7 +25,7 @@ import org.wpilib.units.measure.*;
  *   <li><strong>positionCurrentController:</strong> PID controller for controlling the motor's position via current.
  *   <li><strong>velocityCurrentController:</strong> PID controller for controlling the motor's velocity via current.
  *   <li><strong>feedforward:</strong> A feedforward controller used to compensate for the desired motor behavior based
- *       on input speeds.
+ *       on input velocity.
  *   <li><strong>forwardHardwareLimit:</strong> The forward limit for motor rotation, specified in angle units.
  *   <li><strong>reverseHardwareLimit:</strong> The reverse limit for motor rotation, specified in angle units.
  *   <li><strong>currentLimit:</strong> The current limit applied to the motor to protect it from overcurrent
@@ -51,7 +49,7 @@ public final class SimMotorConfigs {
      * simulation, including the motor model, gearing ratio, load moment of inertia, and friction characteristics.
      *
      * @param motor the motor model to be used in the simulation (e.g., Falcon 500, NEO).
-     * @param gearing the gear ratio between the motor and the load, affecting torque and speed output.
+     * @param gearing the gear ratio between the motor and the load, affecting torque and velocity output.
      * @param loadMOI the moment of inertia of the load connected to the motor, representing rotational resistance.
      * @param frictionVoltage the voltage applied to simulate frictional torque losses in the motor.
      */
@@ -88,7 +86,7 @@ public final class SimMotorConfigs {
      *
      * <p>This method uses the {@link DCMotor} model to find the angular velocity for a given current and voltage.
      *
-     * @see DCMotor#getSpeed(double, double) for the underlying implementation.
+     * @see DCMotor#getVelocity(double, double) for the underlying implementation.
      * @param current the current flowing through the motor.
      * @param voltage the voltage applied to the motor.
      * @return the final angular velocity of the mechanism.

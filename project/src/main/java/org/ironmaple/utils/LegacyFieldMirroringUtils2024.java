@@ -5,7 +5,6 @@ import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.DriverStation;
 import org.wpilib.driverstation.MatchState;
 
 import java.util.Optional;

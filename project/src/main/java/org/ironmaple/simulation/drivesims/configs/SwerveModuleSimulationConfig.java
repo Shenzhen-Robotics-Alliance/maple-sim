@@ -78,11 +78,11 @@ public class SwerveModuleSimulationConfig implements Supplier<SwerveModuleSimula
     /**
      *
      *
-     * <h2>Obtains the theoretical speed that the module can achieve.</h2>
+     * <h2>Obtains the theoretical velocity that the module can achieve.</h2>
      *
-     * @return the theoretical maximum ground speed that the module can achieve, in m/s
+     * @return the theoretical maximum ground velocity that the module can achieve, in m/s
      */
-    public LinearVelocity maximumGroundSpeed() {
+    public LinearVelocity maximumGroundVelocity() {
         return MetersPerSecond.of(
                 driveMotorConfigs.freeSpinMechanismVelocity().in(RadiansPerSecond) * WHEEL_RADIUS.in(Meters));
     }

@@ -40,7 +40,7 @@ public interface GamePiece {
      *
      * @return The velocity of the game piece as a Translation3d.
      */
-    Translation3d getVelocity3dMPS();
+    Translation3d getVelocity3d();
 
     /**
      *

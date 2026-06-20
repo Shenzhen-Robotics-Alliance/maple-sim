@@ -25,19 +25,19 @@ public class ReefscapeAlgaeOnFly extends GamePieceProjectile {
     public ReefscapeAlgaeOnFly(
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
-            ChassisVelocities chassisSpeeds,
+            ChassisVelocities chassisVelocities,
             Rotation2d shooterFacing,
             Distance initialHeight,
-            LinearVelocity launchingSpeed,
+            LinearVelocity launchingVelocity,
             Angle shooterAngle) {
         super(
                 ReefscapeAlgaeOnField.REEFSCAPE_ALGAE_INFO,
                 robotPosition,
                 shooterPositionOnRobot,
-                chassisSpeeds,
+                chassisVelocities,
                 shooterFacing,
                 initialHeight,
-                launchingSpeed,
+                launchingVelocity,
                 shooterAngle);
 
         super.withTouchGroundHeight(0.8);

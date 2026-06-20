@@ -391,7 +391,7 @@ public abstract class Goal implements SimulatedArena.Simulatable {
 
     /**
      * Configures custom velocity requirements for scoring. This can be used to require pieces to be ascending,
-     * descending, or moving within certain speed ranges.
+     * descending, or moving within certain velocity ranges.
      *
      * <p>The predicate receives the {@link GamePiece} and should return {@code true} if the velocity is acceptable for
      * scoring.

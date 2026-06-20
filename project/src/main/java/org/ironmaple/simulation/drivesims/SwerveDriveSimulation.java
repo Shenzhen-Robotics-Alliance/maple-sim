@@ -124,7 +124,7 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
         gyroSimulation.updateSimulationSubTick(super.getAngularVelocity());
     }
 
-    private Translation2d previousModuleSpeedsFieldRelative = new Translation2d();
+    private Translation2d previousModuleVelocitiesFieldRelative = new Translation2d();
 
     /**
      *
@@ -135,9 +135,9 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * engine. There are two components of the friction forces:
      *
      * <ul>
-     *   <li>A portion of the friction force pushes the robot from its current ground speeds
-     *       ({@link #getDriveTrainSimulatedChassisSpeedsRobotRelative()}) toward its current module speeds
-     *       ({@link #getModuleSpeeds()}).
+     *   <li>A portion of the friction force pushes the robot from its current ground velocities
+     *       ({@link #getDriveTrainSimulatedChassisVelocitiesRobotRelative()}) toward its current module velocities
+     *       ({@link #getModuleVelocities()}).
      *   <li>Another portion of the friction force is the centripetal force, which occurs when the chassis changes its
      *       direction of movement.
      * </ul>
@@ -145,45 +145,45 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <p>The total friction force should not exceed the tire's grip limit.
      */
     private void simulateChassisFrictionForce() {
-        final ChassisVelocities moduleSpeeds = getModuleSpeeds();
+        final ChassisVelocities moduleVelocities = getModuleVelocities();
 
-        /* The friction force that tries to bring the chassis from floor speeds to module speeds */
-        final ChassisVelocities differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative =
-                moduleSpeeds.minus(getDriveTrainSimulatedChassisSpeedsRobotRelative());
-        final Translation2d floorAndModuleSpeedsDiffFieldRelative = new Translation2d(
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vx,
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vy)
+        /* The friction force that tries to bring the chassis from floor velocities to module velocities */
+        final ChassisVelocities differenceBetweenFloorVelocityAndModuleVelocitiesRobotRelative =
+                moduleVelocities.minus(getDriveTrainSimulatedChassisVelocitiesRobotRelative());
+        final Translation2d floorAndModuleVelocitiesDiffFieldRelative = new Translation2d(
+                        differenceBetweenFloorVelocityAndModuleVelocitiesRobotRelative.vx,
+                        differenceBetweenFloorVelocityAndModuleVelocitiesRobotRelative.vy)
                 .rotateBy(getSimulatedDriveTrainPose().getRotation());
         final double FRICTION_FORCE_GAIN = 3.0,
                 totalGrippingForce =
                         moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
                                 * moduleSimulations.length;
-        final Vector2 speedsDifferenceFrictionForce = Vector2.create(
+        final Vector2 velocitiesDifferenceFrictionForce = Vector2.create(
                 Math.min(
-                        FRICTION_FORCE_GAIN * totalGrippingForce * floorAndModuleSpeedsDiffFieldRelative.getNorm(),
+                        FRICTION_FORCE_GAIN * totalGrippingForce * floorAndModuleVelocitiesDiffFieldRelative.getNorm(),
                         totalGrippingForce),
-                MapleCommonMath.getAngle(floorAndModuleSpeedsDiffFieldRelative).getRadians());
+                MapleCommonMath.getAngle(floorAndModuleVelocitiesDiffFieldRelative).getRadians());
 
         /* the centripetal friction force during turning */
-        final ChassisVelocities moduleSpeedsFieldRelative = moduleSpeeds.toFieldRelative(
+        final ChassisVelocities moduleVelocitiesFieldRelative = moduleVelocities.toFieldRelative(
                 getSimulatedDriveTrainPose().getRotation());
         final Rotation2d dTheta = MapleCommonMath.getAngle(
-                        GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
-                .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
+                        GeometryConvertor.getChassisVelocitiesTranslationalComponent(moduleVelocitiesFieldRelative))
+                .minus(MapleCommonMath.getAngle(previousModuleVelocitiesFieldRelative));
 
         final double orbitalAngularVelocity =
                 dTheta.getRadians() / SimulatedArena.getSimulationDt().in(Seconds);
         final Rotation2d centripetalForceDirection =
-                MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative).plus(Rotation2d.fromDegrees(90));
+                MapleCommonMath.getAngle(previousModuleVelocitiesFieldRelative).plus(Rotation2d.fromDegrees(90));
         final Vector2 centripetalFrictionForce = Vector2.create(
-                previousModuleSpeedsFieldRelative.getNorm() * orbitalAngularVelocity * config.robotMass.in(Kilograms),
+                previousModuleVelocitiesFieldRelative.getNorm() * orbitalAngularVelocity * config.robotMass.in(Kilograms),
                 centripetalForceDirection.getRadians());
-        previousModuleSpeedsFieldRelative =
-                GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative);
+        previousModuleVelocitiesFieldRelative =
+                GeometryConvertor.getChassisVelocitiesTranslationalComponent(moduleVelocitiesFieldRelative);
 
         /* apply force to physics engine */
         final Vector2
-                totalFrictionForceUnlimited = centripetalFrictionForce.copy().add(speedsDifferenceFrictionForce),
+                totalFrictionForceUnlimited = centripetalFrictionForce.copy().add(velocitiesDifferenceFrictionForce),
                 totalFrictionForce =
                         Vector2.create(
                                 Math.min(totalGrippingForce, totalFrictionForceUnlimited.getMagnitude()),
@@ -200,18 +200,18 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * engine.
      *
      * <p>The friction torque pushes the robot from its current ground angular velocity
-     * ({@link #getDriveTrainSimulatedChassisSpeedsRobotRelative()}) toward its current modules' angular velocity
-     * ({@link #getModuleSpeeds()}).
+     * ({@link #getDriveTrainSimulatedChassisVelocitiesRobotRelative()}) toward its current modules' angular velocity
+     * ({@link #getModuleVelocities()}).
      */
     private void simulateChassisFrictionTorque() {
         final double
                 desiredRotationalMotionPercent =
-                        Math.abs(getDesiredSpeed().omega
+                        Math.abs(getDesiredVelocity().omega
                                 / maxAngularVelocity().in(RadiansPerSecond)),
                 actualRotationalMotionPercent =
                         Math.abs(getAngularVelocity() / maxAngularVelocity().in(RadiansPerSecond)),
-                differenceBetweenFloorSpeedAndModuleSpeed =
-                        getModuleSpeeds().omega - getAngularVelocity(),
+                differenceBetweenFloorVelocityAndModuleVelocity =
+                        getModuleVelocities().omega - getAngularVelocity(),
                 grippingTorqueMagnitude =
                         moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
                                 * moduleTranslations[0].getNorm()
@@ -224,9 +224,9 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                     Math.min(
                             FRICTION_TORQUE_GAIN
                                     * grippingTorqueMagnitude
-                                    * Math.abs(differenceBetweenFloorSpeedAndModuleSpeed),
+                                    * Math.abs(differenceBetweenFloorVelocityAndModuleVelocity),
                             grippingTorqueMagnitude),
-                    differenceBetweenFloorSpeedAndModuleSpeed));
+                    differenceBetweenFloorVelocityAndModuleVelocity));
     }
 
     /**
@@ -238,9 +238,9 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * engine. There are two components of the friction forces:
      *
      * <ul>
-     *   <li>A portion of the friction force pushes the robot from its current ground speeds
-     *       ({@link #getDriveTrainSimulatedChassisSpeedsRobotRelative()}) toward its current module speeds
-     *       ({@link #getModuleSpeeds()}).
+     *   <li>A portion of the friction force pushes the robot from its current ground velocities
+     *       ({@link #getDriveTrainSimulatedChassisVelocitiesRobotRelative()}) toward its current module velocities
+     *       ({@link #getModuleVelocities()}).
      *   <li>Another portion of the friction force is the centripetal force, which occurs when the chassis changes its
      *       direction of movement.
      * </ul>
@@ -261,14 +261,14 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     /**
      *
      *
-     * <h2>Obtains the Chassis Speeds the Modules Are Attempting to Achieve.</h2>
+     * <h2>Obtains the Chassis Velocities the Modules Are Attempting to Achieve.</h2>
      *
-     * <p>This method returns the desired chassis speeds that the modules are trying to reach. If the robot maintains
-     * the current driving voltage and steering position for a long enough period, it will achieve these speeds.
+     * <p>This method returns the desired chassis velocities that the modules are trying to reach. If the robot maintains
+     * the current driving voltage and steering position for a long enough period, it will achieve these velocities.
      *
-     * @return the desired chassis speeds, robot-relative
+     * @return the desired chassis velocities, robot-relative
      */
-    private ChassisVelocities getDesiredSpeed() {
+    private ChassisVelocities getDesiredVelocity() {
         return kinematics.toChassisVelocities(Arrays.stream(moduleSimulations)
                 .map((SwerveModuleSimulation::getFreeSpinState))
                 .toArray(SwerveModuleVelocity[]::new));
@@ -277,15 +277,15 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     /**
      *
      *
-     * <h2>Obtains the Current Chassis Speeds of the Modules.</h2>
+     * <h2>Obtains the Current Chassis Velocities of the Modules.</h2>
      *
-     * <p>This method estimates the chassis speeds of the robot based on the swerve states of the modules.
+     * <p>This method estimates the chassis velocities of the robot based on the swerve states of the modules.
      *
-     * <p><strong>Note:</strong> These speeds might not represent the actual floor speeds due to potential skidding.
+     * <p><strong>Note:</strong> These velocities might not represent the actual floor velocities due to potential skidding.
      *
-     * @return the module speeds, robot-relative
+     * @return the module velocities, robot-relative
      */
-    private ChassisVelocities getModuleSpeeds() {
+    private ChassisVelocities getModuleVelocities() {
         return kinematics.toChassisVelocities(Arrays.stream(moduleSimulations)
                 .map((SwerveModuleSimulation::getCurrentState))
                 .toArray(SwerveModuleVelocity[]::new));
@@ -297,10 +297,10 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <h2>Obtains the maximum achievable linear velocity of the chassis.</h2>
      *
      * @return the maximum linear velocity
-     * @see org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig#maximumGroundSpeed()
+     * @see org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig#maximumGroundVelocity()
      */
     public LinearVelocity maxLinearVelocity() {
-        return moduleSimulations[0].config.maximumGroundSpeed();
+        return moduleSimulations[0].config.maximumGroundVelocity();
     }
 
     /**

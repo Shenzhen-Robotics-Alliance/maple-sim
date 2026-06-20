@@ -1,9 +1,9 @@
 package org.ironmaple.utils.mathutils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
 import org.dyn4j.geometry.Rotation;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
@@ -39,15 +39,15 @@ public class GeometryConvertor {
                 toWpilibRotation2d(dyn4jTransform.getRotation()));
     }
 
-    public static Vector2 toDyn4jLinearVelocity(ChassisSpeeds wpilibChassisSpeeds) {
-        return new Vector2(wpilibChassisSpeeds.vxMetersPerSecond, wpilibChassisSpeeds.vyMetersPerSecond);
+    public static Vector2 toDyn4jLinearVelocity(ChassisVelocities wpilibChassisSpeeds) {
+        return new Vector2(wpilibChassisSpeeds.vx, wpilibChassisSpeeds.vy);
     }
 
-    public static ChassisSpeeds toWpilibChassisSpeeds(Vector2 dyn4jLinearVelocity, double angularVelocityRadPerSec) {
-        return new ChassisSpeeds(dyn4jLinearVelocity.x, dyn4jLinearVelocity.y, angularVelocityRadPerSec);
+    public static ChassisVelocities toWpilibChassisSpeeds(Vector2 dyn4jLinearVelocity, double angularVelocityRadPerSec) {
+        return new ChassisVelocities(dyn4jLinearVelocity.x, dyn4jLinearVelocity.y, angularVelocityRadPerSec);
     }
 
-    public static Translation2d getChassisSpeedsTranslationalComponent(ChassisSpeeds chassisSpeeds) {
-        return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+    public static Translation2d getChassisSpeedsTranslationalComponent(ChassisVelocities chassisSpeeds) {
+        return new Translation2d(chassisSpeeds.vx, chassisSpeeds.vy);
     }
 }

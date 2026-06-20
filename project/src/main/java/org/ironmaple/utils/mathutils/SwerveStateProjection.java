@@ -1,8 +1,8 @@
 // Created by Team 5516 https://github.com/Shenzhen-Robotics-Alliance/ using ChatGPT4o
 package org.ironmaple.utils.mathutils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
 
 public class SwerveStateProjection {
     /**
@@ -12,7 +12,7 @@ public class SwerveStateProjection {
      * @param currentSwerveFacing The desired direction to project onto.
      * @return The projected speed in the direction of currentSwerveFacing.
      */
-    public static double project(SwerveModuleState swerveSpeed, Rotation2d currentSwerveFacing) {
+    public static double project(SwerveModuleVelocity swerveSpeed, Rotation2d currentSwerveFacing) {
         // Get the angle of the swerve module's current direction
         Rotation2d swerveModuleAngle = swerveSpeed.angle;
 
@@ -21,6 +21,6 @@ public class SwerveStateProjection {
         double cosTheta = Math.cos(swerveModuleAngle.minus(currentSwerveFacing).getRadians());
 
         // Scale the speed by the cosine value to get the projection
-        return swerveSpeed.speedMetersPerSecond * cosTheta;
+        return swerveSpeed.velocity * cosTheta;
     }
 }

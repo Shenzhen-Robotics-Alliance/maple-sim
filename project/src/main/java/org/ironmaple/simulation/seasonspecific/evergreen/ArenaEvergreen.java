@@ -1,7 +1,7 @@
 package org.ironmaple.simulation.seasonspecific.evergreen;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.driverstation.DriverStationErrors;
 import org.ironmaple.simulation.SimulatedArena;
 
 /**
@@ -71,6 +71,6 @@ public class ArenaEvergreen extends SimulatedArena {
      */
     @Override
     public void placeGamePiecesOnField() {
-        DriverStation.reportError("Evergreen doesn't have game pieces.", false);
+        DriverStationErrors.reportError("Evergreen doesn't have game pieces.", false);
     }
 }

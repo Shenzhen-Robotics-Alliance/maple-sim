@@ -1,15 +1,14 @@
 import org.gradle.internal.os.OperatingSystem
 
 nativeUtils.addWpiNativeUtils()
-nativeUtils.withCrossRoboRIO()
-nativeUtils.withCrossLinuxArm32()
+nativeUtils.withCrossSystemCore()
 nativeUtils.withCrossLinuxArm64()
 
 nativeUtils {
     wpi {
         configureDependencies {
             wpiVersion = "$wpilibVersion" // Change this to the wpilib version you're using
-            opencvYear = "frc2025"
+            opencvYear = "2027_alpha5"
             niLibVersion = "2025.0.0"
             opencvVersion = "4.10.0-2"
             googleTestVersion = "1.14.0-1"

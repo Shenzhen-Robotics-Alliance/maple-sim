@@ -1,10 +1,9 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
@@ -90,11 +89,11 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * <p>The robot does not accelerate smoothly to these speeds; instead, it jumps to the velocity
      * <strong>Instantaneously</strong>.
      *
-     * @param givenSpeeds the desired chassis speeds, represented as a {@link ChassisSpeeds} object
+     * @param givenSpeeds the desired chassis speeds, represented as a {@link ChassisVelocities} object
      */
-    public void setRobotSpeeds(ChassisSpeeds givenSpeeds) {
+    public void setRobotSpeeds(ChassisVelocities givenSpeeds) {
         super.setLinearVelocity(GeometryConvertor.toDyn4jLinearVelocity(givenSpeeds));
-        super.setAngularVelocity(givenSpeeds.omegaRadiansPerSecond);
+        super.setAngularVelocity(givenSpeeds.omega);
     }
 
     /**
@@ -122,7 +121,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      *
      * <p><strong>Note:</strong> Do not use this method to simulate odometry! For a more realistic odometry simulation,
      * use a {@link SwerveDriveSimulation} together with a
-     * {@link edu.wpi.first.math.estimator.SwerveDrivePoseEstimator}.
+     * {@link org.wpilib.math.estimator.SwerveDrivePoseEstimator}.
      *
      * @return a {@link Pose2d} object yielding the current world pose of the robot in the simulation
      */
@@ -138,15 +137,15 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * <p>This method returns the actual chassis speeds of the drivetrain in the simulation, relative to the robot.
      *
      * <p>To simulate the chassis speeds calculated by encoders, use a {@link SwerveDriveSimulation} together with
-     * {@link edu.wpi.first.math.kinematics.SwerveDriveKinematics#toChassisSpeeds(SwerveModuleState...)} for a more
+     * {@link org.wpilib.math.kinematics.SwerveDriveKinematics#toChassisSpeeds(SwerveModuleState...)} for a more
      * realistic simulation.
      *
      * @return the actual chassis speeds in the simulation world, <strong>Robot-Relative</strong>
      */
-    public ChassisSpeeds getDriveTrainSimulatedChassisSpeedsRobotRelative() {
-        ChassisSpeeds speeds = getDriveTrainSimulatedChassisSpeedsFieldRelative();
-        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds, getSimulatedDriveTrainPose().getRotation());
+    public ChassisVelocities getDriveTrainSimulatedChassisSpeedsRobotRelative() {
+        ChassisVelocities speeds = getDriveTrainSimulatedChassisSpeedsFieldRelative();
+        speeds = speeds.toRobotRelative(
+                 getSimulatedDriveTrainPose().getRotation());
         return speeds;
     }
 
@@ -158,12 +157,12 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * <p>This method returns the actual chassis speeds of the drivetrain in the simulation, relative to the robot.
      *
      * <p>To simulate the chassis speeds calculated by encoders, use a {@link SwerveDriveSimulation} together with
-     * {@link edu.wpi.first.math.kinematics.SwerveDriveKinematics#toChassisSpeeds(SwerveModuleState...)} for a more
+     * {@link org.wpilib.math.kinematics.SwerveDriveKinematics#toChassisSpeeds(SwerveModuleState...)} for a more
      * realistic simulation.
      *
      * @return the actual chassis speeds in the simulation world, <strong>Field-Relative</strong>
      */
-    public ChassisSpeeds getDriveTrainSimulatedChassisSpeedsFieldRelative() {
+    public ChassisVelocities getDriveTrainSimulatedChassisSpeedsFieldRelative() {
         return GeometryConvertor.toWpilibChassisSpeeds(getLinearVelocity(), getAngularVelocity());
     }
 }

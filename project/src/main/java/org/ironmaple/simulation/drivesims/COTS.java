@@ -1,8 +1,8 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.system.plant.DCMotor;
+import org.wpilib.math.system.DCMotor;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 

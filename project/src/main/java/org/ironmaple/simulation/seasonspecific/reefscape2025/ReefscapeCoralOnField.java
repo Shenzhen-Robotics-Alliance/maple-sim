@@ -1,8 +1,8 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose2d;
 import org.dyn4j.geometry.Rectangle;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 

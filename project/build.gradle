@@ -3,14 +3,14 @@ plugins {
     id 'java'
     id 'google-test'
     id("com.diffplug.spotless") version "7.0.0.BETA4"
-    id 'edu.wpi.first.wpilib.repositories.WPILibRepositoriesPlugin' version '2025.0'
-    id 'edu.wpi.first.NativeUtils' version '2025.9.0'
-    id 'edu.wpi.first.GradleJni' version '1.1.0'
-    id 'edu.wpi.first.GradleVsCode' version '2.1.0'
-    id "edu.wpi.first.GradleRIO" version "2026.2.1"
+    id "org.wpilib.WPILibRepositoriesPlugin" version "2027.0.0"
+    id 'org.wpilib.NativeUtils' version '2027.9.0'
+    id 'org.wpilib.GradleJni' version '2027.0.0'
+    id 'org.wpilib.GradleVsCode' version '2027.0.0'
+    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-6"
 }
 
-ext.wpilibVersion = "2026.2.1"
+ext.wpilibVersion = "2027.0.0-alpha-6"
 
 repositories {
     mavenCentral()
@@ -23,10 +23,10 @@ if (project.hasProperty('releaseMode')) {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
-var javaVersion = "17"
+var javaVersion = "25"
 
 // Apply C++ configuration
 apply from: 'config.gradle'
@@ -38,20 +38,20 @@ dependencies {
 
     implementation 'org.dyn4j:dyn4j:5.0.2'
 
-    implementation "edu.wpi.first.cscore:cscore-java:$wpilibVersion"
-    implementation "edu.wpi.first.cameraserver:cameraserver-java:$wpilibVersion"
-    implementation "edu.wpi.first.ntcore:ntcore-java:$wpilibVersion"
-    implementation "edu.wpi.first.wpilibj:wpilibj-java:$wpilibVersion"
-    implementation "edu.wpi.first.wpiutil:wpiutil-java:$wpilibVersion"
-    implementation "edu.wpi.first.wpimath:wpimath-java:$wpilibVersion"
-    implementation "edu.wpi.first.wpiunits:wpiunits-java:$wpilibVersion"
-    implementation "edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:$wpilibVersion"
-    implementation "edu.wpi.first.hal:hal-java:$wpilibVersion"
+    implementation "org.wpilib.cscore:cscore-java:$wpilibVersion"
+    implementation "org.wpilib.cameraserver:cameraserver-java:$wpilibVersion"
+    implementation "org.wpilib.ntcore:ntcore-java:$wpilibVersion"
+    implementation "org.wpilib.wpilibj:wpilibj-java:$wpilibVersion"
+    implementation "org.wpilib.wpiutil:wpiutil-java:$wpilibVersion"
+    implementation "org.wpilib.wpimath:wpimath-java:$wpilibVersion"
+    implementation "org.wpilib.wpiunits:wpiunits-java:$wpilibVersion"
+    implementation "org.wpilib.wpilibNewCommands:wpilibNewCommands-java:$wpilibVersion"
+    implementation "org.wpilib.hal:hal-java:$wpilibVersion"
     implementation "org.ejml:ejml-simple:0.44.0"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.19.2"
     implementation "com.fasterxml.jackson.core:jackson-core:2.19.2"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.19.2"
-    implementation 'edu.wpi.first.thirdparty.frc2025.opencv:opencv-java:4.10.0-2'
+    implementation 'org.wpilib.thirdparty.frc2025.opencv:opencv-java:4.10.0-2'
 }
 
 // Set up exports properly
@@ -91,7 +91,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         greclipse()
-        leadingTabsToSpaces(4)
+        indentWithSpaces(4)
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -101,7 +101,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         trimTrailingWhitespace()
-        leadingTabsToSpaces(4)
+        indentWithSpaces(4)
         endWithNewline()
     }
 }
@@ -111,5 +111,5 @@ compileJava.dependsOn 'spotlessApply'
 apply from: 'publish.gradle'
 
 wrapper {
-    gradleVersion '8.14.3'
+    gradleVersion = '9.4.1'
 }

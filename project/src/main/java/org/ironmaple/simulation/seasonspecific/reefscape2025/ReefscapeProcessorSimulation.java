@@ -1,14 +1,14 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Centimeters;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.MetersPerSecond;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
+import org.wpilib.math.geometry.*;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
 
@@ -64,7 +64,7 @@ public class ReefscapeProcessorSimulation extends Goal {
             this.arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
                     blueProcessorLaunchPose.toTranslation2d(),
                     new Translation2d(),
-                    new ChassisSpeeds(),
+                    new ChassisVelocities(),
                     Rotation2d.fromDegrees(45),
                     Meters.of(1.7),
                     MetersPerSecond.of(7),
@@ -74,7 +74,7 @@ public class ReefscapeProcessorSimulation extends Goal {
             this.arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
                     redProcessorLaunchPose.toTranslation2d(),
                     new Translation2d(),
-                    new ChassisSpeeds(),
+                    new ChassisVelocities(),
                     Rotation2d.fromDegrees(-135),
                     Meters.of(1.7),
                     MetersPerSecond.of(7),

@@ -1,16 +1,17 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
+import static org.wpilib.units.Units.Centimeters;
+import static org.wpilib.units.Units.Degrees;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Rotation3d;
+import org.wpilib.math.geometry.Transform3d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.driverstation.RobotState;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -186,7 +187,7 @@ public class ReefscapeReefBranch extends Goal {
                 (isBlue ? branchesFacingOutwardsBlue : branchesFacingOutwardsRed)[column].getRadians());
 
         if (level == 0) {
-            facing = facing.plus(flip90);
+            facing = facing.rotateBy(flip90);
         }
 
         return new Pose3d(position, facing);
@@ -198,10 +199,10 @@ public class ReefscapeReefBranch extends Goal {
     @Override
     protected void addPoints() {
         System.out.println("Coral scored on level: " + (level + 1) + " on the " + (isBlue ? "Blue " : "Red") + "reef");
-        arena.addValueToMatchBreakdown(isBlue, "Auto/CoralScoredInAuto", DriverStation.isAutonomous() ? 1 : 0);
+        arena.addValueToMatchBreakdown(isBlue, "Auto/CoralScoredInAuto", RobotState.isAutonomous() ? 1 : 0);
         arena.addValueToMatchBreakdown(isBlue, "CoralScoredOnLevel " + String.valueOf(level + 1), 1);
 
-        int points = DriverStation.isAutonomous() ? AUTO_POINTS_BY_LEVEL[level] : TELEOP_POINTS_BY_LEVEL[level];
+        int points = RobotState.isAutonomous() ? AUTO_POINTS_BY_LEVEL[level] : TELEOP_POINTS_BY_LEVEL[level];
         arena.addToScore(isBlue, points);
     }
 

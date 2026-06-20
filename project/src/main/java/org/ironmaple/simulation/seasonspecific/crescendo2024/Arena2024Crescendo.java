@@ -1,11 +1,11 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.DriverStation;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.networktables.BooleanPublisher;
+import org.wpilib.units.Units;
+import org.wpilib.driverstation.RobotState;
 import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2024Crescendo extends SimulatedArena {
@@ -152,9 +152,9 @@ public class Arena2024Crescendo extends SimulatedArena {
      */
     public boolean isAmped(boolean isBlue) {
         if (isBlue) {
-            return blueAmpClock > 0 || DriverStation.isAutonomous();
+            return blueAmpClock > 0 || RobotState.isAutonomous();
         } else {
-            return redAmpClock > 0 || DriverStation.isAutonomous();
+            return redAmpClock > 0 || RobotState.isAutonomous();
         }
     }
 
@@ -184,7 +184,7 @@ public class Arena2024Crescendo extends SimulatedArena {
      */
     public boolean activateAmp(boolean isBlue) {
 
-        if (DriverStation.isAutonomous()) {
+        if (RobotState.isAutonomous()) {
             System.out.println("Amplification is not allowed during auto.");
             return false;
         }

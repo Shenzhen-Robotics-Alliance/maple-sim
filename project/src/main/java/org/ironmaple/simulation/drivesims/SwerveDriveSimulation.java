@@ -1,14 +1,14 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.*;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.math.kinematics.SwerveDriveKinematics;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
+import org.wpilib.units.measure.*;
 import java.util.Arrays;
 import java.util.function.Supplier;
 import org.dyn4j.geometry.Vector2;
@@ -50,7 +50,7 @@ import org.ironmaple.utils.mathutils.MapleCommonMath;
  *   <li>Obtain the {@link SwerveModuleSimulation} instances through {@link #getModules()}.
  *   <li>Create an <a href='https://github.com/Mechanical-Advantage/AdvantageKit/blob/main/docs/RECORDING-INPUTS.md'>IO
  *       Implementation</a> that wraps around {@link SwerveModuleSimulation} to retrieve encoder readings.
- *   <li>Update a {@link edu.wpi.first.math.estimator.SwerveDrivePoseEstimator} using the encoder readings, similar to
+ *   <li>Update a {@link org.wpilib.math.estimator.SwerveDrivePoseEstimator} using the encoder readings, similar to
  *       how you would on a real robot.
  * </ul>
  *
@@ -145,14 +145,14 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      * <p>The total friction force should not exceed the tire's grip limit.
      */
     private void simulateChassisFrictionForce() {
-        final ChassisSpeeds moduleSpeeds = getModuleSpeeds();
+        final ChassisVelocities moduleSpeeds = getModuleSpeeds();
 
         /* The friction force that tries to bring the chassis from floor speeds to module speeds */
-        final ChassisSpeeds differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative =
+        final ChassisVelocities differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative =
                 moduleSpeeds.minus(getDriveTrainSimulatedChassisSpeedsRobotRelative());
         final Translation2d floorAndModuleSpeedsDiffFieldRelative = new Translation2d(
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vxMetersPerSecond,
-                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vyMetersPerSecond)
+                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vx,
+                        differenceBetweenFloorSpeedAndModuleSpeedsRobotRelative.vy)
                 .rotateBy(getSimulatedDriveTrainPose().getRotation());
         final double FRICTION_FORCE_GAIN = 3.0,
                 totalGrippingForce =
@@ -165,8 +165,8 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
                 MapleCommonMath.getAngle(floorAndModuleSpeedsDiffFieldRelative).getRadians());
 
         /* the centripetal friction force during turning */
-        final ChassisSpeeds moduleSpeedsFieldRelative = ChassisSpeeds.fromRobotRelativeSpeeds(
-                moduleSpeeds, getSimulatedDriveTrainPose().getRotation());
+        final ChassisVelocities moduleSpeedsFieldRelative = moduleSpeeds.toFieldRelative(
+                getSimulatedDriveTrainPose().getRotation());
         final Rotation2d dTheta = MapleCommonMath.getAngle(
                         GeometryConvertor.getChassisSpeedsTranslationalComponent(moduleSpeedsFieldRelative))
                 .minus(MapleCommonMath.getAngle(previousModuleSpeedsFieldRelative));
@@ -206,12 +206,12 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
     private void simulateChassisFrictionTorque() {
         final double
                 desiredRotationalMotionPercent =
-                        Math.abs(getDesiredSpeed().omegaRadiansPerSecond
+                        Math.abs(getDesiredSpeed().omega
                                 / maxAngularVelocity().in(RadiansPerSecond)),
                 actualRotationalMotionPercent =
                         Math.abs(getAngularVelocity() / maxAngularVelocity().in(RadiansPerSecond)),
                 differenceBetweenFloorSpeedAndModuleSpeed =
-                        getModuleSpeeds().omegaRadiansPerSecond - getAngularVelocity(),
+                        getModuleSpeeds().omega - getAngularVelocity(),
                 grippingTorqueMagnitude =
                         moduleSimulations[0].config.getGrippingForceNewtons(gravityForceOnEachModule)
                                 * moduleTranslations[0].getNorm()
@@ -268,10 +268,10 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      *
      * @return the desired chassis speeds, robot-relative
      */
-    private ChassisSpeeds getDesiredSpeed() {
-        return kinematics.toChassisSpeeds(Arrays.stream(moduleSimulations)
+    private ChassisVelocities getDesiredSpeed() {
+        return kinematics.toChassisVelocities(Arrays.stream(moduleSimulations)
                 .map((SwerveModuleSimulation::getFreeSpinState))
-                .toArray(SwerveModuleState[]::new));
+                .toArray(SwerveModuleVelocity[]::new));
     }
 
     /**
@@ -285,10 +285,10 @@ public class SwerveDriveSimulation extends AbstractDriveTrainSimulation {
      *
      * @return the module speeds, robot-relative
      */
-    private ChassisSpeeds getModuleSpeeds() {
-        return kinematics.toChassisSpeeds(Arrays.stream(moduleSimulations)
+    private ChassisVelocities getModuleSpeeds() {
+        return kinematics.toChassisVelocities(Arrays.stream(moduleSimulations)
                 .map((SwerveModuleSimulation::getCurrentState))
-                .toArray(SwerveModuleState[]::new));
+                .toArray(SwerveModuleVelocity[]::new));
     }
 
     /**

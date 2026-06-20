@@ -1,7 +1,7 @@
 package org.ironmaple.simulation.gamepieces;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Translation3d;
 
 /**
  *

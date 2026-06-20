@@ -1,9 +1,9 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import org.wpilib.math.geometry.*;
+import org.wpilib.math.kinematics.ChassisVelocities;
 import java.util.List;
 import org.dyn4j.geometry.Circle;
 import org.ironmaple.simulation.SimulatedArena;
@@ -88,7 +88,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
         arena.addGamePieceProjectile(new ReefscapeAlgaeOnFly(
                 stackPosition(),
                 new Translation2d(),
-                new ChassisSpeeds(),
+                new ChassisVelocities(),
                 velocityDirection(),
                 Meters.of(0.3).plus(Inches.of(8)),
                 MetersPerSecond.of(velocityMPS().getNorm() * 0.6),
@@ -128,7 +128,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
     }
 
     private static final Transform3d STACK_TO_ALGAE = new Transform3d(
-            new Translation3d(0, 0, 0.3 + edu.wpi.first.math.util.Units.inchesToMeters(8)), new Rotation3d());
+            new Translation3d(0, 0, 0.3 + org.wpilib.math.util.Units.inchesToMeters(8)), new Rotation3d());
 
     /** @see #getStackedAlgaePoses() */
     public static List<Pose3d> getStackedAlgaePoses(SimulatedArena arena) {

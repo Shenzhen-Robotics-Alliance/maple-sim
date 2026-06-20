@@ -1,22 +1,24 @@
 package org.ironmaple.simulation.seasonspecific.rebuilt2026;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.MetersPerSecond;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.networktables.BooleanPublisher;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.driverstation.DriverStation;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.driverstation.Alliance;
 import java.util.List;
 import org.dyn4j.dynamics.Settings;
 import org.ironmaple.simulation.SimulatedArena;
@@ -268,7 +270,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
         addGamePieceProjectile(new RebuiltFuelOnFly(
                 piecePose.plus(new Translation2d(randomInRange(xVariance), randomInRange(yVariance))),
                 new Translation2d(),
-                new ChassisSpeeds(),
+                new ChassisVelocities(),
                 yaw.plus(Rotation2d.fromDegrees(randomInRange(yawVariance))),
                 height,
                 speed.plus(MetersPerSecond.of(randomInRange(speedVariance))),
@@ -287,8 +289,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
             }
         }
 
-        boolean isOnBlue = !DriverStation.getAlliance().isEmpty()
-                && DriverStation.getAlliance().get() == Alliance.Blue;
+        boolean isOnBlue = !MatchState.getAlliance().isEmpty()
+                && MatchState.getAlliance().get() == Alliance.BLUE;
 
         if (isOnBlue || !isInEfficiencyMode) {
             for (int x = 0; x < 4; x++) {
@@ -326,7 +328,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
 
     @Override
     public void simulationSubTick(int tickNum) {
-        if (shouldClock && !DriverStation.isAutonomous() && DriverStation.isEnabled()) {
+        if (shouldClock && !RobotState.isAutonomous() && RobotState.isEnabled()) {
 
             if (matchClock.get() >= nextClockSwapTime) {
                 nextClockSwapTime = matchClock.get() + 25;
@@ -357,9 +359,9 @@ public class Arena2026Rebuilt extends SimulatedArena {
      */
     public boolean isActive(boolean isBlue) {
         if (isBlue) {
-            return blueIsOnClock || DriverStation.isAutonomous() || !shouldClock;
+            return blueIsOnClock || RobotState.isAutonomous() || !shouldClock;
         } else {
-            return !blueIsOnClock || DriverStation.isAutonomous() || !shouldClock;
+            return !blueIsOnClock || RobotState.isAutonomous() || !shouldClock;
         }
     }
 

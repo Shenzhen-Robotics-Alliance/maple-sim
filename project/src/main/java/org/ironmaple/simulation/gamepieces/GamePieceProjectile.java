@@ -1,13 +1,13 @@
 package org.ironmaple.simulation.gamepieces;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.Timer;
+import org.wpilib.math.geometry.*;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.LinearVelocity;
+import org.wpilib.system.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -121,7 +121,7 @@ public class GamePieceProjectile implements GamePiece {
             GamePieceOnFieldSimulation.GamePieceInfo info,
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
-            ChassisSpeeds chassisSpeedsFieldRelative,
+            ChassisVelocities chassisSpeedsFieldRelative,
             Rotation2d shooterFacing,
             Distance initialHeight,
             LinearVelocity launchingSpeed,
@@ -157,17 +157,17 @@ public class GamePieceProjectile implements GamePiece {
      */
     private static Translation2d calculateInitialProjectileVelocityMPS(
             Translation2d shooterPositionOnRobot,
-            ChassisSpeeds chassisSpeeds,
+            ChassisVelocities chassisSpeeds,
             Rotation2d chassisFacing,
             double groundSpeedMPS) {
         final Translation2d
                 chassisTranslationalVelocity =
-                        new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond),
+                        new Translation2d(chassisSpeeds.vx, chassisSpeeds.vy),
                 shooterGroundVelocityDueToChassisRotation =
                         shooterPositionOnRobot
                                 .rotateBy(chassisFacing)
                                 .rotateBy(Rotation2d.fromDegrees(90))
-                                .times(chassisSpeeds.omegaRadiansPerSecond),
+                                .times(chassisSpeeds.omega),
                 shooterGroundVelocity = chassisTranslationalVelocity.plus(shooterGroundVelocityDueToChassisRotation);
 
         return shooterGroundVelocity.plus(new Translation2d(groundSpeedMPS, chassisFacing));

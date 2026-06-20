@@ -1,10 +1,10 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
-import static edu.wpi.first.units.Units.Centimeters;
+import static org.wpilib.units.Units.Centimeters;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
+import org.wpilib.math.geometry.*;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
 

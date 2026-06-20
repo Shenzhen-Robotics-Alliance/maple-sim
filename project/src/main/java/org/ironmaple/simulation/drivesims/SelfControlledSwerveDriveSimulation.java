@@ -1,19 +1,19 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.*;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.Timer;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.linalg.VecBuilder;
+import org.wpilib.math.controller.PIDController;
+import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.*;
+import org.wpilib.math.numbers.N1;
+import org.wpilib.math.numbers.N3;
+import org.wpilib.units.measure.*;
+import org.wpilib.system.Timer;
 import java.util.Arrays;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
@@ -39,7 +39,7 @@ public class SelfControlledSwerveDriveSimulation {
     private final SelfControlledModuleSimulation[] moduleSimulations;
     private final SwerveDriveKinematics kinematics;
     private final SwerveDrivePoseEstimator poseEstimator;
-    private final SwerveModuleState[] setPointsOptimized;
+    private final SwerveModuleVelocity[] setPointsOptimized;
 
     /**
      *
@@ -89,8 +89,8 @@ public class SelfControlledSwerveDriveSimulation {
                 stateStdDevs,
                 visionMeasurementStdDevs);
 
-        this.setPointsOptimized = new SwerveModuleState[moduleSimulations.length];
-        Arrays.fill(setPointsOptimized, new SwerveModuleState());
+        this.setPointsOptimized = new SwerveModuleVelocity[moduleSimulations.length];
+        Arrays.fill(setPointsOptimized, new SwerveModuleVelocity());
     }
 
     /**
@@ -98,7 +98,7 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * <h2>Periodic Method for Simplified Swerve Sim.</h2>
      *
-     * <p>Call this method in the {@link edu.wpi.first.wpilibj2.command.Subsystem#periodic()} of your swerve subsystem.
+     * <p>Call this method in the {@link org.wpilib.wpilibj2.command.Subsystem#periodic()} of your swerve subsystem.
      *
      * <p>Updates the odometry by fetching cached inputs.
      */
@@ -106,7 +106,7 @@ public class SelfControlledSwerveDriveSimulation {
         final SwerveModulePosition[][] cachedModulePositions = getCachedModulePositions();
         for (int i = 0; i < SimulatedArena.getSimulationSubTicksIn1Period(); i++)
             poseEstimator.updateWithTime(
-                    Timer.getFPGATimestamp()
+                    Timer.getMonotonicTimestamp()
                             - SimulatedArena.getSimulationDt().in(Seconds)
                                     * (SimulatedArena.getSimulationDt().in(Seconds) - i),
                     swerveDriveSimulation.gyroSimulation.getCachedGyroReadings()[i],
@@ -271,20 +271,19 @@ public class SelfControlledSwerveDriveSimulation {
      *     speed.
      */
     public void runChassisSpeeds(
-            ChassisSpeeds chassisSpeeds,
+            ChassisVelocities chassisSpeeds,
             Translation2d centerOfRotationMeters,
             boolean fieldCentricDrive,
             boolean discretizeSpeeds) {
         if (fieldCentricDrive) {
-            chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                    chassisSpeeds, getOdometryEstimatedPose().getRotation());
+            chassisSpeeds = chassisSpeeds.toRobotRelative(
+                     getOdometryEstimatedPose().getRotation());
         }
         if (discretizeSpeeds) {
-            chassisSpeeds = ChassisSpeeds.discretize(
-                    chassisSpeeds,
+            chassisSpeeds = chassisSpeeds.discretize(
                     SimulatedArena.getSimulationDt().in(Seconds) * SimulatedArena.getSimulationSubTicksIn1Period());
         }
-        final SwerveModuleState[] setPoints = kinematics.toSwerveModuleStates(chassisSpeeds, centerOfRotationMeters);
+        final SwerveModuleVelocity[] setPoints = kinematics.toSwerveModuleVelocities(chassisSpeeds, centerOfRotationMeters);
         runSwerveStates(setPoints);
     }
 
@@ -295,9 +294,9 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * <p>Runs the specified module states on the modules.
      *
-     * @param setPoints an array of {@link SwerveModuleState} yielding the requested states
+     * @param setPoints an array of {@link SwerveModuleVelocity} yielding the requested states
      */
-    public void runSwerveStates(SwerveModuleState[] setPoints) {
+    public void runSwerveStates(SwerveModuleVelocity[] setPoints) {
         for (int i = 0; i < moduleSimulations.length; i++)
             setPointsOptimized[i] = moduleSimulations[i].optimizeAndRunModuleState(setPoints[i]);
     }
@@ -311,10 +310,10 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * @return The actual measured swerve states of the simulated swerve.
      */
-    public SwerveModuleState[] getMeasuredStates() {
+    public SwerveModuleVelocity[] getMeasuredStates() {
         return Arrays.stream(moduleSimulations)
                 .map(SelfControlledModuleSimulation::getMeasuredState)
-                .toArray(SwerveModuleState[]::new);
+                .toArray(SwerveModuleVelocity[]::new);
     }
 
     /**
@@ -331,7 +330,7 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * @return The optimized setpoints of the swerve, calculated during the last chassis speed run.
      */
-    public SwerveModuleState[] getSetPointsOptimized() {
+    public SwerveModuleVelocity[] getSetPointsOptimized() {
         return setPointsOptimized;
     }
 
@@ -345,10 +344,10 @@ public class SelfControlledSwerveDriveSimulation {
      * @param useGyroForAngularVelocity Whether to use the gyro for a more accurate angular velocity measurement.
      * @return The measured chassis speeds, <strong>field-relative</strong>.
      */
-    public ChassisSpeeds getMeasuredSpeedsFieldRelative(boolean useGyroForAngularVelocity) {
-        ChassisSpeeds speeds = getMeasuredSpeedsRobotRelative(useGyroForAngularVelocity);
-        speeds = ChassisSpeeds.fromRobotRelativeSpeeds(
-                speeds, getOdometryEstimatedPose().getRotation());
+    public ChassisVelocities getMeasuredSpeedsFieldRelative(boolean useGyroForAngularVelocity) {
+        ChassisVelocities speeds = getMeasuredSpeedsRobotRelative(useGyroForAngularVelocity);
+        speeds = speeds.toFieldRelative(
+                 getOdometryEstimatedPose().getRotation());
         return speeds;
     }
 
@@ -362,17 +361,17 @@ public class SelfControlledSwerveDriveSimulation {
      * @param useGyroForAngularVelocity Whether to use the gyro for a more accurate angular velocity measurement.
      * @return The measured chassis speeds, <strong>robot-relative</strong>.
      */
-    public ChassisSpeeds getMeasuredSpeedsRobotRelative(boolean useGyroForAngularVelocity) {
-        final ChassisSpeeds swerveSpeeds = kinematics.toChassisSpeeds(getMeasuredStates());
-        return new ChassisSpeeds(
-                swerveSpeeds.vxMetersPerSecond,
-                swerveSpeeds.vyMetersPerSecond,
+    public ChassisVelocities getMeasuredSpeedsRobotRelative(boolean useGyroForAngularVelocity) {
+        final ChassisVelocities swerveSpeeds = kinematics.toChassisVelocities(getMeasuredStates());
+        return new ChassisVelocities(
+                swerveSpeeds.vx,
+                swerveSpeeds.vy,
                 useGyroForAngularVelocity
                         ? swerveDriveSimulation
                                 .gyroSimulation
                                 .getMeasuredAngularVelocity()
                                 .in(RadiansPerSecond)
-                        : swerveSpeeds.omegaRadiansPerSecond);
+                        : swerveSpeeds.omega);
     }
 
     /**
@@ -409,7 +408,7 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * @return the actual chassis speeds in the simulation world, <strong>field-relative</strong>
      */
-    public ChassisSpeeds getActualSpeedsFieldRelative() {
+    public ChassisVelocities getActualSpeedsFieldRelative() {
         return this.swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsFieldRelative();
     }
 
@@ -422,7 +421,7 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * @return the actual chassis speeds in the simulation world, <strong>robot-relative</strong>
      */
-    public ChassisSpeeds getActualSpeedsRobotRelative() {
+    public ChassisVelocities getActualSpeedsRobotRelative() {
         return this.swerveDriveSimulation.getDriveTrainSimulatedChassisSpeedsRobotRelative();
     }
 
@@ -499,13 +498,13 @@ public class SelfControlledSwerveDriveSimulation {
          * @param setPoint the desired state to optimize and apply
          * @return the optimized swerve module state after control execution
          */
-        public SwerveModuleState optimizeAndRunModuleState(SwerveModuleState setPoint) {
+        public SwerveModuleVelocity optimizeAndRunModuleState(SwerveModuleVelocity setPoint) {
             setPoint.optimize(instance.getSteerAbsoluteFacing());
             runModuleState(setPoint);
             return setPoint;
         }
 
-        public void runModuleState(SwerveModuleState setPoint) {
+        public void runModuleState(SwerveModuleVelocity setPoint) {
             final double
                     cosProjectedSpeedMPS = SwerveStateProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
                     driveWheelVelocitySetPointRadPerSec =
@@ -531,7 +530,7 @@ public class SelfControlledSwerveDriveSimulation {
             steerMotor.requestVoltage(Volts.of(volts));
         }
 
-        public SwerveModuleState getMeasuredState() {
+        public SwerveModuleVelocity getMeasuredState() {
             return instance.getCurrentState();
         }
 

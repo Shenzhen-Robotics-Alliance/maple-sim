@@ -1,7 +1,7 @@
 package org.ironmaple.utils.mathutils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
 import java.util.Random;
 
 public class MapleCommonMath {

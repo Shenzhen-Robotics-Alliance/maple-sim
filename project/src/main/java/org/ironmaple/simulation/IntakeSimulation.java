@@ -1,9 +1,8 @@
 package org.ironmaple.simulation;
 
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Meters;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.measure.Distance;
+import org.wpilib.units.measure.Distance;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
@@ -285,7 +284,7 @@ public class IntakeSimulation extends BodyFixture {
      * @return the actual (clamped) game piece count after performing this action
      */
     public int setGamePiecesCount(int gamePiecesInIntakeCount) {
-        return this.gamePiecesInIntakeCount = MathUtil.clamp(gamePiecesInIntakeCount, 0, capacity);
+        return this.gamePiecesInIntakeCount = Math.clamp(gamePiecesInIntakeCount, 0, capacity);
     }
 
     /**

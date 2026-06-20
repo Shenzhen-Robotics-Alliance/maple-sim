@@ -1,12 +1,12 @@
 package org.ironmaple.simulation.seasonspecific.rebuilt2026;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.MetersPerSecond;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
+import org.wpilib.math.geometry.*;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.gamepieces.GamePiece;

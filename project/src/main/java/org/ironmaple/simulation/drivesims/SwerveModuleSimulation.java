@@ -1,12 +1,12 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.*;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.kinematics.SwerveDriveOdometry;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
+import org.wpilib.units.measure.*;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.dyn4j.geometry.Vector2;
@@ -247,8 +247,8 @@ public class SwerveModuleSimulation {
     }
 
     /** @return the current module state of this simulation module */
-    public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(
+    public SwerveModuleVelocity getCurrentState() {
+        return new SwerveModuleVelocity(
                 MetersPerSecond.of(getDriveWheelFinalSpeed().in(RadiansPerSecond) * config.WHEEL_RADIUS.in(Meters)),
                 getSteerAbsoluteFacing());
     }
@@ -263,8 +263,8 @@ public class SwerveModuleSimulation {
      *
      * @return the free spinning module state
      */
-    protected SwerveModuleState getFreeSpinState() {
-        return new SwerveModuleState(
+    protected SwerveModuleVelocity getFreeSpinState() {
+        return new SwerveModuleVelocity(
                 config.driveMotorConfigs
                                 .calculateMechanismVelocity(
                                         config.driveMotorConfigs.calculateCurrent(config.driveMotorConfigs.friction),

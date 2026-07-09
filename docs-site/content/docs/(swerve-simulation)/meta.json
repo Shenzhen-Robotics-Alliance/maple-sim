@@ -1,0 +1,8 @@
+{
+  "title": "Swerve Simulation",
+  "pages": [
+    "swerve-simulation-overview",
+    "swerve-sim-easy",
+    "swerve-sim-hardware-abstraction"
+  ]
+}

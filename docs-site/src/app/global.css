@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/catppuccin.css";
+@import "fumadocs-ui/css/preset.css";
+
+@theme {
+  --color-fd-primary: hsl(4, 90%, 58%);
+  --color-fd-primary-foreground: hsl(0, 0%, 100%);
+  --color-fd-accent: hsl(340, 82%, 52%);
+  --color-fd-accent-foreground: hsl(0, 0%, 100%);
+  --color-fd-ring: hsl(4, 90%, 75%);
+}
+
+.dark {
+  --color-fd-primary: hsl(4, 90%, 62%);
+  --color-fd-primary-foreground: hsl(0, 0%, 98%);
+  --color-fd-accent: hsl(340, 82%, 58%);
+  --color-fd-accent-foreground: hsl(0, 0%, 98%);
+  --color-fd-ring: hsl(4, 90%, 70%);
+  --color-fd-foreground: hsl(0, 0%, 96%);
+  --color-fd-secondary-foreground: hsl(0, 0%, 90%);
+  --color-fd-muted-foreground: hsl(0, 0%, 75%);
+}

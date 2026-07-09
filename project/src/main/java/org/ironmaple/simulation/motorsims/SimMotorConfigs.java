@@ -65,6 +65,10 @@ public final class SimMotorConfigs {
         reverseHardwareLimit = Radians.of(-Double.POSITIVE_INFINITY);
     }
 
+    public Voltage getFrictionVoltage() {
+        return Volts.of(motor.getVoltage(friction.in(NewtonMeters), 0));
+    }
+
     /**
      *
      *

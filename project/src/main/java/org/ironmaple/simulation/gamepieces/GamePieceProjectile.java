@@ -111,10 +111,11 @@ public class GamePieceProjectile implements GamePiece {
      *     frame of reference
      * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the game piece,
      *     influencing the initial velocity of the game piece
-     * @param shooterFacing the direction in which the shooter is facing at launch
+     * @param chassisFacing the direction in which the robot chassis is facing at launch. Assumes the shooter is facing in the
+     *     same direction.
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeed the speed at which the game piece is launch
+     * @param launchingSpeed the speed at which the game piece is launched
      * @param shooterAngle the pitch angle of the shooter when launching
      */
     public GamePieceProjectile(
@@ -122,16 +123,59 @@ public class GamePieceProjectile implements GamePiece {
             Translation2d robotPosition,
             Translation2d shooterPositionOnRobot,
             ChassisSpeeds chassisSpeedsFieldRelative,
+            Rotation2d chassisFacing,
+            Distance initialHeight,
+            LinearVelocity launchingSpeed,
+            Angle shooterAngle) {
+        this(
+                info,
+                robotPosition.plus(shooterPositionOnRobot.rotateBy(chassisFacing)),
+                calculateInitialProjectileVelocityMPS(
+                        shooterPositionOnRobot,
+                        chassisSpeedsFieldRelative,
+                        chassisFacing,
+                        chassisFacing,
+                        launchingSpeed.in(MetersPerSecond) * Math.cos(shooterAngle.in(Radians))),
+                initialHeight.in(Meters),
+                launchingSpeed.in(MetersPerSecond) * Math.sin(shooterAngle.in(Radians)),
+                new Rotation3d(0, -shooterAngle.in(Radians), chassisFacing.getRadians()));
+    }
+
+    /**
+     *
+     *
+     * <h2>Creates a Game Piece Projectile Ejected from a Shooter.</h2>
+     *
+     * @param info the info of the game piece
+     * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
+     * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
+     *     frame of reference
+     * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the game piece,
+     *     influencing the initial velocity of the game piece
+     * @param chassisFacing the direction in which the robot chassis is facing at launch
+     * @param shooterFacing the direction in which the shooter is facing at launch
+     * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
+     *     ground
+     * @param launchingSpeed the speed at which the game piece is launched
+     * @param shooterAngle the pitch angle of the shooter when launching
+     */
+    public GamePieceProjectile(
+            GamePieceOnFieldSimulation.GamePieceInfo info,
+            Translation2d robotPosition,
+            Translation2d shooterPositionOnRobot,
+            ChassisSpeeds chassisSpeedsFieldRelative,
+            Rotation2d chassisFacing,
             Rotation2d shooterFacing,
             Distance initialHeight,
             LinearVelocity launchingSpeed,
             Angle shooterAngle) {
         this(
                 info,
-                robotPosition.plus(shooterPositionOnRobot.rotateBy(shooterFacing)),
+                robotPosition.plus(shooterPositionOnRobot.rotateBy(chassisFacing)),
                 calculateInitialProjectileVelocityMPS(
                         shooterPositionOnRobot,
                         chassisSpeedsFieldRelative,
+                        chassisFacing,
                         shooterFacing,
                         launchingSpeed.in(MetersPerSecond) * Math.cos(shooterAngle.in(Radians))),
                 initialHeight.in(Meters),
@@ -151,6 +195,7 @@ public class GamePieceProjectile implements GamePiece {
      * @param chassisSpeeds the speeds of the chassis when the game piece is launched, including translational and
      *     rotational velocities
      * @param chassisFacing the direction the chassis is facing at the time of the launch
+     * @param shooterFacing the direction the shooter is facing at the time of the launch
      * @param groundSpeedMPS the ground component of the projectile's initial velocity, provided as a scalar in meters
      *     per second (m/s)
      * @return the calculated initial velocity of the projectile as a {@link Translation2d} in meters per second
@@ -159,6 +204,7 @@ public class GamePieceProjectile implements GamePiece {
             Translation2d shooterPositionOnRobot,
             ChassisSpeeds chassisSpeeds,
             Rotation2d chassisFacing,
+            Rotation2d shooterFacing,
             double groundSpeedMPS) {
         final Translation2d
                 chassisTranslationalVelocity =
@@ -170,7 +216,7 @@ public class GamePieceProjectile implements GamePiece {
                                 .times(chassisSpeeds.omegaRadiansPerSecond),
                 shooterGroundVelocity = chassisTranslationalVelocity.plus(shooterGroundVelocityDueToChassisRotation);
 
-        return shooterGroundVelocity.plus(new Translation2d(groundSpeedMPS, chassisFacing));
+        return shooterGroundVelocity.plus(new Translation2d(groundSpeedMPS, shooterFacing));
     }
 
     /**
@@ -656,3 +702,5 @@ public class GamePieceProjectile implements GamePiece {
         this.hitTargetCallBack = hitTargetCallBack;
     }
 }
+
+

@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
@@ -28,6 +29,7 @@ public class DriveTrainSimulationConfig {
     public Supplier<SwerveModuleSimulation>[] swerveModuleSimulationFactories;
     public Supplier<GyroSimulation> gyroSimulationFactory;
     public Translation2d[] moduleTranslations;
+    public Translation3d centerOfMass;
 
     /**
      *
@@ -41,10 +43,14 @@ public class DriveTrainSimulationConfig {
      * @param bumperWidthY the width of the bumper (distance from left to right).
      * @param trackLengthX the distance between the front and rear wheels.
      * @param trackWidthY the distance between the left and right wheels.
+     * @param gyroSimulationFactory the factory that creates appropriate gyro simulation for the drivetrain.
+     * @param centerOfMass the center of mass location relative to the robot's geometric center. The center of mass is
+     *     specified as a {@link Translation3d} in robot-relative coordinates, The X and Y coordinates represent the
+     *     horizontal offset from the geometric center, and the Z coordinate represents the height of the center of mass
+     *     above the ground.
      * @param swerveModuleSimulationFactory the factory that creates appropriate swerve module simulation for the
      *     drivetrain. You can specify one factory to apply the same configuration over all modules or specify four
      *     factories in the order (FL, FR, BL, BR).
-     * @param gyroSimulationFactory the factory that creates appropriate gyro simulation for the drivetrain.
      */
     public DriveTrainSimulationConfig(
             Mass robotMass,
@@ -53,10 +59,12 @@ public class DriveTrainSimulationConfig {
             Distance trackLengthX,
             Distance trackWidthY,
             Supplier<GyroSimulation> gyroSimulationFactory,
+            Translation3d centerOfMass,
             Supplier<SwerveModuleSimulation>... swerveModuleSimulationFactory) {
         this.robotMass = robotMass;
         this.bumperLengthX = bumperLengthX;
         this.bumperWidthY = bumperWidthY;
+        this.centerOfMass = centerOfMass;
         this.withTrackLengthTrackWidth(trackLengthX, trackWidthY);
 
         if (swerveModuleSimulationFactory.length == 1) this.withSwerveModule(swerveModuleSimulationFactory[0]);
@@ -68,6 +76,45 @@ public class DriveTrainSimulationConfig {
 
         checkRobotMass();
         checkBumperSize();
+        checkCenterOfMass();
+    }
+
+    /**
+     *
+     *
+     * <h2>Backwards Compatibility Constructor</h2>
+     *
+     * <p>This constructor retains backwards compatibility with existing code by omitting the {@code centerOfMass}
+     * parameter and defaulting it to (0, 0, 0).
+     *
+     * @param robotMass the mass of the robot, including bumpers.
+     * @param bumperLengthX the length of the bumper (distance from front to back).
+     * @param bumperWidthY the width of the bumper (distance from left to right).
+     * @param trackLengthX the distance between the front and rear wheels.
+     * @param trackWidthY the distance between the left and right wheels.
+     * @param gyroSimulationFactory the factory that creates appropriate gyro simulation for the drivetrain.
+     * @param swerveModuleSimulationFactory the factory or factories that create appropriate swerve module
+     *     simulation(s). You can specify one factory (applies to all modules), or four factories in the order (FL, FR,
+     *     BL, BR).
+     */
+    @SafeVarargs
+    public DriveTrainSimulationConfig(
+            Mass robotMass,
+            Distance bumperLengthX,
+            Distance bumperWidthY,
+            Distance trackLengthX,
+            Distance trackWidthY,
+            Supplier<GyroSimulation> gyroSimulationFactory,
+            Supplier<SwerveModuleSimulation>... swerveModuleSimulationFactory) {
+        this(
+                robotMass,
+                bumperLengthX,
+                bumperWidthY,
+                trackLengthX,
+                trackWidthY,
+                gyroSimulationFactory,
+                new Translation3d(0, 0, 0),
+                swerveModuleSimulationFactory);
     }
 
     /**
@@ -87,6 +134,7 @@ public class DriveTrainSimulationConfig {
      *   <li>Bumper Width of 0.76 meters.
      *   <li>Track Length of 0.52 meters.
      *   <li>Track Width of 0.52 meters.
+     *   <li>Center of Mass centered horizontally, 0.2 meters above the ground.
      *   <li>Default swerve module simulations based on Falcon 500 motors.
      *   <li>Default gyro simulation using the Pigeon2 gyro.
      * </ul>
@@ -101,6 +149,7 @@ public class DriveTrainSimulationConfig {
                 Meters.of(0.52),
                 Meters.of(0.52),
                 COTS.ofPigeon2(),
+                new Translation3d(0, 0, 0.2),
                 COTS.ofMark4(DCMotor.getFalcon500(1), DCMotor.getFalcon500(1), COTS.WHEELS.COLSONS.cof, 2));
     }
 
@@ -244,6 +293,26 @@ public class DriveTrainSimulationConfig {
     /**
      *
      *
+     * <h2>Sets the robot's center of mass location.</h2>
+     *
+     * <p>Updates the center of mass location of the robot, relative to the robot's geometric center.
+     *
+     * <p>The center of mass is specified as a {@link Translation3d} in robot-relative coordinates, The X and Y
+     * coordinates represent the horizontal offset from the geometric center, and the Z coordinate represents the height
+     * of the center of mass above the ground.
+     *
+     * @param centerOfMass the center of mass location relative to the robot's geometric center.
+     * @return the current instance of {@link DriveTrainSimulationConfig} for method chaining.
+     */
+    public DriveTrainSimulationConfig withCenterOfMass(Translation3d centerOfMass) {
+        this.centerOfMass = centerOfMass;
+        checkCenterOfMass();
+        return this;
+    }
+
+    /**
+     *
+     *
      * <h2>Calculates the density of the robot.</h2>
      *
      * <p>Returns the density of the robot based on its mass and bumper dimensions.
@@ -319,5 +388,16 @@ public class DriveTrainSimulationConfig {
                     1.2,
                     "module number " + i + " translation magnitude",
                     "meters");
+    }
+
+    private void checkCenterOfMass() {
+        final double halfBumperLengthX = bumperLengthX.in(Meters) / 2.0;
+        final double halfBumperWidthY = bumperWidthY.in(Meters) / 2.0;
+
+        BoundingCheck.check(
+                centerOfMass.getX(), -halfBumperLengthX, halfBumperLengthX, "center of mass X coordinate", "meters");
+        BoundingCheck.check(
+                centerOfMass.getY(), -halfBumperWidthY, halfBumperWidthY, "center of mass Y coordinate", "meters");
+        BoundingCheck.check(centerOfMass.getZ(), 0.0, 4.0, "center of mass height (Z coordinate)", "meters");
     }
 }

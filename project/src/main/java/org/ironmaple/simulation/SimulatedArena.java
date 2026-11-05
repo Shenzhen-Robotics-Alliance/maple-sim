@@ -16,7 +16,6 @@ import org.wpilib.driverstation.Alliance;
 import org.wpilib.framework.RobotBase;
 import org.wpilib.framework.TimedRobot;
 import org.wpilib.system.Timer;
-import org.wpilib.smartdashboard.SmartDashboard;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -84,6 +83,12 @@ public abstract class SimulatedArena {
     public static BooleanPublisher resetFieldPublisher = NetworkTableInstance.getDefault()
             .getTable("SmartDashboard/MapleSim/MatchData")
             .getBooleanTopic("Reset Field")
+            .publish();
+
+    // WPILib 2027 removed SmartDashboard; publish to the same NetworkTables topic it used.
+    private static final DoublePublisher dyn4jEngineCPUTimeMSPublisher = NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard/MapleArenaSimulation")
+            .getDoubleTopic("Dyn4jEngineCPUTimeMS")
             .publish();
 
     public static BooleanSubscriber resetFieldSubscriber =
@@ -548,7 +553,7 @@ public abstract class SimulatedArena {
             // move through a few sub-periods in each update
             for (int i = 0; i < SIMULATION_SUB_TICKS_IN_1_PERIOD; i++) simulationSubTick(i);
 
-            SmartDashboard.putNumber("MapleArenaSimulation/Dyn4jEngineCPUTimeMS", (System.nanoTime() - t0) / 1000000.0);
+            dyn4jEngineCPUTimeMSPublisher.set((System.nanoTime() - t0) / 1000000.0);
 
             if (resetFieldSubscriber.get()) {
                 SimulatedArena.getInstance().resetFieldForAuto();

@@ -34,7 +34,7 @@ public class FieldMirroringUtils {
     public static Pose3d flip(Pose3d toFlip) {
         return new Pose3d(
                 new Translation3d(FIELD_WIDTH - toFlip.getX(), FIELD_HEIGHT - toFlip.getY(), toFlip.getZ()),
-                toFlip.getRotation().plus(new Rotation3d(Rotation2d.k180deg)));
+                toFlip.getRotation().rotateBy(new Rotation3d(Rotation2d.k180deg)));
     }
 
     public static Translation3d toCurrentAllianceTranslation(Translation3d translation3dAtBlueSide) {
@@ -60,6 +60,6 @@ public class FieldMirroringUtils {
     }
 
     public static Rotation2d getCurrentAllianceDriverStationFacing() {
-        return toCurrentAllianceRotation(Rotation2d.kZero);
+        return toCurrentAllianceRotation(Rotation2d.ZERO);
     }
 }

@@ -59,7 +59,7 @@ public class ReefscapeCoralAlgaeStack extends GamePieceOnFieldSimulation {
     }
 
     private Rotation2d velocityDirection() {
-        return velocity().getAngle();
+        return velocity().getAngle().orElse(Rotation2d.ZERO);
     }
 
     private Translation2d stackPosition() {

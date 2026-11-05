@@ -56,6 +56,6 @@ public class MapleCommonMath {
      */
     public static Rotation2d getAngle(Translation2d translation2d) {
         final double tooSmall = 1e-6;
-        return translation2d.getNorm() < tooSmall ? Rotation2d.fromDegrees(0) : translation2d.getAngle();
+        return translation2d.getNorm() < tooSmall ? Rotation2d.fromDegrees(0) : translation2d.getAngle().orElse(Rotation2d.ZERO);
     }
 }

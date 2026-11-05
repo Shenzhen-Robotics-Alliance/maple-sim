@@ -5,11 +5,13 @@ import static org.wpilib.units.Units.Volts;
 
 import org.wpilib.driverstation.DriverStationErrors;
 import org.wpilib.math.filter.LinearFilter;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.NetworkTable;
+import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.units.measure.Current;
 import org.wpilib.units.measure.Voltage;
 import org.wpilib.simulation.BatterySim;
 import org.wpilib.simulation.RoboRioSim;
-import org.wpilib.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -33,6 +35,14 @@ public class SimulatedBattery {
 
     // The current battery voltage in volts.
     private static double batteryVoltageVolts = BATTERY_NOMINAL_VOLTAGE;
+
+    // WPILib 2027 removed SmartDashboard; publish to the same NetworkTables topics it used.
+    private static final NetworkTable batterySimTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/BatterySim");
+    private static final DoublePublisher totalCurrentPublisher =
+            batterySimTable.getDoubleTopic("TotalCurrent (Amps)").publish();
+    private static final DoublePublisher batteryVoltagePublisher =
+            batterySimTable.getDoubleTopic("BatteryVoltage (Volts)").publish();
 
     /**
      *
@@ -89,8 +99,8 @@ public class SimulatedBattery {
 
         RoboRioSim.setVInVoltage(batteryVoltageVolts);
 
-        SmartDashboard.putNumber("BatterySim/TotalCurrent (Amps)", totalCurrentAmps);
-        SmartDashboard.putNumber("BatterySim/BatteryVoltage (Volts)", batteryVoltageVolts);
+        totalCurrentPublisher.set(totalCurrentAmps);
+        batteryVoltagePublisher.set(batteryVoltageVolts);
     }
 
     /**

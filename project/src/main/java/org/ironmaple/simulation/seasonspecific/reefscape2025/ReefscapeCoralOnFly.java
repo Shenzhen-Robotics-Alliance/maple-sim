@@ -61,7 +61,7 @@ public class ReefscapeCoralOnFly extends GamePieceProjectile {
                         pos,
                         new Translation2d(),
                         new ChassisVelocities(3.0, 0, 0).toFieldRelative(rot),
-                        rot.rotateBy(Rotation2d.kCCW_90deg),
+                        rot.rotateBy(Rotation2d.CCW_90DEG),
                         Centimeters.of(98),
                         MetersPerSecond.of(0),
                         Degrees.of(0))
@@ -92,7 +92,7 @@ public class ReefscapeCoralOnFly extends GamePieceProjectile {
                         getPositionAtTime(super.launchedTimer.get()).getZ()),
                 new Pose2d(
                         getPositionAtTime(launchedTimer.get()).toTranslation2d(),
-                        initialLaunchingVelocity.getAngle()),
+                        initialLaunchingVelocity.getAngle().orElse(Rotation2d.ZERO)),
                 super.initialLaunchingVelocity));
     }
 }

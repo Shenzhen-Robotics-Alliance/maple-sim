@@ -324,7 +324,7 @@ public class SelfControlledSwerveDriveSimulation {
      * <p>The setpoints are calculated using {@link SwerveDriveKinematics#toSwerveModuleStates(ChassisVelocities)} in the
      * most recent call to {@link #runChassisVelocities(ChassisVelocities, Translation2d, boolean, boolean)}.
      *
-     * <p>The setpoints are optimized using {@link SwerveModuleState#optimize(SwerveModuleState, Rotation2d)}.
+     * <p>The setpoints are optimized using {@link SwerveModuleVelocity#optimize(Rotation2d)}.
      *
      * <p>The order of the swerve modules is: front-left, front-right, back-left, back-right.
      *
@@ -491,7 +491,7 @@ public class SelfControlledSwerveDriveSimulation {
          *
          * <h2>Runs the control loops for swerve states on a simulated module.</h2>
          *
-         * <p>Optimizes the set-point using {@link SwerveModuleState#optimize(SwerveModuleState, Rotation2d)}.
+         * <p>Optimizes the set-point using {@link SwerveModuleVelocity#optimize(Rotation2d)}.
          *
          * <p>Executes a closed-loop control on the swerve module.
          *
@@ -499,7 +499,7 @@ public class SelfControlledSwerveDriveSimulation {
          * @return the optimized swerve module state after control execution
          */
         public SwerveModuleVelocity optimizeAndRunModuleState(SwerveModuleVelocity setPoint) {
-            setPoint.optimize(instance.getSteerAbsoluteFacing());
+            setPoint = setPoint.optimize(instance.getSteerAbsoluteFacing());
             runModuleState(setPoint);
             return setPoint;
         }

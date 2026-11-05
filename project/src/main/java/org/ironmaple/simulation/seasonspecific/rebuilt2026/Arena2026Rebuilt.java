@@ -1,25 +1,26 @@
 package org.ironmaple.simulation.seasonspecific.rebuilt2026;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.MetersPerSecond;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.List;
 import org.dyn4j.dynamics.Settings;
 import org.ironmaple.simulation.SimulatedArena;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.networktables.BooleanPublisher;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.LinearVelocity;
 
 public class Arena2026Rebuilt extends SimulatedArena {
 
@@ -241,37 +242,37 @@ public class Arena2026Rebuilt extends SimulatedArena {
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
-     * @param chassisSpeedsFieldRelative the field-relative velocity of the robot chassis when launching the game piece,
-     *     influencing the initial velocity of the game piece
+     * @param chassisVelocitiesFieldRelative the field-relative velocity of the robot chassis when launching the game
+     *     piece, influencing the initial velocity of the game piece
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
-     * @param launchingSpeed the speed at which the game piece is launched
+     * @param launchingVelocity the velocity at which the game piece is launched
      * @param shooterAngle the pitch angle of the shooter when launching
      * @param xVariance The max amount of variance that should be added to the x coordinate of the game piece.
      * @param yVariance The max amount of variance that should be added to the y coordinate of the game piece.
      * @param yawVariance The max amount of variance that should be added to the yaw of the game piece.
-     * @param speedVariance The max amount of variance that should be added to the speed of the game piece.
+     * @param velocityVariance The max amount of variance that should be added to the velocity of the game piece.
      * @param pitchVariance The max amount of variance that should be added to the pitch of the game piece.
      */
     public void addPieceWithVariance(
             Translation2d piecePose,
             Rotation2d yaw,
             Distance height,
-            LinearVelocity speed,
+            LinearVelocity velocity,
             Angle pitch,
             double xVariance,
             double yVariance,
             double yawVariance,
-            double speedVariance,
+            double velocityVariance,
             double pitchVariance) {
         addGamePieceProjectile(new RebuiltFuelOnFly(
                 piecePose.plus(new Translation2d(randomInRange(xVariance), randomInRange(yVariance))),
                 new Translation2d(),
-                new ChassisSpeeds(),
+                new ChassisVelocities(),
                 yaw.plus(Rotation2d.fromDegrees(randomInRange(yawVariance))),
                 height,
-                speed.plus(MetersPerSecond.of(randomInRange(speedVariance))),
+                velocity.plus(MetersPerSecond.of(randomInRange(velocityVariance))),
                 Degrees.of(pitch.in(Degrees) + randomInRange(pitchVariance))));
     }
 
@@ -287,8 +288,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
             }
         }
 
-        boolean isOnBlue = !DriverStation.getAlliance().isEmpty()
-                && DriverStation.getAlliance().get() == Alliance.Blue;
+        boolean isOnBlue =
+                !MatchState.getAlliance().isEmpty() && MatchState.getAlliance().get() == Alliance.BLUE;
 
         if (isOnBlue || !isInEfficiencyMode) {
             for (int x = 0; x < 4; x++) {
@@ -326,7 +327,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
 
     @Override
     public void simulationSubTick(int tickNum) {
-        if (shouldClock && !DriverStation.isAutonomous() && DriverStation.isEnabled()) {
+        if (shouldClock && !RobotState.isAutonomous() && RobotState.isEnabled()) {
 
             if (matchClock.get() >= nextClockSwapTime) {
                 nextClockSwapTime = matchClock.get() + 25;
@@ -357,9 +358,9 @@ public class Arena2026Rebuilt extends SimulatedArena {
      */
     public boolean isActive(boolean isBlue) {
         if (isBlue) {
-            return blueIsOnClock || DriverStation.isAutonomous() || !shouldClock;
+            return blueIsOnClock || RobotState.isAutonomous() || !shouldClock;
         } else {
-            return !blueIsOnClock || DriverStation.isAutonomous() || !shouldClock;
+            return !blueIsOnClock || RobotState.isAutonomous() || !shouldClock;
         }
     }
 
@@ -412,7 +413,7 @@ public class Arena2026Rebuilt extends SimulatedArena {
     /**
      *
      *
-     * <h2>Throws a game piece from the outpost at the specified angle and speed.</h2>
+     * <h2>Throws a game piece from the outpost at the specified angle and velocity.</h2>
      *
      * <p>This method comes with variance built in (to simulate human inconsistency). Additionally, if the hub does not
      * have game pieces stored, this method will not do anything. If you would like to have the human player throw at
@@ -421,10 +422,10 @@ public class Arena2026Rebuilt extends SimulatedArena {
      * @param isBlue whether to throw from the blue or red OUTPOST.
      * @param throwYaw The yaw at which to throw the ball.
      * @param throwPitch The pitch at which to throw the ball.
-     * @param speed The speed at which to throw the ball.
+     * @param velocity The velocity at which to throw the ball.
      */
-    public void outpostThrow(boolean isBlue, Rotation2d throwYaw, Angle throwPitch, LinearVelocity speed) {
-        (isBlue ? blueOutpost : redOutpost).throwFuel(throwYaw, throwPitch, speed);
+    public void outpostThrow(boolean isBlue, Rotation2d throwYaw, Angle throwPitch, LinearVelocity velocity) {
+        (isBlue ? blueOutpost : redOutpost).throwFuel(throwYaw, throwPitch, velocity);
     }
 
     /**

@@ -1,15 +1,14 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
 
 /**
  *
@@ -83,18 +82,18 @@ public abstract class AbstractDriveTrainSimulation extends Body {
     /**
      *
      *
-     * <h2>Sets the Robot's Speeds to the Given Chassis Speeds.</h2>
+     * <h2>Sets the Robot's Velocities to the Given Chassis Velocities.</h2>
      *
-     * <p>This method sets the robot's current velocity to the specified chassis speeds.
+     * <p>This method sets the robot's current velocity to the specified chassis velocities.
      *
-     * <p>The robot does not accelerate smoothly to these speeds; instead, it jumps to the velocity
+     * <p>The robot does not accelerate smoothly to these velocities; instead, it jumps to the velocity
      * <strong>Instantaneously</strong>.
      *
-     * @param givenSpeeds the desired chassis speeds, represented as a {@link ChassisSpeeds} object
+     * @param givenVelocities the desired chassis velocities, represented as a {@link ChassisVelocities} object
      */
-    public void setRobotSpeeds(ChassisSpeeds givenSpeeds) {
-        super.setLinearVelocity(GeometryConvertor.toDyn4jLinearVelocity(givenSpeeds));
-        super.setAngularVelocity(givenSpeeds.omegaRadiansPerSecond);
+    public void setRobotVelocities(ChassisVelocities givenVelocities) {
+        super.setLinearVelocity(GeometryConvertor.toDyn4jLinearVelocity(givenVelocities));
+        super.setAngularVelocity(givenVelocities.omega);
     }
 
     /**
@@ -121,8 +120,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * vision simulations</a>.
      *
      * <p><strong>Note:</strong> Do not use this method to simulate odometry! For a more realistic odometry simulation,
-     * use a {@link SwerveDriveSimulation} together with a
-     * {@link edu.wpi.first.math.estimator.SwerveDrivePoseEstimator}.
+     * use a {@link SwerveDriveSimulation} together with a {@link org.wpilib.math.estimator.SwerveDrivePoseEstimator}.
      *
      * @return a {@link Pose2d} object yielding the current world pose of the robot in the simulation
      */
@@ -133,37 +131,36 @@ public abstract class AbstractDriveTrainSimulation extends Body {
     /**
      *
      *
-     * <h2>Gets the Actual Robot-Relative Chassis Speeds from the Simulation.</h2>
+     * <h2>Gets the Actual Robot-Relative Chassis Velocities from the Simulation.</h2>
      *
-     * <p>This method returns the actual chassis speeds of the drivetrain in the simulation, relative to the robot.
+     * <p>This method returns the actual chassis velocities of the drivetrain in the simulation, relative to the robot.
      *
-     * <p>To simulate the chassis speeds calculated by encoders, use a {@link SwerveDriveSimulation} together with
-     * {@link edu.wpi.first.math.kinematics.SwerveDriveKinematics#toChassisSpeeds(SwerveModuleState...)} for a more
+     * <p>To simulate the chassis velocities calculated by encoders, use a {@link SwerveDriveSimulation} together with
+     * {@link org.wpilib.math.kinematics.SwerveDriveKinematics#toChassisVelocities(SwerveModuleVelocity...)} for a more
      * realistic simulation.
      *
-     * @return the actual chassis speeds in the simulation world, <strong>Robot-Relative</strong>
+     * @return the actual chassis velocities in the simulation world, <strong>Robot-Relative</strong>
      */
-    public ChassisSpeeds getDriveTrainSimulatedChassisSpeedsRobotRelative() {
-        ChassisSpeeds speeds = getDriveTrainSimulatedChassisSpeedsFieldRelative();
-        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds, getSimulatedDriveTrainPose().getRotation());
-        return speeds;
+    public ChassisVelocities getDriveTrainSimulatedChassisVelocitiesRobotRelative() {
+        ChassisVelocities velocities = getDriveTrainSimulatedChassisVelocitiesFieldRelative();
+        velocities = velocities.toRobotRelative(getSimulatedDriveTrainPose().getRotation());
+        return velocities;
     }
 
     /**
      *
      *
-     * <h2>Gets the Actual Field-Relative Chassis Speeds from the Simulation.</h2>
+     * <h2>Gets the Actual Field-Relative Chassis Velocities from the Simulation.</h2>
      *
-     * <p>This method returns the actual chassis speeds of the drivetrain in the simulation, relative to the robot.
+     * <p>This method returns the actual chassis velocities of the drivetrain in the simulation, relative to the robot.
      *
-     * <p>To simulate the chassis speeds calculated by encoders, use a {@link SwerveDriveSimulation} together with
-     * {@link edu.wpi.first.math.kinematics.SwerveDriveKinematics#toChassisSpeeds(SwerveModuleState...)} for a more
+     * <p>To simulate the chassis velocities calculated by encoders, use a {@link SwerveDriveSimulation} together with
+     * {@link org.wpilib.math.kinematics.SwerveDriveKinematics#toChassisVelocities(SwerveModuleState...)} for a more
      * realistic simulation.
      *
-     * @return the actual chassis speeds in the simulation world, <strong>Field-Relative</strong>
+     * @return the actual chassis velocities in the simulation world, <strong>Field-Relative</strong>
      */
-    public ChassisSpeeds getDriveTrainSimulatedChassisSpeedsFieldRelative() {
-        return GeometryConvertor.toWpilibChassisSpeeds(getLinearVelocity(), getAngularVelocity());
+    public ChassisVelocities getDriveTrainSimulatedChassisVelocitiesFieldRelative() {
+        return GeometryConvertor.toWpilibChassisVelocities(getLinearVelocity(), getAngularVelocity());
     }
 }

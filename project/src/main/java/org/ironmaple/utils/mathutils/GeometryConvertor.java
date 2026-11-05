@@ -1,12 +1,12 @@
 package org.ironmaple.utils.mathutils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import org.dyn4j.geometry.Rotation;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
 
 /** utils to convert between WPILIB and dyn4j geometry classes */
 public class GeometryConvertor {
@@ -39,15 +39,16 @@ public class GeometryConvertor {
                 toWpilibRotation2d(dyn4jTransform.getRotation()));
     }
 
-    public static Vector2 toDyn4jLinearVelocity(ChassisSpeeds wpilibChassisSpeeds) {
-        return new Vector2(wpilibChassisSpeeds.vxMetersPerSecond, wpilibChassisSpeeds.vyMetersPerSecond);
+    public static Vector2 toDyn4jLinearVelocity(ChassisVelocities wpilibChassisVelocities) {
+        return new Vector2(wpilibChassisVelocities.vx, wpilibChassisVelocities.vy);
     }
 
-    public static ChassisSpeeds toWpilibChassisSpeeds(Vector2 dyn4jLinearVelocity, double angularVelocityRadPerSec) {
-        return new ChassisSpeeds(dyn4jLinearVelocity.x, dyn4jLinearVelocity.y, angularVelocityRadPerSec);
+    public static ChassisVelocities toWpilibChassisVelocities(
+            Vector2 dyn4jLinearVelocity, double angularVelocityRadPerSec) {
+        return new ChassisVelocities(dyn4jLinearVelocity.x, dyn4jLinearVelocity.y, angularVelocityRadPerSec);
     }
 
-    public static Translation2d getChassisSpeedsTranslationalComponent(ChassisSpeeds chassisSpeeds) {
-        return new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+    public static Translation2d getChassisVelocitiesTranslationalComponent(ChassisVelocities chassisVelocities) {
+        return new Translation2d(chassisVelocities.vx, chassisVelocities.vy);
     }
 }

@@ -1,12 +1,12 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
-import static edu.wpi.first.units.Units.Centimeters;
+import static org.wpilib.units.Units.Centimeters;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
+import org.wpilib.math.geometry.*;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
 
 /**
  *
@@ -44,7 +44,7 @@ public class CrescendoSpeaker extends Goal {
 
         crescendoArena = arena;
 
-        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3dMPS().getZ() > 0);
+        withCustomVelocityValidator(gamePiece -> gamePiece.getVelocity3d().getZ() > 0);
 
         StructPublisher<Pose3d> speakerPosePublisher = NetworkTableInstance.getDefault()
                 .getStructTopic(

@@ -1,18 +1,18 @@
 package org.ironmaple.simulation.drivesims;
 
-import static edu.wpi.first.units.Units.*;
+import static org.wpilib.units.Units.*;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.measure.*;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.motorsims.*;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.kinematics.SwerveDriveOdometry;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.units.measure.*;
 
 /**
  *
@@ -63,7 +63,7 @@ public class SwerveModuleSimulation {
     private Voltage driveMotorAppliedVoltage = Volts.zero();
     private Current driveMotorStatorCurrent = Amps.zero();
     private Angle driveWheelFinalPosition = Radians.zero();
-    private AngularVelocity driveWheelFinalSpeed = RadiansPerSecond.zero();
+    private AngularVelocity driveWheelFinalVelocity = RadiansPerSecond.zero();
 
     private SimulatedMotorController driveMotorController;
 
@@ -196,20 +196,22 @@ public class SwerveModuleSimulation {
         final boolean skidding = Math.abs(propellingForceNewtons) > grippingForceNewtons;
         if (skidding) propellingForceNewtons = Math.copySign(grippingForceNewtons, propellingForceNewtons);
 
-        final double floorVelocityProjectionOnWheelDirectionMPS = moduleCurrentGroundVelocity.getMagnitude()
+        final double floorVelocityProjectionOnWheelDirection = moduleCurrentGroundVelocity.getMagnitude()
                 * Math.cos(moduleCurrentGroundVelocity.getAngleBetween(new Vector2(moduleWorldFacing.getRadians())));
 
         // if the chassis is tightly gripped on floor, the floor velocity is projected to the wheel
-        this.driveWheelFinalSpeed =
-                RadiansPerSecond.of(floorVelocityProjectionOnWheelDirectionMPS / config.WHEEL_RADIUS.in(Meters));
+        this.driveWheelFinalVelocity =
+                RadiansPerSecond.of(floorVelocityProjectionOnWheelDirection / config.WHEEL_RADIUS.in(Meters));
 
         // if the module is skidding
         if (skidding) {
-            final AngularVelocity skiddingEquilibriumWheelSpeed = config.driveMotorConfigs.calculateMechanismVelocity(
-                    config.driveMotorConfigs.calculateCurrent(
-                            NewtonMeters.of(propellingForceNewtons * config.WHEEL_RADIUS.in(Meters))),
-                    driveMotorAppliedVoltage);
-            this.driveWheelFinalSpeed = driveWheelFinalSpeed.times(0.5).plus(skiddingEquilibriumWheelSpeed.times(0.5));
+            final AngularVelocity skiddingEquilibriumWheelVelocity =
+                    config.driveMotorConfigs.calculateMechanismVelocity(
+                            config.driveMotorConfigs.calculateCurrent(
+                                    NewtonMeters.of(propellingForceNewtons * config.WHEEL_RADIUS.in(Meters))),
+                            driveMotorAppliedVoltage);
+            this.driveWheelFinalVelocity =
+                    driveWheelFinalVelocity.times(0.5).plus(skiddingEquilibriumWheelVelocity.times(0.5));
         }
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());
@@ -225,15 +227,15 @@ public class SwerveModuleSimulation {
     private double getDriveWheelTorque() {
         driveMotorAppliedVoltage = driveMotorController.updateControlSignal(
                 driveWheelFinalPosition,
-                driveWheelFinalSpeed,
+                driveWheelFinalVelocity,
                 getDriveEncoderUnGearedPosition(),
-                getDriveEncoderUnGearedSpeed());
+                getDriveEncoderUnGearedVelocity());
 
         driveMotorAppliedVoltage = SimulatedBattery.clamp(driveMotorAppliedVoltage);
 
         /* calculate the stator current */
         driveMotorStatorCurrent =
-                config.driveMotorConfigs.calculateCurrent(driveWheelFinalSpeed, driveMotorAppliedVoltage);
+                config.driveMotorConfigs.calculateCurrent(driveWheelFinalVelocity, driveMotorAppliedVoltage);
 
         /* calculate the torque generated */
         Torque driveWheelTorque = config.driveMotorConfigs.calculateTorque(driveMotorStatorCurrent);
@@ -247,9 +249,9 @@ public class SwerveModuleSimulation {
     }
 
     /** @return the current module state of this simulation module */
-    public SwerveModuleState getCurrentState() {
-        return new SwerveModuleState(
-                MetersPerSecond.of(getDriveWheelFinalSpeed().in(RadiansPerSecond) * config.WHEEL_RADIUS.in(Meters)),
+    public SwerveModuleVelocity getCurrentState() {
+        return new SwerveModuleVelocity(
+                MetersPerSecond.of(getDriveWheelFinalVelocity().in(RadiansPerSecond) * config.WHEEL_RADIUS.in(Meters)),
                 getSteerAbsoluteFacing());
     }
 
@@ -263,8 +265,8 @@ public class SwerveModuleSimulation {
      *
      * @return the free spinning module state
      */
-    protected SwerveModuleState getFreeSpinState() {
-        return new SwerveModuleState(
+    protected SwerveModuleVelocity getFreeSpinState() {
+        return new SwerveModuleVelocity(
                 config.driveMotorConfigs
                                 .calculateMechanismVelocity(
                                         config.driveMotorConfigs.calculateCurrent(config.driveMotorConfigs.friction),
@@ -284,7 +286,7 @@ public class SwerveModuleSimulation {
     private void updateEncoderCaches() {
         /* Increment of drive wheel position */
         this.driveWheelFinalPosition =
-                this.driveWheelFinalPosition.plus(this.driveWheelFinalSpeed.times(SimulatedArena.getSimulationDt()));
+                this.driveWheelFinalPosition.plus(this.driveWheelFinalVelocity.times(SimulatedArena.getSimulationDt()));
 
         /* cache sensor readings to queue for high-frequency odometry */
         this.steerAbsolutePositionCache.poll();
@@ -393,23 +395,23 @@ public class SwerveModuleSimulation {
     /**
      *
      *
-     * <h2>Obtains the Speed of the Drive Encoder.</h2>
+     * <h2>Obtains the Velocity of the Drive Encoder.</h2>
      *
-     * @return the un-geared speed of the drive encoder
+     * @return the un-geared velocity of the drive encoder
      */
-    public AngularVelocity getDriveEncoderUnGearedSpeed() {
-        return getDriveWheelFinalSpeed().times(config.DRIVE_GEAR_RATIO);
+    public AngularVelocity getDriveEncoderUnGearedVelocity() {
+        return getDriveWheelFinalVelocity().times(config.DRIVE_GEAR_RATIO);
     }
 
     /**
      *
      *
-     * <h2>Obtains the Final Speed of the Wheel.</h2>
+     * <h2>Obtains the Final Velocity of the Wheel.</h2>
      *
-     * @return the final speed of the drive wheel
+     * @return the final velocity of the drive wheel
      */
-    public AngularVelocity getDriveWheelFinalSpeed() {
-        return driveWheelFinalSpeed;
+    public AngularVelocity getDriveWheelFinalVelocity() {
+        return driveWheelFinalVelocity;
     }
 
     /**
@@ -430,13 +432,13 @@ public class SwerveModuleSimulation {
     /**
      *
      *
-     * <h2>Obtains the Speed of the Steer Relative Encoder (Geared).</h2>
+     * <h2>Obtains the Velocity of the Steer Relative Encoder (Geared).</h2>
      *
-     * @return the speed of the steer relative encoder
+     * @return the velocity of the steer relative encoder
      * @see MapleMotorSim#getEncoderVelocity()
      */
     public AngularVelocity getSteerRelativeEncoderVelocity() {
-        return getSteerAbsoluteEncoderSpeed().times(config.STEER_GEAR_RATIO);
+        return getSteerAbsoluteEncoderVelocity().times(config.STEER_GEAR_RATIO);
     }
 
     /**
@@ -469,7 +471,7 @@ public class SwerveModuleSimulation {
      *
      * @return the absolute angular velocity of the steer mechanism
      */
-    public AngularVelocity getSteerAbsoluteEncoderSpeed() {
+    public AngularVelocity getSteerAbsoluteEncoderVelocity() {
         return steerMotorSim.getVelocity();
     }
 

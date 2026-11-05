@@ -1,19 +1,20 @@
 package org.ironmaple.simulation.motorsims;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Volts;
+import static org.wpilib.units.Units.Amps;
+import static org.wpilib.units.Units.Volts;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.math.filter.LinearFilter;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.NetworkTable;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.simulation.BatterySim;
+import org.wpilib.simulation.RoboRioSim;
+import org.wpilib.units.measure.Current;
+import org.wpilib.units.measure.Voltage;
 
 /**
  *
@@ -34,6 +35,14 @@ public class SimulatedBattery {
 
     // The current battery voltage in volts.
     private static double batteryVoltageVolts = BATTERY_NOMINAL_VOLTAGE;
+
+    // WPILib 2027 removed SmartDashboard; publish to the same NetworkTables topics it used.
+    private static final NetworkTable batterySimTable =
+            NetworkTableInstance.getDefault().getTable("SmartDashboard/BatterySim");
+    private static final DoublePublisher totalCurrentPublisher =
+            batterySimTable.getDoubleTopic("TotalCurrent (Amps)").publish();
+    private static final DoublePublisher batteryVoltagePublisher =
+            batterySimTable.getDoubleTopic("BatteryVoltage (Volts)").publish();
 
     /**
      *
@@ -78,20 +87,20 @@ public class SimulatedBattery {
 
         if (Double.isNaN(batteryVoltageVolts)) {
             batteryVoltageVolts = 12.0;
-            DriverStation.reportError(
+            DriverStationErrors.reportError(
                     "[MapleSim] Internal Library Error: Calculated battery voltage is invalid"
                             + ", reverting to normal operation voltage...",
                     false);
         }
         if (batteryVoltageVolts < RoboRioSim.getBrownoutVoltage()) {
             batteryVoltageVolts = RoboRioSim.getBrownoutVoltage();
-            DriverStation.reportError("[MapleSim] BrownOut Detected, protecting battery voltage...", false);
+            DriverStationErrors.reportError("[MapleSim] BrownOut Detected, protecting battery voltage...", false);
         }
 
         RoboRioSim.setVInVoltage(batteryVoltageVolts);
 
-        SmartDashboard.putNumber("BatterySim/TotalCurrent (Amps)", totalCurrentAmps);
-        SmartDashboard.putNumber("BatterySim/BatteryVoltage (Volts)", batteryVoltageVolts);
+        totalCurrentPublisher.set(totalCurrentAmps);
+        batteryVoltagePublisher.set(batteryVoltageVolts);
     }
 
     /**
@@ -133,6 +142,6 @@ public class SimulatedBattery {
      * @return The clamped voltage as a {@link Voltage} object.
      */
     public static Voltage clamp(Voltage voltage) {
-        return Volts.of(MathUtil.clamp(voltage.in(Volts), -batteryVoltageVolts, batteryVoltageVolts));
+        return Volts.of(Math.clamp(voltage.in(Volts), -batteryVoltageVolts, batteryVoltageVolts));
     }
 }

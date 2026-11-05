@@ -1,18 +1,18 @@
 package org.ironmaple.simulation.seasonspecific.rebuilt2026;
 
-import static edu.wpi.first.units.Units.Centimeters;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static org.wpilib.units.Units.Centimeters;
+import static org.wpilib.units.Units.Degrees;
+import static org.wpilib.units.Units.Inches;
+import static org.wpilib.units.Units.Meters;
+import static org.wpilib.units.Units.MetersPerSecond;
 
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.LinearVelocity;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
+import org.wpilib.math.geometry.*;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.LinearVelocity;
 
 /**
  *
@@ -172,7 +172,7 @@ public class RebuiltOutpost extends Goal {
     /**
      *
      *
-     * <h2>Throws a game piece from the outpost at the specified angle and speed. </h2>
+     * <h2>Throws a game piece from the outpost at the specified angle and velocity. </h2>
      *
      * <p>This method comes with variance built in (to simulate human inconsistency). Additionally, if the outpost does
      * not have game pieces stored, this method will not do anything. If you would like to have the human player throw
@@ -181,14 +181,14 @@ public class RebuiltOutpost extends Goal {
      * @param throwYaw The yaw at which to throw the ball.
      * @param throwPitch The pitch at which to throw the ball.
      */
-    public void throwFuel(Rotation2d yaw, Angle pitch, LinearVelocity speed) {
+    public void throwFuel(Rotation2d yaw, Angle pitch, LinearVelocity velocity) {
         if (gamePieceCount > 0) {
             gamePieceCount--;
             arena.addPieceWithVariance(
                     isBlue ? blueLaunchPose.toTranslation2d() : redLaunchPose.toTranslation2d(),
                     yaw,
                     Meters.of(1.7),
-                    speed,
+                    velocity,
                     pitch,
                     0,
                     0,

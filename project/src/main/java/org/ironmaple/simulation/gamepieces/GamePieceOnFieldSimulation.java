@@ -1,16 +1,8 @@
 package org.ironmaple.simulation.gamepieces;
 
-import static edu.wpi.first.units.Units.Kilogram;
-import static edu.wpi.first.units.Units.Meters;
+import static org.wpilib.units.Units.Kilogram;
+import static org.wpilib.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Mass;
 import java.util.function.DoubleSupplier;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -19,6 +11,14 @@ import org.dyn4j.geometry.MassType;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation3d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.Mass;
 
 /**
  *
@@ -75,13 +75,10 @@ public class GamePieceOnFieldSimulation extends Body implements GamePiece {
      * @param info info about the game piece type
      * @param zPositionSupplier a supplier that provides the current Z-height of the game piece
      * @param initialPose the initial position of the game piece on the field
-     * @param initialVelocityMPS the initial velocity of the game piece, in meters per second
+     * @param initialVelocity the initial velocity of the game piece, in meters per second
      */
     public GamePieceOnFieldSimulation(
-            GamePieceInfo info,
-            DoubleSupplier zPositionSupplier,
-            Pose2d initialPose,
-            Translation2d initialVelocityMPS) {
+            GamePieceInfo info, DoubleSupplier zPositionSupplier, Pose2d initialPose, Translation2d initialVelocity) {
         super();
         this.type = info.type;
         this.zPositionSupplier = zPositionSupplier;
@@ -100,7 +97,7 @@ public class GamePieceOnFieldSimulation extends Body implements GamePiece {
         super.setBullet(true);
 
         super.setTransform(GeometryConvertor.toDyn4jTransform(initialPose));
-        super.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocityMPS));
+        super.setLinearVelocity(GeometryConvertor.toDyn4jVector2(initialVelocity));
     }
 
     /**
@@ -108,11 +105,11 @@ public class GamePieceOnFieldSimulation extends Body implements GamePiece {
      *
      * <h2>Sets the world velocity of this game piece.</h2>
      *
-     * @param chassisSpeedsWorldFrame the speeds of the game piece
+     * @param chassisVelocitiesWorldFrame the velocities of the game piece
      */
-    public void setVelocity(ChassisSpeeds chassisSpeedsWorldFrame) {
-        super.setLinearVelocity(GeometryConvertor.toDyn4jLinearVelocity(chassisSpeedsWorldFrame));
-        super.setAngularVelocity(chassisSpeedsWorldFrame.omegaRadiansPerSecond);
+    public void setVelocity(ChassisVelocities chassisVelocitiesWorldFrame) {
+        super.setLinearVelocity(GeometryConvertor.toDyn4jLinearVelocity(chassisVelocitiesWorldFrame));
+        super.setAngularVelocity(chassisVelocitiesWorldFrame.omega);
     }
 
     /**
@@ -172,7 +169,7 @@ public class GamePieceOnFieldSimulation extends Body implements GamePiece {
     }
 
     @Override
-    public Translation3d getVelocity3dMPS() {
+    public Translation3d getVelocity3d() {
         return new Translation3d(GeometryConvertor.toWpilibTranslation2d(this.getLinearVelocity()));
     }
 

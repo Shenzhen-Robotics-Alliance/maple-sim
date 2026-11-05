@@ -1,8 +1,8 @@
 package org.ironmaple.utils.mathutils;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import java.util.Random;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
 
 public class MapleCommonMath {
     private static final Random random = new Random();
@@ -56,6 +56,8 @@ public class MapleCommonMath {
      */
     public static Rotation2d getAngle(Translation2d translation2d) {
         final double tooSmall = 1e-6;
-        return translation2d.getNorm() < tooSmall ? Rotation2d.fromDegrees(0) : translation2d.getAngle();
+        return translation2d.getNorm() < tooSmall
+                ? Rotation2d.fromDegrees(0)
+                : translation2d.getAngle().orElse(Rotation2d.ZERO);
     }
 }

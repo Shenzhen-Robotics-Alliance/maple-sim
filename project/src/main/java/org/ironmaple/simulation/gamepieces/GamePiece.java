@@ -1,7 +1,7 @@
 package org.ironmaple.simulation.gamepieces;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Translation3d;
 
 /**
  *
@@ -40,7 +40,7 @@ public interface GamePiece {
      *
      * @return The velocity of the game piece as a Translation3d.
      */
-    Translation3d getVelocity3dMPS();
+    Translation3d getVelocity3d();
 
     /**
      *

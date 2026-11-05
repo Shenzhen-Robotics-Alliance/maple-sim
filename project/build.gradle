@@ -4,13 +4,13 @@ plugins {
     id 'google-test'
     id("com.diffplug.spotless") version "7.0.0.BETA4"
     id "org.wpilib.WPILibRepositoriesPlugin" version "2027.0.0"
-    id 'org.wpilib.NativeUtils' version '2027.9.0'
+    id 'org.wpilib.NativeUtils' version '2027.14.3'
     id 'org.wpilib.GradleJni' version '2027.0.0'
     id 'org.wpilib.GradleVsCode' version '2027.0.0'
-    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-6"
+    id "org.wpilib.GradleRIO" version "2027.0.0-alpha-7"
 }
 
-ext.wpilibVersion = "2027.0.0-alpha-6"
+ext.wpilibVersion = "2027.0.0-alpha-7"
 
 repositories {
     mavenCentral()
@@ -45,13 +45,15 @@ dependencies {
     implementation "org.wpilib.wpiutil:wpiutil-java:$wpilibVersion"
     implementation "org.wpilib.wpimath:wpimath-java:$wpilibVersion"
     implementation "org.wpilib.wpiunits:wpiunits-java:$wpilibVersion"
-    implementation "org.wpilib.wpilibNewCommands:wpilibNewCommands-java:$wpilibVersion"
+    implementation "org.wpilib.commandsv2:commandsv2-java:$wpilibVersion"
     implementation "org.wpilib.hal:hal-java:$wpilibVersion"
+    implementation "org.wpilib.telemetry:telemetry-java:$wpilibVersion"
+    implementation "org.wpilib.tunables:tunables-java:$wpilibVersion"
     implementation "org.ejml:ejml-simple:0.44.0"
     implementation "com.fasterxml.jackson.core:jackson-annotations:2.19.2"
     implementation "com.fasterxml.jackson.core:jackson-core:2.19.2"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.19.2"
-    implementation 'org.wpilib.thirdparty.frc2025.opencv:opencv-java:4.10.0-2'
+    implementation 'org.wpilib.thirdparty.opencv:opencv-java:2027-4.13.0-3'
 }
 
 // Set up exports properly
@@ -79,7 +81,7 @@ spotless {
             exclude '**/build/**', '**/build-*/**'
         }
         toggleOffOn()
-        palantirJavaFormat('2.39.0').formatJavadoc(true)
+        palantirJavaFormat('2.71.0').formatJavadoc(true)
         removeUnusedImports()
         trimTrailingWhitespace()
         endWithNewline()

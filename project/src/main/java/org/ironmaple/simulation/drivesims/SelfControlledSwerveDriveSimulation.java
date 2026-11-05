@@ -2,23 +2,23 @@ package org.ironmaple.simulation.drivesims;
 
 import static org.wpilib.units.Units.*;
 
-import org.wpilib.math.linalg.Matrix;
-import org.wpilib.math.linalg.VecBuilder;
+import java.util.Arrays;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
+import org.ironmaple.simulation.motorsims.SimulatedMotorController;
+import org.ironmaple.utils.mathutils.SwerveVelocityProjection;
 import org.wpilib.math.controller.PIDController;
 import org.wpilib.math.estimator.SwerveDrivePoseEstimator;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.kinematics.*;
+import org.wpilib.math.linalg.Matrix;
+import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.numbers.N1;
 import org.wpilib.math.numbers.N3;
-import org.wpilib.units.measure.*;
 import org.wpilib.system.Timer;
-import java.util.Arrays;
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
-import org.ironmaple.simulation.motorsims.SimulatedMotorController;
-import org.ironmaple.utils.mathutils.SwerveVelocityProjection;
+import org.wpilib.units.measure.*;
 
 /**
  *
@@ -267,8 +267,8 @@ public class SelfControlledSwerveDriveSimulation {
      *     corner of the robot and provide a chassis velocity that has only a dtheta component, the robot will rotate
      *     around that corner.
      * @param fieldCentricDrive Whether to execute field-centric drive with the provided velocity.
-     * @param discretizeVelocities Whether to apply {@link ChassisVelocities#discretize(ChassisVelocities, double)} to the provided
-     *     velocity.
+     * @param discretizeVelocities Whether to apply {@link ChassisVelocities#discretize(ChassisVelocities, double)} to
+     *     the provided velocity.
      */
     public void runChassisVelocities(
             ChassisVelocities chassisVelocities,
@@ -276,14 +276,15 @@ public class SelfControlledSwerveDriveSimulation {
             boolean fieldCentricDrive,
             boolean discretizeVelocities) {
         if (fieldCentricDrive) {
-            chassisVelocities = chassisVelocities.toRobotRelative(
-                     getOdometryEstimatedPose().getRotation());
+            chassisVelocities =
+                    chassisVelocities.toRobotRelative(getOdometryEstimatedPose().getRotation());
         }
         if (discretizeVelocities) {
             chassisVelocities = chassisVelocities.discretize(
                     SimulatedArena.getSimulationDt().in(Seconds) * SimulatedArena.getSimulationSubTicksIn1Period());
         }
-        final SwerveModuleVelocity[] setPoints = kinematics.toSwerveModuleVelocities(chassisVelocities, centerOfRotationMeters);
+        final SwerveModuleVelocity[] setPoints =
+                kinematics.toSwerveModuleVelocities(chassisVelocities, centerOfRotationMeters);
         runSwerveVelocities(setPoints);
     }
 
@@ -321,8 +322,8 @@ public class SelfControlledSwerveDriveSimulation {
      *
      * <h2>Obtain the optimized SETPOINTS of the swerve.</h2>
      *
-     * <p>The setpoints are calculated using {@link SwerveDriveKinematics#toSwerveModuleStates(ChassisVelocities)} in the
-     * most recent call to {@link #runChassisVelocities(ChassisVelocities, Translation2d, boolean, boolean)}.
+     * <p>The setpoints are calculated using {@link SwerveDriveKinematics#toSwerveModuleStates(ChassisVelocities)} in
+     * the most recent call to {@link #runChassisVelocities(ChassisVelocities, Translation2d, boolean, boolean)}.
      *
      * <p>The setpoints are optimized using {@link SwerveModuleVelocity#optimize(Rotation2d)}.
      *
@@ -346,8 +347,7 @@ public class SelfControlledSwerveDriveSimulation {
      */
     public ChassisVelocities getMeasuredVelocitiesFieldRelative(boolean useGyroForAngularVelocity) {
         ChassisVelocities velocities = getMeasuredVelocitiesRobotRelative(useGyroForAngularVelocity);
-        velocities = velocities.toFieldRelative(
-                 getOdometryEstimatedPose().getRotation());
+        velocities = velocities.toFieldRelative(getOdometryEstimatedPose().getRotation());
         return velocities;
     }
 
@@ -506,7 +506,8 @@ public class SelfControlledSwerveDriveSimulation {
 
         public void runModuleState(SwerveModuleVelocity setPoint) {
             final double
-                    cosProjectedVelocityMPS = SwerveVelocityProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
+                    cosProjectedVelocityMPS =
+                            SwerveVelocityProjection.project(setPoint, instance.getSteerAbsoluteFacing()),
                     driveWheelVelocitySetPointRadPerSec =
                             cosProjectedVelocityMPS / instance.config.WHEEL_RADIUS.in(Meters);
 

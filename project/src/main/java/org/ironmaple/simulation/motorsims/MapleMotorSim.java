@@ -9,8 +9,8 @@ import org.wpilib.units.measure.*;
  *
  * <h1>{@link org.wpilib.wpilibj.simulation.DCMotorSim} with a bit of extra spice.</h1>
  *
- * <p>This class extends the functionality of the original {@link org.wpilib.wpilibj.simulation.DCMotorSim} and
- * models the following aspects in addition:
+ * <p>This class extends the functionality of the original {@link org.wpilib.wpilibj.simulation.DCMotorSim} and models
+ * the following aspects in addition:
  *
  * <ul>
  *   <li>Motor Controller Closed Loops.

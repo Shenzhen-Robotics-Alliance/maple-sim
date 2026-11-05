@@ -2,14 +2,13 @@ package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
 import static org.wpilib.units.Units.Centimeters;
 
+import java.util.*;
+import org.ironmaple.simulation.Goal;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.math.geometry.*;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.StructPublisher;
 import org.wpilib.units.Units;
-import org.wpilib.driverstation.RobotState;
-
-import java.util.*;
-import org.ironmaple.simulation.Goal;
 
 /**
  *

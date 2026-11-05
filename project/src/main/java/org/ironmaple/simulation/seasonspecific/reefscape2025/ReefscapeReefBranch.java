@@ -3,6 +3,12 @@ package org.ironmaple.simulation.seasonspecific.reefscape2025;
 import static org.wpilib.units.Units.Centimeters;
 import static org.wpilib.units.Units.Degrees;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.ironmaple.simulation.Goal;
+import org.ironmaple.utils.FieldMirroringUtils;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Rotation3d;
@@ -10,13 +16,6 @@ import org.wpilib.math.geometry.Transform3d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.units.measure.Angle;
-import org.wpilib.driverstation.RobotState;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import org.ironmaple.simulation.Goal;
-import org.ironmaple.utils.FieldMirroringUtils;
 
 /**
  *

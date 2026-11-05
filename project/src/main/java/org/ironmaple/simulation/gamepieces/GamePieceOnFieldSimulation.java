@@ -3,14 +3,6 @@ package org.ironmaple.simulation.gamepieces;
 import static org.wpilib.units.Units.Kilogram;
 import static org.wpilib.units.Units.Meters;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.math.geometry.Rotation3d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.geometry.Translation3d;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.Mass;
 import java.util.function.DoubleSupplier;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -19,6 +11,14 @@ import org.dyn4j.geometry.MassType;
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation3d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.geometry.Translation3d;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.Mass;
 
 /**
  *
@@ -78,10 +78,7 @@ public class GamePieceOnFieldSimulation extends Body implements GamePiece {
      * @param initialVelocity the initial velocity of the game piece, in meters per second
      */
     public GamePieceOnFieldSimulation(
-            GamePieceInfo info,
-            DoubleSupplier zPositionSupplier,
-            Pose2d initialPose,
-            Translation2d initialVelocity) {
+            GamePieceInfo info, DoubleSupplier zPositionSupplier, Pose2d initialPose, Translation2d initialVelocity) {
         super();
         this.type = info.type;
         this.zPositionSupplier = zPositionSupplier;

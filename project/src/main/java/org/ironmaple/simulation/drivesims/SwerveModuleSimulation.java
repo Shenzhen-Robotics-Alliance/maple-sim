@@ -2,17 +2,17 @@ package org.ironmaple.simulation.drivesims;
 
 import static org.wpilib.units.Units.*;
 
-import org.wpilib.math.util.MathUtil;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.kinematics.SwerveDriveOdometry;
-import org.wpilib.math.kinematics.SwerveModuleVelocity;
-import org.wpilib.units.measure.*;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.dyn4j.geometry.Vector2;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.motorsims.*;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.kinematics.SwerveDriveOdometry;
+import org.wpilib.math.kinematics.SwerveModuleVelocity;
+import org.wpilib.math.util.MathUtil;
+import org.wpilib.units.measure.*;
 
 /**
  *
@@ -205,11 +205,13 @@ public class SwerveModuleSimulation {
 
         // if the module is skidding
         if (skidding) {
-            final AngularVelocity skiddingEquilibriumWheelVelocity = config.driveMotorConfigs.calculateMechanismVelocity(
-                    config.driveMotorConfigs.calculateCurrent(
-                            NewtonMeters.of(propellingForceNewtons * config.WHEEL_RADIUS.in(Meters))),
-                    driveMotorAppliedVoltage);
-            this.driveWheelFinalVelocity = driveWheelFinalVelocity.times(0.5).plus(skiddingEquilibriumWheelVelocity.times(0.5));
+            final AngularVelocity skiddingEquilibriumWheelVelocity =
+                    config.driveMotorConfigs.calculateMechanismVelocity(
+                            config.driveMotorConfigs.calculateCurrent(
+                                    NewtonMeters.of(propellingForceNewtons * config.WHEEL_RADIUS.in(Meters))),
+                            driveMotorAppliedVoltage);
+            this.driveWheelFinalVelocity =
+                    driveWheelFinalVelocity.times(0.5).plus(skiddingEquilibriumWheelVelocity.times(0.5));
         }
 
         return Vector2.create(propellingForceNewtons, moduleWorldFacing.getRadians());

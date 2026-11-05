@@ -3,16 +3,16 @@ package org.ironmaple.simulation.drivesims.configs;
 import static org.wpilib.units.Units.Kilograms;
 import static org.wpilib.units.Units.Meters;
 
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.math.system.DCMotor;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.Mass;
 import java.util.Arrays;
 import java.util.OptionalDouble;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.GyroSimulation;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.math.system.DCMotor;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.Mass;
 
 /**
  *

@@ -1,12 +1,12 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
+import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
-import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 
 /**
  *

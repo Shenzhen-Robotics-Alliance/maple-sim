@@ -2,13 +2,13 @@ package org.ironmaple.simulation.drivesims;
 
 import static org.wpilib.units.Units.Meters;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.kinematics.ChassisVelocities;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.geometry.Geometry;
 import org.dyn4j.geometry.MassType;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.kinematics.ChassisVelocities;
 
 /**
  *
@@ -120,8 +120,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      * vision simulations</a>.
      *
      * <p><strong>Note:</strong> Do not use this method to simulate odometry! For a more realistic odometry simulation,
-     * use a {@link SwerveDriveSimulation} together with a
-     * {@link org.wpilib.math.estimator.SwerveDrivePoseEstimator}.
+     * use a {@link SwerveDriveSimulation} together with a {@link org.wpilib.math.estimator.SwerveDrivePoseEstimator}.
      *
      * @return a {@link Pose2d} object yielding the current world pose of the robot in the simulation
      */
@@ -144,8 +143,7 @@ public abstract class AbstractDriveTrainSimulation extends Body {
      */
     public ChassisVelocities getDriveTrainSimulatedChassisVelocitiesRobotRelative() {
         ChassisVelocities velocities = getDriveTrainSimulatedChassisVelocitiesFieldRelative();
-        velocities = velocities.toRobotRelative(
-                 getSimulatedDriveTrainPose().getRotation());
+        velocities = velocities.toRobotRelative(getSimulatedDriveTrainPose().getRotation());
         return velocities;
     }
 

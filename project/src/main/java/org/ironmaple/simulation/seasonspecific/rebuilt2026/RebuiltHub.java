@@ -4,13 +4,13 @@ import static org.wpilib.units.Units.Degrees;
 import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.MetersPerSecond;
 
-import org.wpilib.math.geometry.*;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.networktables.StructPublisher;
 import java.util.*;
 import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.ironmaple.utils.FieldMirroringUtils;
+import org.wpilib.math.geometry.*;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructPublisher;
 
 /**
  *

@@ -1,12 +1,12 @@
 package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
+import org.ironmaple.simulation.SimulatedArena;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.networktables.BooleanPublisher;
 import org.wpilib.units.Units;
-import org.wpilib.driverstation.RobotState;
-import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2024Crescendo extends SimulatedArena {
 

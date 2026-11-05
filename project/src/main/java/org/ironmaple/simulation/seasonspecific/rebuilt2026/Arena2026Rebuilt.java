@@ -5,6 +5,12 @@ import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.MetersPerSecond;
 
+import java.util.List;
+import org.dyn4j.dynamics.Settings;
+import org.ironmaple.simulation.SimulatedArena;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.MatchState;
+import org.wpilib.driverstation.RobotState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation2d;
@@ -15,13 +21,6 @@ import org.wpilib.networktables.DoublePublisher;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.driverstation.DriverStation;
-import org.wpilib.driverstation.MatchState;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.Alliance;
-import java.util.List;
-import org.dyn4j.dynamics.Settings;
-import org.ironmaple.simulation.SimulatedArena;
 
 public class Arena2026Rebuilt extends SimulatedArena {
 
@@ -243,8 +242,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
-     * @param chassisVelocitiesFieldRelative the field-relative velocity of the robot chassis when launching the game piece,
-     *     influencing the initial velocity of the game piece
+     * @param chassisVelocitiesFieldRelative the field-relative velocity of the robot chassis when launching the game
+     *     piece, influencing the initial velocity of the game piece
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
@@ -289,8 +288,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
             }
         }
 
-        boolean isOnBlue = !MatchState.getAlliance().isEmpty()
-                && MatchState.getAlliance().get() == Alliance.BLUE;
+        boolean isOnBlue =
+                !MatchState.getAlliance().isEmpty() && MatchState.getAlliance().get() == Alliance.BLUE;
 
         if (isOnBlue || !isInEfficiencyMode) {
             for (int x = 0; x < 4; x++) {

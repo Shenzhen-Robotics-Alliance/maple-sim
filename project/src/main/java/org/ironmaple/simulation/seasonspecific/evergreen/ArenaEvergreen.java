@@ -1,8 +1,8 @@
 package org.ironmaple.simulation.seasonspecific.evergreen;
 
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.driverstation.DriverStationErrors;
 import org.ironmaple.simulation.SimulatedArena;
+import org.wpilib.driverstation.DriverStationErrors;
+import org.wpilib.math.geometry.Translation2d;
 
 /**
  *

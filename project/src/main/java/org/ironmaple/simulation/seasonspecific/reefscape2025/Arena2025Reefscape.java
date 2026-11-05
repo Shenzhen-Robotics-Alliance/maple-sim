@@ -1,14 +1,14 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.math.geometry.Rotation2d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.driverstation.Alliance;
 import java.util.Arrays;
 import java.util.List;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.FieldMirroringUtils;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Rotation2d;
+import org.wpilib.math.geometry.Translation2d;
 
 /**
  *

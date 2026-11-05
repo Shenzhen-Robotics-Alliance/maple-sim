@@ -1,12 +1,12 @@
 package org.ironmaple.simulation.seasonspecific.reefscape2025;
 
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.networktables.StructArrayPublisher;
 import java.util.ArrayList;
 import java.util.List;
 import org.ironmaple.simulation.Goal;
 import org.ironmaple.simulation.SimulatedArena;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.networktables.StructArrayPublisher;
 
 /**
  *

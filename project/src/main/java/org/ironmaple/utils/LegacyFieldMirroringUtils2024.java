@@ -1,14 +1,13 @@
 package org.ironmaple.utils;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.MatchState;
 import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.driverstation.MatchState;
-
-import java.util.Optional;
-import java.util.function.Supplier;
 
 public class LegacyFieldMirroringUtils2024 {
     public static final double FIELD_WIDTH = 16.54;

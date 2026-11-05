@@ -15,7 +15,8 @@ import org.wpilib.units.measure.*;
  *
  * <ul>
  *   <li><strong>motor:</strong> The motor model used in the simulation (e.g., Falcon 500, NEO).
- *   <li><strong>gearing:</strong> The gear ratio between the motor and the load, affecting the output torque and velocity.
+ *   <li><strong>gearing:</strong> The gear ratio between the motor and the load, affecting the output torque and
+ *       velocity.
  *   <li><strong>loadMOI:</strong> The moment of inertia (MOI) of the load connected to the motor, which determines the
  *       resistance to changes in rotational velocity.
  *   <li><strong>friction:</strong> The torque friction characteristics applied to the motor's simulation, representing

@@ -2,6 +2,8 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
 import static org.ironmaple.simulation.seasonspecific.crescendo2024.CrescendoNoteOnField.*;
 
+import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
+import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 import org.wpilib.math.geometry.Rotation2d;
 import org.wpilib.math.geometry.Translation2d;
 import org.wpilib.math.geometry.Translation3d;
@@ -9,8 +11,6 @@ import org.wpilib.math.kinematics.ChassisVelocities;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
 import org.wpilib.units.measure.LinearVelocity;
-import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
-import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
 public class NoteOnFly extends GamePieceProjectile {
     public NoteOnFly(

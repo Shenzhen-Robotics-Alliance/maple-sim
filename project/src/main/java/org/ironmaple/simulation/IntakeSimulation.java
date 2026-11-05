@@ -2,7 +2,6 @@ package org.ironmaple.simulation;
 
 import static org.wpilib.units.Units.Meters;
 
-import org.wpilib.units.measure.Distance;
 import java.util.ArrayDeque;
 import java.util.Objects;
 import java.util.Queue;
@@ -21,6 +20,7 @@ import org.dyn4j.world.listener.ContactListener;
 import org.ironmaple.simulation.drivesims.AbstractDriveTrainSimulation;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
 import org.ironmaple.simulation.seasonspecific.reefscape2025.ReefscapeCoralAlgaeStack;
+import org.wpilib.units.measure.Distance;
 
 /**
  *
@@ -131,14 +131,15 @@ public class IntakeSimulation extends BodyFixture {
         final double distanceTransformed = lengthExtended / 2 - 0.01;
         intakeRectangle.translate(
                 switch (side) {
-                    case LEFT -> new Vector2(
-                            0, driveTrainSimulation.config.bumperWidthY.in(Meters) / 2 + distanceTransformed);
-                    case RIGHT -> new Vector2(
-                            0, -driveTrainSimulation.config.bumperWidthY.in(Meters) / 2 - distanceTransformed);
-                    case FRONT -> new Vector2(
-                            driveTrainSimulation.config.bumperLengthX.in(Meters) / 2 + distanceTransformed, 0);
-                    case BACK -> new Vector2(
-                            -driveTrainSimulation.config.bumperLengthX.in(Meters) / 2 - distanceTransformed / 2, 0);
+                    case LEFT ->
+                        new Vector2(0, driveTrainSimulation.config.bumperWidthY.in(Meters) / 2 + distanceTransformed);
+                    case RIGHT ->
+                        new Vector2(0, -driveTrainSimulation.config.bumperWidthY.in(Meters) / 2 - distanceTransformed);
+                    case FRONT ->
+                        new Vector2(driveTrainSimulation.config.bumperLengthX.in(Meters) / 2 + distanceTransformed, 0);
+                    case BACK ->
+                        new Vector2(
+                                -driveTrainSimulation.config.bumperLengthX.in(Meters) / 2 - distanceTransformed / 2, 0);
                 });
 
         return intakeRectangle;

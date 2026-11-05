@@ -6,13 +6,13 @@ import static org.wpilib.units.Units.Inches;
 import static org.wpilib.units.Units.Meters;
 import static org.wpilib.units.Units.MetersPerSecond;
 
+import java.util.*;
+import org.ironmaple.simulation.Goal;
 import org.wpilib.math.geometry.*;
 import org.wpilib.networktables.NetworkTableInstance;
 import org.wpilib.networktables.StructPublisher;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.LinearVelocity;
-import java.util.*;
-import org.ironmaple.simulation.Goal;
 
 /**
  *

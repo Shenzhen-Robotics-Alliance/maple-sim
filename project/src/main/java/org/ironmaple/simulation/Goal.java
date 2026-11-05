@@ -2,17 +2,17 @@ package org.ironmaple.simulation;
 
 import static org.wpilib.units.Units.Degrees;
 
+import java.util.List;
+import java.util.function.Predicate;
+import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
+import org.ironmaple.simulation.gamepieces.GamePiece;
 import org.wpilib.math.geometry.Pose3d;
 import org.wpilib.math.geometry.Rotation3d;
 import org.wpilib.math.geometry.Translation3d;
 import org.wpilib.units.Units;
 import org.wpilib.units.measure.Angle;
 import org.wpilib.units.measure.Distance;
-import java.util.List;
-import java.util.function.Predicate;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
-import org.ironmaple.simulation.gamepieces.GamePiece;
 
 /**
  *

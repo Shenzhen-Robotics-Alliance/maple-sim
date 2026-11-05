@@ -2,20 +2,6 @@ package org.ironmaple.simulation;
 
 import static org.wpilib.units.Units.Seconds;
 
-import org.wpilib.math.geometry.Pose2d;
-import org.wpilib.math.geometry.Pose3d;
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.networktables.BooleanPublisher;
-import org.wpilib.networktables.BooleanSubscriber;
-import org.wpilib.networktables.DoublePublisher;
-import org.wpilib.networktables.NetworkTable;
-import org.wpilib.networktables.NetworkTableInstance;
-import org.wpilib.units.measure.Time;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.driverstation.Alliance;
-import org.wpilib.framework.RobotBase;
-import org.wpilib.framework.TimedRobot;
-import org.wpilib.system.Timer;
 import java.util.*;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -31,6 +17,20 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.Arena2026Rebuilt;
 import org.ironmaple.utils.mathutils.GeometryConvertor;
+import org.wpilib.driverstation.Alliance;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.framework.RobotBase;
+import org.wpilib.framework.TimedRobot;
+import org.wpilib.math.geometry.Pose2d;
+import org.wpilib.math.geometry.Pose3d;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.networktables.BooleanPublisher;
+import org.wpilib.networktables.BooleanSubscriber;
+import org.wpilib.networktables.DoublePublisher;
+import org.wpilib.networktables.NetworkTable;
+import org.wpilib.networktables.NetworkTableInstance;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.Time;
 
 /**
  *

@@ -2,12 +2,6 @@ package org.ironmaple.simulation.gamepieces;
 
 import static org.wpilib.units.Units.*;
 
-import org.wpilib.math.geometry.*;
-import org.wpilib.math.kinematics.ChassisVelocities;
-import org.wpilib.units.measure.Angle;
-import org.wpilib.units.measure.Distance;
-import org.wpilib.units.measure.LinearVelocity;
-import org.wpilib.system.Timer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -17,6 +11,12 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.utils.LegacyFieldMirroringUtils2024;
+import org.wpilib.math.geometry.*;
+import org.wpilib.math.kinematics.ChassisVelocities;
+import org.wpilib.system.Timer;
+import org.wpilib.units.measure.Angle;
+import org.wpilib.units.measure.Distance;
+import org.wpilib.units.measure.LinearVelocity;
 
 /**
  *
@@ -109,8 +109,8 @@ public class GamePieceProjectile implements GamePiece {
      * @param robotPosition the position of the robot (not the shooter) at the time of launching the game piece
      * @param shooterPositionOnRobot the translation from the shooter's position to the robot's center, in the robot's
      *     frame of reference
-     * @param chassisVelocitiesFieldRelative the field-relative velocity of the robot chassis when launching the game piece,
-     *     influencing the initial velocity of the game piece
+     * @param chassisVelocitiesFieldRelative the field-relative velocity of the robot chassis when launching the game
+     *     piece, influencing the initial velocity of the game piece
      * @param shooterFacing the direction in which the shooter is facing at launch
      * @param initialHeight the initial height of the game piece when launched, i.e., the height of the shooter from the
      *     ground
@@ -148,8 +148,8 @@ public class GamePieceProjectile implements GamePiece {
      * translational and rotational motion as well as the shooter's ground velocity.
      *
      * @param shooterPositionOnRobot the translation of the shooter on the robot, in the robot's frame of reference
-     * @param chassisVelocities the velocities of the chassis when the game piece is launched, including translational and
-     *     rotational velocities
+     * @param chassisVelocities the velocities of the chassis when the game piece is launched, including translational
+     *     and rotational velocities
      * @param chassisFacing the direction the chassis is facing at the time of the launch
      * @param groundVelocity the ground component of the projectile's initial velocity, provided as a scalar in meters
      *     per second (m/s)
@@ -161,8 +161,7 @@ public class GamePieceProjectile implements GamePiece {
             Rotation2d chassisFacing,
             double groundVelocity) {
         final Translation2d
-                chassisTranslationalVelocity =
-                        new Translation2d(chassisVelocities.vx, chassisVelocities.vy),
+                chassisTranslationalVelocity = new Translation2d(chassisVelocities.vx, chassisVelocities.vy),
                 shooterGroundVelocityDueToChassisRotation =
                         shooterPositionOnRobot
                                 .rotateBy(chassisFacing)
@@ -180,8 +179,8 @@ public class GamePieceProjectile implements GamePiece {
      *
      * @param info the info of the game piece
      * @param initialPosition the position of the game piece at the moment it is launched into the air
-     * @param initialLaunchingVelocity the horizontal component of the initial velocity in the X-Y plane, in meters
-     *     per second (m/s)
+     * @param initialLaunchingVelocity the horizontal component of the initial velocity in the X-Y plane, in meters per
+     *     second (m/s)
      * @param initialHeight the initial height of the game piece when launched (the height of the shooter from the
      *     ground)
      * @param initialVerticalVelocity the vertical component of the initial velocity, in meters per second (m/s)
@@ -379,8 +378,7 @@ public class GamePieceProjectile implements GamePiece {
     private Translation3d getVelocityAtTime(double t) {
         final double verticalVelocity = initialVerticalVelocity - GRAVITY * t;
 
-        return new Translation3d(
-                initialLaunchingVelocity.getX(), initialLaunchingVelocity.getY(), verticalVelocity);
+        return new Translation3d(initialLaunchingVelocity.getX(), initialLaunchingVelocity.getY(), verticalVelocity);
     }
 
     /**

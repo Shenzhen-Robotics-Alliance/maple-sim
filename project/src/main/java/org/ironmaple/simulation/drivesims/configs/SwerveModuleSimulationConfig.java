@@ -2,13 +2,13 @@ package org.ironmaple.simulation.drivesims.configs;
 
 import static org.wpilib.units.Units.*;
 
-import org.wpilib.math.system.DCMotor;
-import org.wpilib.math.util.Units;
-import org.wpilib.units.measure.*;
 import java.util.function.Supplier;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveModuleSimulation;
 import org.ironmaple.simulation.motorsims.SimMotorConfigs;
+import org.wpilib.math.system.DCMotor;
+import org.wpilib.math.util.Units;
+import org.wpilib.units.measure.*;
 
 public class SwerveModuleSimulationConfig implements Supplier<SwerveModuleSimulation> {
     public final SimMotorConfigs driveMotorConfigs, steerMotorConfigs;

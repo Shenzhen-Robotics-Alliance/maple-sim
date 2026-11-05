@@ -2,11 +2,11 @@ package org.ironmaple.simulation.seasonspecific.crescendo2024;
 
 import static org.ironmaple.utils.LegacyFieldMirroringUtils2024.toCurrentAllianceTranslation;
 
-import org.wpilib.math.geometry.Translation2d;
-import org.wpilib.driverstation.RobotState;
-import org.wpilib.system.Timer;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.gamepieces.GamePieceOnFieldSimulation;
+import org.wpilib.driverstation.RobotState;
+import org.wpilib.math.geometry.Translation2d;
+import org.wpilib.system.Timer;
 
 public class CrescendoHumanPlayerSimulation implements SimulatedArena.Simulatable {
     private static final Translation2d BLUE_SOURCE_POSITION = new Translation2d(15.6, 0.8);
